@@ -3,7 +3,7 @@ export const Container = styled.div`
   padding-top: 41px;
   color: #fff;
   padding-bottom: 68px;
-  @media(max-width: 375px){
+  @media (max-width: 375px) {
     padding-top: 14px;
   }
 `;
@@ -19,7 +19,7 @@ export const Grid = styled.div`
   justify-content: space-between;
   grid-template-columns: 111px 148px 67px 173px;
   justify-items: center;
-  @media(max-width: 375px){
+  @media (max-width: 375px) {
     padding-left: 54px;
     padding-right: 13px;
     justify-content: start;
@@ -28,17 +28,16 @@ export const Grid = styled.div`
     row-gap: 42px;
   }
 `;
-export const IconLinksMo=styled.div`
+export const IconLinksMo = styled.div`
   justify-content: center;
   align-items: center;
-margin-top: 68px;
+  margin-top: 68px;
   display: none;
-  @media(max-width: 375px){
+  @media (max-width: 375px) {
     display: flex;
   }
-`
-export const MobileIconLink=styled.a`
-`
+`;
+export const MobileIconLink = styled.a``;
 export const Column = styled.div`
   display: flex;
   flex-direction: column;
@@ -50,11 +49,11 @@ export const ColumnTitle = styled.div`
   font-weight: 400;
   margin-bottom: 22px;
   white-space: nowrap;
-  @media(max-width: 375px){
+  @media (max-width: 375px) {
     margin-bottom: 9px;
     font-size: 20px;
     line-height: 24px;
-    color: #EB8B8B;
+    color: #eb8b8b;
   }
 `;
 export const ColumnSubTitle = styled.div``;
@@ -75,7 +74,7 @@ export const IconLink = styled.a`
   margin-right: 5.82px;
 `;
 export const IconLinkWrapper = styled.div`
-@media(max-width: 375px){
-  display: none;
-}
+  @media (max-width: 375px) {
+    display: none;
+  }
 `;

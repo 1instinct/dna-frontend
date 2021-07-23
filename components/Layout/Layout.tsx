@@ -16,7 +16,7 @@ const Logo = styled.div`
   font-family: Montserrat;
   text-align: center;
   margin-bottom: 60px;
-  @media(max-width:375px){
+  @media (max-width: 375px) {
     width: 80px;
     height: 19.83px;
     font-size: 10px;
@@ -29,7 +29,7 @@ const CameraIcon = styled.img`
   width: 11px;
   height: auto;
   margin-right: 3.88px;
-  @media(max-width: 375px){
+  @media (max-width: 375px) {
     width: 20.71px;
     height: auto;
     margin-right: 7.76px;
@@ -39,7 +39,7 @@ const FacebookIcon = styled.img`
   width: 6.81px;
   height: auto;
   margin-right: 3.88px;
-  @media(max-width: 375px){
+  @media (max-width: 375px) {
     width: 13.63px;
     height: auto;
     margin-right: 7.76px;
@@ -49,7 +49,7 @@ const PlayIcon = styled.img`
   width: 12.29px;
   height: auto;
   margin-right: 3.88px;
-  @media(max-width: 375px){
+  @media (max-width: 375px) {
     width: 24.59px;
     height: auto;
     margin-right: 7.76px;
@@ -58,12 +58,12 @@ const PlayIcon = styled.img`
 const CircleIcon = styled.img`
   width: 10.35px;
   height: auto;
-  @media(max-width: 375px){
+  @media (max-width: 375px) {
     width: 20.71px;
     height: auto;
   }
 `;
-const iconLinks=[
+const iconLinks = [
   {
     icon: <CameraIcon src={"/camera.png"} />,
     url: ""
@@ -80,7 +80,7 @@ const iconLinks=[
     icon: <CircleIcon src={"/circle.png"} />,
     url: ""
   }
-]
+];
 const columns: Column[] = [
   {
     title: "Contact Info",
@@ -89,7 +89,7 @@ const columns: Column[] = [
       "+1 (310) 715-1370",
       "ecom@polclothing.com"
     ],
-    iconLinks,
+    iconLinks
   },
   {
     title: "Information",
@@ -208,7 +208,7 @@ export const Layout: React.FC<LayoutProps> = ({
                   background-color: #000;
                 `
               }}
-              footerData={{ logo: <MyLogo />, columns,mobileIconLinks:iconLinks }}
+              footerData={{ logo: <MyLogo />, columns, mobileIconLinks: iconLinks }}
             />
           )}
         </ClassNames>

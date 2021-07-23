@@ -10,9 +10,11 @@ import {
   LinkItem,
   Description,
   IconLink,
-  IconLinkWrapper, IconLinksMo, MobileIconLink
+  IconLinkWrapper,
+  IconLinksMo,
+  MobileIconLink
 } from "./Foot.styles";
-import {Icon} from "@material-ui/core";
+import { Icon } from "@material-ui/core";
 export type CLASSESTYPE = {
   root?: string;
   grid?: string;
@@ -58,7 +60,7 @@ export const Foot: React.FC<FootProps> = (props) => {
   let descClass = classes?.description || "";
   let iconWrapperClass = classes?.iconWrapperClass || "";
   let columns = footerData.columns;
-  let mobileIconLinks=footerData.mobileIconLinks
+  let mobileIconLinks = footerData.mobileIconLinks;
   return (
     <Container className={classnames(classes?.root)}>
       {Logo && <LogoDiv>{Logo}</LogoDiv>}
@@ -93,15 +95,15 @@ export const Foot: React.FC<FootProps> = (props) => {
           </Column>
         ))}
       </Grid>
-      {mobileIconLinks&&(<IconLinksMo>
-        {
-          mobileIconLinks.map((link,linkId)=>(
-              <MobileIconLink href={link.url} key={linkId}>
-                {link.icon}
-              </MobileIconLink>
-          ))
-        }
-      </IconLinksMo>)}
+      {mobileIconLinks && (
+        <IconLinksMo>
+          {mobileIconLinks.map((link, linkId) => (
+            <MobileIconLink href={link.url} key={linkId}>
+              {link.icon}
+            </MobileIconLink>
+          ))}
+        </IconLinksMo>
+      )}
     </Container>
   );
 };
