@@ -10,4 +10,5 @@ export interface IStream {
   start_date: number;
   is_active: true;
   product_ids: number[];
+  actor: string;
 }

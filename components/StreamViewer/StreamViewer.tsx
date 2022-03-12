@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-
+import { StreamViewerChat } from "../StreamViewerChat";
 import { StreamViewerWrapper, StreamVideo, StreamHeaderFade } from "./StreamViewer.styles";
 
 export const StreamViewer = ({ props }: any) => {
@@ -18,7 +18,7 @@ export const StreamViewer = ({ props }: any) => {
         fluid: true,
         sources: [
           {
-            src: `https://stream.mux.com/${streamId}.m3u8`,
+            src: "https://stream.mux.com/"+streamId+".m3u8",
             type: "application/x-mpegURL"
           }
         ]
@@ -54,6 +54,7 @@ export const StreamViewer = ({ props }: any) => {
 
   return (
     <StreamViewerWrapper>
+      <StreamViewerChat />
       <StreamVideo options={videoJsOptions} onReady={handlePlayerReady} />
       <StreamHeaderFade />
     </StreamViewerWrapper>

@@ -14,12 +14,13 @@ import {
   StreamMask,
   StreamStatusWrapper,
   StreamStatus,
-  StreamCardDesc,
+  StreamCardDesc, 
   StreamChecked
 } from "./StreamCard.styles";
 
 export const StreamCard = ({ isPast, item }: any) => {
   const router = useRouter();
+  //console.log('video id', item);
   return (
     <StreamCardWrapper
       key={`${item}-card`}
