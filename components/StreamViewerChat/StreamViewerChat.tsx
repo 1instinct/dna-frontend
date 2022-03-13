@@ -5,13 +5,14 @@ import { Chat, Channel, ChannelHeader, MessageInput, MessageInputSmall, Virtuali
 
 import 'stream-chat-react/dist/css/index.css';
 
-import { StreamViewerChatWrapper, StreamViewerChatInput, StreamViewerChatMessages } from "./StreamViewerChat.styles";
+import { StreamViewerChatWrapper } from "./StreamViewerChat.styles";
 
 export const StreamViewerChat = ({ props }: any) => {
   const router = useRouter();
-  //const { streamId } = router.query;
+  const { streamId, title } = router.query;
   const chatClient = StreamChat.getInstance('h3t9t6dtbs6d');
   const userToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiY29sZC1uaWdodC0xIn0.PTghhJHXk5oR0gAnm76elzZTCUusg5tzfAKQtk2GoeY';
+  
 
   chatClient.connectUser(
     {
@@ -22,9 +23,9 @@ export const StreamViewerChat = ({ props }: any) => {
     userToken,
   );
   
-  const channel = chatClient.channel('livestream', 'spacex', {
+  const channel = chatClient.channel('livestream', streamId, {
     image: 'https://goo.gl/Zefkbx',
-    name: 'SpaceX launch discussion',
+    name: title,
   });
 
   return (

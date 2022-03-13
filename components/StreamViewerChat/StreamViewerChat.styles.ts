@@ -6,11 +6,3 @@ export const StreamViewerChatWrapper = styled.div`
   left: 10px;
   height: 100%;
 `;
-
-export const StreamViewerChatInput = styled.input`
-  
-`;
-
-export const StreamViewerChatMessages = styled.input`
-  
-`;

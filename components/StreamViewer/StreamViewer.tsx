@@ -6,7 +6,6 @@ import { StreamViewerWrapper, StreamVideo, StreamHeaderFade } from "./StreamView
 export const StreamViewer = ({ props }: any) => {
   const router = useRouter();
   const { streamId } = router.query;
-
   const playerRef = React.useRef(null);
 
   const videoJsOptions = streamId
@@ -18,7 +17,7 @@ export const StreamViewer = ({ props }: any) => {
         fluid: true,
         sources: [
           {
-            src: "https://stream.mux.com/"+streamId+".m3u8",
+            src: `https://stream.mux.com/${streamId}.m3u8`,
             type: "application/x-mpegURL"
           }
         ]
