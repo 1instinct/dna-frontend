@@ -3,7 +3,9 @@ import ReactAudioPlayer from "react-audio-player";
 import Image from "next/image";
 import { useTracks } from "../../hooks/useTracks";
 import { Video } from "../Video";
-const client_id = "465bfa9fa3bf3c824164deb07cb2761b";
+const user_id = process.env.SC_USER_ID;
+const client_id = process.env.SC_CLIENT_ID;
+const client_secret = process.env.SC_CLIENT_SECRET;
 
 import { StarsContainer, Stars, GlowContainer, Glow, Skyline, Cockpit } from "./MediaPlayer.styles";
 
@@ -36,7 +38,7 @@ export const MediaPlayer = (props: any) => {
   const {
     error,
     status,
-    data,
+    data: songData,
     isLoading,
     isSuccess
   }: { error: any; status: any; data: any; isLoading: boolean; isSuccess: boolean } =
@@ -58,7 +60,6 @@ export const MediaPlayer = (props: any) => {
   const [seekbarvalue, setSeekbarvalue] = useState("");
 
   useEffect(() => {
-    // ApiCall();
     const audio = document.getElementsByClassName("react-audio-player")[0];
     // console.log( this.rap.audioEl.current);
     //audio.addEventListener('timeupdate', this.UpdateTheTime, false);
@@ -100,7 +101,7 @@ export const MediaPlayer = (props: any) => {
     // }).catch((err: any) => { throw Error(err) });
     // const userTracks = await fetch("/api/corsProxy");
     // const trackData = userTracks.json();
-    console.log("Tracks: ", userTracks);
+    console.log("Tracks: ", userTracks, songData);
     // setSongs(userTracks);
     // return userTracks;
     // SC.initialize({
@@ -118,6 +119,16 @@ export const MediaPlayer = (props: any) => {
     //   (error) => {}
     // );
     // fetch(
+    //   `https://api.soundcloud.com/users/${user_id}/playlists?client_id=${client_id}`,
+    //   {
+    //     method: "GET",
+    //     headers: {
+    //       "Content-type": "application/json;charset=UTF-8",
+    //       "Authorization": `OAuth ${client_secret}`
+    //     }
+    //   }
+    // )
+    // fetch(
     //   "https://api.soundcloud.com/users/6319082/playlists?client_id=" +
     //     `${client_id}`
     // )
@@ -128,6 +139,7 @@ export const MediaPlayer = (props: any) => {
     //     },
     //     (error) => {}
     //   );
+    return userTracks;
   };
 
   const GetCurrentTimeAndDuration = () => {
