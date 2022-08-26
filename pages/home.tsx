@@ -1,3 +1,3 @@
 import { MediaPlayer } from "../components";
 
-export default Home;
+export default MediaPlayer;
