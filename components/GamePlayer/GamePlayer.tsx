@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import { createRoot } from "react-dom/client";
-import React, { useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 
 const Box = (props: JSX.IntrinsicElements["mesh"]) => {
