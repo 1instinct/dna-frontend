@@ -29,7 +29,7 @@ export const GamePlayer = (props: any) => {
   const [clicked, click] = useState(false);
   useFrame((state, delta) => (ref.current.rotation.x += 0.01));
 
-  console.log("data: ", data);
+  // console.log("data: ", data);
 
   return (
     <Canvas>
