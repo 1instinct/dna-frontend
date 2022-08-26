@@ -52,7 +52,7 @@ const Schema = ({ post }: any) => {
   });
   const citationsText = citationsList.join("");
 
-  const org = `{ "@id": "${site}#organization", "type": "Organization", "name":"${process.env.SITE_TITLE}", "logo": {
+  const org = `{ "@id": "${process.env.SITE_URL}#organization", "type": "Organization", "name":"${process.env.SITE_TITLE}", "logo": {
     "@type": "ImageObject",
     "name": "${process.env.SITE_TITLE} Logo",
     "width": "230",
@@ -77,7 +77,7 @@ const Schema = ({ post }: any) => {
           : ""
       }
       "about": "${blurb}",
-      "author": { "@type": "Person", "@id": "${site}author/${author.slug}", "name": "${
+      "author": { "@type": "Person", "@id": "${process.env.SITE_URL}author/${author.slug}", "name": "${
         author.name
       }" },
       ${
@@ -88,20 +88,20 @@ const Schema = ({ post }: any) => {
           : ""
       }
       "commentCount": ${commentCount},
-      "copyrightHolder": { "@id": "${site}#organization" },
+      "copyrightHolder": { "@id": "${process.env.SITE_URL}#organization" },
       "copyrightYear": ${copyrightYear},
       "datePublished": "${date}",
       "dateModified": "${modified}",
       "description": "${blurb}",
-      "discussionUrl": "${site}articles/${slug}#comments",
-      "editor": { "@id": "${site}author/${author.slug}#author" },
+      "discussionUrl": "${process.env.SITE_URL}articles/${slug}#comments",
+      "editor": { "@id": "${process.env.SITE_URL}author/${author.slug}#author" },
       "headline": "${title}",
       ${sourceUrl ? `"image": "${sourceUrl}",` : ""}
       "inLanguage": "English",
-      "mainEntityOfPage": "${site}articles/${slug}",
-      "publisher": { "@id": "${site}#organization" },
+      "mainEntityOfPage": "${process.env.SITE_URL}articles/${slug}",
+      "publisher": { "@id": "${process.env.SITE_URL}#organization" },
       "sourceOrganization": ${org},
-      "url": "${site}articles/${slug}"
+      "url": "${process.env.SITE_URL}articles/${slug}"
 
     }
     `}</script>{" "}
