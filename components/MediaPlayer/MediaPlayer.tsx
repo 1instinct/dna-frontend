@@ -41,8 +41,9 @@ export const MediaPlayer = (props: any) => {
     data: songData,
     isLoading,
     isSuccess
-  }: { error: any; status: any; data: any; isLoading: boolean; isSuccess: boolean } =
-    useTracks("smokeyyy");
+  }: { error: any; status: any; data: any; isLoading: boolean; isSuccess: boolean } = useTracks(
+    "smokeyyy"
+  );
   //seekbarFunction: (e: Event) => void;
   const rap = useRef<any>();
   const [songs, setSongs] = useState([]);
