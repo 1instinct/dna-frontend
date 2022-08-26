@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { site, siteTitle } from "../../config";
+// import { site, siteTitle } from "../../config";
 
 function strip(html) {
   var one = html.replace(/<\/?[^>]+(>|$)/gm, "");
@@ -52,12 +52,12 @@ const Schema = ({ post }) => {
   });
   const citationsText = citationsList.join("");
 
-  const org = `{ "@id": "${site}#organization", "type": "Organization", "name":"${siteTitle}", "logo": {
+  const org = `{ "@id": "${site}#organization", "type": "Organization", "name":"${process.env.SITE_TITLE}", "logo": {
     "@type": "ImageObject",
-    "name": "${siteTitle} Logo",
+    "name": "${process.env.SITE_TITLE} Logo",
     "width": "230",
     "height": "67",
-    "url": "${site}images/logo.png"
+    "url": "${process.env.SITE_URL}images/logo.png"
 } }`;
 
   return (
