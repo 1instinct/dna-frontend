@@ -1,7 +1,7 @@
 import Head from "next/head";
 // import { site, siteTitle } from "../../config";
 
-function strip(html) {
+function strip(html: any) {
   var one = html.replace(/<\/?[^>]+(>|$)/gm, "");
   var two = one.replace(/[\r\n]\s*[\r\n]/gm, "");
   return two;
@@ -22,7 +22,7 @@ function strip(html) {
 </script> */
 }
 
-const Schema = ({ post }) => {
+const Schema = ({ post }: any) => {
   const {
     title,
     blurb,
@@ -45,7 +45,7 @@ const Schema = ({ post }) => {
     sourceUrl = featuredImage.sourceUrl;
   }
 
-  const citationsList = citations.map((citation, i) => {
+  const citationsList = citations.map(({citation, i}: any) => {
     return `{ "@type": "CreativeWork", "citation": ${JSON.stringify(citation)} }${
       i === citations.length - 1 ? "" : ","
     }\n`;
