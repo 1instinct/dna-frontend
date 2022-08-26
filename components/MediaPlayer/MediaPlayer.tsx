@@ -371,7 +371,7 @@ export const MediaPlayer = (props: any) => {
   //   };
 
   // console.log("data: ", data?.data?.map((item: any, index: any) => item));
-  console.log("data: ", data);
+  // console.log("data: ", data);
 
   return (
     <>
