@@ -7,6 +7,7 @@ export * from "./Header";
 export * from "./Home";
 export * from "./InfoBox";
 export * from "./Layout";
+export * from "./LegalLinks";
 export * from "./Loading";
 export * from "./Login";
 export * from "./MainMenu";

@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { NotifyForm, ProductTeaser, SocialLinks } from "../components";
+import {
+  NotifyForm,
+  ProductTeaser,
+  SocialLinks,
+  LegalLinks
+} from "../components";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { useMutation, useQueryClient } from "react-query";
@@ -170,6 +175,7 @@ export const ComingSoon = () => {
             </CarouselProvider>
           </ProductImageCarousel>
         )}
+        <LegalLinks />
       </Container>
     </>
   );
