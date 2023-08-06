@@ -3,10 +3,7 @@ import fs from "fs";
 import path from "path";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const fontPath = path.join(
-    process.cwd(),
-    `fonts/${req.query.font}.woff2`
-  );
+  const fontPath = path.join(process.cwd(), `fonts/${req.query.font}.woff2`);
   const fontData = fs.readFileSync(fontPath);
 
   res.setHeader("Access-Control-Allow-Origin", "*");
