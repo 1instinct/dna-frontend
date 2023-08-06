@@ -9,11 +9,11 @@ export const LegalContainer = styled.div<any>`
     background-color: ${({ darkMode, hasBackground, theme }: any) =>
             darkMode && hasBackground ? theme.colors.brand.primary : "transparent"};
     color: ${({ darkMode, theme }: any) =>
-            darkMode ? theme.colors.brand.white : theme.colors.brand.black};
-    font-family: ${({ theme }: any) => theme.typography.bodyMD.fontFamily};
-    font-size: ${({ theme }: any) => theme.typography.bodyMD.fontSize};
-    font-weight: ${({ theme }: any) => theme.typography.bodyMD.fontWeight};
-    line-height: ${({ theme }: any) => theme.typography.bodyMD.lineHeight};
+            darkMode ? theme.colors.white.primary : theme.colors.black.primary};
+    font-family: ${({ theme }: any) => theme.typography.bodySM.fontFamily};
+    font-size: ${({ theme }: any) => theme.typography.bodySM.fontSize};
+    font-weight: ${({ theme }: any) => theme.typography.bodySM.fontWeight};
+    line-height: ${({ theme }: any) => theme.typography.bodySM.lineHeight};
     text-align: center;
     letter-spacing: 0.05em;
     text-decoration: none;
