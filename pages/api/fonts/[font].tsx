@@ -5,7 +5,7 @@ import path from "path";
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const fontPath = path.join(
     process.cwd(),
-    `../public/fonts/${req.query.font}.woff2`
+    `fonts/${req.query.font}.woff2`
   );
   const fontData = fs.readFileSync(fontPath);
 
