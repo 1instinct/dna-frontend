@@ -25,6 +25,7 @@ export const LegalLinks = ({ darkMode, hasBackground }: any) => {
             Privacy Policy
           </LegalLink>
         </LegalColumn>
+        {` | `}
         <LegalColumn>
           <LegalLink darkMode={darkMode} href={termsSlug}>
             Terms of Service

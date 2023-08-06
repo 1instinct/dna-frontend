@@ -31,7 +31,7 @@ export const LegalContainer = styled.div<any>`
 export const LegalRow = styled.div`
     display: flex;
     flex-direction: row;
-    margin: 0 auto 0.5rem auto;
+    margin: 0 auto 1rem auto;
 `;
 
 export const LegalColumn = styled.div`
@@ -45,7 +45,7 @@ export const LegalLink = styled.a<any>`
     color: ${({ darkMode, theme }: any) =>
             darkMode ? theme.colors.white.primary : theme.colors.black.primary};
     margin: 0 0.5rem;
-    text-decoration: none;
+    text-decoration: underline;
     text-decoration-skip-ink: auto;
     cursor: pointer;
     &:hover {
