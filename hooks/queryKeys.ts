@@ -7,5 +7,6 @@ export enum QueryKeys {
   MENU_ITEMS = "MENU_ITEMS",
   MENU_ITEM = "MENU_ITEM",
   STREAMS = "STREAMS",
-  STREAM = "STREAM"
+  STREAM = "STREAM",
+  TRACKS = "TRACKS"
 }

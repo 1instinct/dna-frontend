@@ -44,6 +44,7 @@
     "@mui/material": "5.11.2",
     "@mux/mux-node": "^3.3.1",
     "@spree/storefront-api-v2-sdk": "file:contrib/spree-storefront-api-v2-sdk-4.5.1003.tgz",
+    "@types/jquery": "^3.5.5",
     "classnames": "^2.3.1",
     "cors": "^2.8.5",
     "dotenv-webpack": "^1.7.0",

@@ -11,6 +11,7 @@ export * from "./LegalLinks";
 export * from "./Loading";
 export * from "./Login";
 export * from "./MainMenu";
+export * from "./MediaPlayer";
 export * from "./NotifyForm";
 export * from "./PostList";
 export * from "./POLTerms";
