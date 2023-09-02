@@ -8,6 +8,7 @@ const client_id = process.env.SC_CLIENT_ID;
 const client_secret = process.env.SC_CLIENT_SECRET;
 
 import { StarsContainer, Stars, GlowContainer, Glow, Skyline, Cockpit } from "./MediaPlayer.styles";
+import { NotifyForm } from "..";
 
 const styles = {
   backgroundColor: "#1f1f1f",
@@ -400,7 +401,6 @@ export const MediaPlayer = (props: any) => {
       </StarsContainer>
       <Skyline />
       <Cockpit />
-
       <Video
         isPlaying={isPlaying}
         mute={muted}
@@ -408,6 +408,7 @@ export const MediaPlayer = (props: any) => {
         handleChangeReverse={handleChangeReverse}
         reverse={reverse}
       />
+      <NotifyForm />
     </>
   );
 };

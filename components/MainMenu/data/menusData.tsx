@@ -104,7 +104,7 @@ const NewDigs = () => {
       <Column>
         <ColumnTitle>FEATURED</ColumnTitle>
         <ColumnItem>trend — 90s kids</ColumnItem>
-        <ColumnItem>trend — dad’s closet</ColumnItem>
+        <ColumnItem>trend — dad's closet</ColumnItem>
         <ColumnItem>chill summer</ColumnItem>
         <ColumnItem>throw it back</ColumnItem>
         <ColumnItem>back to school</ColumnItem>
