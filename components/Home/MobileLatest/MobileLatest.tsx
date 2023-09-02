@@ -1,4 +1,6 @@
 import React from "react";
+import { fetchStreams, fetchProducts, useProducts, useStreams } from "../../../hooks";
+import { ProductCard } from "../..";
 import {
   fetchStreams,
   fetchProducts,
