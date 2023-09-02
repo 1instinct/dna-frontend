@@ -33,8 +33,9 @@ export const Video = (props: any) => {
   const _onPlayerReady = (event: any) => {
     var embedCode = event.target.getVideoEmbedCode();
     event.target.playVideo();
-    if (document.getElementById("embed-code")) {
-      document.getElementById("embed-code").innerHTML = embedCode;
+    const embedElement = document.getElementById("embed-code");
+    if (embedElement) {
+      embedElement.innerHTML = embedCode;
     }
   };
 

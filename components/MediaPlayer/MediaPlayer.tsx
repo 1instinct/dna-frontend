@@ -33,6 +33,12 @@ export interface S {
   seekbarvalue: any;
 }
 
+export interface Song {
+  title: string;
+  permalink_url: string;
+  stream_url: string;
+}
+
 // export const MediaPlayer = (props: any): <Props, S> => {
 export const MediaPlayer = (props: any) => {
   const {
@@ -46,7 +52,7 @@ export const MediaPlayer = (props: any) => {
   );
   //seekbarFunction: (e: Event) => void;
   const rap = useRef<any>();
-  const [songs, setSongs] = useState([]);
+  const [songs, setSongs] = useState<Song[]>([]);
   const [songIndex, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [url, setUrl] = useState("");
@@ -57,7 +63,7 @@ export const MediaPlayer = (props: any) => {
   const [reverse, setReverse] = useState(100);
   const [seeking, setSeeking] = useState(false);
   const [seekable, setSeekable] = useState("");
-  const [audioInput, setAudioInput] = useState<Element>(null);
+  const [audioInput, setAudioInput] = useState<Element | null>(null);
   const [seekbarvalue, setSeekbarvalue] = useState("");
 
   useEffect(() => {
