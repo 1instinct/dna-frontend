@@ -7,7 +7,7 @@ const corsProxy = nc()
   .use(cors())
   .get(async (req, res: any) => {
     // console.log("Starting API call");
-    const sc = new Soundcloud(process.env.SOUNDCLOUD_CLIENT_ID, process.env.SOUNDCLOUD_OAUTH_TOKEN);
+    const sc = new Soundcloud(process.env.NEXT_PUBLIC_SC_CLIENT_ID, process.env.NEXT_PUBLIC_SC_CLIENT_SECRET);
     // const scId = await sc.resolve.getV2("https://soundcloud.com/smokeyyy/");
     // const userTracks = await sc.playlists.fetch(scId);
     const userTracks = await sc.users.tracksV2("smokeyyy").then((res) => res);
