@@ -137,7 +137,10 @@
     "@types/react-typist": "^2.0.3",
     "@types/three": "0.143.1",
     "@types/ua-parser-js": "^0.7.36",
+<<<<<<< HEAD
     "@types/video.js": "^7.3.28",
+=======
+>>>>>>> 5666297 (add a bunch of temp typings)
     "@types/yup": "0.29.13",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",

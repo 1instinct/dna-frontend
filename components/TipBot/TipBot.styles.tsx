@@ -60,8 +60,7 @@ export const TipBotImage = styled.div`
     bottom: -130px;
   }
 
-  @media only screen and (max-width: ${(props: any) =>
-      props.theme.breakpoints.values.sm}px) {
+  @media only screen and (max-width: ${(props: any) => props.theme.breakpoints.values.sm}px) {
     position: absolute;
     ${
       "" /* left: 25px;
