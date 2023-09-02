@@ -24,9 +24,13 @@ export const MenuItem = styled.div<MenuItemProps>`
   font-size: 14px;
   line-height: 150%;
   color: ${(p) =>
+<<<<<<< HEAD
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
+=======
+    p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+>>>>>>> aea2f40 (more style tweaks, linter fixes)
   text-align: center;
   display: flex;
   justify-content: center;
@@ -39,9 +43,13 @@ export const MenuItem = styled.div<MenuItemProps>`
     width: 120%;
     height: 1px;
     background-color: ${(p) =>
+<<<<<<< HEAD
       p.theme.isDarkMode
         ? p.theme.colors.black.primary
         : p.theme.colors.white.primary};
+=======
+      p.theme.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
+>>>>>>> aea2f40 (more style tweaks, linter fixes)
     content: "";
     position: absolute;
     bottom: 0;
@@ -54,9 +62,13 @@ export const MenuItem = styled.div<MenuItemProps>`
 export const DropDown = styled.div<DropDownProps>`
   position: absolute;
   background-color: ${(p) =>
+<<<<<<< HEAD
     p.theme.isDarkMode
       ? p.theme.colors.black.primary
       : p.theme.colors.white.primary};
+=======
+    p.theme.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
+>>>>>>> aea2f40 (more style tweaks, linter fixes)
   left: 0;
   top: 100%;
   width: 100%;
@@ -79,23 +91,35 @@ export const DropDownColumn = styled.div`
 
 export const DropDownHeader = styled.h4`
   color: ${(p) =>
+<<<<<<< HEAD
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
+=======
+    p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+>>>>>>> aea2f40 (more style tweaks, linter fixes)
 `;
 
 export const DropDownLink = styled.a`
   color: ${(p) =>
+<<<<<<< HEAD
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary} !important;
+=======
+    p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary} !important;
+>>>>>>> aea2f40 (more style tweaks, linter fixes)
 `;
 
 export const DropDownAdvert = styled.div`
   color: ${(p) =>
+<<<<<<< HEAD
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
+=======
+    p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+>>>>>>> aea2f40 (more style tweaks, linter fixes)
   margin: 0 20px;
   padding: 10px;
 `;

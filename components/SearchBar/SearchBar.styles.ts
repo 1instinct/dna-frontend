@@ -56,9 +56,13 @@ export const StyledInputContainer = styled.div<StyledInputContainerType>`
     border-bottom: ${(p) =>
       p.isExpanded
         ? `1px solid ${
+<<<<<<< HEAD
             p.theme.isDarkMode
               ? p.theme.colors.white.primary
               : p.theme.colors.black.primary
+=======
+            p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary
+>>>>>>> aea2f40 (more style tweaks, linter fixes)
           }`
         : 0};
     width: ${(p) => (p.isWidthSet ? "140px" : "100%")};
@@ -68,6 +72,7 @@ export const StyledInputContainer = styled.div<StyledInputContainerType>`
 
 export const StyledInput = styled.input<WithThemeType>`
   font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
+<<<<<<< HEAD
   background: ${(p) =>
     p.darkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
   caret-color: ${(p) =>
@@ -78,6 +83,13 @@ export const StyledInput = styled.input<WithThemeType>`
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
+=======
+  background: ${(p) => (p.darkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary)};
+  caret-color: ${(p) =>
+    p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+  color: ${(p) =>
+    p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+>>>>>>> aea2f40 (more style tweaks, linter fixes)
   border: 0;
   outline: none;
 `;

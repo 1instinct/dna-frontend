@@ -55,7 +55,7 @@ export const GlobalStyles = ({ theme, children }: any) => (
       select {
         font-size: 28.95px;
         line-height: 34.74px;
-        border: 2px solid #000000;
+        border: 2px solid ${theme.colors.black.primary};
         box-sizing: border-box;
         transition: background-color 0.3s;
         width: 100%;

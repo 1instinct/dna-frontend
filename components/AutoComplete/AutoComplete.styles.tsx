@@ -24,13 +24,15 @@ export const StyledAutoComplete = styled.div<StyledAutoCompleteProps>`
   &::-webkit-scrollbar {
     width: 20px;
     border-radius: 0 0 3px 0;
-    background-color: ${(p) => p.theme.isDarkMode ? p.theme.colors.black.light : p.theme.colors.white.light};
+    background-color: ${(p) =>
+      p.theme.isDarkMode ? p.theme.colors.black.light : p.theme.colors.white.light};
   }
 
   &::-webkit-scrollbar-thumb {
     border-radius: 12px;
     height: 80px;
-    background-color: ${(p) => p.theme.isDarkMode ? p.theme.colors.black.medium : p.theme.colors.white.medium};
+    background-color: ${(p) =>
+      p.theme.isDarkMode ? p.theme.colors.black.medium : p.theme.colors.white.medium};
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.33);
     transition: 1s all ease-in-out;
     &:active {
@@ -41,7 +43,8 @@ export const StyledAutoComplete = styled.div<StyledAutoCompleteProps>`
 
   &::-webkit-scrollbar-track {
     border-radius: 8px;
-    background-color: ${(p) => p.theme.isDarkMode ? p.theme.colors.gray.dark : p.theme.colors.gray.light};
+    background-color: ${(p) =>
+      p.theme.isDarkMode ? p.theme.colors.gray.dark : p.theme.colors.gray.light};
   }
 `;
 export interface StyledSuggestionLinkProps {
@@ -61,8 +64,10 @@ export const StyledSuggestionLink = styled.div<StyledSuggestionLinkProps>`
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px 12px 30px;
-  background-color: ${(p) => p.theme.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
-  color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+  background-color: ${(p) =>
+    p.theme.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
+  color: ${(p) =>
+    p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
 
   font-size: 14px;
   font-weight: 700;
@@ -71,8 +76,10 @@ export const StyledSuggestionLink = styled.div<StyledSuggestionLinkProps>`
 
   &:hover {
     text-decoration: none;
-    background-color: ${(p) => p.theme.isDarkMode ? p.theme.colors.gray.medium : p.theme.colors.gray.primary};
-    color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+    background-color: ${(p) =>
+      p.theme.isDarkMode ? p.theme.colors.gray.medium : p.theme.colors.gray.primary};
+    color: ${(p) =>
+      p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
   }
 
   mark {
