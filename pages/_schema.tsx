@@ -45,7 +45,7 @@ const Schema = ({ post }: any) => {
     sourceUrl = featuredImage.sourceUrl;
   }
 
-  const citationsList = citations.map(({citation, i}: any) => {
+  const citationsList = citations.map(({ citation, i }: any) => {
     return `{ "@type": "CreativeWork", "citation": ${JSON.stringify(citation)} }${
       i === citations.length - 1 ? "" : ","
     }\n`;
@@ -77,9 +77,9 @@ const Schema = ({ post }: any) => {
           : ""
       }
       "about": "${blurb}",
-      "author": { "@type": "Person", "@id": "${process.env.SITE_URL}author/${author.slug}", "name": "${
-        author.name
-      }" },
+      "author": { "@type": "Person", "@id": "${process.env.SITE_URL}author/${
+        author.slug
+      }", "name": "${author.name}" },
       ${
         citationsText.length
           ? `"citation": [

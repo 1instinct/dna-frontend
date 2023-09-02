@@ -164,7 +164,7 @@ const FormWrapper: React.FC<any> = ({
           {/* {<div><pre>VALUE: {JSON.stringify(values, null, 2)}</pre></div>} */}
           {canGoBack && (
             <Disclaimer>
-              Don’t worry your information is safe{" "}
+              Don't worry your information is safe{" "}
               <span role="img" aria-label="lock">
                 🔐
               </span>{" "}
