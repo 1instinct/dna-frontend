@@ -48,9 +48,6 @@ export const Container = styled.main`
   }
 `;
 export const Content = styled.div`
-  width: 100%;
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  overflow: scroll;
 `;

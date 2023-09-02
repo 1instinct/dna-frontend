@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Formik, Field, ErrorMessage } from "formik";
-import styled from "@emotion/styled";
 
 import { loginForm } from "../AuthForm/constants";
 import { useAuth } from "../../config/auth";

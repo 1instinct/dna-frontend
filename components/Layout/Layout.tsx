@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "@emotion/styled";
 import { ClassNames } from "@emotion/react";
 import { LayoutProps } from "./types";
 import { Footer } from "../Footer/Footer";
