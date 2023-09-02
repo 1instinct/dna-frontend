@@ -160,6 +160,12 @@ export const NotifyForm = () => {
 
   return (
     <>
+      <defs>
+        <rect id="rect" x="25%" y="25%" width="50%" height="50%" rx="15" />
+        <clipPath id="clip">
+          <use xlinkHref="#rect" />
+        </clipPath>
+      </defs>
       <Container>
         <FormWrapper index={currentQuestion}>
           <form
