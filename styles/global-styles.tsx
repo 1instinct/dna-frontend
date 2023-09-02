@@ -27,7 +27,6 @@ export const GlobalStyles = ({ theme, children }: any) => (
           font-display: swap;
           font-smooth: 2em;
         }
-
         #__next {
           margin: 0;
           padding: 0;
