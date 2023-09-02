@@ -127,6 +127,7 @@
     "@types/react-slick": "^0.23.5",
     "@types/react-sticky-el": "^1.0.2",
     "@types/react-typist": "^2.0.3",
+    "@types/three": "0.143.1",
     "@types/ua-parser-js": "^0.7.36",
     "@types/video.js": "^7.3.28",
     "@types/yup": "0.29.13",
