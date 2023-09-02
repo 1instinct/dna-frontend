@@ -80,7 +80,6 @@ export const Detail = styled.h3`
     text-align: center;
   }
 `;
-<<<<<<< HEAD
 
 export const Price = styled.h1``;
 
@@ -201,5 +200,3 @@ export const PropertyName = styled.span`
       ? p.theme.colors.gray.primary
       : p.theme.colors.black.primary};
 `;
-=======
->>>>>>> dcaa40a (some linter fixes)

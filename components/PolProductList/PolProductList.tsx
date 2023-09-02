@@ -20,7 +20,7 @@ export interface PolProductListProps {
   products?: IProducts;
   title?: string;
 }
-const PolProductList: React.FC<PolProductListProps> = (props) => {
+export const PolProductList: React.FC<PolProductListProps> = (props) => {
   const { products, title } = props;
 
   if (products && Array.isArray(products.data)) {
@@ -85,5 +85,3 @@ const PolProductList: React.FC<PolProductListProps> = (props) => {
   }
   return null;
 };
-
-export default PolProductList;

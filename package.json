@@ -128,19 +128,13 @@
     "@types/react-lottie": "^1.2.6",
     "@types/react-places-autocomplete": "^7.2.8",
     "@types/react-responsive": "^8.0.2",
-<<<<<<< HEAD
     "@types/react-responsive-masonry": "2.1.0",
-=======
->>>>>>> 0bfa11d (merge in latest main, fix carousel slide height)
     "@types/react-slick": "^0.23.5",
     "@types/react-sticky-el": "^1.0.2",
     "@types/react-typist": "^2.0.3",
     "@types/three": "0.143.1",
     "@types/ua-parser-js": "^0.7.36",
-<<<<<<< HEAD
     "@types/video.js": "^7.3.28",
-=======
->>>>>>> 5666297 (add a bunch of temp typings)
     "@types/yup": "0.29.13",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
