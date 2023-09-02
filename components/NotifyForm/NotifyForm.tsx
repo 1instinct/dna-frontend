@@ -152,6 +152,11 @@ export const NotifyForm = () => {
     // setFirstName('');
     // setLastName('');
   };
+  
+  useEffect(() => {
+    // if (status === "success") clearFields();
+    // if(modalOpen && status === "success") clearFields();
+  }, [status]);
 
   useEffect(() => {
     // if (status === "success") clearFields();
