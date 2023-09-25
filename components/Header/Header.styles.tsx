@@ -71,7 +71,6 @@ export const LeftSide = styled.div`
   width: auto;
   display: flex;
   position: absolute;
-  top: 0;
   left: 10px;
   flex-direction: row;
   align-items: center;
@@ -87,7 +86,6 @@ export const RightSide = styled.div`
   width: auto;
   display: flex;
   position: absolute;
-  top: 0;
   right: 10px;
   flex-direction: row;
   align-items: center;

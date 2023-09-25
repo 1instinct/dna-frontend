@@ -59,7 +59,9 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
   const toggleCart = () => setCartVisible((isVisible) => !isVisible);
   const toggleAccount = () => setAccountVisible((isVisible) => !isVisible);
   const isMaint = process.env.NEXT_PUBLIC_IS_MAINT_MODE || "false";
-  const logoPath = process.env.NEXT_PUBLIC_LOGO_PATH || "/images/logo.png";
+  const siteTitle = process.env.NEXT_PUBLIC_SITE_TITLE || "DNA";
+
+  const logoPath = process.env.NEXT_PUBLIC_LOGO_PATH || null;
 
   const {
     data: cartData,
@@ -98,7 +100,11 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
               router.push("/");
             }}
           >
-            <MyLogo imageFile={logoPath} darkMode={darkMode} />
+            {logoPath ? (
+              <MyLogo imageFile={logoPath} darkMode={darkMode} />
+            ) : (
+              <h1>{siteTitle}</h1>
+            )}
           </LinkDiv>
         </LogoDiv>
         <RightSide>

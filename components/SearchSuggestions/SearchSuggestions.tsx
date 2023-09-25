@@ -38,6 +38,8 @@ const SearchSuggestions = ({
     // console.log("suggestions: ", suggestions, "data: ", data);
   }, []);
 
+  if (!isVisible) return null;
+
   if (isLoading) {
     setIsSearchLoading();
     return (
@@ -47,7 +49,7 @@ const SearchSuggestions = ({
     );
   }
 
-  if (error && isVisible) {
+  if (error) {
     return (
       <StyledSearchSuggestions role="listbox" aria-labelledby={labelId} id={id}>
         <p>Error {status}</p>
@@ -55,7 +57,8 @@ const SearchSuggestions = ({
     );
   }
 
-  setIsSearchLoading();
+  if (!data || data.data.length === 0) return null;
+
   return (
     <StyledSearchSuggestions role="listbox" aria-labelledby={labelId} id={id}>
       {isVisible &&

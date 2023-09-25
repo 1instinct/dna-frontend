@@ -19,7 +19,7 @@ export const PersonalInfo = () => {
   // const { errors, touched } = useFormikContext()
 
   const speechMarkup = useCallback(() => {
-    return { __html: "Let’s start with your name." };
+    return { __html: "Let's start with your name." };
   }, []);
 
   return (

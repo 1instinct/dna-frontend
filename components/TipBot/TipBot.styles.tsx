@@ -4,7 +4,7 @@ import { boolean } from "yup/lib/locale";
 
 const fadeInOut = keyframes`
   0% { opacity: 1; }
-  50% { opacity: 0.25; margi }
+  50% { opacity: 0.25; }
   100% { opacity: 1; }
 `;
 
@@ -74,8 +74,11 @@ export const TipBotImage = styled.div`
 
 export const BubbleWrapper = styled.div`
   border-radius: 8px;
-  border: 1px solid ${(props: any) => props.theme.colors.gray.medium};
-  background: ${(props: any) => props.theme.colors.white.primary};
+  /* border: 1px solid ${(props: any) => props.theme.colors.gray.medium}; */
+  background: ${(props: any) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.black.light
+      : props.theme.colors.white.primary};
   margin: 0 0 -35px 0;
   padding: 15px;
   &:after {
@@ -108,14 +111,23 @@ export const BubbleWrapperMobile = styled.div<BubbleWrapperMobileType>`
   align-items: center;
   justify-content: space-around;
   border-radius: ${(props) => (props.speechReady ? 20 : 36)}px;
-  background-color: ${(props) => props.theme.colors.white.primary};
+  background-color: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.black.light
+      : props.theme.colors.white.primary};
   box-shadow: 5px 8px 20px rgba(0, 0, 0, 0.25);
-  color: ${(props) => props.theme.colors.gray.dark};
+  color: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.white.primary
+      : props.theme.colors.black.primary};
   &::before,
   &::after {
     position: absolute;
     content: " ";
-    background: ${(props) => props.theme.colors.white.primary};
+    background: ${(props) =>
+      props.theme.isDarkMode
+        ? props.theme.colors.black.light
+        : props.theme.colors.white.primary};
     border-radius: 100%;
     ${"" /* box-shadow: 5px 8px 20px rgba(0,0,0,0.25); */}
   }
@@ -136,7 +148,10 @@ export const BubbleWrapperMobile = styled.div<BubbleWrapperMobileType>`
 `;
 
 export const BubbleSpeech = styled.div`
-  color: ${(props: any) => props.theme.colors.gray.dark};
+  color: ${(props: any) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.white.primary
+      : props.theme.colors.black.primary};
   font-size: 1rem;
   font-weight: 300;
   text-align: left;
@@ -146,7 +161,10 @@ export const BubbleDot = styled.div`
   width: ${width / 8}px;
   height: ${width / 8}px;
   border-radius: 100%;
-  background-color: ${(props: any) => props.theme.colors.gray.medium};
+  background-color: ${(props: any) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.black.light
+      : props.theme.colors.white.primary};
 
   animation: ${fadeInOut} 1.5s linear infinite;
   animation-delay: 0.25s;

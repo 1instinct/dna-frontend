@@ -28,7 +28,10 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
     padding: 30px 0px 0px 0px;
   }
   & [data-qa="title"] {
-    color: ${(props) => props.theme.colors.brand.primary};
+    color: ${(props) =>
+      props.theme.isDarkMode
+        ? props.theme.colors.white.primary
+        : props.theme.colors.brand.primary};
     font-size: 1.6rem;
   }
   & .carousel .thumbs-wrapper {
@@ -44,14 +47,20 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
   & .carousel .control-dots .dot {
     width: 5px;
     height: 5px;
-    background: ${(props) => props.theme.colors.gray.primary};
+    background: ${(props) =>
+      props.theme.isDarkMode
+        ? props.theme.colors.white.primary
+        : props.theme.colors.brand.primary};
     box-shadow: none;
     &:focus {
       outline: none;
     }
   }
   & .carousel .control-dots .dot.selected {
-    background: ${(props) => props.theme.colors.white.primary};
+    background: ${(props) =>
+      props.theme.isDarkMode
+        ? props.theme.colors.white.primary
+        : props.theme.colors.brand.primary};
     box-shadow: 0 0 0 7px ${(props) => props.theme.colors.brand.primary};
   }
 `;

@@ -15,7 +15,10 @@ export const MainWrapper = styled.div`
 
 export const InitialTitle = styled.div`
   box-sizing: border-box;
-  color: ${(props) => props.theme.colors.white.primary};
+  color: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.white.primary
+      : props.theme.colors.black.primary};
   font-size: 2rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -27,7 +30,10 @@ export const InitialTitle = styled.div`
 
 export const Title = styled.div`
   box-sizing: border-box;
-  color: ${(props) => props.theme.colors.white.primary};
+  color: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.white.primary
+      : props.theme.colors.black.primary};
   font-size: 2rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -37,7 +43,10 @@ export const Title = styled.div`
 
 export const Subtitle = styled.div`
   box-sizing: border-box;
-  color: ${(props) => props.theme.colors.white.primary};
+  color: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.white.primary
+      : props.theme.colors.black.primary};
   font-size: 1.2rem;
   text-align: center;
   padding: 20px 0 15px;
@@ -132,8 +141,14 @@ interface WizardFormType {
 export const WizardForm = styled.div<WizardFormType>`
   padding-top: 0;
   ${"" /* margin-top: ${props => props.canGoBack ? '120px' : '225px'}; */}
-  background: ${(props) => props.theme.colors.white.primary};
-  color: ${(props) => props.theme.colors.brand.primary};
+  background: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.black.light
+      : props.theme.colors.white.primary};
+  color: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.white.primary
+      : props.theme.colors.black.primary};
   border-radius: 8px;
   box-shadow: 0px 22px 33px rgba(0, 0, 0, 0.066);
   width: 100%;
@@ -218,7 +233,10 @@ export const SkipAction = styled.div<GenericThemeType>`
   justify-content: center;
   & button {
     width: 100%;
-    color: ${(props) => props.theme.colors.brand.primary};
+    color: ${(props) =>
+      props.theme.isDarkMode
+        ? props.theme.colors.white.primary
+        : props.theme.colors.black.primary};
     text-transform: capitalize;
   }
 
@@ -233,7 +251,10 @@ export const LoginAction = styled.div<GenericThemeType>`
   justify-content: center;
   & button a {
     width: 100%;
-    color: ${(props) => props.theme.colors.brand.primary};
+    color: ${(props) =>
+      props.theme.isDarkMode
+        ? props.theme.colors.white.primary
+        : props.theme.colors.black.primary};
     text-transform: capitalize;
   }
 

@@ -64,7 +64,7 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
   const mobileIconLinks = footerData.mobileIconLinks;
   return (
     <Container className={classnames(classes?.root)}>
-      {Logo && <LogoDiv>{Logo ? Logo : null}</LogoDiv>}
+      {/* {Logo && <LogoDiv>{Logo ? Logo : null}</LogoDiv>} */}
       <Grid className={gridClass}>
         {columns.map((item, index) => (
           <Column className={columnClass} key={index}>

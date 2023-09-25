@@ -1,7 +1,7 @@
 import { slide as BurgerMenu } from "react-burger-menu";
 import { Loading, LoadingWrapper } from "..";
 import { useCart } from "../../hooks/useCart";
-import { cartStyles } from "./cartStyles";
+import cartStyles from "./cartStyles";
 
 import { CartWrapper, CartTitle, CartButton } from "./CartSidebar.styles";
 
@@ -31,14 +31,15 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   if (cartIsLoading) {
     return (
       <CartWrapper>
-        <CartButton onClick={toggle}>
-          <i className="btb bt-lg bt-shopping-cart" />
-        </CartButton>
+        {/* <CartButton onClick={toggle}>
+          
+        </CartButton> */}
         <BurgerMenu
           right
+          customBurgerIcon={<i className="btb bt-lg bt-shopping-cart" />}
           isOpen={isVisible}
           onOpen={toggle}
-          styles={cartStyles}
+          styles={cartStyles()}
           onClose={toggle}
         >
           <LoadingWrapper>
@@ -69,7 +70,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
           right
           isOpen={isVisible}
           onOpen={toggle}
-          styles={cartStyles}
+          styles={cartStyles()}
           onClose={toggle}
         >
           <CartTitle>Cart</CartTitle>
@@ -106,7 +107,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
           right
           isOpen={isVisible}
           onOpen={toggle}
-          styles={cartStyles}
+          styles={cartStyles()}
           onClose={toggle}
         >
           <CartTitle>Cart</CartTitle>
