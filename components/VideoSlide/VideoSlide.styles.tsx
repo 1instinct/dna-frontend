@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 // Define your styled components
 export const VideoSlideWrapper = styled.a`
@@ -20,7 +20,7 @@ export const VideoSlideInfo = styled.div`
   text-transform: uppercase;
   bottom: 0;
   font-size: 32px !important;
-  ${p => p.theme.typography.titleLG};
+  ${(p) => p.theme.typography.titleLG};
 `;
 
 export const VideoSlideTitle = styled.h1`

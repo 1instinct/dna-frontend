@@ -1,29 +1,28 @@
-import React from 'react';
-import { ImageWithZoom, CarouselProvider, Slide,  } from "pure-react-carousel";
+import React from "react";
+import { ImageWithZoom, CarouselProvider, Slide } from "pure-react-carousel";
 import { ArrowBack, ArrowForward } from "@material-ui/icons";
-import { VideoSlide } from '../VideoSlide';
+import { VideoSlide } from "../VideoSlide";
 
 import {
-VideoCarousel,
-StyledSlider,
-StyledSlide,
-StyledImageWithZoom,
-CarouselNav,
-CarouselBackButton,
-CarouselNextButton
-} from './VideoSlider.styles';
+  VideoCarousel,
+  StyledSlider,
+  StyledSlide,
+  StyledImageWithZoom,
+  CarouselNav,
+  CarouselBackButton,
+  CarouselNextButton
+} from "./VideoSlider.styles";
 
-export const VideoSlider = ({videos}) => {
-
+export const VideoSlider = ({ videos }) => {
   const renderSlides = (videos) => {
-    if(!videos) {
+    if (!videos) {
       return <div>Loading...</div>;
     } else {
       return videos.map((slide) => {
         return <VideoSlide key={slide.url} slide={slide} />;
       });
     }
-  }
+  };
 
   return (
     <VideoCarousel>
@@ -57,4 +56,4 @@ export const VideoSlider = ({videos}) => {
       </CarouselProvider>
     </VideoCarousel>
   );
-}
+};

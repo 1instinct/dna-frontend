@@ -1,1 +1,1 @@
-export { TelevisionHome } from './TelevisionHome'
+export { TelevisionHome } from "./TelevisionHome";

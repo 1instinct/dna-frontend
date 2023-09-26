@@ -1,13 +1,7 @@
-import React from 'react';
-import moment from 'moment';
+import React from "react";
+import moment from "moment";
 
-import {
-  Snippet,
-  VidPic,
-  VidDetails,
-  Text,
-  Date,
-} from './VideoSnippet.styles';
+import { Snippet, VidPic, VidDetails, Text, Date } from "./VideoSnippet.styles";
 
 export const VideoSnippet = ({ vid }: any) => {
   const escapeHTML = (data) => {

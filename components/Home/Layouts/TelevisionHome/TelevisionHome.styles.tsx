@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 export const MainContent = styled.div`
   max-width: 100%;
@@ -13,7 +13,11 @@ export const HeroContainer = styled.div`
   justify-content: center;
   border: 0px;
   overflow: hidden;
-  background-image: linear-gradient(to bottom right, ${(p) => p.theme.colors.brand.primary}, ${(p) => p.theme.colors.brand.secondary});
+  background-image: linear-gradient(
+    to bottom right,
+    ${(p) => p.theme.colors.brand.primary},
+    ${(p) => p.theme.colors.brand.secondary}
+  );
   padding: 40px;
 `;
 
@@ -26,9 +30,9 @@ export const HorizontalList = styled.div`
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
   white-space: nowrap;
-  -webkit-transform: translate3d(0,0,0);
-  -moz-transform: translate3d(0,0,0);
-  -ms-transform: translate3d(0,0,0);
-  -o-transform: translate3d(0,0,0);
-  transform: translate3d(0,0,0);
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -ms-transform: translate3d(0, 0, 0);
+  -o-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 `;

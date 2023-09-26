@@ -35,7 +35,11 @@ export const VideoControls = styled.div`
   color: ${(p) => p.theme.colors.white.primary};
   padding: 45px 5px 2px 5px;
   transition: bottom 0.3s ease;
-  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.66) 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.66) 100%
+  );
   &:hover {
     bottom: 0px;
   }

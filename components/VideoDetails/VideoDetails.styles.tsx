@@ -6,7 +6,7 @@ export const Progress = styled.div`
 `;
 
 export const ProgressBar = styled.input.attrs({
-  type: 'range',
+  type: "range"
 })`
   background: ${(p) => p.theme.colors.gray.primary};
   appearance: none;

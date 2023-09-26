@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 import {
   VideoSlideWrapper,
   VideoSlideBackground,
   VideoSlideInfo,
-  VideoSlideTitle,
-} from './VideoSlide.styles';
+  VideoSlideTitle
+} from "./VideoSlide.styles";
 
 // Define your TypeScript interface for props
 interface SlideProps {

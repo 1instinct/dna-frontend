@@ -1,13 +1,7 @@
-import React from 'react';
-import moment from 'moment';
+import React from "react";
+import moment from "moment";
 
-import {
-  Snippet,
-  VidPic,
-  VidDetails,
-  Text,
-  Date,
-} from './PostSnippet.styles';
+import { Snippet, VidPic, VidDetails, Text, Date } from "./PostSnippet.styles";
 
 export const PostSnippet = ({ post }) => {
   const formatDate = () => {

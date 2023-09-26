@@ -1,1 +1,1 @@
-export { FashionHome } from './FashionHome';
+export { FashionHome } from "./FashionHome";

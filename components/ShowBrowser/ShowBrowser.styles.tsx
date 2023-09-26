@@ -32,6 +32,10 @@ export const MainContent = styled.div`
 export const HeroContainer = styled.div`
   border: 0px;
   overflow: hidden;
-  background-image: linear-gradient(to bottom right, ${(p) => p.theme.colors.brand.primary}, ${(p) => p.theme.colors.brand.secondary});
+  background-image: linear-gradient(
+    to bottom right,
+    ${(p) => p.theme.colors.brand.primary},
+    ${(p) => p.theme.colors.brand.secondary}
+  );
   padding: 40px;
 `;

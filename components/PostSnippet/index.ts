@@ -1,1 +1,1 @@
-export { PostSnippet } from './PostSnippet';
+export { PostSnippet } from "./PostSnippet";

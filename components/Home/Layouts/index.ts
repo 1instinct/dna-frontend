@@ -1,4 +1,4 @@
-import { TelevisionHome } from './TelevisionHome';
-import { FashionHome } from './FashionHome';
+import { TelevisionHome } from "./TelevisionHome";
+import { FashionHome } from "./FashionHome";
 
 export { TelevisionHome, FashionHome };

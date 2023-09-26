@@ -1,14 +1,14 @@
-import react from 'react';
-import Link from 'next/link';
-import styled from '@emotion/styled';
+import react from "react";
+import Link from "next/link";
+import styled from "@emotion/styled";
 
 import {
   ShowContainer,
   ShowPic,
   ShowDetails,
   ShowTitle,
-  ShowDescription,
-} from './ShowSnippet.styles';
+  ShowDescription
+} from "./ShowSnippet.styles";
 
 export const showsnippet = ({ show, togglepopup }: any) => {
   const params = { slug: show.slug };

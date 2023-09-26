@@ -10,5 +10,5 @@ export enum QueryKeys {
   STREAMS = "STREAMS",
   STREAM = "STREAM",
   VIDEO = "VIDEO",
-  VIDEOS = "VIDEOS",
+  VIDEOS = "VIDEOS"
 }

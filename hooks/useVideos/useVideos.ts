@@ -2,7 +2,10 @@ import { useQuery, QueryFunction } from "react-query";
 import { IVideo } from "../../typings/video";
 import { QueryKeys } from "../queryKeys";
 
-const fetchVideos: QueryFunction<any, [QueryKeys.VIDEOS, string, number]> = async ({ queryKey }) => {
+const fetchVideos: QueryFunction<
+  any,
+  [QueryKeys.VIDEOS, string, number]
+> = async ({ queryKey }) => {
   console.log("fetchVideos: ", queryKey);
   const storage = (await import("../../config/storage")).default;
   const show = queryKey[1];
@@ -49,7 +52,7 @@ const fetchShows = async () => {
     });
   // console.log(response)
   return response;
-}
+};
 
 const useVideos = (show: string, page: number) => {
   return useQuery<any>([QueryKeys.VIDEOS, page], () => fetchVideos(show, page));
@@ -57,6 +60,6 @@ const useVideos = (show: string, page: number) => {
 
 const useShows = () => {
   return useQuery<any>([QueryKeys.SHOWS], () => fetchShows());
-}
+};
 
 export { useVideos, fetchVideos, fetchShows };
