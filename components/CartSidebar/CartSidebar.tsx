@@ -31,9 +31,6 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   if (cartIsLoading) {
     return (
       <CartWrapper>
-        {/* <CartButton onClick={toggle}>
-          
-        </CartButton> */}
         <BurgerMenu
           right
           customBurgerIcon={<i className="btb bt-lg bt-shopping-cart" />}

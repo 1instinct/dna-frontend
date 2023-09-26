@@ -1,6 +1,15 @@
 import { lighten } from "polished";
 const darkMode = process.env.NEXT_PUBLIC_DARK_MODE || "false";
+const industry = process.env.NEXT_PUBLIC_INDUSTRY || "fashion";
+const hasVideo = process.env.NEXT_PUBLIC_HAS_VIDEO || "false";
+const mediaProvider = process.env.NEXT_PUBLIC_MEDIA_PROVIDER || "YouTube";
+const isLiveStreaming = process.env.NEXT_PUBLIC_IS_LIVE_STREAMING || "false";
 export const theme = {
+  name: "Omniscient",
+  industry: industry,
+  hasVideo: hasVideo === "true",
+  mediaProvider: mediaProvider,
+  isLiveStreaming: isLiveStreaming === "true",
   isDarkMode: darkMode === "true",
   colors: {
     gray: {
