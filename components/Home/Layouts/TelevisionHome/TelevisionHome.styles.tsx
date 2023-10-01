@@ -45,13 +45,14 @@ export const HorizontalList = styled.div`
 `;
 
 export const SeeMoreLink = styled.a`
-  width: 220px; height: 240px;
-	margin: 0 5px;
-	display: inline-table !important;
-	background-size: cover;
-	white-space: normal !important;
-	font-size: 12px;
-	vertical-align: bottom;
+  width: 220px;
+  height: 240px;
+  margin: 0 5px;
+  display: inline-table !important;
+  background-size: cover;
+  white-space: normal !important;
+  font-size: 12px;
+  vertical-align: bottom;
   text-align: center;
 
   display: flex;

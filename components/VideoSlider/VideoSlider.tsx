@@ -27,7 +27,7 @@ export const VideoSlider = ({ videos }: VideoSliderType) => {
         <LoadingWrapper>
           <Loading />
         </LoadingWrapper>
-      )
+      );
     } else {
       return videos.map((slide) => {
         return <VideoSlide key={slide.url} slide={slide} />;

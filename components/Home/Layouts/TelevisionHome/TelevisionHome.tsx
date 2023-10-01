@@ -203,7 +203,7 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
       });
     }
   };
-  
+
   const renderBeautyConfessionals = () => {
     if (isLoading) {
       return (
