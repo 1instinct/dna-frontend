@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
 
-// Define your styled components
 export const VideoSlideWrapper = styled.a`
-  /* Your slide styles here */
+  text-decoration: none;
 `;
 
 export const VideoSlideBackground = styled.div`
+  display: flex;
   max-height: 66vh;
   overflow: hidden;
 `;
@@ -24,5 +24,5 @@ export const VideoSlideInfo = styled.div`
 `;
 
 export const VideoSlideTitle = styled.h1`
-  /* Your slideTitle styles here */
+  font-size: 18px;
 `;

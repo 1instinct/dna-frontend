@@ -1,5 +1,5 @@
 import { useQuery, QueryFunction } from "react-query";
-import { IVideo } from "../../typings/video";
+import { IVideo, IShow } from "../../typings";
 import { QueryKeys } from "../queryKeys";
 
 const fetchVideos: QueryFunction<

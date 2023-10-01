@@ -1,9 +1,8 @@
 import styled from "@emotion/styled";
 
-export const MainContent = styled.div`
+export const Wrapper = styled.div`
   max-width: 100%;
   background: ${(p) => p.theme.colors.gray.dark};
-  padding: 0 15px;
 `;
 
 export const HeroContainer = styled.div`
@@ -21,6 +20,14 @@ export const HeroContainer = styled.div`
   padding: 40px;
 `;
 
+export const MainContent = styled.div`
+  padding-top: 55px;
+`;
+
+export const ListTitle = styled.div`
+  margin-left: 20px;
+`;
+
 export const HorizontalList = styled.div`
   width: 100%;
   height: 100%;
@@ -35,4 +42,24 @@ export const HorizontalList = styled.div`
   -ms-transform: translate3d(0, 0, 0);
   -o-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
+`;
+
+export const SeeMoreLink = styled.a`
+  width: 220px; height: 240px;
+	margin: 0 5px;
+	display: inline-table !important;
+	background-size: cover;
+	white-space: normal !important;
+	font-size: 12px;
+	vertical-align: bottom;
+  text-align: center;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const SeeMoreIconWrapper = styled.div`
+  width: 30px;
+  height: 30px;
 `;

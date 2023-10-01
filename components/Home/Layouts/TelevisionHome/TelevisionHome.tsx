@@ -7,13 +7,19 @@ import { VideoSnippet } from "../../../VideoSnippet";
 import { VideoSlider } from "../../../VideoSlider";
 
 import {
-  MainContent,
+  Wrapper,
   HeroContainer,
-  HorizontalList
+  MainContent,
+  ListTitle,
+  HorizontalList,
+  SeeMoreLink,
+  SeeMoreIconWrapper
 } from "./TelevisionHome.styles";
 
 import { QueryKeys } from "../../../../hooks/queryKeys";
 import { Loading, LoadingWrapper } from "../../..";
+
+import { IVideo, IFeaturedVideo } from "../../../../typings";
 
 export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
   const {
@@ -158,37 +164,67 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
 
   const renderLatest = () => {
     if (isLoading) {
-      return <div>Loading...</div>;
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      );
     } else {
-      return latestData.map((vid) => {
-        return <VideoSnippet key={vid.url} vid={vid} />;
+      return latestData.slice(0, 5).map((video: IVideo) => {
+        return <VideoSnippet key={video.url} video={video} />;
       });
     }
   };
 
   const renderExclusives = () => {
     if (isLoading) {
-      return <div>Loading...</div>;
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      );
     } else {
-      return exclusivesData.map((vid) => {
-        return <VideoSnippet key={vid.url} vid={vid} />;
+      return exclusivesData.slice(0, 5).map((video: IVideo) => {
+        return <VideoSnippet key={video.url} video={video} />;
       });
     }
   };
 
   const renderOriginals = () => {
     if (isLoading) {
-      return <div>Loading...</div>;
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      );
     } else {
-      return originalsData.map((vid) => {
-        return <VideoSnippet key={vid.url} vid={vid} />;
+      return originalsData.slice(0, 5).map((video: IVideo) => {
+        return <VideoSnippet key={video.url} video={video} />;
+      });
+    }
+  };
+  
+  const renderBeautyConfessionals = () => {
+    if (isLoading) {
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      );
+    } else {
+      return beautyConfessionalData.slice(0, 5).map((video: IVideo) => {
+        return <VideoSnippet key={video.url} video={video} />;
       });
     }
   };
 
   // const renderPosts = () => {
   //   if (isLoading) {
-  //     return <div>Loading...</div>;
+  //     return (
+  //   <LoadingWrapper>
+  //     <Loading />
+  //   </LoadingWrapper>
+  // );
   //   } else {
   //     return posts.map((post) => {
   //       return <PostSnippet key={post._id} post={post} />;
@@ -197,7 +233,11 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
   // }
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <LoadingWrapper>
+        <Loading />
+      </LoadingWrapper>
+    );
   }
 
   if (isError) {
@@ -205,7 +245,7 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
   }
 
   return (
-    <MainContent>
+    <Wrapper>
       <HeroContainer>
         <div id="slider">
           <div id="featuredSlider" className="owl-carousel">
@@ -214,19 +254,19 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
         </div>
       </HeroContainer>
 
-      <div id="mainContent" className="col-sm-12 col-lg-12 col-lg-offset-0">
+      <MainContent className="col-sm-12 col-lg-12 col-lg-offset-0">
         <div className="contentArea">
-          <h3>
+          <ListTitle>
             <a href="javascript:;" onClick={() => false}>
               <span>
                 The Latest <i className="fa fa-angle-right"></i>
               </span>
             </a>
-          </h3>
+          </ListTitle>
           <HorizontalList>
             {renderLatest()}
 
-            <a
+            <SeeMoreLink
               href="javascript:;"
               onClick={() => false}
               className="snippet last"
@@ -235,75 +275,95 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
                 <i className="fa fa-arrow-right"></i>
               </div>
               <h5>See More</h5>
-            </a>
+            </SeeMoreLink>
           </HorizontalList>
         </div>
 
         <div className="contentArea">
-          <h3>
+          <ListTitle>
             <a href={""}>
               <span>
                 Exclusives <i className="fa fa-angle-right"></i>
               </span>
             </a>
-          </h3>
+          </ListTitle>
           <HorizontalList>
             {renderExclusives()}
 
-            <a href={""} className="snippet last">
+            <SeeMoreLink href={""} className="snippet last">
               <div className="seeMore">
                 <i className="fa fa-arrow-right"></i>
               </div>
               <h5>See More</h5>
-            </a>
+            </SeeMoreLink>
           </HorizontalList>
         </div>
 
         <div className="featArea">
-          <h3>
+          <ListTitle>
             <a href={""}>
               <span>
                 Originals <i className="fa fa-angle-right"></i>
               </span>
             </a>
-          </h3>
+          </ListTitle>
           <HorizontalList>
             {renderOriginals()}
 
-            <a href={""} className="snippet last">
+            <SeeMoreLink href={""} className="snippet last">
               <div className="seeMore">
                 <i className="fa fa-arrow-right"></i>
               </div>
               <h5>See More</h5>
-            </a>
+            </SeeMoreLink>
           </HorizontalList>
         </div>
 
-        <div className="featArea">
-          <h3>
+        <div className="contentArea">
+          <ListTitle>
+            <a href={""}>
+              <span>
+                Beauty Confessional <i className="fa fa-angle-right"></i>
+              </span>
+            </a>
+          </ListTitle>
+          <HorizontalList>
+            {renderBeautyConfessionals()}
+
+            <SeeMoreLink href={""} className="snippet last">
+              <div className="seeMore">
+                <i className="fa fa-arrow-right"></i>
+              </div>
+              <h5>See More</h5>
+            </SeeMoreLink>
+          </HorizontalList>
+        </div>
+
+        {/* <div className="featArea">
+          <ListTitle>
             <a href="http://galoremag.com" target="_blank">
               <span>
                 Something to Read? <i className="fa fa-angle-right"></i>
               </span>
             </a>
-          </h3>
+          </ListTitle>
           <HorizontalList>
-            {/* {renderPosts()} */}
+            {renderPosts()}
 
-            <a
+            <SeeMoreLink
               href="https://galoremag.com"
               target="_blank"
               className="snippet last"
             >
-              <div className="seeMore">
+              <div>
                 <i className="fa fa-arrow-right"></i>
               </div>
               <h5>See More</h5>
-            </a>
+            </SeeMoreLink>
           </HorizontalList>
-        </div>
-      </div>
-    </MainContent>
+        </div> */}
+      </MainContent>
+    </Wrapper>
   );
 };
 

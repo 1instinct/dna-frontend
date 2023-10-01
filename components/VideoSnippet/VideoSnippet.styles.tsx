@@ -9,6 +9,7 @@ export const Snippet = styled.a`
   white-space: normal !important;
   font-size: 12px;
   vertical-align: top;
+  text-decoration: none;
 `;
 
 export const VidPic = styled.div<any>`
@@ -16,6 +17,8 @@ export const VidPic = styled.div<any>`
   width: 480px;
   height: 270px;
   background-position-y: -45px;
+  background-size: 120%;
+  background-position-x: center;
   overflow: hidden;
 `;
 
@@ -25,7 +28,7 @@ export const VidDetails = styled.div`
   padding: 1px 10px;
 `;
 
-export const Text = styled.h5`
+export const Text = styled.h3`
   /* Your text styles here */
 `;
 

@@ -3,6 +3,8 @@ import { ImageWithZoom, CarouselProvider, Slide } from "pure-react-carousel";
 import { ArrowBack, ArrowForward } from "@material-ui/icons";
 import { VideoSlide } from "../VideoSlide";
 
+import { IFeaturedVideo } from "../../typings";
+
 import {
   VideoCarousel,
   StyledSlider,
@@ -12,11 +14,20 @@ import {
   CarouselBackButton,
   CarouselNextButton
 } from "./VideoSlider.styles";
+import { Loading, LoadingWrapper } from "..";
 
-export const VideoSlider = ({ videos }) => {
-  const renderSlides = (videos) => {
+interface VideoSliderType {
+  videos: IFeaturedVideo[];
+}
+
+export const VideoSlider = ({ videos }: VideoSliderType) => {
+  const renderSlides = (videos: IFeaturedVideo[]) => {
     if (!videos) {
-      return <div>Loading...</div>;
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      )
     } else {
       return videos.map((slide) => {
         return <VideoSlide key={slide.url} slide={slide} />;
@@ -27,13 +38,12 @@ export const VideoSlider = ({ videos }) => {
   return (
     <VideoCarousel>
       <CarouselProvider
-        naturalSlideWidth={600}
+        naturalSlideWidth={800}
         naturalSlideHeight={600}
-        // totalSlides={productImgs ? productImgs.length : 1}
-        totalSlides={3}
+        totalSlides={videos ? videos.length : 1}
         isIntrinsicHeight
         touchEnabled
-        // infinite={productImgs ? true : false}
+        infinite={videos ? true : false}
       >
         <StyledSlider className="slider">
           {/* <Slide index={1} style={{ height: "500px" }}>

@@ -6,19 +6,14 @@ import {
   VideoSlideInfo,
   VideoSlideTitle
 } from "./VideoSlide.styles";
+import { IFeaturedVideo } from "../../typings";
 
 // Define your TypeScript interface for props
-interface SlideProps {
-  slide: {
-    slug: string;
-    thumb_smdefault?: string;
-    thumb_mddefault?: string;
-    thumb_hqdefault?: string;
-    title: string;
-  };
+interface VideoSlideProps {
+  slide: IFeaturedVideo;
 }
 
-export const VideoSlide: React.FC<SlideProps> = ({ slide }) => {
+export const VideoSlide: React.FC<VideoSlideProps> = ({ slide }) => {
   // Uncomment and use if needed
   // const cleanTitle = () => {
   //   const str = " | Galore TV";

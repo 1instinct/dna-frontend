@@ -4,7 +4,7 @@ import { ImageWithZoom } from "pure-react-carousel";
 
 export const VideoCarousel = styled.div`
   margin: 0 auto;
-  width: 40%;
+  width: 50%;
   height: auto;
   @media screen and (max-width: 800px) {
     width: 100%;
@@ -19,8 +19,8 @@ export const StyledSlider = styled(Slider)`
   width: 100%;
 `;
 export const StyledSlide = styled(Slide)`
-  width: 100% !important;
-  height: 500px !important;
+  /* width: 100% !important; */
+  /* height: 500px !important; */
 `;
 export const StyledImageWithZoom = styled(ImageWithZoom)``;
 
