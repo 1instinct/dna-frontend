@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 
 import {
-  Container,
+  NotifyFormContainer,
   NotifyText,
   FormWrapper,
   QuestionWrapper,
@@ -158,11 +158,6 @@ export const NotifyForm = () => {
     // if(modalOpen && status === "success") clearFields();
   }, [status]);
 
-  useEffect(() => {
-    // if (status === "success") clearFields();
-    // if(modalOpen && status === "success") clearFields();
-  }, [status]);
-
   return (
     <>
       <defs>
@@ -171,7 +166,7 @@ export const NotifyForm = () => {
           <use xlinkHref="#rect" />
         </clipPath>
       </defs>
-      <Container>
+      <NotifyFormContainer>
         <FormWrapper index={currentQuestion}>
           <form
             onSubmit={(e: any) =>
@@ -217,9 +212,9 @@ export const NotifyForm = () => {
             )}
         </FormWrapper>
         <MailTo id="mailto" href={`mailto:${process.env.NEXT_PUBLIC_EMAIL}`}>
-          Got Questions? We'd love to hear from you.
+          Email us
         </MailTo>
-      </Container>
+      </NotifyFormContainer>
     </>
   );
 };
