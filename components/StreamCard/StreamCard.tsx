@@ -14,17 +14,18 @@ import {
   StreamMask,
   StreamStatusWrapper,
   StreamStatus,
-  StreamCardDesc,
+  StreamCardDesc, 
   StreamChecked
 } from "./StreamCard.styles";
 
 export const StreamCard = ({ isPast, item }: any) => {
   const router = useRouter();
+  console.log('stream card', item);
   return (
     <StreamCardWrapper
       key={`${item}-card`}
       // href={`/tv/${item.playback_ids[0]}`}
-      onClick={() => router.push(`/tv/${item.playback_ids[0]}`)}
+      onClick={() => router.push(`/tv/${item.playback_ids[0]}?title=${item.title}`)}
       // as={`/tv/${item.playback_ids[0]}`}
       // title={`Link to ${item.title} Live Stream`}
     >

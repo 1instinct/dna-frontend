@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-
+import { StreamViewerChat } from "../StreamViewerChat";
 import { StreamViewerWrapper, StreamVideo, StreamHeaderFade } from "./StreamViewer.styles";
 
 export const StreamViewer = ({ props }: any) => {
   const router = useRouter();
   const { streamId } = router.query;
-
   const playerRef = React.useRef(null);
 
   const videoJsOptions = streamId
@@ -54,6 +53,7 @@ export const StreamViewer = ({ props }: any) => {
 
   return (
     <StreamViewerWrapper>
+      <StreamViewerChat />
       <StreamVideo options={videoJsOptions} onReady={handlePlayerReady} />
       <StreamHeaderFade />
     </StreamViewerWrapper>
