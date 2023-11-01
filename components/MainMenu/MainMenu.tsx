@@ -106,7 +106,7 @@ export const MainMenu = (props: MainMenuProps) => {
               />
             ) : null}
           </HiddenOnMobile>
-  
+
           {isBrowsing && (
             <ShowBrowser
               darkMode={darkMode}
@@ -118,7 +118,7 @@ export const MainMenu = (props: MainMenuProps) => {
       );
     }
     return <></>;
-  }
+  };
 
   return (
     <>
@@ -143,7 +143,7 @@ export const MainMenu = (props: MainMenuProps) => {
         />
       )}
     </>
-  )
+  );
 };
 
 export async function getServerSideProps() {

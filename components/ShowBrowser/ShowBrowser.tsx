@@ -1,13 +1,13 @@
-import React from 'react';
-import { useQuery } from 'react-query';
+import React from "react";
+import { useQuery } from "react-query";
 import { CloseOutlined } from "@material-ui/icons";
-import { generateKey } from '../../utilities/keys';
-import { fetchShows, useShows } from '../../hooks';
+import { generateKey } from "../../utilities/keys";
+import { fetchShows, useShows } from "../../hooks";
 
 import { QueryKeys } from "../../hooks";
 import { Loading, LoadingWrapper } from "../";
 
-import { IShow } from '../../typings';
+import { IShow } from "../../typings";
 
 import {
   ShowBrowserWrapper,
@@ -17,12 +17,12 @@ import {
   MainContent,
   CloseButton
 } from "./ShowBrowser.styles";
-import { currentSeason } from '../../utilities/dates';
+import { currentSeason } from "../../utilities/dates";
 
 export const ShowBrowser: React.FC<any> = ({
   darkMode,
   isBrowsing,
-  setIsBrowsing,
+  setIsBrowsing
 }) => {
   const {
     data: showsData,
@@ -30,7 +30,8 @@ export const ShowBrowser: React.FC<any> = ({
     isError: showsError
   } = useQuery([QueryKeys.SHOWS, 1], fetchShows);
 
-  const ShowSnippetUrl = (slug: any) => `https://dna-video-dev.s3.amazonaws.com/posters/${slug}.jpg`
+  const ShowSnippetUrl = (slug: any) =>
+    `https://dna-video-dev.s3.amazonaws.com/posters/${slug}.jpg`;
 
   const renderShows = () => {
     if (showsLoading) {
@@ -46,7 +47,7 @@ export const ShowBrowser: React.FC<any> = ({
           <ShowSnippet key={uniqKey}>
             <ShowSnippetImg src={ShowSnippetUrl(show.slug)} />
           </ShowSnippet>
-        )
+        );
       });
     }
   };
@@ -57,9 +58,7 @@ export const ShowBrowser: React.FC<any> = ({
       <CloseButton onClick={() => setIsBrowsing(!isBrowsing)}>
         <CloseOutlined />
       </CloseButton>
-      <MainContent>
-        {renderShows()}
-      </MainContent>
+      <MainContent>{renderShows()}</MainContent>
     </ShowBrowserWrapper>
   );
 };

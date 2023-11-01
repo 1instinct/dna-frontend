@@ -34,7 +34,10 @@ export const ShowBrowserTitle = styled.h1`
   font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
   margin: 0 auto 10px;
   text-align: center;
-  color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+  color: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.white.primary
+      : p.theme.colors.black.primary};
 `;
 
 export const ShowSnippet = styled.div`
