@@ -34,9 +34,12 @@ const MenuItem = styled(StyledListItem, {
 `;
 
 export const MobileMenu = ({
+  isBrowsing,
+  setIsBrowsing,
   showMenuHeader,
   onMenuItemClick,
-  menusData
+  menusData,
+  darkMode,
 }: any) => {
   const router = useRouter();
   const currYear = new Date().getFullYear();
@@ -155,6 +158,11 @@ export const MobileMenu = ({
       ) : null}
       {/* {renderMenuItems(menuItemsData && menuItemsData?.response_data.menu_location_listing[0], "", 0)} */}
       {renderMenuItems(menusData, "", 0)}
+      <SocialLinks darkMode={darkMode} />
+      <button onClick={() => {
+        toggleMenu();
+        setIsBrowsing(!isBrowsing)
+      }}>SHOWS</button>
       <MenuItem
         paddingLeft={"10px"}
         onClick={() => {

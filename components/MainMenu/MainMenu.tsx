@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useState } from "react";
 import classnames from "classnames";
 import { QueryClient } from "react-query";
+import { useTheme } from "@emotion/react";
 import { dehydrate } from "react-query/hydration";
 import {
   fetchMenuLocation,
@@ -12,7 +13,9 @@ import { MainMenuProps, menuDataItem } from "./types";
 import DesktopMenu from "./DesktopMenu";
 
 import { HiddenOnDesktop, HiddenOnMobile } from "./MainMenu.styles";
+import { Loading } from "..";
 import { MobileMenu } from "./MobileMenu";
+import { ShowBrowser } from "../ShowBrowser";
 
 // const SidebarMenu = styled(List)`
 //   width: 100%;
@@ -20,6 +23,9 @@ import { MobileMenu } from "./MobileMenu";
 
 export const MainMenu = (props: MainMenuProps) => {
   const {
+    darkMode,
+    isBrowsing,
+    setIsBrowsing,
     showMenuHeader,
     pcWrapClassName,
     pcMenuItemClassName,
@@ -29,6 +35,9 @@ export const MainMenu = (props: MainMenuProps) => {
     menusData,
     ...others
   } = props;
+
+  const theme = useTheme();
+  const hasSpree = theme.hasSpree;
 
   const {
     error: menuLocationError,
@@ -58,44 +67,83 @@ export const MainMenu = (props: MainMenuProps) => {
     isSuccess: boolean;
   } = useMenuItems(1);
 
-  useEffect(() => {
-    // if (menuItemsIsSuccess && menuLocationIsSuccess) {
-    //   console.log(
-    //     menusData,
-    //     "MENU LOCATION",
-    //     menuLocationData?.response_data,
-    //     "MENU ITEMS",
-    //     menuItemsData?.response_data
-    //   );
-    // }
-  }, []);
+  // useEffect(() => {
+  //   if (menuItemsIsSuccess && menuLocationIsSuccess) {
+  //     console.log(
+  //       menusData,
+  //       "MENU LOCATION",
+  //       menuLocationData?.response_data,
+  //       "MENU ITEMS",
+  //       menuItemsData?.response_data
+  //     );
+  //   }
+  // }, []);
 
-  if (menuItemsIsLoading || menuLocationIsLoading) return null;
+  const renderMenus = () => {
+    if (hasSpree) {
+      if (menuItemsIsLoading || menuLocationIsLoading) return <Loading />;
+      return (
+        <>
+          <HiddenOnDesktop>
+            <MobileMenu
+              isBrowsing={isBrowsing}
+              setIsBrowsing={setIsBrowsing}
+              showMenuHeader={showMenuHeader}
+              onMenuItemClick={onMenuItemClick}
+              menusLoading={menuItemsIsLoading}
+              menusData={menuItemsData ? menuItemsData?.response_data : []}
+            />
+          </HiddenOnDesktop>
+          <HiddenOnMobile>
+            {menuItemsIsSuccess ? (
+              <DesktopMenu
+                onMenuItemClick={onMenuItemClick}
+                pcWrapClassName={classnames(pcWrapClassName)}
+                pcMenuItemClassName={pcMenuItemClassName}
+                menusLoading={menuItemsIsLoading}
+                menusData={menuItemsData ? menuItemsData?.response_data : []}
+                // menusData={menusData}
+              />
+            ) : null}
+          </HiddenOnMobile>
+  
+          {isBrowsing && (
+            <ShowBrowser
+              darkMode={darkMode}
+              isBrowsing={isBrowsing}
+              setIsBrowsing={setIsBrowsing}
+            />
+          )}
+        </>
+      );
+    }
+    return <></>;
+  }
 
   return (
     <>
-      <HiddenOnDesktop>
-        <MobileMenu
-          showMenuHeader={showMenuHeader}
-          onMenuItemClick={onMenuItemClick}
-          menusLoading={menuItemsIsLoading}
-          menusData={menuItemsData ? menuItemsData?.response_data : []}
-        />
-      </HiddenOnDesktop>
-      <HiddenOnMobile>
-        {menuItemsIsSuccess ? (
-          <DesktopMenu
+      {renderMenus()}
+      {!hasSpree && (
+        <HiddenOnDesktop>
+          <MobileMenu
+            isBrowsing={isBrowsing}
+            setIsBrowsing={setIsBrowsing}
+            showMenuHeader={showMenuHeader}
             onMenuItemClick={onMenuItemClick}
-            pcWrapClassName={classnames(pcWrapClassName)}
-            pcMenuItemClassName={pcMenuItemClassName}
             menusLoading={menuItemsIsLoading}
             menusData={menuItemsData ? menuItemsData?.response_data : []}
-            // menusData={menusData}
           />
-        ) : null}
-      </HiddenOnMobile>
+        </HiddenOnDesktop>
+      )}
+      {isBrowsing && (
+        <ShowBrowser
+          darkMode={darkMode}
+          isBrowsing={isBrowsing}
+          setIsBrowsing={setIsBrowsing}
+        />
+      )}
     </>
-  );
+  )
 };
 
 export async function getServerSideProps() {

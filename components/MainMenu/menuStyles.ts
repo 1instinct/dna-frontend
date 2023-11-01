@@ -100,10 +100,11 @@ export const menuStyles: any = {
 
 export const darkMenuStyles: any = {
   bmBurgerButton: {
-    position: "fixed",
+    position: "absolute",
+    zIndex: "99",
     width: "33px",
     height: "18px",
-    left: "15px",
+    left: "18px",
     top: "16px"
   },
   bmBurgerBars: {

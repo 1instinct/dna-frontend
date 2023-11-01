@@ -62,4 +62,4 @@ const useShows = () => {
   return useQuery<any>([QueryKeys.SHOWS], () => fetchShows());
 };
 
-export { useVideos, fetchVideos, fetchShows };
+export { useVideos, fetchVideos, fetchShows, useShows };

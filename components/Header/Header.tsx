@@ -63,6 +63,8 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
 
   const logoPath = process.env.NEXT_PUBLIC_LOGO_PATH || null;
 
+  const [isBrowsing, setIsBrowsing] = useState(false);
+
   const {
     data: cartData,
     isLoading: cartIsLoading,
@@ -91,6 +93,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
         {!isMobile && (
           <LeftSide>
             <SocialLinks darkMode={darkMode} />
+            <button onClick={() => setIsBrowsing(!isBrowsing)}>SHOWS</button>
           </LeftSide>
         )}
         <LogoDiv>
@@ -170,6 +173,20 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
           </CartToggle>
         </RightSide>
       </TopHeader>
+      <MainMenu
+        darkMode={darkMode}
+        showMenuHeader
+        isBrowsing={isBrowsing}
+        setIsBrowsing={setIsBrowsing}
+        customBurgerIcon={<i className="btb bt-bars" />}
+        pcMenuItemClassName={"pc-menu-item"}
+        pcWrapClassName={"pc-menu-wrap"}
+        outterContainerId={"outter-container"}
+        pageWrapId={"page-wrap"}
+        animationType={"slide"}
+        menusData={menusData}
+        right={false}
+      />
     </HeaderDiv>
   );
 };

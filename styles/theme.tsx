@@ -7,10 +7,11 @@ const isLiveStreaming = process.env.NEXT_PUBLIC_IS_LIVE_STREAMING || "false";
 export const theme = {
   name: "Omniscient",
   industry: industry,
-  hasVideo: hasVideo === "true",
+  hasVideo: hasVideo === "true" ? true : false,
+  hasSpree: false,
   mediaProvider: mediaProvider,
-  isLiveStreaming: isLiveStreaming === "true",
-  isDarkMode: darkMode === "true",
+  isLiveStreaming: isLiveStreaming === "true" ? true : false,
+  isDarkMode: darkMode === "true" ? true : false,
   colors: {
     gray: {
       dark: "#333",

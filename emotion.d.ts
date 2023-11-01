@@ -3,6 +3,12 @@ import { string } from "prop-types";
 
 declare module "@emotion/react" {
   export interface Theme {
+    name: string;
+    industry: string;
+    hasVideo: boolean;
+    hasSpree: boolean;
+    mediaProvider: string;
+    isLiveStreaming: boolean;
     isDarkMode: boolean;
     colors: {
       purple?: {

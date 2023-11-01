@@ -36,6 +36,9 @@ export type menuDataItem = {
   pcMenuItem?: ReactNode;
 };
 export interface MainMenuProps {
+  darkMode?: boolean;
+  isBrowsing?: boolean;
+  setIsBrowsing?: (isBrowsing: boolean) => void;
   showMenuHeader?: boolean;
   pcWrapClassName?: string;
   pcMenuItemClassName?: string;
