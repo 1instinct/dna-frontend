@@ -1,1 +1,1 @@
-export { FeaturedSnippet } from './FeaturedSnippet';
+export { FeaturedSnippet } from "./FeaturedSnippet";
