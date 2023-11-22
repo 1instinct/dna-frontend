@@ -1,5 +1,7 @@
 import React from "react";
 import { Facebook, Twitter, Instagram, YouTube } from "@material-ui/icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpotify, faSoundcloud, faLastfm } from '@fortawesome/free-brands-svg-icons';
 
 import {
   SocialContainer,
@@ -8,63 +10,69 @@ import {
   SocialIcon
 } from "./SocialLinks.styles";
 
-export const SocialLinks = ({ darkMode }: any) => {
+export const SocialLinks = ({ networks = [] }: { networks: string[] }) => {
+  // Method to check if a network is in the passed array
+  const isNetworkPresent = (network: string) => networks.includes(network);
+
   return (
-    <>
-      <SocialContainer darkMode={darkMode}>
-        <SocialList>
-          <SocialListItem darkMode={darkMode}>
-            <a
-              href={
-                `http://www.instagram.com/${process.env.NEXT_PUBLIC_INSTAGRAM_SLUG}` ||
-                "http://www.instagram.com"
-              }
-              target="_blank"
-            >
-              {/* <SocialIcon src="images/social-icon-instagram.png" /> */}
-              <Instagram />{" "}
+    <SocialContainer>
+      <SocialList>
+        {isNetworkPresent("instagram") && (
+          <SocialListItem>
+            <a href={`http://www.instagram.com/${process.env.NEXT_PUBLIC_INSTAGRAM_SLUG}`} target="_blank">
+              <Instagram />
             </a>
           </SocialListItem>
+        )}
 
-          <SocialListItem darkMode={darkMode}>
-            <a
-              href={
-                `http://www.facebook.com/${process.env.NEXT_PUBLIC_FACEBOOK_SLUG}` ||
-                "http://www.facebook.com"
-              }
-              target="_blank"
-            >
-              {/* <SocialIcon src="images/social-icon-facebook.png" />{" "} */}
-              <Facebook />{" "}
+        {isNetworkPresent("facebook") && (
+          <SocialListItem>
+            <a href={`http://www.facebook.com/${process.env.NEXT_PUBLIC_FACEBOOK_SLUG}`} target="_blank">
+              <Facebook />
             </a>
           </SocialListItem>
+        )}
 
-          <SocialListItem darkMode={darkMode}>
-            <a
-              href={
-                `http://www.twitter.com/${process.env.NEXT_PUBLIC_TWITTER_SLUG}` ||
-                "http://www.twitter.com"
-              }
-              target="_blank"
-            >
-              {/* <SocialIcon src="images/social-icon-twitter.png" />{" "} */}
-              <Twitter />{" "}
+        {isNetworkPresent("twitter") && (
+          <SocialListItem>
+            <a href={`http://www.twitter.com/${process.env.NEXT_PUBLIC_TWITTER_SLUG}`} target="_blank">
+              <Twitter />
             </a>
           </SocialListItem>
-          
-          <SocialListItem darkMode={darkMode}>
-            <a
-              href={
-                `http://www.youtube.com/${process.env.NEXT_PUBLIC_YOUTUBE_SLUG}` ||
-                "http://www.youtube.com"
-              }
-              target="_blank"
-            >
-              <YouTube />{" "}
+        )}
+
+        {isNetworkPresent("youtube") && (
+          <SocialListItem>
+            <a href={`http://www.youtube.com/${process.env.NEXT_PUBLIC_YOUTUBE_SLUG}`} target="_blank">
+              <YouTube />
             </a>
           </SocialListItem>
-        </SocialList>
-      </SocialContainer>
-    </>
+        )}
+
+        {isNetworkPresent("spotify") && (
+          <SocialListItem>
+            <a href="https://open.spotify.com/album/3FfuBJ7SkThWE5ZsxM8DZx?si=KmWYhLPTTXWQ2kYerZcjtQ" target="_blank">
+              <FontAwesomeIcon icon={faSpotify} />
+            </a>
+          </SocialListItem>
+        )}
+
+        {isNetworkPresent("soundcloud") && (
+          <SocialListItem>
+            <a href="http://www.soundcloud.com/smokeyyy" target="_blank">
+              <FontAwesomeIcon icon={faSoundcloud} />
+            </a>
+          </SocialListItem>
+        )}
+
+        {isNetworkPresent("lastfm") && (
+          <SocialListItem>
+            <a href="https://www.last.fm/music/Sky+Chase" target="_blank">
+              <FontAwesomeIcon icon={faLastfm} />
+            </a>
+          </SocialListItem>
+        )}
+      </SocialList>
+    </SocialContainer>
   );
 };

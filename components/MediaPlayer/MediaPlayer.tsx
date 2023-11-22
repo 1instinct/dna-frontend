@@ -18,7 +18,7 @@ import {
   Cockpit
 } from "./MediaPlayer.styles";
 import { Layout, NotifyForm } from "..";
-import { FeaturedSnippet } from "../FeaturedSnippet";
+import { FeaturedSnippet } from "..";
 
 const styles = {
   backgroundColor: "#1f1f1f",
@@ -151,7 +151,7 @@ export const MediaPlayer = (props: any) => {
               width: "100%",
               bottom: "8%",
               textAlign: "center",
-              position: "absolute",
+              position: "relative",
               fontFamily: "james",
               fontSize: 40,
               margin: "auto",
@@ -163,7 +163,7 @@ export const MediaPlayer = (props: any) => {
         </a>
         <div
           style={{
-            position: "absolute",
+            position: "relative",
             width: "100%",
             margin: "auto",
             zIndex: 99999,
@@ -417,9 +417,9 @@ export const MediaPlayer = (props: any) => {
           onChange={ChangeTheTime} />
         <label id="lblTime">-:--:--</label>
       </div> */}
-      <GlowContainer>
+      {/* <GlowContainer>
         <Glow />
-      </GlowContainer>
+      </GlowContainer> */}
       <StarsContainer>
         <Stars />
       </StarsContainer>
@@ -432,9 +432,9 @@ export const MediaPlayer = (props: any) => {
         handleChangeReverse={handleChangeReverse}
         reverse={reverse}
       />
-      {songs && _renderSongPlayer()}
       {/* <div dangerouslySetInnerHTML={{__html: spotifyEmbedCode}} /> */}
       <FeaturedSnippet />
+      {/* {songs && _renderSongPlayer()} */}
       <NotifyForm />
     </>
   );

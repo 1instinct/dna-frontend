@@ -27,7 +27,8 @@ export const Stars = styled.div`
   left: -50%;
   background: url(img/stars.png) 0 0 repeat;
   background-size: cover;
-  animation: ${spin} 180s linear infinite;
+  animation: ${spin} 333s linear infinite;
+  filter: blur(2px);
 `;
 
 export const GlowContainer = styled.div`
@@ -64,8 +65,9 @@ export const Skyline = styled.div`
   height: 490px;
   display: block;
   background: url(img/skyline.png) repeat-x;
-  background-size: 1775px 600px;
-  background-position: center -30px;
+  background-size: contain;
+  filter: blur(2px);
+  background-position: center bottom;
   pointer-events: none;
 `;
 
@@ -82,6 +84,5 @@ export const Cockpit = styled.div`
   background: url(img/cockpit.png) no-repeat;
   background-size: 120% 120%;
   background-position: top center;
-
   pointer-events: none;
 `;

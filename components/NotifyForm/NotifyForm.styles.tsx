@@ -5,11 +5,11 @@ export const NotifyFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  position: absolute;
+  position: relative;
   z-index: 10;
   width: 100%;
   height: 175px;
-  bottom: 40px;
+  /* bottom: 40px; */
 `;
 
 export const NotifyText = styled.div`
