@@ -24,7 +24,7 @@ export const VidPic = styled.div<any>`
 
 export const VidDetails = styled.div`
   background: ${(p) =>
-    p.theme.isDarkMode ? p.theme.colors.gray.dark : p.theme.colors.gray.medium};
+    p.theme.isDarkMode ? p.theme.colors.gray.dark : p.theme.colors.white.light};
   padding: 1px 10px;
 `;
 

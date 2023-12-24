@@ -5,7 +5,7 @@ export const ShowBrowserWrapper = styled.div`
   top: 0;
   left: 0;
   z-index: 100;
-  background: ${(p) => p.theme.colors.black.primary};
+  background: ${(p) => p.theme.isDarkMode ? p.theme.colors.gray.dark : p.theme.colors.white.primary};
   height: 100%;
   padding: 80px 15px 80px 15px;
   overflow-y: scroll;

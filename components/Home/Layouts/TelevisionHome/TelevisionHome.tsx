@@ -271,9 +271,9 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
               onClick={() => false}
               className="snippet last"
             >
-              <div className="seeMore">
+              <SeeMoreIconWrapper className="seeMore">
                 <i className="fa fa-arrow-right"></i>
-              </div>
+              </SeeMoreIconWrapper>
               <h5>See More</h5>
             </SeeMoreLink>
           </HorizontalList>
@@ -291,9 +291,9 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
             {renderExclusives()}
 
             <SeeMoreLink href={""} className="snippet last">
-              <div className="seeMore">
+              <SeeMoreIconWrapper className="seeMore">
                 <i className="fa fa-arrow-right"></i>
-              </div>
+              </SeeMoreIconWrapper>
               <h5>See More</h5>
             </SeeMoreLink>
           </HorizontalList>
@@ -311,9 +311,9 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
             {renderOriginals()}
 
             <SeeMoreLink href={""} className="snippet last">
-              <div className="seeMore">
+              <SeeMoreIconWrapper className="seeMore">
                 <i className="fa fa-arrow-right"></i>
-              </div>
+              </SeeMoreIconWrapper>
               <h5>See More</h5>
             </SeeMoreLink>
           </HorizontalList>
@@ -331,9 +331,9 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
             {renderBeautyConfessionals()}
 
             <SeeMoreLink href={""} className="snippet last">
-              <div className="seeMore">
+              <SeeMoreIconWrapper className="seeMore">
                 <i className="fa fa-arrow-right"></i>
-              </div>
+              </SeeMoreIconWrapper>
               <h5>See More</h5>
             </SeeMoreLink>
           </HorizontalList>

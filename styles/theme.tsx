@@ -1,3 +1,4 @@
+import { darken } from "@material-ui/core";
 import { lighten } from "polished";
 const darkMode = process.env.NEXT_PUBLIC_DARK_MODE || "false";
 const industry = process.env.NEXT_PUBLIC_INDUSTRY || "fashion";
@@ -14,52 +15,73 @@ export const theme = {
   isDarkMode: darkMode === "true" ? true : false,
   colors: {
     gray: {
-      dark: "#333",
+      dark: darken("#666", 0.33),
       primary: "#666",
-      medium: "#999",
-      light: "#c4c4c4",
-      background: "#eee"
+      medium: lighten(0.33, "#666"),
+      light: lighten(0.66, "#666")
     },
     black: {
-      primary: "#000",
-      medium: "#585858",
-      light: lighten(0.33, "#000")
+      dark: "#222",
+      primary: "#333",
+      medium: "#444",
+      light: "#555"
     },
     white: {
-      primary: "#fff",
-      medium: lighten(0.66, "#fff"),
-      light: "#f9f9f9"
+      dark: "#ddd",
+      primary: "#eee",
+      medium: "#f4f4f4",
+      light: "#fafafa"
     },
     blue: {
+      dark: darken("#7b61ff", 0.33),
       primary: "#7b61ff",
-      medium: lighten(0.66, "#7b61ff"),
-      light: lighten(0.33, "#7b61ff")
+      medium: lighten(0.33, "#7b61ff"),
+      light: lighten(0.66, "#7b61ff")
+    },
+    // Additional colors
+    green: {
+      dark: darken("#3cb371", 0.33),
+      primary: "#3cb371",
+      medium: lighten(0.33, "#3cb371"),
+      light: lighten(0.66, "#3cb371")
+    },
+    red: {
+      dark: darken("#ff6347", 0.33),
+      primary: "#ff6347",
+      medium: lighten(0.33, "#ff6347"),
+      light: lighten(0.66, "#ff6347")
+    },
+    // Semantic colors
+    error: {
+      dark: darken("#d32f2f", 0.33),
+      primary: "#d32f2f",
+      medium: lighten(0.33, "#d32f2f"),
+      light: lighten(0.66, "#d32f2f")
+    },
+    warning: {
+      dark: darken("#ff9800", 0.33),
+      primary: "#ff9800",
+      medium: lighten(0.33, "#ff9800"),
+      light: lighten(0.66, "#ff9800")
+    },
+    success: {
+      dark: darken("#4caf50", 0.33),
+      primary: "#4caf50",
+      medium: lighten(0.33, "#4caf50"),
+      light: lighten(0.66, "#4caf50")
+    },
+    info: {
+      dark: darken("#2196f3", 0.33),
+      primary: "#2196f3",
+      medium: lighten(0.33, "#2196f3"),
+      light: lighten(0.66, "#2196f3")
     },
     brand: {
+      dark: darken("#EB8B8B", 0.33),
       primary: "#EB8B8B",
       secondary: "#E6CDC0",
       light: "#F9F2EA"
     },
-    todo: {
-      primary: "#BFB081",
-      medium: lighten(0.66, "#BFB081"),
-      light: lighten(0.33, "#BFB081")
-    },
-    design: {
-      primary: "#FF6C52",
-      medium: lighten(0.66, "#FF6C52"),
-      light: lighten(0.33, "#FF6C52")
-    },
-    developed: {
-      primary: "#A5D8BC",
-      medium: lighten(0.66, "#A5D8BC"),
-      light: lighten(0.33, "#A5D8BC")
-    },
-    red: {
-      primary: "#D04040",
-      medium: lighten(0.66, "#D04040"),
-      light: lighten(0.33, "#D04040")
-    }
   },
   background: {
     ambient: "linear-gradient(180deg, #EB8B8B 0%, #CC8BEB 100%)",

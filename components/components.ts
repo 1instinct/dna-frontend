@@ -28,3 +28,4 @@ export * from "./StreamViewer";
 export * from "./Terms";
 export * from "./TipBot";
 export * from "./VideoJS";
+export * from "./VideoDetails";

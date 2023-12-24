@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 export const Wrapper = styled.div`
   width: 100%;
   max-width: 100%;
-  background: ${(p) => p.theme.colors.gray.dark};
+  background: ${(p) => p.theme.isDarkMode ? p.theme.colors.gray.dark : p.theme.colors.white.primary};
 `;
 
 export const HeroContainer = styled.div`
@@ -62,6 +62,7 @@ export const SeeMoreLink = styled.a`
 `;
 
 export const SeeMoreIconWrapper = styled.div`
-  width: 30px;
-  height: 30px;
+  & i {
+    color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.brand.dark};
+  }
 `;

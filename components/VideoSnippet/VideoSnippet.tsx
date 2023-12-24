@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
 import moment from "moment";
-
 import { Snippet, VidPic, VidDetails, Text, Date } from "./VideoSnippet.styles";
 import { IVideo } from "../../typings";
 
@@ -9,6 +8,16 @@ interface VideoSnippetType {
 }
 
 export const VideoSnippet = ({ video }: VideoSnippetType) => {
+  useEffect(() => {
+    console.log("VideoSnippet: ", video.url);
+  }, [video]);
+
+  // Check if video.url is in the expected format
+  if (typeof video.url !== "string") {
+    // Render placeholder or loading indicator
+    return <div>Loading...</div>;
+  }
+
   const escapeHTML = (data) => {
     return { __html: data };
   };
@@ -20,15 +29,11 @@ export const VideoSnippet = ({ video }: VideoSnippetType) => {
 
   let title = video.title;
   let cleanTitle = title.replace(" | Galore TV", "");
-
-  let params = { slug: video.slug };
+  let slug = video.url;
 
   return (
-    <Snippet href={""} itemProp="url">
+    <Snippet key={`video-${slug}`} href={`/video/${slug}`} itemProp="url">
       <VidPic image={video.thumb_mqdefault} />
-      {/* <VidPic>
-        <img src={video.thumb_mqdefault} itemProp="thumbnailUrl" alt={cleanTitle}></img>
-      </VidPic> */}
       <VidDetails>
         <Text itemProp="name">{cleanTitle}</Text>
         <Date className="date">Posted {formatDate()}</Date>

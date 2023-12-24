@@ -13,55 +13,63 @@ declare module "@emotion/react" {
     colors: {
       purple?: {
         light: string;
+        medium: string;
+        dark: string;
         primary: string;
       };
       gray: {
+        light: string;
+        medium: string;
         dark: string;
         primary: string;
-        medium: string;
-        light: string;
-        background: string;
       };
       black: {
-        primary: string;
-        medium: string;
         light: string;
+        medium: string;
+        dark: string;
+        primary: string;
       };
       white: {
-        primary: string;
-        medium: string;
         light: string;
+        medium: string;
+        dark: string;
+        primary: string;
       };
       blue: {
-        primary: string;
-        medium: string;
         light: string;
+        medium: string;
+        dark: string;
+        primary: string;
       };
       brand: {
-        bright?: string;
-        primary: string;
-        secondary: string;
         light: string;
+        medium: string;
+        dark: string;
+        primary: string;
       };
       todo: {
-        primary: string;
-        medium: string;
         light: string;
+        medium: string;
+        dark: string;
+        primary: string;
       };
       design: {
-        primary: string;
-        medium: string;
         light: string;
+        medium: string;
+        dark: string;
+        primary: string;
       };
       developed: {
-        primary: string;
-        medium: string;
         light: string;
+        medium: string;
+        dark: string;
+        primary: string;
       };
       red: {
-        primary: string;
-        medium: string;
         light: string;
+        medium: string;
+        dark: string;
+        primary: string;
       };
     };
     gradients: {
@@ -74,6 +82,7 @@ declare module "@emotion/react" {
         monoBoldItalic: string;
         monoItalic: string;
         monoExtraLight: string;
+        dark: string;
         monoExtraLightItalic: string;
         monoSemiBold: string;
         bold: string;
