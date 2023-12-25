@@ -19,7 +19,7 @@ export const PersonalInfo = () => {
   // const { errors, touched } = useFormikContext()
 
   const speechMarkup = useCallback(() => {
-    return { __html: "Let’s start with your name." };
+    return { __html: "Let's start with your name." };
   }, []);
 
   return (
@@ -31,6 +31,7 @@ export const PersonalInfo = () => {
             name="firstName"
             id="firstName"
             component={FormikInput}
+            placeholder="First Name"
             label="First Name"
           />
         </InputWrapper>
@@ -47,6 +48,7 @@ export const PersonalInfo = () => {
             name="lastName"
             id="lastName"
             component={FormikInput}
+            placeholder="Last Name"
             label="Last Name"
           />
         </InputWrapper>

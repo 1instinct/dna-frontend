@@ -67,7 +67,7 @@ export const StyledInputContainer = styled.div<StyledInputContainerType>`
 `;
 
 export const StyledInput = styled.input<WithThemeType>`
-  font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
+  font-family: ${(p) => p.theme.typography.bodySM.fontFamily};
   background: ${(p) =>
     p.darkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
   caret-color: ${(p) =>

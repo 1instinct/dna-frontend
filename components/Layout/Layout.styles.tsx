@@ -49,5 +49,38 @@ export const Container = styled.main`
 `;
 export const Content = styled.div`
   flex: 1;
-  overflow: scroll;
+  overflow-x: scroll;
 `;
+
+export const HorizontalList = styled.div`
+  width: 100%;
+  height: 100%;
+  white-space: nowrap !important;
+  padding: 15px 15px 20px 15px;
+  position: relative;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -ms-transform: translate3d(0, 0, 0);
+  -o-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+`;
+
+export const SeeMoreLink = styled.a`
+  width: 220px;
+  height: 240px;
+  margin: 0 5px;
+  display: inline-table !important;
+  background-size: cover;
+  white-space: normal !important;
+  font-size: 12px;
+  vertical-align: bottom;
+  text-align: center;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+

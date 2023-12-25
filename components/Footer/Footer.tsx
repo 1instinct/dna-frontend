@@ -66,6 +66,14 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
     <Container className={classnames(classes?.root)}>
       {/* {Logo && <LogoDiv>{Logo ? Logo : null}</LogoDiv>} */}
       <Grid className={gridClass}>
+        <Column className={columnClass}>
+          <ColumnTitle className={columnTitleClass}>
+            Contact
+          </ColumnTitle>
+          <Description>
+            {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
+          </Description>
+        </Column>
         {columns.map((item, index) => (
           <Column className={columnClass} key={index}>
             {item.title && (
@@ -101,6 +109,14 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
             )}
           </Column>
         ))}
+        <Column className={columnClass}>
+          <ColumnTitle className={columnTitleClass}>
+            About Us
+          </ColumnTitle>
+          <Description>
+            {process.env.NEXT_PUBLIC_SITE_DESC}
+          </Description>
+        </Column>
       </Grid>
       <SocialLinks isDark />
     </Container>

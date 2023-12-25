@@ -17,8 +17,10 @@ import { SocialLinks } from "..";
 import {
   TopHeader,
   LeftSide,
+  ShowButton,
   RightSide,
   LogoDiv,
+  LogoText,
   HeaderDiv,
   LinkDiv,
   BottomHeader,
@@ -93,7 +95,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
         {!isMobile && (
           <LeftSide>
             <SocialLinks darkMode={darkMode} />
-            <button onClick={() => setIsBrowsing(!isBrowsing)}>SHOWS</button>
+            <ShowButton onClick={() => setIsBrowsing(!isBrowsing)}>SHOWS</ShowButton>
           </LeftSide>
         )}
         <LogoDiv>
@@ -106,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
             {logoPath ? (
               <MyLogo imageFile={logoPath} darkMode={darkMode} />
             ) : (
-              <h1>{siteTitle}</h1>
+              <LogoText>{siteTitle}</LogoText>
             )}
           </LinkDiv>
         </LogoDiv>

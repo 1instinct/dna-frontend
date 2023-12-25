@@ -24,5 +24,8 @@ export const VideoSlideInfo = styled.div`
 `;
 
 export const VideoSlideTitle = styled.h1`
-  font-size: 18px;
+  font-size: ${(p) => p.theme.typography.titleLG.fontSize};
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
+  font-weight: ${(p) => p.theme.typography.titleLG.fontWeight};
+  color: ${(p) => p.theme.colors.black.primary};
 `;

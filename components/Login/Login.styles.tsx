@@ -27,6 +27,7 @@ export const FormWrapper = styled(Form)`
 
 export const InputWrapper = styled.div<GenericThemeType>`
   display: flex;
+  flex-direction: column;
   text-align: left;
   margin: 10px 0;
 

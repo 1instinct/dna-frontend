@@ -1,9 +1,8 @@
 import React from "react";
-import styled from "@emotion/styled";
 import { ClassNames } from "@emotion/react";
 import { LayoutProps } from "./types";
 import { Footer } from "../Footer/Footer";
-import columns from "../Footer/footer.json";
+import footer from "../../data/footer.json";
 
 import { Container, Content, Logo } from "./Layout.styles";
 
@@ -30,7 +29,7 @@ export const Layout: React.FC<LayoutProps> = ({
             <Footer
               footerData={{
                 logo: <MyLogo imageFile="/pol-logo.png" darkMode={true} />,
-                columns
+                columns: footer.columns,
               }}
             />
           )}

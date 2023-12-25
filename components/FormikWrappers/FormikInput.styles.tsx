@@ -3,32 +3,31 @@ import { Field } from "formik";
 import { TextField, Checkbox } from "@material-ui/core";
 
 export const BasicField = styled(Field)`
+  box-sizing: border-box;
   width: 100%;
   border-width: 2px;
   border-style: dashed;
-  border-color: ${(p: any) => p.theme.colors.gray.primary};
-  border-radius: 5px;
+  border-color: ${(p: any) => p.theme.colors.gray.medium};
+  border-radius: 8px;
   padding: 10px;
   font-size: 1em;
   color: ${(p: any) =>
-    p.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
+    p.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.light};
   background: ${(p: any) =>
-    p.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+    p.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.light};
   outline: none;
   transition: all 0.3s ease-in-out;
-  font-family: "Anonymous";
+  font-family: ${(p: any) => p.theme.typography.bodySM.fontFamily};
   &:focus {
-    transition: all 0.3s ease-in-out;
     border: 2px solid ${(p: any) => p.theme.colors.brand.primary};
   }
 `;
 
 export const Error = styled.div`
-  position: absolute;
-  bottom: -20px;
   color: ${(p: any) => p.theme.colors.red.primary};
   font-size: 0.8em;
   text-align: left;
+  padding: 0 0 10px 12px;
 `;
 
 export const HiddenInput = styled.div`

@@ -97,6 +97,7 @@ export const Account = () => {
             name="phoneNumber"
             id="phoneNumber"
             component={FormikPhone}
+            placeholder="(___) ___-____"
             label="Phone"
           />
         </InputWrapper>
@@ -106,6 +107,7 @@ export const Account = () => {
             name="email"
             id="email"
             component={FormikInput}
+            placeholder="Email"
             label="Email"
           />
         </InputWrapper>
@@ -118,6 +120,7 @@ export const Account = () => {
             component={FormikInput}
             label="Password"
             ref={passwordRef}
+            placeholder="Password"
             type="password"
           />
         </InputWrapper>
@@ -128,6 +131,7 @@ export const Account = () => {
             id="passwordConfirm"
             variant="password"
             component={FormikInput}
+            placeholder="Re-type Password"
             label="Re-type Password"
             ref={passwordRef}
             type="password"

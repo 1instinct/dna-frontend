@@ -1,130 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useQuery } from 'react-query';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { QueryKeys, useShows, useVideo, useVideos } from '../../hooks';
+import { fetchVideo, fetchVideos, fetchShows } from '../../hooks';
 import Head from 'next/head';
 import moment from 'moment';
-import { fetchVideo } from '../../hooks';
+import { VideoSnippet } from '../VideoSnippet';
+import { IShow, IVideo } from '../../typings';
+import { Footer, VideoPlayer } from '..';
+import footerData from '../../data/footer.json';
+import { QueryClient, dehydrate } from 'react-query';
 
-// Styled components
-const HorizontalList = styled.div`
-  // Your styles here
-`;
+import { Content, HorizontalList, SeeMoreLink } from "../Layout/Layout.styles";
 
-export const VideoDetails: React.FC = () => {
+import {
+  MainVid,
+  VideoContainer,
+  VidInfo,
+  ShareButtons
+} from './VideoDetails.styles';
+
+export const VideoDetails = () => {
   const router = useRouter();
-  const theme = useTheme();
+  const { slug } = router.query;
   const { id } = router.query;
-  const [isMute, setIsMute] = useState(false);
-  const [player, setPlayer] = useState(null);
-  const { data: videoData, isLoading } = useQuery(['videoData', id], () => fetchVideo(id as string));
+  const videoId = id as string;
 
-  useEffect(() => {
-    if (theme.mediaProvider === 'YouTube' && videoData) {
-      const onYouTubeIframeAPIReady = () => {
-        const newPlayer = new YT.Player('videoFrame', {
-          videoId: videoData?.id, // The YouTube video ID
-          events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-          }
-        });
-        setPlayer(newPlayer);
-      };
+  const [videoShow, setVideoShow] = useState<IShow | null>(null);
 
-      window['onYouTubeIframeAPIReady'] = onYouTubeIframeAPIReady;
-
-      // Insert the YouTube IFrame Player API script tag
-      const tag = document.createElement('script');
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-      return () => {
-        // Clean up the script tag
-        if (firstScriptTag.parentNode) {
-          firstScriptTag.parentNode.removeChild(tag);
-        }
-      };
-    }
-  }, [videoData, theme.mediaProvider]);
-
-  const onPlayerReady = (event) => {
-    // Player is ready
-    const player = event.target;
-    player.playVideo();
-    player.mute();
-  };
-
-  const onPlayerStateChange = (event) => {
-    // Player state has changed
-
-    // event.data can be any of the following:
-    // -1 (unstarted)
-    // 0 (ended)
-    // 1 (playing)
-    // 2 (paused)
-    // 3 (buffering)
-    // 5 (video cued).
-
-    switch (event.data) {
-      case -1:
-        // Video has not started
-        console.log('Video has not started');
-        break;
-      case 1:
-        console.log('Video has started playing');
-        // Video has started playing
-        break;
-      case 2:
-        console.log('Video has been paused');
-        // Video has been paused
-        break;
-      case 3:
-        console.log('Video is buffering');
-        // Video is buffering
-        break;
-      case 5:
-        // Video is cued
-        console.log('Video is cued');
-        break;
-    }
-  };
-
-  const toggleMute = () => {
-    setIsMute(!isMute);
-  };
-
-  const renderMuteIcon = () => {
-    return isMute ? <i className="fa fa-volume-off"></i> : <i className="fa fa-volume-up"></i>;
-  };
-
-  const _toggleMute = () => {
-    if (player.isMuted()) {
-      player.unMute();
-      setIsMute(false);
-    } else {
-      player.mute();
-      setIsMute(true);
-    }
-  };
-
-  const _renderMute = () => {
-    if (!isMute) {
-      return (
-        <i className="fa fa-volume-up"></i>
-      );
-    } else {
-      return (
-        <i className="fa fa-volume-off"></i>
-      );
-    }
-  };
+  const {
+    data: videoData,
+    isLoading: videoLoading,
+    error: videoError,
+  } = useVideo(videoId);
+  const {
+    data: allVids,
+    isLoading: allVidsLoading,
+    error: allVidsError,
+  } = useVideos('latest');
 
   const renderVids = () => {
-    return allVids.map((vid) => {
-      return <VidSnippet key={vid.id} vid={vid} />;
+    return allVids?.map((video: IVideo) => {
+      return <VideoSnippet key={video.id} video={video} />;
     });
   };
 
@@ -155,52 +71,31 @@ export const VideoDetails: React.FC = () => {
     window.open('https://twitter.com/share?url=http://tv.galoremag.com/video/' + videoData?.slug, 'Tweet this post', 'width=600,height=400');
   };
 
-  const mobilePlayer = () => {
-    // if mobile device
-    if (window.innerWidth < 768) {
-      return (
-        <div id="videoFrame"></div>
-      );
-    }
-  };
-
   let title = videoData?.title,
       cleanTitle = title?.replace(" | Galore TV","");
 
   return (
     <div>
       <Head>
-        <title>{videoData?.title} 💅🏾 GaloreTV</title>
+        <title>{cleanTitle} 💅🏾 GaloreTV</title>
         <meta name="description" content={videoData?.desc} />
         {/* Other meta tags */}
       </Head>
 
       <div id="contentContainer" className="container-fluid noPadding" itemType="http://schema.org/Episode">
 
-        <div id="mainVid" className="col-sm-12 col-lg-12 col-lg-offset-0 noPadding">
-          <div id="videoContainer" className="col-sm-8 noPadding">
-            {mobilePlayer()}
-            <div id="videoFrame"></div>
-            <div id="videoControls">
-              <div id="mute" className="pull-left" onClick={_toggleMute}>{_renderMute()}</div>
-              <div id="currentTime" className="pull-left"></div>
-              <div id="progress" className="pull-left">
-                <div id="elapsed" className="pull-left"></div>
-                <input type="range" id="progressBar"></input>
-              </div>
+        <MainVid id="mainVid" className="col-sm-12 col-lg-12 col-lg-offset-0 noPadding">
+          <VideoContainer id="videoContainer" className="col-sm-8 noPadding">
+            <VideoPlayer videoData={videoData} />
+          </VideoContainer>
 
-              <div id="fullscreen"><i className="fa fa-expand"></i></div>
-              <div id="duration"></div>
-            </div>
-          </div>
-
-          <div id="vidInfo" className="col-sm-4">
+          <VidInfo id="vidInfo" className="col-sm-4">
             <div id="vidShare">
-              <ul id="shareButtons" className="list-inline text-center">
-                <li><a className="share-facebook" href="javascript:;" target="popup" onClick={facebookShare} title="Share on Facebook"><i className="fa fa-facebook"></i></a></li>
-                <li><a className="share-twitter" href="javascript:;" target="popup" onClick={twitterShare} title="Share on Twitter"><i className="fa fa-twitter"></i></a></li>
-                <li><a href="mailto:friend@galoremag.com?subject=UGGHHH%3A%20FIRE.%20Seen%20on%20GaloreTV&amp;body=Whoa, %20check%20this%20amazing%20video%20out%20on%20GaloreTV" title="Share with an Email"><i className="fa fa-envelope"></i></a></li>
-              </ul>
+              <ShareButtons id="shareButtons">
+                <a className="share-facebook" href="#" target="popup" onClick={facebookShare} title="Share on Facebook"><i className="fa fa-facebook"></i></a>
+                <a className="share-twitter" href="#" target="popup" onClick={twitterShare} title="Share on Twitter"><i className="fa fa-twitter"></i></a>
+                <a href="mailto:friend@galoremag.com?subject=UGGHHH%3A%20FIRE.%20Seen%20on%20GaloreTV&amp;body=Whoa, %20check%20this%20amazing%20video%20out%20on%20GaloreTV" title="Share with an Email"><i className="fa fa-envelope"></i></a>
+              </ShareButtons>
             </div>
 
             <hr></hr>
@@ -212,49 +107,66 @@ export const VideoDetails: React.FC = () => {
             <hr></hr>
 
             <p>You are watching:</p>
-            <h4 itemProp="show"><a href={""} title={show?.title}><span className="badge">{show?.title}</span></a></h4>
-          </div>
-        </div>
+            <h4 itemProp="show"><a href={""} title={videoShow?.title}><span className="badge">{videoShow?.title}</span></a></h4>
+          </VidInfo>
+        </MainVid>
 
-        <div id="mainContent" className="col-sm-12 col-lg-12 col-lg-offset-0">
+        <Content id="mainContent">
 
           <h3>
-            <a href={""}><flag>More Episodes <i className="fa fa-angle-right"></i></flag></a>
+            <a href={""}><span>More Episodes <i className="fa fa-angle-right"></i></span></a>
           </h3>
-          <div className="horizontalList">
+          <HorizontalList className="horizontalList">
 
-            <a href={""} title={show?.title} className="snippet last">
+            <SeeMoreLink href={""} title={videoShow?.title} className="snippet last">
               <div className="seeMore">
                 <i className="fa fa-arrow-right"></i>
               </div>
               <h5>See More</h5>
-            </a>
+            </SeeMoreLink>
 
-          </div>
+          </HorizontalList>
 
-          <h3><flag>Everything Else</flag></h3>
-          <div className="horizontalList">
+          <h3><span>Everything Else</span></h3>
+          <HorizontalList className="horizontalList">
             {renderVids()}
 
-            <a href="/browse/all" className="snippet last">
+            <SeeMoreLink href="/browse/all" className="snippet last">
               <div className="seeMore">
                 <i className="fa fa-arrow-right"></i>
               </div>
               <h5>See More</h5>
-            </a>
+            </SeeMoreLink>
 
-          </div>
+          </HorizontalList>
 
           <div>
-            <Footer />
+            <Footer footerData={footerData}/>
           </div>
 
-        </div>
+        </Content>
 
       </div>
-      <HorizontalList>
-        {/* Your list items here */}
-      </HorizontalList>
     </div>
   );
 };
+
+export async function getServerSideProps(context: any) {
+  const queryClient = new QueryClient();
+  const { slug } = context.params;
+  const videoId = context.query.id;
+  console.log("SLUG: ", slug);
+  console.log("ID: ", videoId);
+
+  if (videoId) {
+    await queryClient.prefetchQuery([QueryKeys.VIDEO, videoId], () => fetchVideo(videoId));
+  }
+  await queryClient.prefetchQuery([QueryKeys.VIDEO, 'latest'], () => fetchVideos('latest'));
+  await queryClient.prefetchQuery([QueryKeys.SHOWS], () => fetchShows());
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient)
+    }
+  };
+}

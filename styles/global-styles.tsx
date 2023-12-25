@@ -44,6 +44,14 @@ export const GlobalStyles = ({ theme, children }: any) => (
           background: ${theme.colors.brand.primary};
         }
 
+        h1,h2 {
+          font-family: ${theme.typography.titleMD.fontFamily};
+          font-weight: ${theme.typography.titleMD.fontWeight};
+          font-size: ${theme.typography.titleMD.fontSize};
+          line-height: 40.19px;
+          margin: 0;
+        }
+
         a {
           cursor: pointer;
           color: ${theme.colors.brand.primary};
@@ -88,14 +96,16 @@ export const GlobalStyles = ({ theme, children }: any) => (
         button {
           background-color: ${theme.colors.brand.primary};
           border: 0;
+          font-family: ${theme.typography.bodySM.fontFamily};
           color: ${theme.colors.white.primary};
           width: 100%;
-          max-width: 400px;
-          font-size: 29.24px;
+          font-size: ${theme.typography.bodyMD.fontSize};
           line-height: 35.09px;
           font-weight: bold;
-          padding: 10px 10px;
+          padding: 4px 6px;
           cursor: pointer;
+          transition: background-color 0.3s;
+          border-radius: 6px;
         }
 
         button:hover {

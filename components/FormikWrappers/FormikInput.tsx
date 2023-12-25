@@ -13,6 +13,11 @@ export const FormikInput = ({
 }: any) => {
   return (
     <>
+      {touched[fields.name] && errors[fields.name] ? (
+        <Error>{errors[fields.name]}</Error>
+      ) : (
+        ""
+      )}
       <BasicField
         // selectedTheme="dark"
         {...props}
@@ -21,11 +26,6 @@ export const FormikInput = ({
         invalid={Boolean(touched[fields.name] && errors[fields.name])}
         // variant="outlined"
       />
-      {touched[fields.name] && errors[fields.name] ? (
-        <Error>{errors[fields.name]}</Error>
-      ) : (
-        ""
-      )}
     </>
   );
 };

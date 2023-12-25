@@ -44,6 +44,7 @@ export const CarouselBackButton = styled(ButtonBack)`
   border-radius: 50%;
   margin-left: 10px;
   opacity: 0.11;
+  padding: 12px;
   &:hover {
     opacity: 1;
   }
@@ -55,6 +56,7 @@ export const CarouselNextButton = styled(ButtonNext)`
   border-radius: 50%;
   margin-right: 10px;
   opacity: 0.11;
+  padding: 12px;
   &:hover {
     opacity: 1;
   }

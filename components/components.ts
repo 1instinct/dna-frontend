@@ -29,3 +29,4 @@ export * from "./Terms";
 export * from "./TipBot";
 export * from "./VideoJS";
 export * from "./VideoDetails";
+export * from "./VideoPlayer";

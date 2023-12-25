@@ -1,8 +1,8 @@
 import { useQuery } from "react-query";
-import { IStream } from "../../typings/stream";
 import { QueryKeys } from "../queryKeys";
 
 const fetchMenuLocation = async (id: number = 1) => {
+  return null;
   const storage = (await import("../../config/storage")).default;
   const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL;
   const token = process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN;

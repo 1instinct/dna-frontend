@@ -8,7 +8,7 @@ import { ref, addMethod, mixed, object, string, bool, date } from "yup";
 import Static from "../../../utilities/staticData";
 import constants from "../../../utilities/constants";
 import { Alert } from "../../Alerts";
-import { GetPreQualified } from "./GetPreQualified";
+import { Introduction } from "./Introduction";
 import { PersonalInfo } from "./PersonalInfo";
 import { DateOfBirth } from "./DateOfBirth";
 import { HomeAddress } from "./HomeAddress";
@@ -76,7 +76,7 @@ interface QuestionsType {
 export const Questions: QuestionsType[] = [
   {
     id: "get-prequalified",
-    component: GetPreQualified,
+    component: Introduction,
     actionLabel: "Get Started"
   },
   {

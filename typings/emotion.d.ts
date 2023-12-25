@@ -46,6 +46,7 @@ declare module "@emotion/react" {
         medium: string;
         dark: string;
         primary: string;
+        secondary: string;
       };
       todo: {
         light: string;

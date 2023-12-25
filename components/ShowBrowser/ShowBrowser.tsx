@@ -1,10 +1,8 @@
 import React from "react";
-import { useQuery } from "react-query";
 import { CloseOutlined } from "@material-ui/icons";
 import { generateKey } from "../../utilities/keys";
-import { fetchShows, useShows } from "../../hooks";
+import { useShows } from "../../hooks";
 
-import { QueryKeys } from "../../hooks";
 import { Loading, LoadingWrapper } from "../";
 
 import { IShow } from "../../typings";
@@ -20,7 +18,6 @@ import {
 import { currentSeason } from "../../utilities/dates";
 
 export const ShowBrowser: React.FC<any> = ({
-  darkMode,
   isBrowsing,
   setIsBrowsing
 }) => {
@@ -28,19 +25,19 @@ export const ShowBrowser: React.FC<any> = ({
     data: showsData,
     isLoading: showsLoading,
     isError: showsError
-  } = useQuery([QueryKeys.SHOWS, 1], fetchShows);
+  } = useShows();
 
   const ShowSnippetUrl = (slug: any) =>
     `https://dna-video-dev.s3.amazonaws.com/posters/${slug}.jpg`;
 
   const renderShows = () => {
-    if (showsLoading) {
+    if (showsLoading || showsError) {
       return (
         <LoadingWrapper>
           <Loading />
         </LoadingWrapper>
       );
-    } else {
+    } else if (Array.isArray(showsData)) {
       return showsData.map((show: IShow) => {
         const uniqKey = generateKey();
         return (
@@ -49,8 +46,11 @@ export const ShowBrowser: React.FC<any> = ({
           </ShowSnippet>
         );
       });
+    } else {
+      // Handle the case where showsData is not an array
+      return <div>No shows available.</div>;
     }
-  };
+  };    
 
   return (
     <ShowBrowserWrapper>

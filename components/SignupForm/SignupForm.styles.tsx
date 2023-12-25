@@ -73,7 +73,7 @@ interface LeftHalfType {
 }
 
 export const LeftHalf = styled.div<LeftHalfType>`
-  display: ${(props) => props.show};
+  display: flex;
   flex-direction: column;
   flex-basis: 100%;
   flex: 0 0 48%;
@@ -115,8 +115,7 @@ export const RightHalf = styled.div<RightHalfType>`
   flex-direction: column;
   flex-basis: 100%;
   flex: 1;
-  width: ${(props) => (props.isLargeDevice ? "48%" : "100%")};
-  max-width: ${(props) => (props.isLargeDevice ? "48%" : "100%")};
+  width: 100%;
   ${"" /* flex: 1; */}
   ${"" /* flex-grow: 1; */}
   ${"" /* flex-basis: 50%; */}

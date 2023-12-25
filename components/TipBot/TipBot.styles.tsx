@@ -17,7 +17,7 @@ const height = width * 0.5;
 
 export const TipBotWrapper = styled.div`
   position: relative;
-  top: -150px;
+  top: -100px;
   left: 0px;
   ${"" /* width: 105%; */}
 `;
@@ -35,31 +35,23 @@ export const TipBotImage = styled.div`
   /* iPhone 6,7,8 Portrait ------- */
   @media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (orientation: portrait) {
     position: absolute;
-    left: 0px;
-    bottom: -130px;
   }
 
   /* iPhone 11 Portrait ------------ */
   @media only screen and (device-width: 414px) and (device-height: 896px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2) {
     position: absolute;
-    left: 0px;
-    bottom: -130px;
   }
 
   /* iPhone X Portrait ----------- */
   @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait) {
     position: absolute;
-    left: 0px;
-    bottom: -130px;
-  }
 
+  }
   /* iPad Mini Portrait ------------ */
   @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 1) {
     position: absolute;
-    left: 0px;
-    bottom: -130px;
-  }
 
+  }
   @media only screen and (max-width: ${(props: any) =>
       props.theme.breakpoints.values.sm}px) {
     position: absolute;
@@ -67,8 +59,6 @@ export const TipBotImage = styled.div`
       "" /* left: 25px;
     bottom: -35px; */
     }
-    left: 0px;
-    bottom: -130px;
   }
 `;
 
@@ -78,9 +68,10 @@ export const BubbleWrapper = styled.div`
   background: ${(props: any) =>
     props.theme.isDarkMode
       ? props.theme.colors.black.light
-      : props.theme.colors.white.primary};
+      : props.theme.colors.white.light};
   margin: 0 0 -35px 0;
   padding: 15px;
+  box-shadow: 5px 8px 20px rgba(0, 0, 0, 0.11);
   &:after {
     display: block;
     position: relative;
@@ -114,7 +105,7 @@ export const BubbleWrapperMobile = styled.div<BubbleWrapperMobileType>`
   background-color: ${(props) =>
     props.theme.isDarkMode
       ? props.theme.colors.black.light
-      : props.theme.colors.white.primary};
+      : props.theme.colors.white.light};
   box-shadow: 5px 8px 20px rgba(0, 0, 0, 0.25);
   color: ${(props) =>
     props.theme.isDarkMode

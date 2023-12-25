@@ -47,6 +47,7 @@ export const HomeAddress = () => {
             name="unitNumber"
             id="unitNumber"
             component={FormikInput}
+            placeholder="Apt / Unit"
             label="Apt / Unit"
           />
         </InputWrapper>

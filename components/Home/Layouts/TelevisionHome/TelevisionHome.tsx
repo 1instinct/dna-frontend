@@ -1,23 +1,25 @@
 // Layouts/TelevisionHome.tsx
 import React from "react";
-import { QueryClient, QueryFunction, dehydrate, useQuery } from "react-query";
-import { fetchVideos, fetchShows } from "../../../../hooks/useVideos";
+import { QueryClient, dehydrate } from "react-query";
+import { fetchVideos, fetchShows, useVideos } from "../../../../hooks/useVideos";
 import { VideoSnippet } from "../../../VideoSnippet";
 // import { PostSnippet } from '../../../PostSnippet';
 import { VideoSlider } from "../../../VideoSlider";
+
+import { HorizontalList, SeeMoreLink } from "../../../Layout/Layout.styles";
+
+import footerData from '../../../../data/footer.json';
 
 import {
   Wrapper,
   HeroContainer,
   MainContent,
   ListTitle,
-  HorizontalList,
-  SeeMoreLink,
   SeeMoreIconWrapper
 } from "./TelevisionHome.styles";
 
 import { QueryKeys } from "../../../../hooks/queryKeys";
-import { Loading, LoadingWrapper } from "../../..";
+import { Footer, Loading, LoadingWrapper } from "../../..";
 
 import { IVideo, IFeaturedVideo } from "../../../../typings";
 
@@ -26,109 +28,98 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
     data: latestData,
     isLoading: latestVideosLoading,
     isError: isLatestVideosError
-  } = useQuery([QueryKeys.VIDEOS, "latest", 1], fetchVideos);
+  } = useVideos('latest')
   const {
     data: beautyConfessionalData,
     isLoading: beautyConfessionalLoading,
     isError: isBeautyConfessionalError
-  } = useQuery([QueryKeys.VIDEOS, "beautyConfessional", 1], fetchVideos);
+  } = useVideos('beautyConfessional')
   const {
     data: bombshellOnStreetData,
     isLoading: bombshellOnStreetLoading,
     isError: isBombshellOnStreetError
-  } = useQuery([QueryKeys.VIDEOS, "bombshellOnStreet", 1], fetchVideos);
-  const {
-    data: etcData,
-    isLoading: etcLoading,
-    isError: isEtcError
-  } = useQuery([QueryKeys.VIDEOS, "etcetera", 1], fetchVideos);
+  } = useVideos('bombshellOnStreet')
   const {
     data: exclusivesData,
     isLoading: exclusivesLoading,
     isError: isExclusivesError
-  } = useQuery([QueryKeys.VIDEOS, "exclusives", 1], fetchVideos);
+  } = useVideos('exclusives')
   const {
     data: featuredData,
     isLoading: featuredLoading,
     isError: isFeaturedError
-  } = useQuery([QueryKeys.VIDEOS, "featured", 1], fetchVideos);
+  } = useVideos('featured')
   const {
     data: girlsData,
     isLoading: girlsLoading,
     isError: isGirlsError
-  } = useQuery([QueryKeys.VIDEOS, "girls", 1], fetchVideos);
+  } = useVideos('girls')
   const {
     data: liveFromData,
     isLoading: liveFromLoading,
     isError: isLiveFromError
-  } = useQuery([QueryKeys.VIDEOS, "liveFrom", 1], fetchVideos);
+  } = useVideos('liveFrom')
   const {
     data: model20Data,
     isLoading: model20Loading,
     isError: isModel20Error
-  } = useQuery([QueryKeys.VIDEOS, "model20", 1], fetchVideos);
+  } = useVideos('model20')
   const {
     data: originalsData,
     isLoading: originalsLoading,
     isError: isOriginalsError
-  } = useQuery([QueryKeys.VIDEOS, "originals", 1], fetchVideos);
+  } = useVideos('originals')
   const {
     data: originalsTwoData,
     isLoading: originalsTwoLoading,
     isError: isOriginalsTwoError
-  } = useQuery([QueryKeys.VIDEOS, "originalsTwo", 1], fetchVideos);
+  } = useVideos('originalsTwo')
   const {
     data: specialsData,
     isLoading: specialsLoading,
     isError: isSpecialsError
-  } = useQuery([QueryKeys.VIDEOS, "specials", 1], fetchVideos);
+  } = useVideos('specials')
   const {
     data: teachMeData,
     isLoading: teachMeLoading,
     isError: isTeachMeError
-  } = useQuery([QueryKeys.VIDEOS, "teachMe", 1], fetchVideos);
-  const {
-    data: theLatestData,
-    isLoading: theLatestLoading,
-    isError: isTheLatestError
-  } = useQuery([QueryKeys.VIDEOS, "latest", 1], fetchVideos);
+  } = useVideos('teachMe')
   const {
     data: uncoveredData,
     isLoading: uncoveredLoading,
     isError: isUncoveredError
-  } = useQuery([QueryKeys.VIDEOS, "uncovered", 1], fetchVideos);
+  } = useVideos('uncovered')
   const {
     data: vintage1Data,
     isLoading: vintage1Loading,
     isError: isVintage1Error
-  } = useQuery([QueryKeys.VIDEOS, "vintage/1", 1], fetchVideos);
+  } = useVideos('vintage/1')
   const {
     data: vintage2Data,
     isLoading: vintage2Loading,
     isError: isVintage2Error
-  } = useQuery([QueryKeys.VIDEOS, "vintage/2", 1], fetchVideos);
+  } = useVideos('vintage/2')
   const {
     data: vintage3Data,
     isLoading: vintage3Loading,
     isError: isVintage3Error
-  } = useQuery([QueryKeys.VIDEOS, "vintage/3", 1], fetchVideos);
+  } = useVideos('vintage/3')
   const {
     data: vintage4Data,
     isLoading: vintage4Loading,
     isError: isVintage4Error
-  } = useQuery([QueryKeys.VIDEOS, "vintage/4", 1], fetchVideos);
+  } = useVideos('vintage/4')
   const {
     data: vintage5Data,
     isLoading: vintage5Loading,
     isError: isVintage5Error
-  } = useQuery([QueryKeys.VIDEOS, "vintage/5", 1], fetchVideos);
+  } = useVideos('vintage/5')
 
   const posts = [];
 
   const isLoading =
     beautyConfessionalLoading ||
     bombshellOnStreetLoading ||
-    etcLoading ||
     exclusivesLoading ||
     featuredLoading ||
     girlsLoading ||
@@ -146,7 +137,6 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
   const isError =
     isBeautyConfessionalError ||
     isBombshellOnStreetError ||
-    isEtcError ||
     isExclusivesError ||
     isFeaturedError ||
     isGirlsError ||
@@ -218,6 +208,90 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
     }
   };
 
+  const renderGirls = () => {
+    if (isLoading) {
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      );
+    } else {
+      return girlsData.slice(0, 5).map((video: IVideo) => {
+        return <VideoSnippet key={video.url} video={video} />;
+      });
+    }
+  };
+
+  const renderLiveFrom = () => {
+    if (isLoading) {
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      );
+    } else {
+      return liveFromData.slice(0, 5).map((video: IVideo) => {
+        return <VideoSnippet key={video.url} video={video} />;
+      });
+    }
+  };
+
+  const renderModel20 = () => {
+    if (isLoading) {
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      );
+    } else {
+      return model20Data.slice(0, 5).map((video: IVideo) => {
+        return <VideoSnippet key={video.url} video={video} />;
+      });
+    }
+  };
+
+  const renderSpecials = () => {
+    if (isLoading) {
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      );
+    } else {
+      return specialsData.slice(0, 5).map((video: IVideo) => {
+        return <VideoSnippet key={video.url} video={video} />;
+      });
+    }
+  };
+
+  const renderTeachMe = () => {
+    if (isLoading) {
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      );
+    } else if (teachMeData) {
+      return teachMeData.slice(0, 5).map((video: IVideo) => {
+        return <VideoSnippet key={video.url} video={video} />;
+      });
+    }
+  };
+
+  const renderUncovered = () => {
+    if (isLoading) {
+      return (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      );
+    } else if (uncoveredData) {
+      return uncoveredData.slice(0, 5).map((video: IVideo) => {
+        return <VideoSnippet key={video.url} video={video} />;
+      });
+    }
+  };
+
   // const renderPosts = () => {
   //   if (isLoading) {
   //     return (
@@ -257,17 +331,17 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
       <MainContent className="col-sm-12 col-lg-12 col-lg-offset-0">
         <div className="contentArea">
           <ListTitle>
-            <a href="javascript:;" onClick={() => false}>
-              <span>
+            <a href="#" onClick={() => false}>
+              <h2>
                 The Latest <i className="fa fa-angle-right"></i>
-              </span>
+              </h2>
             </a>
           </ListTitle>
           <HorizontalList>
             {renderLatest()}
 
             <SeeMoreLink
-              href="javascript:;"
+              href="#"
               onClick={() => false}
               className="snippet last"
             >
@@ -282,9 +356,9 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
         <div className="contentArea">
           <ListTitle>
             <a href={""}>
-              <span>
+              <h2>
                 Exclusives <i className="fa fa-angle-right"></i>
-              </span>
+              </h2>
             </a>
           </ListTitle>
           <HorizontalList>
@@ -302,9 +376,9 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
         <div className="featArea">
           <ListTitle>
             <a href={""}>
-              <span>
+              <h2>
                 Originals <i className="fa fa-angle-right"></i>
-              </span>
+              </h2>
             </a>
           </ListTitle>
           <HorizontalList>
@@ -322,9 +396,9 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
         <div className="contentArea">
           <ListTitle>
             <a href={""}>
-              <span>
+              <h2>
                 Beauty Confessional <i className="fa fa-angle-right"></i>
-              </span>
+              </h2>
             </a>
           </ListTitle>
           <HorizontalList>
@@ -339,12 +413,132 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
           </HorizontalList>
         </div>
 
+        <div className="contentArea">
+          <ListTitle>
+            <a href="#">
+              <h2>
+                Girls Girls Girls <i className="fa fa-angle-right"></i>
+              </h2>
+            </a>
+          </ListTitle>
+          <HorizontalList>
+            {renderGirls()}
+
+            <SeeMoreLink href="#" className="snippet last">
+              <SeeMoreIconWrapper className="seeMore">
+                <i className="fa fa-arrow-right"></i>
+              </SeeMoreIconWrapper>
+              <h5>See More</h5>
+            </SeeMoreLink>
+          </HorizontalList>
+        </div>
+
+        <div className="contentArea">
+          <ListTitle>
+            <a href="#">
+              <h2>
+                Live From <i className="fa fa-angle-right"></i>
+              </h2>
+            </a>
+          </ListTitle>
+          <HorizontalList>
+            {renderLiveFrom()}
+
+            <SeeMoreLink href="#" className="snippet last">
+              <SeeMoreIconWrapper className="seeMore">
+                <i className="fa fa-arrow-right"></i>
+              </SeeMoreIconWrapper>
+              <h5>See More</h5>
+            </SeeMoreLink>
+          </HorizontalList>
+        </div>
+
+        <div className="contentArea">
+          <ListTitle>
+            <a href="#">
+              <h2>
+                Model 20 <i className="fa fa-angle-right"></i>
+              </h2>
+            </a>
+          </ListTitle>
+          <HorizontalList>
+            {renderModel20()}
+
+            <SeeMoreLink href="#" className="snippet last">
+              <SeeMoreIconWrapper className="seeMore">
+                <i className="fa fa-arrow-right"></i>
+              </SeeMoreIconWrapper>
+              <h5>See More</h5>
+            </SeeMoreLink>
+          </HorizontalList>
+        </div>
+
+        <div className="contentArea">
+          <ListTitle>
+            <a href="#">
+              <h2>
+                Specials <i className="fa fa-angle-right"></i>
+              </h2>
+            </a>
+          </ListTitle>
+          <HorizontalList>
+            {renderSpecials()}
+
+            <SeeMoreLink href="#" className="snippet last">
+              <SeeMoreIconWrapper className="seeMore">
+                <i className="fa fa-arrow-right"></i>
+              </SeeMoreIconWrapper>
+              <h5>See More</h5>
+            </SeeMoreLink>
+          </HorizontalList>
+        </div>
+
+        <div className="contentArea">
+          <ListTitle>
+            <a href="#">
+              <h2>
+                Teach Me <i className="fa fa-angle-right"></i>
+              </h2>
+            </a>
+          </ListTitle>
+          <HorizontalList>
+            {renderTeachMe()}
+
+            <SeeMoreLink href="#" className="snippet last">
+              <SeeMoreIconWrapper className="seeMore">
+                <i className="fa fa-arrow-right"></i>
+              </SeeMoreIconWrapper>
+              <h5>See More</h5>
+            </SeeMoreLink>
+          </HorizontalList>
+        </div>
+
+        <div className="contentArea">
+          <ListTitle>
+            <a href="#">
+              <h2>
+                Uncovered <i className="fa fa-angle-right"></i>
+              </h2>
+            </a>
+          </ListTitle>
+          <HorizontalList>
+            {renderUncovered()}
+
+            <SeeMoreLink href="#" className="snippet last">
+              <div className="seeMore">
+                <i className="fa fa-arrow-right"></i>
+              </div>
+              <h5>See More</h5>
+            </SeeMoreLink>
+          </HorizontalList>
+        </div>
+
         {/* <div className="featArea">
           <ListTitle>
             <a href="http://galoremag.com" target="_blank">
-              <span>
+              <h2>
                 Something to Read? <i className="fa fa-angle-right"></i>
-              </span>
+              </h2>
             </a>
           </ListTitle>
           <HorizontalList>
@@ -362,6 +556,9 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
             </SeeMoreLink>
           </HorizontalList>
         </div> */}
+        <div>
+          <Footer footerData={footerData}/>
+        </div>
       </MainContent>
     </Wrapper>
   );
@@ -370,10 +567,15 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
 export async function getServerSideProps() {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(["latestVideos", 1], () =>
-    fetchVideos("latest", 1)
-  );
-  await queryClient.prefetchQuery(["shows", 1], () => fetchShows());
+  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'latest', 1], () => fetchVideos);
+  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'beautyConfessional', 1], () => fetchVideos);
+  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'bombshellOnStreet', 1], () => fetchVideos);
+  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'etcetera', 1], () => fetchVideos);
+  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'exclusives', 1], () => fetchVideos);
+  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'featured', 1], () => fetchVideos);
+  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'originals', 1], () => fetchVideos);
+
+  await queryClient.prefetchQuery([QueryKeys.SHOWS, 1], () => fetchShows);
 
   return {
     props: {

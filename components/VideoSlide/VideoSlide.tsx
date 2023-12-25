@@ -22,7 +22,7 @@ export const VideoSlide: React.FC<VideoSlideProps> = ({ slide }) => {
   // };
 
   // Replace with your actual routing logic
-  const vidLink = `/video/${slide.slug}`;
+  const vidLink = `/video/${slide.slug}?id=${slide.id}`;
 
   return (
     <VideoSlideWrapper href={vidLink}>

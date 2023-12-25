@@ -64,12 +64,12 @@ export const ColorizedCart = styled.i<GenericThemeType>`
 
 const partnerName = process.env.NEXT_PUBLIC_SITE_TITLE;
 
-export const GetPreQualified = () => {
+export const Introduction = () => {
   // const { errors, touched } = useFormikContext();
 
   const speechMarkup = useCallback(() => {
     return {
-      __html: `Welcome from <strong>${partnerName}</strong>!<br /> Create your account, and you'll be surfing the latest trends in no-time.`
+      __html: `Welcome to <strong>${partnerName}</strong>!<br /> Create your account, and you'll be surfing the latest trends in no-time.`
     };
   }, []);
 

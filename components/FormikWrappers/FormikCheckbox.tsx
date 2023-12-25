@@ -1,6 +1,6 @@
 import React from "react";
 
-import { TermsCheckbox } from "./FormikInput.styles";
+import { TermsCheckbox, Error } from "./FormikInput.styles";
 
 export const FormikCheckbox = ({
   field,
@@ -20,6 +20,11 @@ export const FormikCheckbox = ({
 
   return (
     <>
+      {touched[fields.name] && errors[fields.name] ? (
+        <Error>{errors[fields.name]}</Error>
+      ) : (
+        ""
+      )}
       <TermsCheckbox
         {...props}
         id={field.name}

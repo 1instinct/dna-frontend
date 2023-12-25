@@ -24,13 +24,30 @@ export const LogoDiv = styled.div`
   justify-content: center;
   cursor: pointer;
 `;
+
+export const LogoText = styled.h1`
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
+  font-size: ${(p) => p.theme.typography.titleLG.fontSize};
+  font-weight: ${(p) => p.theme.typography.titleLG.fontWeight};
+  line-height: ${(p) => p.theme.typography.titleLG.lineHeight};
+  color: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.white.primary
+      : p.theme.colors.black.primary};
+  margin: 0;
+  padding: 0;
+  @media (max-width: ${(p) => p.theme.breakpoints.values.sm}px) {
+    font-size: 16px;
+  }
+`;
+
 export const HeaderDiv = styled.header`
   z-index: 9;
 `;
 
 export interface LinkDivProps {
   isActive: boolean;
-}
+};
 
 export const LinkDiv = styled.a<LinkDivProps>`
   font-size: 14px;
@@ -80,6 +97,22 @@ export const LeftSide = styled.div`
   @media (max-width: ${(p) => p.theme.breakpoints.values.sm}px) {
     justify-content: flex-end;
   }
+`;
+
+export const ShowButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${(p) => p.theme.colors.brand.primary};
+  border: none;
+  width: 80px;
+  height: 30px;
+  cursor: pointer;
+  margin: 0 15px;
+  font-size: 14px;
+  padding: 2px;
+  border-radius: 5px;
+  font-family: ${(p) => p.theme.typography.titleMD.fontFamily};
 `;
 
 export const RightSide = styled.div`

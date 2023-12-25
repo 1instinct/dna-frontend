@@ -1,0 +1,25 @@
+{
+  "columns": [
+    {
+      "title": "Information",
+      "links": [
+        { "text": "About Us", "url": "/about" },
+        { "text": "Shipping", "url": "/shipping" },
+        { "text": "Rewards", "url": "/rewards" },
+        { "text": "Returns", "url": "/returns" },
+        { "text": "Terms", "url": "/terms" },
+        { "text": "Privacy", "url": "/privacy" },
+        { "text": "Contact", "url": "/contact" }
+      ]
+    },
+    {
+      "title": "Account",
+      "links": [
+        { "text": "Profile", "url": "" },
+        { "text": "Addresses", "url": "" },
+        { "text": "Orders", "url": "" },
+        { "text": "Favorites", "url": "" }
+      ]
+    }
+  ]  
+}

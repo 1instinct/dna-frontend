@@ -5,6 +5,7 @@ export interface IVideo {
   desc: string;
   date: string;
   slug: string;
+  listId: string;
   thumb_mqdefault: string;
   thumb_hqdefault: string;
   thumb_sddefault: string;

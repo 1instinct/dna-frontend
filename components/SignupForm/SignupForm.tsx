@@ -9,7 +9,7 @@ import { AuthFormType, signupForm } from "../AuthForm/constants";
 import { useAuth } from "../../config/auth";
 import { SlideInLeft, SlideOutLeft } from "../Animations";
 // import { Questions } from "./Questions";
-import { Questions } from "./POLQuestions";
+import { Questions } from "./Questions";
 import { Alert } from "../Alerts";
 
 import FormikWizardStepType from "formik-wizard";
@@ -164,7 +164,7 @@ const FormWrapper: React.FC<any> = ({
           {/* {<div><pre>VALUE: {JSON.stringify(values, null, 2)}</pre></div>} */}
           {canGoBack && (
             <Disclaimer>
-              Don’t worry your information is safe{" "}
+              Don't worry your information is safe{" "}
               <span role="img" aria-label="lock">
                 🔐
               </span>{" "}
@@ -284,14 +284,22 @@ export const SignupForm = () => {
   return (
     <MainWrapper>
       <ContentWrapper>
-        <LeftHalf show={isLargeDevice ? "none" : "flex"}>
-          <Title>
-            Enjoy The Journey{" "}
-            <span role="img" aria-label="sunglasses">
-              😎
-            </span>
-          </Title>
-        </LeftHalf>
+        {isLargeDevice && (
+          <LeftHalf>
+            <Title>
+              Time To Binge{" "}
+              <span role="img" aria-label="sunglasses">
+                😎
+              </span>
+            </Title>
+            <Subtitle>
+              All your favorite shows all in one place.
+            </Subtitle>
+            <Subtitle>
+              The only difference between use and netflix is the price.
+            </Subtitle>
+          </LeftHalf>
+        )}
         <RightHalf isLargeDevice={isLargeDevice}>
           <SlideInLeft>
             <FormikWizard

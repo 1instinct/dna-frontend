@@ -30,8 +30,10 @@ export const VidDetails = styled.div`
 
 export const Text = styled.h3`
   /* Your text styles here */
+  font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
 `;
 
 export const Date = styled.p`
   /* Your date styles here */
+  color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.gray.dark};
 `;

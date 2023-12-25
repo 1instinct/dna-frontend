@@ -80,7 +80,7 @@ export const theme = {
       dark: darken("#EB8B8B", 0.33),
       primary: "#EB8B8B",
       secondary: "#E6CDC0",
-      light: "#F9F2EA"
+      light: lighten(0.66, "#EB8B8B")
     },
   },
   background: {
@@ -121,63 +121,63 @@ export const theme = {
   },
   typography: {
     titleXXL: {
-      fontFamily: "Anybody Light",
+      fontFamily: "IBM Plex Sans Condensed Medium",
       fontWeight: "bold",
       fontSize: "72px",
       lineHeight: "86px",
       color: "#000"
     },
     titleXL: {
-      fontFamily: "Anybody Light",
+      fontFamily: "IBM Plex Sans Condensed Medium",
       fontWeight: "bold",
       fontSize: "33.8681px",
       lineHeight: "41px",
       color: "#000"
     },
     titleLG: {
-      fontFamily: "Anybody Light",
+      fontFamily: "IBM Plex Sans Condensed Medium",
       fontWeight: "bold",
       fontSize: "24px",
       lineHeight: "30px",
       color: "#000"
     },
     titleMD: {
-      fontFamily: "Anybody ExtraLight",
+      fontFamily: "IBM Plex Sans Condensed Medium",
       fontWeight: "bold",
       fontSize: "20px",
       lineHeight: "24px",
       color: "#000"
     },
     titleSM: {
-      fontFamily: "Anybody ExtraLight",
+      fontFamily: "IBM Plex Sans Bold",
       fontWeight: "normal",
       fontSize: "14px",
       lineHeight: "1.5rem",
       color: "#000"
     },
     titleXS: {
-      fontFamily: "Anybody ExtraLight",
+      fontFamily: "IBM Plex Sans Condensed Medium",
       fontWeight: "normal",
       fontSize: "10px",
       lineHeight: "0.9rem",
       color: "#000"
     },
     bodyMD: {
-      fontFamily: "Anybody ExtraLight",
+      fontFamily: "IBM Plex Mono Extra Light",
       fontWeight: "normal",
       fontSize: "18px",
       lineHeight: "20px",
       color: "#000"
     },
     bodySM: {
-      fontFamily: "Anybody ExtraLight",
+      fontFamily: "IBM Plex Mono Extra Light",
       fontWeight: "normal",
       fontSize: "14px",
       lineHeight: "16px",
       color: "#000"
     },
     bodyXS: {
-      fontFamily: "Anybody ExtraLight",
+      fontFamily: "IBM Plex Mono Extra Light",
       fontWeight: "normal",
       fontSize: "9px",
       lineHeight: "0.9rem",
