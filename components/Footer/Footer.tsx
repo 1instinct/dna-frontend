@@ -67,12 +67,8 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
       {/* {Logo && <LogoDiv>{Logo ? Logo : null}</LogoDiv>} */}
       <Grid className={gridClass}>
         <Column className={columnClass}>
-          <ColumnTitle className={columnTitleClass}>
-            Contact
-          </ColumnTitle>
-          <Description>
-            {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
-          </Description>
+          <ColumnTitle className={columnTitleClass}>Contact</ColumnTitle>
+          <Description>{process.env.NEXT_PUBLIC_COMPANY_ADDRESS}</Description>
         </Column>
         {columns.map((item, index) => (
           <Column className={columnClass} key={index}>
@@ -110,12 +106,8 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
           </Column>
         ))}
         <Column className={columnClass}>
-          <ColumnTitle className={columnTitleClass}>
-            About Us
-          </ColumnTitle>
-          <Description>
-            {process.env.NEXT_PUBLIC_SITE_DESC}
-          </Description>
+          <ColumnTitle className={columnTitleClass}>About Us</ColumnTitle>
+          <Description>{process.env.NEXT_PUBLIC_SITE_DESC}</Description>
         </Column>
       </Grid>
       <SocialLinks isDark />

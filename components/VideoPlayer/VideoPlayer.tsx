@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react';
-import React, { useState, useEffect, useRef } from 'react';
+import { useTheme } from "@emotion/react";
+import React, { useState, useEffect, useRef } from "react";
 
 import {
   MainVid,
@@ -17,7 +17,7 @@ import {
   Duration,
   Fullscreen,
   VidInfo
-} from './VideoPlayer.styles';
+} from "./VideoPlayer.styles";
 
 export const VideoPlayer = ({ videoData }) => {
   const theme = useTheme();
@@ -42,30 +42,30 @@ export const VideoPlayer = ({ videoData }) => {
           events: {
             onReady: () => {
               setPlayer(newPlayer);
-            },
+            }
             // Other event handlers...
-          },
+          }
         });
       }
     };
 
-    if (theme.mediaProvider === 'YouTube' && videoData) {
+    if (theme.mediaProvider === "YouTube" && videoData) {
       const onYouTubeIframeAPIReady = () => {
-        const newPlayer = new YT.Player('videoFrame', {
+        const newPlayer = new YT.Player("videoFrame", {
           videoId: videoData?.id,
           events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
+            onReady: onPlayerReady,
+            onStateChange: onPlayerStateChange
           }
         });
         setPlayer(newPlayer);
       };
 
-      window['onYouTubeIframeAPIReady'] = onYouTubeIframeAPIReady;
+      window["onYouTubeIframeAPIReady"] = onYouTubeIframeAPIReady;
 
-      const tag = document.createElement('script');
+      const tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName('script')[0];
+      const firstScriptTag = document.getElementsByTagName("script")[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
       return () => {
@@ -79,12 +79,12 @@ export const VideoPlayer = ({ videoData }) => {
   useEffect(() => {
     if (player) {
       const interval = setInterval(() => {
-        if (typeof player.getCurrentTime === 'function') {
+        if (typeof player.getCurrentTime === "function") {
           setCurrentTime(player.getCurrentTime());
           setDuration(player.getDuration());
         }
       }, 1000);
-  
+
       return () => clearInterval(interval);
     }
   }, [player]);
@@ -136,7 +136,11 @@ export const VideoPlayer = ({ videoData }) => {
   };
 
   const renderMuteIcon = () => {
-    return isMute ? <i className="fa fa-volume-off"></i> : <i className="fa fa-volume-up"></i>;
+    return isMute ? (
+      <i className="fa fa-volume-off"></i>
+    ) : (
+      <i className="fa fa-volume-up"></i>
+    );
   };
 
   const _toggleMute = () => {
@@ -151,32 +155,26 @@ export const VideoPlayer = ({ videoData }) => {
 
   const _renderMute = () => {
     if (!isMute) {
-      return (
-        <i className="fa fa-volume-up"></i>
-      );
+      return <i className="fa fa-volume-up"></i>;
     } else {
-      return (
-        <i className="fa fa-volume-off"></i>
-      );
+      return <i className="fa fa-volume-off"></i>;
     }
   };
 
   const mobilePlayer = () => {
     // if mobile device
     if (window.innerWidth < 768) {
-      return (
-        <div id="videoFrame"></div>
-      );
+      return <div id="videoFrame"></div>;
     }
   };
 
   const onPlayerStateChange = (event) => {
     setPlayerState(event.data);
     if (event.data === YT.PlayerState.PLAYING) {
-      videoFrameRef.current.style.opacity = '1';
+      videoFrameRef.current.style.opacity = "1";
     }
     if (event.data === YT.PlayerState.ENDED) {
-      videoFrameRef.current.style.opacity = '0';
+      videoFrameRef.current.style.opacity = "0";
     }
   };
 
@@ -195,7 +193,7 @@ export const VideoPlayer = ({ videoData }) => {
     time = Math.round(time);
     const minutes = Math.floor(time / 60);
     const seconds = time - minutes * 60;
-    return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
   };
 
   useEffect(() => {
@@ -218,11 +216,15 @@ export const VideoPlayer = ({ videoData }) => {
         <ProgressBar type="range" id="progressBar" ref={progressBarRef} />
         <Elapsed id="elapsed" ref={elapsedRef}></Elapsed>
         <LeftControls>
-          <Mute id="mute" className="pull-left" onClick={_toggleMute}>{_renderMute()}</Mute>
+          <Mute id="mute" className="pull-left" onClick={_toggleMute}>
+            {_renderMute()}
+          </Mute>
           <CurrentTime id="currentTime">{formatTime(currentTime)}</CurrentTime>
         </LeftControls>
         <RightControls>
-          <Fullscreen id="fullscreen" onClick={playFullscreen}><i className="fa fa-expand"></i></Fullscreen>
+          <Fullscreen id="fullscreen" onClick={playFullscreen}>
+            <i className="fa fa-expand"></i>
+          </Fullscreen>
           <Duration id="duration">{formatTime(duration)}</Duration>
         </RightControls>
       </VideoControls>

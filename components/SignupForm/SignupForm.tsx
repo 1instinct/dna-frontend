@@ -292,9 +292,7 @@ export const SignupForm = () => {
                 😎
               </span>
             </Title>
-            <Subtitle>
-              All your favorite shows all in one place.
-            </Subtitle>
+            <Subtitle>All your favorite shows all in one place.</Subtitle>
             <Subtitle>
               The only difference between use and netflix is the price.
             </Subtitle>

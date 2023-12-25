@@ -83,4 +83,3 @@ export const SeeMoreLink = styled.a`
   justify-content: center;
   align-items: center;
 `;
-

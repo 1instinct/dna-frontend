@@ -45,12 +45,10 @@ export const TipBotImage = styled.div`
   /* iPhone X Portrait ----------- */
   @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait) {
     position: absolute;
-
   }
   /* iPad Mini Portrait ------------ */
   @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 1) {
     position: absolute;
-
   }
   @media only screen and (max-width: ${(props: any) =>
       props.theme.breakpoints.values.sm}px) {

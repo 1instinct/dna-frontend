@@ -1,14 +1,18 @@
 // Layouts/TelevisionHome.tsx
 import React from "react";
 import { QueryClient, dehydrate } from "react-query";
-import { fetchVideos, fetchShows, useVideos } from "../../../../hooks/useVideos";
+import {
+  fetchVideos,
+  fetchShows,
+  useVideos
+} from "../../../../hooks/useVideos";
 import { VideoSnippet } from "../../../VideoSnippet";
 // import { PostSnippet } from '../../../PostSnippet';
 import { VideoSlider } from "../../../VideoSlider";
 
 import { HorizontalList, SeeMoreLink } from "../../../Layout/Layout.styles";
 
-import footerData from '../../../../data/footer.json';
+import footerData from "../../../../data/footer.json";
 
 import {
   Wrapper,
@@ -28,92 +32,92 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
     data: latestData,
     isLoading: latestVideosLoading,
     isError: isLatestVideosError
-  } = useVideos('latest')
+  } = useVideos("latest");
   const {
     data: beautyConfessionalData,
     isLoading: beautyConfessionalLoading,
     isError: isBeautyConfessionalError
-  } = useVideos('beautyConfessional')
+  } = useVideos("beautyConfessional");
   const {
     data: bombshellOnStreetData,
     isLoading: bombshellOnStreetLoading,
     isError: isBombshellOnStreetError
-  } = useVideos('bombshellOnStreet')
+  } = useVideos("bombshellOnStreet");
   const {
     data: exclusivesData,
     isLoading: exclusivesLoading,
     isError: isExclusivesError
-  } = useVideos('exclusives')
+  } = useVideos("exclusives");
   const {
     data: featuredData,
     isLoading: featuredLoading,
     isError: isFeaturedError
-  } = useVideos('featured')
+  } = useVideos("featured");
   const {
     data: girlsData,
     isLoading: girlsLoading,
     isError: isGirlsError
-  } = useVideos('girls')
+  } = useVideos("girls");
   const {
     data: liveFromData,
     isLoading: liveFromLoading,
     isError: isLiveFromError
-  } = useVideos('liveFrom')
+  } = useVideos("liveFrom");
   const {
     data: model20Data,
     isLoading: model20Loading,
     isError: isModel20Error
-  } = useVideos('model20')
+  } = useVideos("model20");
   const {
     data: originalsData,
     isLoading: originalsLoading,
     isError: isOriginalsError
-  } = useVideos('originals')
+  } = useVideos("originals");
   const {
     data: originalsTwoData,
     isLoading: originalsTwoLoading,
     isError: isOriginalsTwoError
-  } = useVideos('originalsTwo')
+  } = useVideos("originalsTwo");
   const {
     data: specialsData,
     isLoading: specialsLoading,
     isError: isSpecialsError
-  } = useVideos('specials')
+  } = useVideos("specials");
   const {
     data: teachMeData,
     isLoading: teachMeLoading,
     isError: isTeachMeError
-  } = useVideos('teachMe')
+  } = useVideos("teachMe");
   const {
     data: uncoveredData,
     isLoading: uncoveredLoading,
     isError: isUncoveredError
-  } = useVideos('uncovered')
+  } = useVideos("uncovered");
   const {
     data: vintage1Data,
     isLoading: vintage1Loading,
     isError: isVintage1Error
-  } = useVideos('vintage/1')
+  } = useVideos("vintage/1");
   const {
     data: vintage2Data,
     isLoading: vintage2Loading,
     isError: isVintage2Error
-  } = useVideos('vintage/2')
+  } = useVideos("vintage/2");
   const {
     data: vintage3Data,
     isLoading: vintage3Loading,
     isError: isVintage3Error
-  } = useVideos('vintage/3')
+  } = useVideos("vintage/3");
   const {
     data: vintage4Data,
     isLoading: vintage4Loading,
     isError: isVintage4Error
-  } = useVideos('vintage/4')
+  } = useVideos("vintage/4");
   const {
     data: vintage5Data,
     isLoading: vintage5Loading,
     isError: isVintage5Error
-  } = useVideos('vintage/5')
+  } = useVideos("vintage/5");
 
   const posts = [];
 
@@ -557,7 +561,7 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
           </HorizontalList>
         </div> */}
         <div>
-          <Footer footerData={footerData}/>
+          <Footer footerData={footerData} />
         </div>
       </MainContent>
     </Wrapper>
@@ -567,13 +571,34 @@ export const TelevisionHome: React.FC<any> = ({ wholesale }) => {
 export async function getServerSideProps() {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'latest', 1], () => fetchVideos);
-  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'beautyConfessional', 1], () => fetchVideos);
-  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'bombshellOnStreet', 1], () => fetchVideos);
-  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'etcetera', 1], () => fetchVideos);
-  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'exclusives', 1], () => fetchVideos);
-  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'featured', 1], () => fetchVideos);
-  await queryClient.prefetchQuery([QueryKeys.VIDEOS, 'originals', 1], () => fetchVideos);
+  await queryClient.prefetchQuery(
+    [QueryKeys.VIDEOS, "latest", 1],
+    () => fetchVideos
+  );
+  await queryClient.prefetchQuery(
+    [QueryKeys.VIDEOS, "beautyConfessional", 1],
+    () => fetchVideos
+  );
+  await queryClient.prefetchQuery(
+    [QueryKeys.VIDEOS, "bombshellOnStreet", 1],
+    () => fetchVideos
+  );
+  await queryClient.prefetchQuery(
+    [QueryKeys.VIDEOS, "etcetera", 1],
+    () => fetchVideos
+  );
+  await queryClient.prefetchQuery(
+    [QueryKeys.VIDEOS, "exclusives", 1],
+    () => fetchVideos
+  );
+  await queryClient.prefetchQuery(
+    [QueryKeys.VIDEOS, "featured", 1],
+    () => fetchVideos
+  );
+  await queryClient.prefetchQuery(
+    [QueryKeys.VIDEOS, "originals", 1],
+    () => fetchVideos
+  );
 
   await queryClient.prefetchQuery([QueryKeys.SHOWS, 1], () => fetchShows);
 

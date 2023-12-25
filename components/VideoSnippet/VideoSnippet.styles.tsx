@@ -35,5 +35,8 @@ export const Text = styled.h3`
 
 export const Date = styled.p`
   /* Your date styles here */
-  color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.gray.dark};
+  color: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.white.primary
+      : p.theme.colors.gray.dark};
 `;

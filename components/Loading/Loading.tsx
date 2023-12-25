@@ -10,7 +10,10 @@ export const LoadingWrapper = styled.div`
   align-items: center;
 
   div svg g g g path {
-    stroke: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.brand.primary}};
+    stroke: ${(p) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.white.primary
+        : p.theme.colors.brand.primary}};
   }
 `;
 

@@ -95,7 +95,9 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
         {!isMobile && (
           <LeftSide>
             <SocialLinks darkMode={darkMode} />
-            <ShowButton onClick={() => setIsBrowsing(!isBrowsing)}>SHOWS</ShowButton>
+            <ShowButton onClick={() => setIsBrowsing(!isBrowsing)}>
+              SHOWS
+            </ShowButton>
           </LeftSide>
         )}
         <LogoDiv>

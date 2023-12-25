@@ -46,28 +46,29 @@ const fetchShows = async () => {
   const apiUrl = process.env.NEXT_PUBLIC_TV_API_URL;
   // requestHeaders.set("Content-Type", "application/json;charset=UTF-8");
   const response = await fetch(`${apiUrl}/shows`, {
-    method: "GET",
+    method: "GET"
   })
-  .then((response) => {
-    if (!response.ok) throw new Error("Shows request failed");
-    else return response.json();
-  })
-  .then((data) => console.log(data))
-  .catch((err) => {
-    console.log(err);
-    throw new Error("Shows request failed");
-  });
+    .then((response) => {
+      if (!response.ok) throw new Error("Shows request failed");
+      else return response.json();
+    })
+    .then((data) => console.log(data))
+    .catch((err) => {
+      console.log(err);
+      throw new Error("Shows request failed");
+    });
   // console.log(response)
   return response;
 };
 
 const useVideos = (show: string) => {
-  return useQuery<IVideo[], false>([QueryKeys.VIDEOS, show, 1], () => fetchVideos(show))};
+  return useQuery<IVideo[], false>([QueryKeys.VIDEOS, show, 1], () =>
+    fetchVideos(show)
+  );
+};
 
 const useVideo = (id: string) => {
-  return useQuery<IVideo, false>([QueryKeys.VIDEO, id], () =>
-    fetchVideo(id)
-  );
+  return useQuery<IVideo, false>([QueryKeys.VIDEO, id], () => fetchVideo(id));
 };
 
 const useShows = () => {

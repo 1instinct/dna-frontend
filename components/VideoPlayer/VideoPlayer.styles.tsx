@@ -14,12 +14,12 @@ export const VideoHover = styled.div`
 `;
 
 export const VideoContainer = styled.div`
-  background: url('img/static.gif');
+  background: url("img/static.gif");
   background-size: cover;
   background-position: 0px 0px;
   overflow: hidden;
   height: 100%;
-  `;
+`;
 
 export const VideoFrame = styled.div`
   pointer-events: none;
@@ -38,9 +38,13 @@ export const VideoControls = styled.div`
   bottom: -75px;
   width: 100%;
   color: ${(p) => p.theme.colors.white.primary};
-  padding: 45px 0 2px 0 ;
+  padding: 45px 0 2px 0;
   transition: bottom 0.3s ease;
-  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.66) 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.66) 100%
+  );
   &:hover {
     bottom: 0px;
   }
@@ -63,7 +67,8 @@ export const Progress = styled.div`
 
 export const ProgressBar = styled.input`
   position: absolute;
-  background: ${(p) => p.theme.isDarkMode ? p.theme.colors.gray.dark : p.theme.colors.white.dark};
+  background: ${(p) =>
+    p.theme.isDarkMode ? p.theme.colors.gray.dark : p.theme.colors.white.dark};
   appearance: none;
   width: 100%;
   left: 0;
@@ -85,7 +90,10 @@ export const Mute = styled.div`
   cursor: pointer;
 
   & i {
-    color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.white.primary};
+    color: ${(p) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.white.primary
+        : p.theme.colors.white.primary};
   }
 `;
 
@@ -102,7 +110,10 @@ export const Fullscreen = styled.div`
   cursor: pointer;
 
   & i {
-    color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.white.primary};
+    color: ${(p) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.white.primary
+        : p.theme.colors.white.primary};
   }
 `;
 

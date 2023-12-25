@@ -47,7 +47,7 @@ export const HeaderDiv = styled.header`
 
 export interface LinkDivProps {
   isActive: boolean;
-};
+}
 
 export const LinkDiv = styled.a<LinkDivProps>`
   font-size: 14px;

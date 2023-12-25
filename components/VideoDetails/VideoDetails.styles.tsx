@@ -19,7 +19,7 @@ export const VideoHover = styled.div`
 
 export const VideoContainer = styled.div`
   flex: 1;
-  background: url('img/static.gif');
+  background: url("img/static.gif");
   background-size: cover;
   background-position: 0px 0px;
   overflow: hidden;

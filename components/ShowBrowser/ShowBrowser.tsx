@@ -17,10 +17,7 @@ import {
 } from "./ShowBrowser.styles";
 import { currentSeason } from "../../utilities/dates";
 
-export const ShowBrowser: React.FC<any> = ({
-  isBrowsing,
-  setIsBrowsing
-}) => {
+export const ShowBrowser: React.FC<any> = ({ isBrowsing, setIsBrowsing }) => {
   const {
     data: showsData,
     isLoading: showsLoading,
@@ -50,7 +47,7 @@ export const ShowBrowser: React.FC<any> = ({
       // Handle the case where showsData is not an array
       return <div>No shows available.</div>;
     }
-  };    
+  };
 
   return (
     <ShowBrowserWrapper>

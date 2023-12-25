@@ -3,7 +3,10 @@ import styled from "@emotion/styled";
 export const Wrapper = styled.div`
   width: 100%;
   max-width: 100%;
-  background: ${(p) => p.theme.isDarkMode ? p.theme.colors.gray.dark : p.theme.colors.white.primary};
+  background: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.gray.dark
+      : p.theme.colors.white.primary};
 `;
 
 export const HeroContainer = styled.div`
@@ -31,6 +34,9 @@ export const ListTitle = styled.div`
 
 export const SeeMoreIconWrapper = styled.div`
   & i {
-    color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.brand.dark};
+    color: ${(p) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.white.primary
+        : p.theme.colors.brand.dark};
   }
 `;

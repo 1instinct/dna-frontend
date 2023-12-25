@@ -33,7 +33,11 @@ export const VideoSnippet = ({ video }: VideoSnippetType) => {
   let slug = video.slug;
 
   return (
-    <Snippet key={`video-${slug}`} href={`/video/${slug}?id=${videoId}`} itemProp="url">
+    <Snippet
+      key={`video-${slug}`}
+      href={`/video/${slug}?id=${videoId}`}
+      itemProp="url"
+    >
       <VidPic image={video.thumb_mqdefault} />
       <VidDetails>
         <Text itemProp="name">{cleanTitle}</Text>

@@ -81,7 +81,7 @@ export const theme = {
       primary: "#EB8B8B",
       secondary: "#E6CDC0",
       light: lighten(0.66, "#EB8B8B")
-    },
+    }
   },
   background: {
     ambient: "linear-gradient(180deg, #EB8B8B 0%, #CC8BEB 100%)",
