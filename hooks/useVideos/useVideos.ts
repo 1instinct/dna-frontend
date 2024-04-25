@@ -9,7 +9,7 @@ const fetchVideos = async (show: string) => {
 
   if (!show) throw new Error("No show provided");
 
-  const url = new URL(`${apiUrl}/${show}`);
+  const url = new URL(`${apiUrl}/api/youtube/${show}`);
 
   console.log(`Fetching from API URL: ${url}`);
 
@@ -45,7 +45,7 @@ const fetchShows = async () => {
   const storage = (await import("../../config/storage")).default;
   const apiUrl = process.env.NEXT_PUBLIC_TV_API_URL;
   // requestHeaders.set("Content-Type", "application/json;charset=UTF-8");
-  const response = await fetch(`${apiUrl}/shows`, {
+  const response = await fetch(`${apiUrl}/api/youtube/shows`, {
     method: "GET"
   })
     .then((response) => {
