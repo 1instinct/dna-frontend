@@ -34,7 +34,9 @@ const fetchVideo = async (id: string) => {
   const apiUrl = process.env.NEXT_PUBLIC_TV_API_URL;
 
   if (!id) throw new Error("No id provided");
-  const response = await fetch(`${apiUrl}/video/${id}`, { method: "GET" });
+  const response = await fetch(`${apiUrl}/api/youtube/video/${id}`, {
+    method: "GET"
+  });
   if (!response.ok) {
     throw new Error("Video request failed");
   }
