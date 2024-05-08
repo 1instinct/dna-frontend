@@ -35,13 +35,13 @@ const SearchSuggestions = ({
   useEffect(() => {
     // getSearchData();
     // data ? console.log("stuff: ", data) : null;
-    // console.log("suggestions: ", suggestions, "data: ", data);
-  }, []);
+    console.log("suggestions: ", suggestions);
+  }, [suggestions]);
 
   if (!isVisible) return null;
 
   if (isLoading) {
-    setIsSearchLoading();
+    setIsSearchLoading(true);
     return (
       <StyledSearchSuggestions role="listbox" aria-labelledby={labelId} id={id}>
         <LoadingIcon className="bts bt-spinner bt-pulse" />

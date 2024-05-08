@@ -41,6 +41,7 @@ export const showCart = async () => {
     } else {
       const response = await spreeClient.cart.create();
       if (response.isSuccess()) {
+        console.log("cart: ", response.success());
         const result = response.success();
         storage.setGuestOrderToken(result.data.attributes.token);
         return result;

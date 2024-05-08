@@ -77,7 +77,7 @@ Done!
 - `git checkout main`
 - `git pull upstream main`
 
-# TODO
+## TODO
 
 - Move data fetching into on `getInitialProps`
 - Setup Redux
@@ -103,6 +103,7 @@ Done!
 - Unit Testing
 - Chat widget
 - Chatbot (Rasa)
+- Masonry ([react-responsive-masonry](https://www.npmjs.com/package/react-responsive-masonry))
 - Browser Feature Detection
 - Speed/Performance Benchmarking (GTMetrix.com API?)
 - Header tags customization (NextJS: `next/header`)

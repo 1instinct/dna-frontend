@@ -21,5 +21,12 @@ export default {
   PASSWORD_REGEX: new RegExp(
     /^(?=(?:[^A-Za-z]*[A-Za-z]){1})(?=(?:[^0-9!@#$%^&*()_+-=]*[0-9!@#$%^&*()_+-=]){1}).*$/
   ),
-  PHONE_REGEX: new RegExp(/^[+]?[(]?[0-9]{3}[)]?[\s.]?[0-9]{3}[-.]?[0-9]{4,6}$/)
+  PHONE_REGEX: new RegExp(/^[+]?[(]?[0-9]{3}[)]?[\s.]?[0-9]{3}[-.]?[0-9]{4,6}$/),
+  SSN_REGEX: new RegExp(/^\d{3}-\d{2}-\d{4}$/),
+  ZIPCODE_REGEX: new RegExp(/^\d{5}(-\d{4})?$/),
+  DATE_REGEX: new RegExp(
+    /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/
+  ),
+  IS_DEBUG: process.env.NEXT_PUBLIC_DEBUG_MODE === "true",
+  PLACES_API_KEY: process.env.NEXT_PUBLIC_PLACES_API_KEY,
 };

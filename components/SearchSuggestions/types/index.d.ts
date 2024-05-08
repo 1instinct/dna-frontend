@@ -3,7 +3,7 @@ export interface SearchSuggestionsProps {
   id?: string;
   labelId?: string;
   isVisible?: boolean;
-  setIsSearchLoading: () => void;
+  setIsSearchLoading: (e) => void;
   toggleVisibility: (e) => void;
   onSelect: (e) => void;
   query?: string;

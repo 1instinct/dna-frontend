@@ -188,7 +188,7 @@ const SearchBar = ({
 
       {autoComplete ? (
         <AutoComplete
-          setIsSearchLoading={() => setIsSearchLoading}
+          setIsSearchLoading={(e) => setIsSearchLoading(e)}
           isVisible={isAutoCompleteVisible}
           toggleVisibility={(e: any) => setIsAutocompleteVisible(e)}
           id={dropdownId}

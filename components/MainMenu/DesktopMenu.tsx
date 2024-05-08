@@ -90,7 +90,7 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
               ))}
               <Vr />
               <DropDownAdvert>
-                <h1>On Sale!</h1>
+                <h1>On Sale</h1>
               </DropDownAdvert>
             </DropDown>
           );

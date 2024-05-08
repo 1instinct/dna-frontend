@@ -170,6 +170,7 @@ export const ProductDetails = ({ wholesale, props }: ProductDetailsProps) => {
 
   // const [colorOptions, setColorOptions] = useState<any>(productColors);
   const [chosenVariants, setChosenVariants] = useState<any[]>([]);
+  const [chosenVariantQty, setChosenVariantQty] = useState(0);
   const [addItem, setAddItem] = useState<any>({
     variant_id: thisProduct?.data.id,
     quantity: wholesale ? variantsPerPack(packSizeQtys) : 1
@@ -325,22 +326,23 @@ export const ProductDetails = ({ wholesale, props }: ProductDetailsProps) => {
     });
   };
 
+  useEffect(() => {
+    const foundVariants = thisProduct?.included?.filter(
+      (elem) => elem.type === "variant"
+    );
+    console.log("VARIANTS: ", foundVariants);
+  }, [thisProduct]);
+  
   const renderWholesaleOptions = () => {
-    const [chosenVariantQty, setChosenVariantQty] = useState(0);
-
-    useEffect(() => {
-      const foundVariants = thisProduct?.included?.filter(
-        (elem) => elem.type === "variant"
-      );
-      console.log("VARIANTS: ", foundVariants);
-    }, [thisProduct]);
 
     const handleUpdatePackSelections = (e: any, variantId: any) => {
       // logic to update the chosenVariantQty state
+      setChosenVariantQty(e.target.value);
     };
 
     const handleIncrementVariantQty = (variantId: any) => {
       // logic to increment the chosenVariantQty state
+      setChosenVariantQty(chosenVariantQty + 1);
     };
 
     if (variantsAreLoading) {

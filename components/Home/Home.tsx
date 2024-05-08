@@ -21,6 +21,7 @@ import MobileLatest from "./MobileLatest";
 import { Loading } from "../Loading";
 import homeData from "./home.json";
 import { VideoJS } from "..";
+import constants from "../../utilities/constants";
 
 export const Home = (props: any) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -100,8 +101,8 @@ export const Home = (props: any) => {
   const banner = isMobile ? null : <Banner data={homeData.bigHotDig} />;
 
   useEffect(() => {
-    // console.log(streamsData?.response_data, productsData);
-  }, []);
+    constants.IS_DEBUG && console.log("streamsData: ", streamsData);
+  }, [streamsData, productsData]);
 
   if (productsAreLoading || streamsAreLoading) {
     return <Loading />;

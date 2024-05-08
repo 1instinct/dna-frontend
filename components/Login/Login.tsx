@@ -15,6 +15,7 @@ import {
   InputWrapper,
   Subtext
 } from "./Login.styles";
+import constants from "../../utilities/constants";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -28,12 +29,15 @@ export const Login = () => {
         initialValues={loginForm.fields}
         validationSchema={loginForm.validate}
         onSubmit={(values, { setSubmitting }) => {
+          setSubmitting(true);
           login(values)
-            .then(() => {
+            .then((res: any) => {
+              console.log("LOGIN SUCCESS: ", res);
               setSubmitting(false);
               router.push("/");
             })
-            .catch(() => {
+            .catch((e: any) => {
+              constants.IS_DEBUG && console.log("LOGIN FAIL: ", e);
               setSubmitting(false);
             });
         }}

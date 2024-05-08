@@ -3,6 +3,7 @@ import {
   IToken
 } from "@spree/storefront-api-v2-sdk/types/interfaces/Token";
 import { spreeClient } from "./spree";
+import constants from "../utilities/constants";
 
 const storage = {
   getToken: async (): Promise<IOAuthToken | undefined> => {
@@ -21,7 +22,7 @@ const storage = {
           storage.setToken(newToken);
           return newToken;
         } else {
-          console.warn("COULD NOT REFRESH TOKEN");
+          constants.IS_DEBUG && console.warn("COULD NOT REFRESH TOKEN");
           storage.clearToken();
         }
       }

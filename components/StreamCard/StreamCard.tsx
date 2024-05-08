@@ -42,10 +42,10 @@ export const StreamCard = ({ isPast, item }: any) => {
             </StreamStatusWrapper>
           ) : null}
           <StreamImg src="/3.png" alt={""} />
-          {/* <InfluencerBox>
+          <InfluencerBox>
             <InfluencerAvatar src="/1.png" />
             <InfluencerName as={"span"}>Jane Doe</InfluencerName>
-          </InfluencerBox> */}
+          </InfluencerBox>
         </StreamImgWrapper>
         <StreamCardTitle>{item.title}</StreamCardTitle>
         <StreamCardDesc>{item.description}</StreamCardDesc>
