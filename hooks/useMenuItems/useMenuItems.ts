@@ -1,10 +1,7 @@
 import { useQuery } from "react-query";
-import { IStream } from "../../typings/stream";
 import { QueryKeys } from "../queryKeys";
-import constants from "../../utilities/constants";
 
 const fetchMenuItems = async (id: number = 1) => {
-  const storage = (await import("../../config/storage")).default;
   const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL;
   const token = process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN;
   const requestHeaders: HeadersInit = new Headers();
@@ -18,13 +15,12 @@ const fetchMenuItems = async (id: number = 1) => {
     }
   )
     .then((response) => {
-      constants.IS_DEBUG && console.log("Menu Items response: ", response);
       if (!response.ok) throw new Error("Menu Items request failed");
       else return response.json();
     })
     .then((data) => data)
     .catch((err) => {
-      constants.IS_DEBUG && console.error("Menu Items error: ", err);
+      console.error(err);
       throw new Error("Menu Items request failed");
     });
   return response;

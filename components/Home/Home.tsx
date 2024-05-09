@@ -100,10 +100,6 @@ export const Home = (props: any) => {
   );
   const banner = isMobile ? null : <Banner data={homeData.bigHotDig} />;
 
-  useEffect(() => {
-    constants.IS_DEBUG && console.log("streamsData: ", streamsData);
-  }, [streamsData, productsData]);
-
   if (productsAreLoading || streamsAreLoading) {
     return <Loading />;
   }

@@ -58,18 +58,6 @@ export const MainMenu = (props: MainMenuProps) => {
     isSuccess: boolean;
   } = useMenuItems(1);
 
-  // useEffect(() => {
-  //   if (menuItemsIsSuccess && menuLocationIsSuccess) {
-  //     console.log(
-  //       // menusData,
-  //       // "MENU LOCATION",
-  //       // menuLocationData?.response_data,
-  //       "MENU ITEMS",
-  //       menuItemsData?.response_data
-  //     );
-  //   }
-  // }, [menuItemsData, menuLocationData]);
-
   if (menuItemsIsLoading || menuLocationIsLoading) return null;
 
   return (

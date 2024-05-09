@@ -58,11 +58,9 @@ export const MobileMenu = ({
       // }
       setKeyPath((pre) => {
         if (kp == pre) {
-          // console.log("closing");
           let str = kp.replace("/" + key, "");
           return str;
         } else {
-          // console.log("opening");
           return kp;
         }
       });
@@ -85,13 +83,7 @@ export const MobileMenu = ({
     level: number
   ) => {
     const paddingLeft = level * 20 + "px";
-    // const isArray = Array.isArray(localMenuData);
-    // console.log(isArray, localMenuData);
-    // const menuItems = isArray
-    //   ? localMenuData
-    //   : menusData?.menu_location_listing[0].menu_item_listing;
     
-    constants.IS_DEBUG && console.log("menuItems: ", menuItems);
     if (menuData.length) {
       return (
         <StyledList disablePadding>
@@ -100,7 +92,6 @@ export const MobileMenu = ({
             const subItems = hasChildren ? item.childrens : [];
             const slug = item.name.toLowerCase();
             const pathSlug = parentKeyPath + "/" + slug;
-            constants.IS_DEBUG && subItems.length && console.log("subItems: ", subItems, pathSlug, keyPath.indexOf(pathSlug) != -1);
 
             return (
               <Fragment key={pathSlug}>
