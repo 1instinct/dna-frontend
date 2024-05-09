@@ -386,7 +386,7 @@ export const ProductDetails = ({ wholesale, props }: ProductDetailsProps) => {
       thisProduct &&
       thisProduct?.included?.filter((e: any) => e["type"] === "image");
     const primaryImg = productImgs && productImgs[0]?.attributes.styles[9].url;
-    // console.log("rendered imgs: ", productImgs);
+    console.log("rendered imgs: ", productImgs);
     if (productImgs && productImgs.length < 1) {
       return <Loading />;
     }
