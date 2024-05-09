@@ -59,6 +59,7 @@ import {
 } from "./ProductDetails.styles";
 import { boolean } from "yup";
 import { size } from "polished";
+import constants from "../../utilities/constants";
 
 const settings = {
   speed: 500,
@@ -168,11 +169,14 @@ export const ProductDetails = ({ wholesale, props }: ProductDetailsProps) => {
     return qty;
   };
 
+  const foundVariants = thisProduct?.included?.filter(
+    (elem) => elem.type === "variant"
+  );
   // const [colorOptions, setColorOptions] = useState<any>(productColors);
   const [chosenVariants, setChosenVariants] = useState<any[]>([]);
   const [chosenVariantQty, setChosenVariantQty] = useState(0);
   const [addItem, setAddItem] = useState<any>({
-    variant_id: thisProduct?.data.id,
+    variant_id: foundVariants ? foundVariants[0].id : "",
     quantity: wholesale ? variantsPerPack(packSizeQtys) : 1
     // public_metadata: {
     //   first_item_order: true
@@ -231,7 +235,6 @@ export const ProductDetails = ({ wholesale, props }: ProductDetailsProps) => {
     const foundVariants = findVariantsWithOptionId(optionId);
     // const chosenVariant = variantsData && variantsData?.find((i) => i.relationships?.option_values?.data['id'] === optionId);
     if (chosenVariants.length > 0) {
-      debugger;
       const chosenVariant = chosenVariants.find(
         (i) => i.relationships?.option_values?.data["id"] === optionId
       );
@@ -326,12 +329,13 @@ export const ProductDetails = ({ wholesale, props }: ProductDetailsProps) => {
     });
   };
 
-  useEffect(() => {
-    const foundVariants = thisProduct?.included?.filter(
-      (elem) => elem.type === "variant"
-    );
-    console.log("VARIANTS: ", foundVariants);
-  }, [thisProduct]);
+  // useEffect(() => {
+  //   const foundVariants = thisProduct?.included?.filter(
+  //     (elem) => elem.type === "variant"
+  //   );
+  //   console.log("VARIANTS: ", foundVariants);
+  //   console.log("PRODUCT ID: ", thisProduct?.data?.id);
+  // }, [thisProduct]);
   
   const renderWholesaleOptions = () => {
 
@@ -385,15 +389,16 @@ export const ProductDetails = ({ wholesale, props }: ProductDetailsProps) => {
     const productImgs =
       thisProduct &&
       thisProduct?.included?.filter((e: any) => e["type"] === "image");
-    const primaryImg = productImgs && productImgs[0]?.attributes.styles[9].url;
-    console.log("rendered imgs: ", productImgs);
+    const primaryImg = productImgs && productImgs[0]?.attributes?.styles[9]?.url;
+    constants.IS_DEBUG && console.log("Product Imgs: ", productImgs);
+    const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${primaryImg}`;
     if (productImgs && productImgs.length < 1) {
       return <Loading />;
     }
     if (productImgs && productImgs.length == 1) {
       return (
         <StyledSlide index={0}>
-          <StyledImageWithZoom src={primaryImg} />
+          <StyledImageWithZoom src={imgSrc} />
         </StyledSlide>
       );
     }
@@ -590,8 +595,8 @@ export const ProductDetails = ({ wholesale, props }: ProductDetailsProps) => {
                 </div>
               )}
 
-              {/* <BuyButton className="" onClick={() => handleAllToCart(addItem)}> */}
-              <BuyButton className="" onClick={addAllToCart}>
+              <BuyButton className="" onClick={() => handleAddToCart(addItem)}>
+              {/* <BuyButton className="" onClick={addAllToCart}> */}
                 add to cart
               </BuyButton>
               <div style={{ textAlign: "left" }}>

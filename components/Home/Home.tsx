@@ -117,7 +117,7 @@ export const Home = (props: any) => {
       <Hero />
       <Content>
         {/* {memberList} */}
-        <StreamList data={streamsData?.response_data} title={"Live-Shopping"} />
+        {streamsData && <StreamList data={streamsData?.response_data} title={"Live-Shopping"} />}
         {!productsAreLoading && polProductList}
         {/* {mobileMemberList} */}
         <Featured data={homeData.latestProducts} title="" />;

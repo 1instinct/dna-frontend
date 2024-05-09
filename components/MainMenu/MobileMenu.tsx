@@ -18,6 +18,7 @@ import {
   StyledListItemText,
   StyledListItemIcon
 } from "./MobileMenu.styles";
+import constants from "../../utilities/constants";
 
 export interface MenuItemProps {
   paddingLeft: string;
@@ -38,14 +39,18 @@ export const MobileMenu = ({
   onMenuItemClick,
   menusData
 }: any) => {
+  const theme = useTheme();
   const router = useRouter();
   const currYear = new Date().getFullYear();
   const [open, setOpen] = useState(false);
+  const [keyPath, setKeyPath] = useState("");
+  const menuItems =
+      menusData?.menu_location_listing?.length > 0
+        ? menusData?.menu_location_listing[0].menu_item_listing
+        : [];
+  
   const toggleMenu = () => setOpen((value: any) => !value);
 
-  const theme = useTheme();
-
-  const [keyPath, setKeyPath] = useState("");
   const handleClick = useCallback(
     (kp: any, key: any) => {
       if (onMenuItemClick) {
@@ -66,7 +71,7 @@ export const MobileMenu = ({
   );
 
   const renderMenuItems = (
-    localMenuData: any[],
+    menuData: any[],
     parentKeyPath: string,
     level: number
   ) => {
@@ -76,19 +81,17 @@ export const MobileMenu = ({
     // const menuItems = isArray
     //   ? localMenuData
     //   : menusData?.menu_location_listing[0].menu_item_listing;
-    const menuItems =
-      menusData.length > 0
-        ? menusData?.menu_location_listing[0].menu_item_listing
-        : [];
-    // console.log('local menu: ', localMenuData);
-    if (menusData.length) {
+    
+    constants.IS_DEBUG && console.log("menuItems: ", menuItems);
+    if (menuData.length) {
       return (
         <StyledList disablePadding>
-          {menuItems.map((item: any, index: any) => {
-            const subItems = item.childrens;
+          {menuData.map((item: any, index: any) => {
+            const hasChildren = item.childrens.length > 0;
+            const subItems = hasChildren ? item.childrens : [];
             const slug = item.name.toLowerCase();
             const pathSlug = parentKeyPath + "/" + slug;
-            // console.log(subItems, pathSlug, keyPath.indexOf(pathSlug) != -1);
+            constants.IS_DEBUG && subItems.length && console.log("subItems: ", subItems, pathSlug, keyPath.indexOf(pathSlug) != -1);
 
             return (
               <Fragment key={pathSlug}>
@@ -104,7 +107,7 @@ export const MobileMenu = ({
                     <StyledListItemText primary={item.name} />
                     {item &&
                       subItems &&
-                      subItems.length != 0 &&
+                      subItems.length > 0 &&
                       (keyPath.indexOf(pathSlug) != -1 ? (
                         <ExpandLess />
                       ) : (
@@ -112,13 +115,13 @@ export const MobileMenu = ({
                       ))}
                   </MenuItem>
                 }
-                {item && subItems && subItems.length != 0 && (
+                {item && subItems && subItems.length > 0 && (
                   <Collapse
                     timeout="auto"
                     unmountOnExit
-                    in={keyPath.indexOf(pathSlug) != -1}
+                    in={keyPath.indexOf(pathSlug) !== -1}
                   >
-                    {level < 2
+                    {level < 1 && subItems.length > 0
                       ? renderMenuItems(subItems, pathSlug, level + 1)
                       : null}
                     {/* <h1>hey</h1> */}
@@ -154,7 +157,7 @@ export const MobileMenu = ({
         </>
       ) : null}
       {/* {renderMenuItems(menuItemsData && menuItemsData?.response_data.menu_location_listing[0], "", 0)} */}
-      {renderMenuItems(menusData, "", 0)}
+      {menuItems && renderMenuItems(menuItems, "", 0)}
       <MenuItem
         paddingLeft={"10px"}
         onClick={() => {

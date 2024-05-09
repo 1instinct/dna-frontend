@@ -58,17 +58,17 @@ export const MainMenu = (props: MainMenuProps) => {
     isSuccess: boolean;
   } = useMenuItems(1);
 
-  useEffect(() => {
-    // if (menuItemsIsSuccess && menuLocationIsSuccess) {
-    //   console.log(
-    //     menusData,
-    //     "MENU LOCATION",
-    //     menuLocationData?.response_data,
-    //     "MENU ITEMS",
-    //     menuItemsData?.response_data
-    //   );
-    // }
-  }, []);
+  // useEffect(() => {
+  //   if (menuItemsIsSuccess && menuLocationIsSuccess) {
+  //     console.log(
+  //       // menusData,
+  //       // "MENU LOCATION",
+  //       // menuLocationData?.response_data,
+  //       "MENU ITEMS",
+  //       menuItemsData?.response_data
+  //     );
+  //   }
+  // }, [menuItemsData, menuLocationData]);
 
   if (menuItemsIsLoading || menuLocationIsLoading) return null;
 
@@ -105,7 +105,7 @@ export async function getServerSideProps() {
   await queryClient.prefetchQuery(["menu_location", 1], () =>
     fetchMenuLocation(1)
   );
-  await queryClient.prefetchQuery(["menu_items", 1], () => fetchMenuItems(0));
+  await queryClient.prefetchQuery(["menu_items", 1], () => fetchMenuItems(1));
 
   return {
     props: {

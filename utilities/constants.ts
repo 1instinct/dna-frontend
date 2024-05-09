@@ -27,6 +27,6 @@ export default {
   DATE_REGEX: new RegExp(
     /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/
   ),
-  IS_DEBUG: process.env.NEXT_PUBLIC_DEBUG_MODE === "true",
+  IS_DEBUG: process.env.NEXT_PUBLIC_IS_DEBUG_MODE === "true",
   PLACES_API_KEY: process.env.NEXT_PUBLIC_PLACES_API_KEY,
 };

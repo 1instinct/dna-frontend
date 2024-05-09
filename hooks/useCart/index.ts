@@ -3,6 +3,7 @@ import { IOrder } from "@spree/storefront-api-v2-sdk/types/interfaces/Order";
 import { useQuery } from "react-query";
 import { spreeClient } from "../../config/spree";
 import { QueryKeys } from "../queryKeys";
+import constants from "../../utilities/constants";
 
 export const showCart = async () => {
   const storage = (await import("../../config/storage")).default;
@@ -33,7 +34,7 @@ export const showCart = async () => {
         orderToken: guestOrderToken as any
       });
       if (response.isSuccess()) {
-        console.log("cart: ", response.success());
+        constants.IS_DEBUG && console.log("cart: ", response.success());
         return response.success();
       } else {
         throw new Error(response.fail().message);
@@ -41,7 +42,7 @@ export const showCart = async () => {
     } else {
       const response = await spreeClient.cart.create();
       if (response.isSuccess()) {
-        console.log("cart: ", response.success());
+        constants.IS_DEBUG && console.log("cart: ", response.success());
         const result = response.success();
         storage.setGuestOrderToken(result.data.attributes.token);
         return result;
