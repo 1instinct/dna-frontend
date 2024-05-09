@@ -65,6 +65,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <Header darkMode={darkMode} />
         <MainMenu
           showMenuHeader
+          onMenuItemClick={(key: string) => router.push(key)}
           customBurgerIcon={<i className="btb bt-bars" />}
           pcMenuItemClassName={"pc-menu-item"}
           pcWrapClassName={"pc-menu-wrap"}

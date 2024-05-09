@@ -53,9 +53,9 @@ export const MobileMenu = ({
 
   const handleClick = useCallback(
     (kp: any, key: any) => {
-      if (onMenuItemClick) {
-        onMenuItemClick(kp, key);
-      }
+      // if (onMenuItemClick) {
+      //   onMenuItemClick(key);
+      // }
       setKeyPath((pre) => {
         if (kp == pre) {
           // console.log("closing");
@@ -69,6 +69,15 @@ export const MobileMenu = ({
     },
     [onMenuItemClick]
   );
+
+  const handleItemClick = (item: any, hasChildren: boolean, pathSlug: string, slug: string) => {
+    if (hasChildren) {
+      handleClick(pathSlug, slug);
+    } else {
+      router.push(item.url); // Navigate to the item's URL.
+      toggleMenu(); // Close the sidebar menu.
+    }
+  };
 
   const renderMenuItems = (
     menuData: any[],
@@ -95,39 +104,24 @@ export const MobileMenu = ({
 
             return (
               <Fragment key={pathSlug}>
-                {
-                  <MenuItem
-                    key={`${pathSlug}-1`}
-                    paddingLeft={paddingLeft}
-                    onClick={handleClick.bind(null, pathSlug, slug)}
-                    button
-                  >
-                    {/* <StyledListItemIcon>{item.icon ? item.icon() : null}</StyledListItemIcon> */}
-                    {/* <StyledListItemText primary={item.name.replace("/", "_")} /> */}
-                    <StyledListItemText primary={item.name} />
-                    {item &&
-                      subItems &&
-                      subItems.length > 0 &&
-                      (keyPath.indexOf(pathSlug) != -1 ? (
-                        <ExpandLess />
-                      ) : (
-                        <ExpandMore />
-                      ))}
-                  </MenuItem>
-                }
-                {item && subItems && subItems.length > 0 && (
+                <MenuItem
+                  key={`${pathSlug}-1`}
+                  paddingLeft={paddingLeft}
+                  onClick={() => handleItemClick(item, hasChildren, pathSlug, slug)}
+                  button
+                >
+                  {/* <StyledListItemIcon>{item.icon ? item.icon() : null}</StyledListItemIcon> */}
+                  {/* <StyledListItemText primary={item.name.replace("/", "_")} /> */}
+                  <StyledListItemText primary={item.name} />
+                  {hasChildren && (keyPath.indexOf(pathSlug) !== -1 ? <ExpandLess /> : <ExpandMore />)}
+                </MenuItem>
+                {hasChildren && (
                   <Collapse
                     timeout="auto"
                     unmountOnExit
                     in={keyPath.indexOf(pathSlug) !== -1}
                   >
-                    {level < 1 && subItems.length > 0
-                      ? renderMenuItems(subItems, pathSlug, level + 1)
-                      : null}
-                    {/* <h1>hey</h1> */}
-                    {subItems.map(({ item, i }: any) => {
-                      return <Fragment key={`${pathSlug}-2`}>{item}</Fragment>;
-                    })}
+                    {renderMenuItems(subItems, pathSlug, level + 1)}
                   </Collapse>
                 )}
               </Fragment>

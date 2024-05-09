@@ -24,10 +24,12 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
     pcMenuItemClassName,
     onMenuItemClick
   } = props;
+
   const menuItems =
     menusData && menusData.menu_location_listing
       ? menusData?.menu_location_listing[0]?.menu_item_listing
       : [];
+
   const desktopMenu = () => {
     if (menusLoading) {
       return [];
@@ -37,7 +39,7 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
         <MenuItem
           onMouseEnter={handleMouseEnter.bind(null, item)}
           onMouseLeave={handleMouseLeave}
-          onClick={() => router.push(item.url)}
+          onClick={() => item.childrens?.length < 1 && router.push(item.url)}
           isActive={currentKey == item.id}
           key={`${index}-1`}
         >
@@ -46,6 +48,7 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
       );
     });
   };
+
   const [currentKey, setCurrentKey] = useState();
   const handleMouseEnter = useCallback((item: any) => {
     if (timer) {
@@ -71,21 +74,20 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
         if (item.childrens.length) {
           return (
             <DropDown
+              // onClick={handleMouseEnter.bind(null, item)}
               onMouseEnter={handleMouseEnter.bind(null, item)}
               onMouseLeave={handleMouseLeave}
               isActive={currentKey == item.id}
               key={`${index}-2`}
             >
-              {item.childrens?.map((item: any, index: any) => (
+              {item.childrens?.map((child: any, index: any) => (
                 <DropDownColumn key={`${index}-column`}>
-                  <DropDownHeader key={`${index}-header`}>
+                  {/* <DropDownHeader key={`${index}-header`}>
                     {item.name}
-                  </DropDownHeader>
-                  {item.childrens?.map((item: any, index: any) => (
-                    <DropDownLink href={item.url} key={`${index}-link`}>
-                      {item.name}
+                  </DropDownHeader> */}
+                  <DropDownLink href={child.url} key={`${index}-link`}>
+                      {child.name}
                     </DropDownLink>
-                  ))}
                 </DropDownColumn>
               ))}
               <Vr />
