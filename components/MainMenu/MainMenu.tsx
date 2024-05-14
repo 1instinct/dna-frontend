@@ -58,7 +58,7 @@ export const MainMenu = (props: MainMenuProps) => {
     isSuccess: boolean;
   } = useMenuItems(1);
 
-  if (menuItemsIsLoading || menuLocationIsLoading) return null;
+  if (menuItemsIsLoading || menuLocationIsLoading || !menuItemsData) return null;
 
   return (
     <>

@@ -15,6 +15,10 @@ export const StreamList: React.FC<StreamListProps> = (props) => {
   const { data, title } = props;
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
+  if (!data) {
+    return null;
+  }
+
   return (
     <StreamListWrapper>
       <Title>{title}</Title>

@@ -107,6 +107,7 @@ Done!
 - Twilio
 - Unit Testing
 - Chat widget
+- RSS feeds
 - Chatbot (Rasa)
 - Masonry ([react-responsive-masonry](https://www.npmjs.com/package/react-responsive-masonry))
 - Browser Feature Detection
