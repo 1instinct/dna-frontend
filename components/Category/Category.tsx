@@ -15,7 +15,7 @@ import { addItemToCart } from "../../hooks/useCart";
 import { QueryKeys } from "../../hooks/queryKeys";
 import * as tracking from "../../config/tracking";
 import Featured from "../Home/Featured";
-import PolProductList from "../PolProductList";
+import { PolProductList } from "../PolProductList";
 import { useMediaQuery } from "react-responsive";
 import homeData from "../Home/home.json";
 import {
