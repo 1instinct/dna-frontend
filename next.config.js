@@ -37,23 +37,20 @@ const DEPLOY_ENV_MAPPING = {
 };
 const envFile = path.join(__dirname, `.env.${DEPLOY_ENV_MAPPING[DEPLOY_ENV]}`);
 loadEnvVariables();
-const isLocalDevEnvironment = !process.env.DEPLOY_ENV;
-// console.log("process.env.TEST", process.env.TEST);
 module.exports = {
   swcMinify: true,
   webpack: (config, { webpack }) => {
-    config.stats = "verbose";
     config.plugins = config.plugins || [];
     config.plugins = [
       ...config.plugins,
+      new webpack.DefinePlugin({
+        'process.env.FLUENTFFMPEG_COV': false
+      }),
       new Dotenv({
         path: envFile,
         systemvars: true
       })
     ];
-    config.node = {
-      fs: false
-    };
     config.resolve = {
       ...config.resolve,
       alias: {

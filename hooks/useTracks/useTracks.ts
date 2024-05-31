@@ -1,8 +1,12 @@
 import { useQuery } from "react-query";
-import { scClient } from "../../config/soundcloud";
 import { QueryKeys } from "../queryKeys";
+import Soundcloud from "soundcloud.ts";
 
 const fetchTracks = async (user: string = "") => {
+  const scClient = new Soundcloud(
+    process.env.NEXT_PUBLIC_SC_CLIENT_ID,
+    process.env.NEXT_PUBLIC_SC_OAUTH_TOKEN
+  );
   const response = await scClient.users
     .tracksV2(user)
     .then((res: any) => res)

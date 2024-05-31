@@ -6,13 +6,6 @@ import {
   useStreams
 } from "../../../hooks";
 import { ProductCard } from "../..";
-import {
-  fetchStreams,
-  fetchProducts,
-  useProducts,
-  useStreams
-} from "../../../hooks";
-import { ProductCard } from "../..";
 import { Container, Grid, LatestTitle } from "./MobileLatest.styles";
 export interface MobileLatestProps {
   products: any;

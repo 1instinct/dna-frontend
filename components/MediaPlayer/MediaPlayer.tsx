@@ -49,22 +49,11 @@ export interface Song {
 
 // export const MediaPlayer = (props: any): <Props, S> => {
 export const MediaPlayer = (props: any) => {
-  const {
-    error,
-    status,
-    data: songData,
-    isLoading,
-    isSuccess
-  }: {
-    error: any;
-    status: any;
-    data: any;
-    isLoading: boolean;
-    isSuccess: boolean;
-  } = useTracks("smokeyyy");
   //seekbarFunction: (e: Event) => void;
   const rap = useRef<any>();
+  const isClient = typeof window !== "undefined";
   const [songs, setSongs] = useState<Song[]>([]);
+  const [songData, setSongData] = useState<any | null>(null);
   const [songIndex, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [url, setUrl] = useState("");
@@ -79,6 +68,23 @@ export const MediaPlayer = (props: any) => {
   const [seekbarvalue, setSeekbarvalue] = useState("");
 
   useEffect(() => {
+    if (isClient) {
+      const {
+        error,
+        status,
+        data: fetchedSongData,
+        isLoading,
+        isSuccess
+      }: {
+        error: any;
+        status: any;
+        data: any;
+        isLoading: boolean;
+        isSuccess: boolean;
+      } = useTracks("smokeyyy");
+
+      setSongData(fetchedSongData);
+    }
     const audio = document.getElementsByClassName("react-audio-player")[0];
     // console.log( this.rap.audioEl.current);
     //audio.addEventListener('timeupdate', this.UpdateTheTime, false);
@@ -107,7 +113,7 @@ export const MediaPlayer = (props: any) => {
 
     /* Update state songs while data is passed from parent component while ready and formated */
     // setSongs(props.songs);
-  }, [songs, rap, props.songs]);
+  }, [isClient, songs, rap, props.songs]);
 
   const ApiCall = async () => {
     console.log("Starting API call");

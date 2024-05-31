@@ -45,12 +45,12 @@
     "@mux/mux-node": "^3.3.1",
     "@react-three/fiber": "8.13.3",
     "@spree/storefront-api-v2-sdk": "file:contrib/spree-storefront-api-v2-sdk-4.5.1003.tgz",
-    "@types/jquery": "^3.5.5",
     "classnames": "^2.3.1",
     "cors": "^2.8.5",
     "dotenv-webpack": "^1.7.0",
     "emotion-theming": "^11.0.0",
     "eve": "^0.5.4",
+    "fluent-ffmpeg": "2.1.2",
     "formik": "^2.2.6",
     "formik-wizard": "^3.1.2",
     "fs": "^0.0.1-security",
@@ -110,6 +110,7 @@
     "@babel/plugin-syntax-export-default-from": "^7.14.5",
     "@emotion/babel-plugin": "^11.3.0",
     "@types/cors": "^2.8.12",
+    "@types/fluent-ffmpeg": "2.1.21",
     "@types/hls.js": "^1.0.0",
     "@types/jest": "29.2.4",
     "@types/jquery": "^3.5.5",
@@ -130,7 +131,6 @@
     "@types/react-typist": "^2.0.3",
     "@types/three": "0.152.1",
     "@types/ua-parser-js": "^0.7.36",
-    "@types/video.js": "7.3.52",
     "@types/yup": "0.29.13",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
@@ -146,6 +146,7 @@
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0",
-    "typescript": "4.9.4"
+    "typescript": "4.9.4",
+    "webpack-cli": "5.1.4"
   }
 }
