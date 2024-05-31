@@ -2,26 +2,6 @@ import styled from "@emotion/styled";
 import { ButtonBack, ButtonNext } from "pure-react-carousel";
 import { Slider, Slide, ImageWithZoom } from "pure-react-carousel";
 
-export const NotFoundContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: space-around;
-  min-height: 80vh;
-  font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
-`;
-
-export const NotFoundTitle = styled.h1`
-  width: 100%;
-
-  text-align: center;
-`;
-
-export const NotFoundSubtitle = styled.h2`
-  width: 100%;
-  text-align: center;
-`;
-
 export const ProductContainer = styled.div`
   display: flex;
   flex-wrap: wrap;

@@ -17,7 +17,7 @@ const MobileLatest: React.FC<MobileLatestProps> = (props) => {
   const { title, products } = props;
   return (
     <Container>
-      <LatestTitle>{data.title}</LatestTitle>
+      <LatestTitle>{title}</LatestTitle>
       <Grid>
         {products?.data.map((item: any, index: any) => {
           const defaultImg =

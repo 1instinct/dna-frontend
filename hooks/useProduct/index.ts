@@ -16,6 +16,11 @@ const fetchProduct = async (slug: string): Promise<IProduct> => {
       if (res.status >= 200 && res.status <= 299) {
         return res.json();
       }
+      // else {
+      //   // Promise.reject("Product request failed");
+      //   // console.log("Uh oh RES: ", res.statusText);
+      //   throw new Error(res.statusText);
+      // }
     })
     .catch((err) => {
       // console.log("Uh oh ERR: ", err);
