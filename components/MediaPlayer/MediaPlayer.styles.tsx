@@ -41,7 +41,11 @@ export const GlowContainer = styled.div`
 
 /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#2e04e8+0,660058+100&0+0,1+100 */
 export const Glow = styled.div`
-  background: radial-gradient(ellipse at center, rgba(46, 4, 232, 0) 0%, rgba(102, 0, 88, 1) 100%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(46, 4, 232, 0) 0%,
+    rgba(102, 0, 88, 1) 100%
+  );
   display: block;
   height: 100%;
   width: 100%;

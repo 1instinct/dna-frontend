@@ -4,8 +4,8 @@
   src: url("fonts/JamesFajardo.eot?#iefix") format("embedded-opentype"),
     /* //  url('fonts/JamesFajardo.woff2') format('woff2'), */
       url("fonts/JamesFajardo.woff") format("woff"),
-    /* //  url('fonts/JamesFajardo.woff2') format('woff2'), */ url("fonts/JamesFajardo.woff")
-      format("woff"),
+    /* //  url('fonts/JamesFajardo.woff2') format('woff2'), */
+      url("fonts/JamesFajardo.woff") format("woff"),
     url("fonts/JamesFajardo.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;

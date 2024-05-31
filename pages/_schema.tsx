@@ -46,9 +46,9 @@ const Schema = ({ post }: any) => {
   }
 
   const citationsList = citations.map(({ citation, i }: any) => {
-    return `{ "@type": "CreativeWork", "citation": ${JSON.stringify(citation)} }${
-      i === citations.length - 1 ? "" : ","
-    }\n`;
+    return `{ "@type": "CreativeWork", "citation": ${JSON.stringify(
+      citation
+    )} }${i === citations.length - 1 ? "" : ","}\n`;
   });
   const citationsText = citationsList.join("");
 
@@ -94,7 +94,9 @@ const Schema = ({ post }: any) => {
       "dateModified": "${modified}",
       "description": "${blurb}",
       "discussionUrl": "${process.env.SITE_URL}articles/${slug}#comments",
-      "editor": { "@id": "${process.env.SITE_URL}author/${author.slug}#author" },
+      "editor": { "@id": "${process.env.SITE_URL}author/${
+        author.slug
+      }#author" },
       "headline": "${title}",
       ${sourceUrl ? `"image": "${sourceUrl}",` : ""}
       "inLanguage": "English",

@@ -21,7 +21,9 @@ const fetchTracks = async (user: string = "") => {
 };
 
 const useTracks = (user: string) => {
-  return useQuery<any, false>([QueryKeys.TRACKS, user], () => fetchTracks(user));
+  return useQuery<any, false>([QueryKeys.TRACKS, user], () =>
+    fetchTracks(user)
+  );
 };
 
 export { useTracks, fetchTracks };

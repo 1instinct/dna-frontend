@@ -7,7 +7,14 @@ const user_id = process.env.SC_USER_ID;
 const client_id = process.env.SC_CLIENT_ID;
 const client_secret = process.env.SC_CLIENT_SECRET;
 
-import { StarsContainer, Stars, GlowContainer, Glow, Skyline, Cockpit } from "./MediaPlayer.styles";
+import {
+  StarsContainer,
+  Stars,
+  GlowContainer,
+  Glow,
+  Skyline,
+  Cockpit
+} from "./MediaPlayer.styles";
 import { NotifyForm } from "..";
 
 const styles = {
@@ -48,9 +55,13 @@ export const MediaPlayer = (props: any) => {
     data: songData,
     isLoading,
     isSuccess
-  }: { error: any; status: any; data: any; isLoading: boolean; isSuccess: boolean } = useTracks(
-    "smokeyyy"
-  );
+  }: {
+    error: any;
+    status: any;
+    data: any;
+    isLoading: boolean;
+    isSuccess: boolean;
+  } = useTracks("smokeyyy");
   //seekbarFunction: (e: Event) => void;
   const rap = useRef<any>();
   const [songs, setSongs] = useState<Song[]>([]);

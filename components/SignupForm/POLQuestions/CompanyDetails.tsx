@@ -6,7 +6,11 @@ import { Button } from "@material-ui/core";
 // Local
 import TipBot from "../../TipBot";
 import { FormikInput } from "../../FormikWrappers";
-import { QuestionWrapper, InputGroupWrapper, InputWrapper } from "./Questions.styles";
+import {
+  QuestionWrapper,
+  InputGroupWrapper,
+  InputWrapper
+} from "./Questions.styles";
 
 export const CompanyDetails = () => {
   // const { errors, touched } = useFormikContext()

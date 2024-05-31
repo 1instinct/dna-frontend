@@ -200,7 +200,9 @@ export const NotifyForm = () => {
           </form>
           {/* MailChimp Status */}
           {status === "sending" && (
-            <NotifyText className="mc__alert mc__alert--sending">sending...</NotifyText>
+            <NotifyText className="mc__alert mc__alert--sending">
+              sending...
+            </NotifyText>
           )}
           {status === "error" && (
             <NotifyText>

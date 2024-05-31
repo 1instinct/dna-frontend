@@ -42,7 +42,7 @@ const isLocalDevEnvironment = !process.env.DEPLOY_ENV;
 module.exports = {
   swcMinify: true,
   webpack: (config, { webpack }) => {
-    config.stats = 'verbose';
+    config.stats = "verbose";
     config.plugins = config.plugins || [];
     config.plugins = [
       ...config.plugins,
