@@ -245,19 +245,19 @@ export const SignupForm = () => {
         subtitle: `Your new User ID is: ###`
       });
     })
-    .then((res) => {
-      console.log("handleSubmit res: ", res);
-    })
-    .catch((err) => {
-      console.log("handleSubmit error: ", err);
-      // toggleErrorModal();
-      // setErrorMessage(err);
-      Alert.fire({ icon: "error", title: "Uh oh!", text: err });
-      // return Promise.resolve({
-      //   message: 'Uh oh.',
-      //   subtitle: err
-      // })
-    });
+      .then((res) => {
+        console.log("handleSubmit res: ", res);
+      })
+      .catch((err) => {
+        console.log("handleSubmit error: ", err);
+        // toggleErrorModal();
+        // setErrorMessage(err);
+        Alert.fire({ icon: "error", title: "Uh oh!", text: err });
+        // return Promise.resolve({
+        //   message: 'Uh oh.',
+        //   subtitle: err
+        // })
+      });
   }, []);
 
   // We assume this method cannot be called on the last step

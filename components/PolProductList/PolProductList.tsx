@@ -67,23 +67,23 @@ export const PolProductList: React.FC<PolProductListProps> = (props) => {
           return (
             <SwiperSlide key={index}>
               <a href={`${item.attributes.slug}`}>
-              <ProductImgOutterBox>
-                <ProductImg src={imgSrc} />
-              </ProductImgOutterBox>
-              <ProductFooter>
-                <ProductFooterLeft>
-                  <MyProductTitle>{item.attributes.name}</MyProductTitle>
-                  {/* <ProductDesc>{item.attributes.description}</ProductDesc> */}
-                  <ThreeDot>
-                    <Dot1 as={"span"}></Dot1>
-                    <Dot2 as={"span"}></Dot2>
-                    <Dot3 as={"span"}></Dot3>
-                  </ThreeDot>
-                </ProductFooterLeft>
-                <ProductFooterRight>
-                  <ProductRate name="simple-controlled" value={item.attributes.rate} />
-                  <Price>${item.attributes.price}</Price>
-                </ProductFooterRight>
+                <ProductImgOutterBox>
+                  <ProductImg src={imgSrc} />
+                </ProductImgOutterBox>
+                <ProductFooter>
+                  <ProductFooterLeft>
+                    <MyProductTitle>{item.attributes.name}</MyProductTitle>
+                    {/* <ProductDesc>{item.attributes.description}</ProductDesc> */}
+                    <ThreeDot>
+                      <Dot1 as={"span"}></Dot1>
+                      <Dot2 as={"span"}></Dot2>
+                      <Dot3 as={"span"}></Dot3>
+                    </ThreeDot>
+                  </ProductFooterLeft>
+                  <ProductFooterRight>
+                    <ProductRate name="simple-controlled" value={item.attributes.rate} />
+                    <Price>${item.attributes.price}</Price>
+                  </ProductFooterRight>
                 </ProductFooter>
               </a>
             </SwiperSlide>
