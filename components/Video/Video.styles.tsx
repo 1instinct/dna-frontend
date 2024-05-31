@@ -9,7 +9,4 @@ export const VideoContainer = styled.div`
   background-size: cover;
   background-position: 0px 0px;
   overflow: hidden;
-
-  & div:first-child {
-  }
 `;

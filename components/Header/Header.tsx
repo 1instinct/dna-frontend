@@ -69,12 +69,6 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
     isError: cartHasError
   } = useCart();
 
-  const {
-    data: cartData,
-    isLoading: cartIsLoading,
-    isError: cartHasError
-  } = useCart();
-
   const handleAccount = (event: any) => {
     setAccountElem(event.currentTarget);
   };
@@ -88,7 +82,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
   }
 
   useEffect(() => {
-    console.log(user && user.data.attributes);
+    // console.log(user && user.data.attributes);
   }, []);
 
   return (
@@ -145,7 +139,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
                 </AccountOption>
                 <hr />
                 <AccountOption>
-                  <div onClick={logout}>Logout</div>
+                  <button onClick={() => logout()}>Logout</button>
                 </AccountOption>
               </AccountMenu>
               {/* <UserIconMo src={"/user.png"} /> */}

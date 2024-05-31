@@ -28,4 +28,5 @@ export * from "./StreamList";
 export * from "./StreamViewer";
 export * from "./Terms";
 export * from "./TipBot";
+export * from "./Video";
 export * from "./VideoJS";

@@ -4,6 +4,7 @@ export * from "./useProducts";
 export * from "./useOnClickOutside";
 export * from "./useStream";
 export * from "./useStreams";
+export * from "./useTracks";
 export * from "./useMenuLocation";
 export * from "./useMenuItems";
 export * from "./useVariants";
