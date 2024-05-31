@@ -96,6 +96,7 @@
     "soundcloud.ts": "^0.4.5",
     "sweetalert2": "^11.1.4",
     "swiper": "^6.7.5",
+    "three": "0.143.0",
     "ua-parser-js": "^0.7.28",
     "video-react": "^0.14.1",
     "video.js": "^7.17.0",
