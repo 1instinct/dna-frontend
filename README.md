@@ -2,8 +2,13 @@
 
 ## Getting Started
 
+<<<<<<< HEAD
 ### Running Locally
+=======
+### Running Locally:
+>>>>>>> 296d2f1 (cleanup some cart/search loading states, fix linter errors)
 
+<<<<<<< HEAD
 1. `cp .env.example .env.development`
 1. Replace `.env.development` with variables from Aaron
 1. `yarn dev`
@@ -13,6 +18,24 @@ _Gotchas:_
 
 - Does the backend (`dna-admin`) have menus, products, live streams
 - Do you have the backend url & api key in `.env`?
+=======
+- `cp .env.example .env.development`
+- Replace `.env.development` with variables from Aaron
+- `yarn dev`
+- Open [http://localhost:3000](http://localhost:3000) in your browser.
+<<<<<<< HEAD
+=======
+
+## NextJS
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+>>>>>>> 296d2f1 (cleanup some cart/search loading states, fix linter errors)
+>>>>>>> 1d2ecf5 (cleanup some cart/search loading states, fix linter errors)
 
 ## Styles
 
