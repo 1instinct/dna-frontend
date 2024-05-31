@@ -36,7 +36,7 @@ export const PolProductList: React.FC<PolProductListProps> = (props) => {
 
   useEffect(() => {
     if (products) {
-      console.log("PRODUCTS: ", data);
+      // console.log("PRODUCTS: ", data);
     }
   }, []);
 
@@ -60,13 +60,15 @@ export const PolProductList: React.FC<PolProductListProps> = (props) => {
           const defaultImg =
             "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
           const productImg = item.relationships?.images?.data[0]?.id;
-          const foundImage = data?.included.filter((e: any) => e["id"] == productImg);
-          const imgUrl = foundImage[0]?.attributes?.styles[4].url;
-          console.log(foundImage);
+          const foundImg = data?.included.filter((e: any) => e["id"] == productImg);
+          const imgUrl = foundImg[0]?.attributes?.styles[4].url;
+          const imgSrc = productImg ? `${process.env.SPREE_API_URL}${imgUrl}` : defaultImg;
+          // console.log(item, productImg, foundImg, imgUrl);
           return (
             <SwiperSlide key={index}>
+              <a href={`${item.attributes.slug}`}>
               <ProductImgOutterBox>
-                <ProductImg src={`${process.env.SPREE_API_URL}${imgUrl}`} />
+                <ProductImg src={imgSrc} />
               </ProductImgOutterBox>
               <ProductFooter>
                 <ProductFooterLeft>
@@ -82,7 +84,8 @@ export const PolProductList: React.FC<PolProductListProps> = (props) => {
                   <ProductRate name="simple-controlled" value={item.attributes.rate} />
                   <Price>${item.attributes.price}</Price>
                 </ProductFooterRight>
-              </ProductFooter>
+                </ProductFooter>
+              </a>
             </SwiperSlide>
           );
         })}
