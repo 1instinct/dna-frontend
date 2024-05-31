@@ -2,6 +2,7 @@ export * from "./404";
 export * from "./Alerts";
 export * from "./AuthForm";
 export * from "./ComingSoon";
+export * from "./FeaturedSnippet";
 export * from "./Footer";
 export * from "./Header";
 export * from "./Home";

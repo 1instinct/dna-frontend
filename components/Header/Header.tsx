@@ -107,7 +107,19 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
             )}
           </LinkDiv>
         </LogoDiv>
+
         <RightSide>
+          <HeaderOptions>
+            <LinkDiv href="https://open.spotify.com/playlist/3T8xxIMFx8OsL8osiY02Wj?si=78c4db2339b14c57" isActive={pathname !== "/login"} target="_blank">
+              PLAYLIST
+            </LinkDiv>
+            <LinkDiv href="https://smokey.threadless.com" isActive={pathname !== "/login"} target="_blank">
+              SHOP
+            </LinkDiv>
+          </HeaderOptions>
+        </RightSide>
+
+        <RightSide style={{ display: "none" }}>
           {isMobile ? null : <SearchBar darkMode={darkMode} />}
           {user ? (
             <HeaderAccount>

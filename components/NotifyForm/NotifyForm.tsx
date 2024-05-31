@@ -16,25 +16,25 @@ import {
 const notifyQuestions = [
   {
     id: "email",
-    question: "Wanna know when the product becomes available?",
+    question: "🎧 Get music in your inbox 🎧",
     placeholder: "Email",
-    buttonText: "Get Updates"
+    buttonText: "Signup"
   },
   {
     id: "firstName",
-    question: "Great. Btw, what's your name?",
+    question: "Thanks! Btw, what's your name? 🤔",
     placeholder: "First Name",
     buttonText: "Save Name"
   },
   {
     id: "lastName",
-    question: "Ok, and your last name?",
+    question: "Sweet, and your last name? 🤔",
     placeholder: "Last Name",
     buttonText: "Save Name"
   },
   {
     id: "phone",
-    question: "Perfect, wanna get text updates from us?",
+    question: "Amazing, want texts from us? 📱",
     placeholder: "Phone",
     buttonText: "Sure"
   }
@@ -211,8 +211,8 @@ export const NotifyForm = () => {
               <NotifyText>{message}</NotifyText>
             )}
         </FormWrapper>
-        <MailTo id="mailto" href={`mailto:${process.env.NEXT_PUBLIC_EMAIL}`}>
-          Email us
+        <MailTo id="mailto" href={`mailto:${process.env.NEXT_PUBLIC_COMPANY_EMAIL}`}>
+          {process.env.NEXT_PUBLIC_COMPANY_EMAIL}
         </MailTo>
       </NotifyFormContainer>
     </>

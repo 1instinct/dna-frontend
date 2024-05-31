@@ -1,13 +1,15 @@
 import styled from "@emotion/styled";
+import { transparentize } from "polished";
 
 export const NotifyFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  position: relative;
+  position: absolute;
   z-index: 10;
-  width: 95%;
+  width: 100%;
   height: 175px;
+  bottom: 40px;
 `;
 
 export const NotifyText = styled.div`
@@ -65,11 +67,13 @@ export const EmailInput = styled.input`
   font-size: ${(p: any) => p.theme.typography.bodySM.fontSize};
   line-height: ${(p: any) => p.theme.typography.bodySM.lineHeight};
   outline: none;
+  border: 2px dotted ${(p: any) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+  border-spacing: 12px;
   padding: 8px 15px;
   background: ${(p: any) =>
     p.theme.isDarkMode
-      ? p.theme.colors.black.primary
-      : p.theme.colors.white.primary};
+      ? transparentize(0.33, p.theme.colors.black.primary)
+      : transparentize(0.33, p.theme.colors.white.primary)};
   transition: 0.33s all ease-in-out;
   &::placeholder {
     color: ${(p: any) =>
@@ -82,12 +86,9 @@ export const EmailInput = styled.input`
     color: ${(p) => p.theme.colors.brand.primary};
     background: ${(p: any) =>
       p.theme.isDarkMode
-        ? p.theme.colors.black.light
+        ? p.theme.colors.black.primary
         : p.theme.colors.white.primary};
-  }
-  &:focus {
-    transition: 0.33s all ease-in-out;
-    color: ${(p) => p.theme.colors.blue.primary};
+    border: 2px dotted ${(p: any) => p.theme.colors.brand.primary};
   }
   &:focus::placeholder {
     color: ${(p) => p.theme.colors.brand.primary};

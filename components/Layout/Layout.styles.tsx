@@ -26,8 +26,9 @@ export const Logo = styled.img<LogoType>`
   width: 181px;
   height: auto;
   margin-bottom: 20px;
-  ${(p) => (p.darkMode ? "filter: invert(1);" : null)};
-  box-shadow: 0 10px 22px rgba(255, 255, 255, 0.1);
+  /* ${(p) => (p.darkMode ? "filter: invert(1);" : null)}; */
+  transform: invert(${(p) => (p.darkMode ? "1" : "0")});
+  /* box-shadow: 0 10px 22px rgba(255, 255, 255, 0.1); */
   @media (max-width: 375px) {
     width: ${pxIphone(80)};
     margin-bottom: 14.68vw;

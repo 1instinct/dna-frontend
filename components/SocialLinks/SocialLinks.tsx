@@ -1,5 +1,5 @@
 import React from "react";
-import { Facebook, Twitter, Instagram } from "@material-ui/icons";
+import { Facebook, Twitter, Instagram, YouTube } from "@material-ui/icons";
 
 import {
   SocialContainer,
@@ -49,6 +49,18 @@ export const SocialLinks = ({ darkMode }: any) => {
             >
               {/* <SocialIcon src="images/social-icon-twitter.png" />{" "} */}
               <Twitter />{" "}
+            </a>
+          </SocialListItem>
+          
+          <SocialListItem darkMode={darkMode}>
+            <a
+              href={
+                `http://www.youtube.com/${process.env.NEXT_PUBLIC_YOUTUBE_SLUG}` ||
+                "http://www.youtube.com"
+              }
+              target="_blank"
+            >
+              <YouTube />{" "}
             </a>
           </SocialListItem>
         </SocialList>

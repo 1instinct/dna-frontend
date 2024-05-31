@@ -101,7 +101,7 @@ export const HeaderOptions = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  margin: 0 20px;
+  margin: 20px;
   justify-content: space-around;
   & > a {
     margin: 0 10px;

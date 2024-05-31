@@ -17,7 +17,8 @@ import {
   Skyline,
   Cockpit
 } from "./MediaPlayer.styles";
-import { NotifyForm } from "..";
+import { Layout, NotifyForm } from "..";
+import { FeaturedSnippet } from "../FeaturedSnippet";
 
 const styles = {
   backgroundColor: "#1f1f1f",
@@ -175,7 +176,7 @@ export const MediaPlayer = (props: any) => {
           <div style={{ marginTop: 10, cursor: "pointer", marginRight: 5 }}>
             <Image
               src="/img/previous.png"
-              alt="Picture of the author"
+              alt="Previous Button"
               width={24}
               height={24}
               onClick={_playNextSong}
@@ -185,7 +186,7 @@ export const MediaPlayer = (props: any) => {
             <div style={{ cursor: "pointer", marginTop: 10 }}>
               <Image
                 src="/img/pause.png"
-                alt="Picture of the author"
+                alt="Pause Button"
                 width={24}
                 height={24}
                 onClick={_pauseAudio}
@@ -195,7 +196,7 @@ export const MediaPlayer = (props: any) => {
             <div style={{ cursor: "pointer", marginTop: 10 }}>
               <Image
                 src="/img/play-arrow.png"
-                alt="Picture of the author"
+                alt="Play Button"
                 width={24}
                 height={24}
                 onClick={_playCurrentSong}
@@ -204,6 +205,7 @@ export const MediaPlayer = (props: any) => {
           )}
           {sampleSoundCloudURLs.length > 0 && (
             <SoundCloudPlayer
+              style={{ display: "none" }}
               url={sampleSoundCloudURLs[songIndex]}
               playing={isPlaying}
               volume={volume}
@@ -217,7 +219,7 @@ export const MediaPlayer = (props: any) => {
           <div style={{ marginTop: 10, cursor: "pointer", marginLeft: 5 }}>
             <Image
               src="/img/right-arrow.png"
-              alt="Picture of the author"
+              alt="Next Button"
               width={24}
               height={24}
               onClick={_playNextSong}
@@ -422,7 +424,7 @@ export const MediaPlayer = (props: any) => {
         <Stars />
       </StarsContainer>
       <Skyline />
-      <Cockpit />
+      {/* <Cockpit /> */}
       <Video
         isPlaying={isPlaying}
         mute={muted}
@@ -432,6 +434,7 @@ export const MediaPlayer = (props: any) => {
       />
       {songs && _renderSongPlayer()}
       {/* <div dangerouslySetInnerHTML={{__html: spotifyEmbedCode}} /> */}
+      <FeaturedSnippet />
       <NotifyForm />
     </>
   );
