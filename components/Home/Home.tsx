@@ -1,3 +1,4 @@
+import React from "react";
 import { useRef, useEffect } from "react";
 import { useQuery } from "react-query";
 import { QueryClient } from "react-query";
@@ -15,7 +16,7 @@ import { Content } from "./Home.styles";
 import Featured from "./Featured";
 import MemberList from "./MemberList";
 import { StreamList } from "../StreamList";
-import PolProductList from "../PolProductList";
+import { PolProductList } from "../PolProductList";
 import { useMediaQuery } from "react-responsive";
 import MobileLatest from "./MobileLatest";
 import { Loading } from "../Loading";

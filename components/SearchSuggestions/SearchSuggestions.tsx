@@ -40,21 +40,24 @@ const SearchSuggestions = ({
 
   if (!isVisible) return null;
 
-  if (isLoading) {
-    setIsSearchLoading(true);
-    return (
-      <StyledSearchSuggestions role="listbox" aria-labelledby={labelId} id={id}>
-        <LoadingIcon className="bts bt-spinner bt-pulse" />
-      </StyledSearchSuggestions>
-    );
-  }
+  // if (isLoading) {
+  //   setIsSearchLoading();
+  //   return (
+  //     <StyledSearchSuggestions role="listbox" aria-labelledby={labelId} id={id}>
+  //       <LoadingIcon className="bts bt-spinner bt-pulse" />
+  //     </StyledSearchSuggestions>
+  //   );
+  // }
 
-  if (error) {
-    return (
-      <StyledSearchSuggestions role="listbox" aria-labelledby={labelId} id={id}>
-        <p>Error {status}</p>
-      </StyledSearchSuggestions>
-    );
+  if (error || isLoading) return <></>;
+
+  if (error && isVisible) {
+    return <></>;
+    // return (
+    //   <StyledSearchSuggestions role="listbox" aria-labelledby={labelId} id={id}>
+    //     <p>Error {status}</p>
+    //   </StyledSearchSuggestions>
+    // );
   }
 
   if (!data || data.data.length === 0) return null;

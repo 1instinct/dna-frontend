@@ -46,7 +46,7 @@ export const MenuItem = styled.div<MenuItemProps>`
     position: absolute;
     bottom: 0;
     display: ${(props) => (props.isActive ? "block" : "none")};
-    transfrom: ${(props) =>
+    transform: ${(props) =>
       props.isActive ? "translateX(0)" : "translateX(-100%)"};
   }
 `;

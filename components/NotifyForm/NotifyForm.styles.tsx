@@ -1,21 +1,24 @@
 import styled from "@emotion/styled";
+import { transparentize } from "polished";
 
-//Emotion styling
-export const Container = styled.div`
+export const NotifyFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 95%;
+  position: relative;
+  z-index: 10;
+  width: 100%;
   height: 175px;
+  /* bottom: 40px; */
 `;
 
 export const NotifyText = styled.div`
   text-align: center;
   width: 100%;
-  font-family: ${(p: any) => p.theme.typography.bodyXS.fontFamily};
-  font-weight: ${(p: any) => p.theme.typography.bodyXS.fontWeight};
-  font-size: ${(p: any) => p.theme.typography.bodyXS.fontSize};
-  line-height: ${(p: any) => p.theme.typography.bodyXS.lineHeight};
+  font-family: ${(p: any) => p.theme.typography.bodySM.fontFamily};
+  font-weight: ${(p: any) => p.theme.typography.bodySM.fontWeight};
+  font-size: ${(p: any) => p.theme.typography.bodySM.fontSize};
+  line-height: ${(p: any) => p.theme.typography.bodySM.lineHeight};
   margin: 10px auto;
   color: ${(p) =>
     p.theme.isDarkMode
@@ -63,16 +66,14 @@ export const EmailInput = styled.input`
   font-weight: ${(p: any) => p.theme.typography.bodySM.fontWeight};
   font-size: ${(p: any) => p.theme.typography.bodySM.fontSize};
   line-height: ${(p: any) => p.theme.typography.bodySM.lineHeight};
-  /* // position: absolute;
-  // left: 50%;
-  // margin-left: -150px; */
   outline: none;
+  border: 2px dotted ${(p: any) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+  border-spacing: 12px;
   padding: 8px 15px;
-  background-color: ${(p: any) =>
+  background: ${(p: any) =>
     p.theme.isDarkMode
-      ? p.theme.colors.black.primary
-      : p.theme.colors.white.primary};
-  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23333' stroke-width='4' stroke-dasharray='11%2c 33%2c 66%2c 10' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
+      ? transparentize(0.33, p.theme.colors.black.primary)
+      : transparentize(0.33, p.theme.colors.white.primary)};
   transition: 0.33s all ease-in-out;
   &::placeholder {
     color: ${(p: any) =>
@@ -82,14 +83,15 @@ export const EmailInput = styled.input`
   }
   &:focus {
     transition: 0.33s all ease-in-out;
-    color: ${(props) => props.theme.colors.brand.primary};
-    background-image: ${(p: any) =>
+    color: ${(p) => p.theme.colors.brand.primary};
+    background: ${(p: any) =>
       p.theme.isDarkMode
-        ? `url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='${p.theme.colors.white.primary}' stroke-width='4' stroke-dasharray='0' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e"`
-        : `url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='${p.theme.colors.black.primary}' stroke-width='4' stroke-dasharray='0' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e"`};
+        ? p.theme.colors.black.primary
+        : p.theme.colors.white.primary};
+    border: 2px dotted ${(p: any) => p.theme.colors.brand.primary};
   }
   &:focus::placeholder {
-    color: ${(props) => props.theme.colors.brand.primary};
+    color: ${(p) => p.theme.colors.brand.primary};
   }
 `;
 
@@ -105,13 +107,7 @@ export const Button = styled.button`
   width: 201px;
   height: 36.15px;
   margin-left: -100px;
-  opacity: 0.66;
-  background: rgb(154, 154, 154);
-  background: linear-gradient(
-    90deg,
-    rgba(154, 154, 154, 0) 0%,
-    rgba(154, 154, 154, 1) 100%
-  );
+  background: ${(p: any) => p.theme.colors.brand.primary};
   border: none;
   box-sizing: border-box;
   position: relative;
@@ -120,27 +116,31 @@ export const Button = styled.button`
   width: 75px;
   cursor: pointer;
   float: right;
-  font-family: ${(p: any) => p.theme.typography.bodyXS.fontFamily};
-  font-weight: ${(p: any) => p.theme.typography.bodyXS.fontWeight};
-  font-size: ${(p: any) => p.theme.typography.bodyXS.fontSize};
-  line-height: ${(p: any) => p.theme.typography.bodyXS.lineHeight};
+  font-family: ${(p: any) => p.theme.typography.bodySM.fontFamily};
+  font-weight: ${(p: any) => p.theme.typography.bodySM.fontWeight};
+  font-size: ${(p: any) => p.theme.typography.bodySM.fontSize};
+  line-height: ${(p: any) => p.theme.typography.bodySM.lineHeight};
   &:hover {
     transition: 0.33s all ease-in-out;
     opacity: 1;
   }
   &:active {
-    background: ${(props) => props.theme.colors.black.primary};
-    color: ${(props) => props.theme.colors.white.primary};
+    background: ${(p) => p.theme.colors.black.primary};
+    color: ${(p) => p.theme.colors.white.primary};
+  }
+  &:active {
+    background: ${(p) => p.theme.colors.black.primary};
+    color: ${(p) => p.theme.colors.white.primary};
   }
 `;
 
 export const MailTo = styled.a`
   text-decoration: none;
   text-align: center;
-  font-family: ${(p: any) => p.theme.typography.bodyXS.fontFamily};
-  font-weight: ${(p: any) => p.theme.typography.bodyXS.fontWeight};
-  font-size: ${(p: any) => p.theme.typography.bodyXS.fontSize};
-  line-height: ${(p: any) => p.theme.typography.bodyXS.lineHeight};
+  font-family: ${(p: any) => p.theme.typography.bodySM.fontFamily};
+  font-weight: ${(p: any) => p.theme.typography.bodySM.fontWeight};
+  font-size: ${(p: any) => p.theme.typography.bodySM.fontSize};
+  line-height: ${(p: any) => p.theme.typography.bodySM.lineHeight};
   color: ${(p: any) =>
     p.theme.isDarkMode
       ? p.theme.colors.white.primary

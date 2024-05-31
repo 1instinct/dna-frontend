@@ -12,6 +12,7 @@ export const SocialContainer = styled.div<FooterStateType>`
 
 export const SocialList = styled.ul`
   padding-inline-start: 0px;
+  display: flex;
 `;
 
 export const SocialListItem = styled.li<FooterStateType>`

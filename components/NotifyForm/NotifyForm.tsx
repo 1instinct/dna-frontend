@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 
 import {
-  Container,
+  NotifyFormContainer,
   NotifyText,
   FormWrapper,
   QuestionWrapper,
@@ -16,25 +16,25 @@ import {
 const notifyQuestions = [
   {
     id: "email",
-    question: "Wanna know when the product becomes available?",
+    question: "🎧 Get music in your inbox 🎧",
     placeholder: "Email",
-    buttonText: "Get Updates"
+    buttonText: "Signup"
   },
   {
     id: "firstName",
-    question: "Great. Btw, what's your name?",
+    question: "Thanks! Btw, what's your name? 🤔",
     placeholder: "First Name",
     buttonText: "Save Name"
   },
   {
     id: "lastName",
-    question: "Ok, and your last name?",
+    question: "Sweet, and your last name? 🤔",
     placeholder: "Last Name",
     buttonText: "Save Name"
   },
   {
     id: "phone",
-    question: "Perfect, wanna get text updates from us?",
+    question: "Amazing, want texts from us? 📱",
     placeholder: "Phone",
     buttonText: "Sure"
   }
@@ -160,7 +160,13 @@ export const NotifyForm = () => {
 
   return (
     <>
-      <Container>
+      <defs>
+        <rect id="rect" x="25%" y="25%" width="50%" height="50%" rx="15" />
+        <clipPath id="clip">
+          <use xlinkHref="#rect" />
+        </clipPath>
+      </defs>
+      <NotifyFormContainer>
         <FormWrapper index={currentQuestion}>
           <form
             onSubmit={(e: any) =>
@@ -205,10 +211,10 @@ export const NotifyForm = () => {
               <NotifyText>{message}</NotifyText>
             )}
         </FormWrapper>
-        <MailTo id="mailto" href={`mailto:${process.env.NEXT_PUBLIC_EMAIL}`}>
-          Got Questions? We'd love to hear from you.
+        <MailTo id="mailto" href={`mailto:${process.env.NEXT_PUBLIC_COMPANY_EMAIL}`}>
+          {process.env.NEXT_PUBLIC_COMPANY_EMAIL}
         </MailTo>
-      </Container>
+      </NotifyFormContainer>
     </>
   );
 };

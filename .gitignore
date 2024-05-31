@@ -28,9 +28,10 @@ yarn-error.log*
 # local env files
 .env
 .env.dev
+.env.local
+.env.dev
 .env.development
 .env.development.local
-.env.local
 .env.staging
 .env.staging.local
 .env.test

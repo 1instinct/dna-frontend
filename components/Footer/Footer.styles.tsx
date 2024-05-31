@@ -42,6 +42,9 @@ export const IconLinksMo = styled.div`
   @media (max-width: ${(p) => p.theme.breakpoints.values.xs}px) {
     display: flex;
   }
+  @media (max-width: 750px) {
+    display: flex;
+  }
 `;
 export const MobileIconLink = styled.a``;
 export const Column = styled.div`

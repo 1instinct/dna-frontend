@@ -27,7 +27,6 @@ export const GlobalStyles = ({ theme, children }: any) => (
           font-display: swap;
           font-smooth: 2em;
         }
-
         #__next {
           margin: 0;
           padding: 0;
@@ -53,10 +52,23 @@ export const GlobalStyles = ({ theme, children }: any) => (
           margin: 10px 0px 20px;
         }
 
-        article {
-          margin: 0 auto;
-          max-width: 650px;
-        }
+      select {
+        font-size: 28.95px;
+        line-height: 34.74px;
+        border: 2px solid ${theme.colors.black.primary};
+        box-sizing: border-box;
+        transition: background-color 0.3s;
+        width: 100%;
+        max-width: 400px;
+        text-transform: uppercase;
+        text-align-last: center;
+        background: url("https://cdn1.iconfinder.com/data/icons/pinpoint-action/48/arrow-dropdown-24.png")
+          no-repeat 95% 50%;
+        padding: 10px 10px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+      }
 
         svg {
           margin: 0;

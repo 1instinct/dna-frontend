@@ -64,10 +64,10 @@ export const FinancialPrivacyModal = () => {
             <tr className="fp-modal-table-content two">
               <td className="left">How?</td>
               <td className="right">
-                All financial companies need to share customers’ personal
+                All financial companies need to share customers' personal
                 information to run their everyday business. In the section
                 below, we list the reasons financial companies can share their
-                customers’ personal information; the reasons{" "}
+                customers' personal information; the reasons{" "}
                 {process.env.NEXT_PUBLIC_SITE_TITLE} chooses to share; and
                 whether you can limit this sharing.
               </td>
@@ -86,7 +86,7 @@ export const FinancialPrivacyModal = () => {
             <tr className="fp-modal-table-content three">
               <td className="left">
                 <p>
-                  <b>For our every day business purposes –</b>
+                  <b>For our every day business purposes -</b>
                 </p>
                 such as to process your transactions, maintain your account(s),
                 respond to court orders and legal investigations, or report to
@@ -98,7 +98,7 @@ export const FinancialPrivacyModal = () => {
             <tr className="fp-modal-table-content three">
               <td className="left">
                 <p>
-                  <b>For our marketing purposes –</b>
+                  <b>For our marketing purposes -</b>
                 </p>
                 to offer our products and services to you
               </td>
@@ -117,7 +117,7 @@ export const FinancialPrivacyModal = () => {
             <tr className="fp-modal-table-content three">
               <td className="left">
                 <p>
-                  <b>For our affiliates’ everyday business purposes –</b>
+                  <b>For our affiliates' everyday business purposes -</b>
                 </p>
                 information about your transactions and experiences
               </td>
@@ -127,7 +127,7 @@ export const FinancialPrivacyModal = () => {
             <tr className="fp-modal-table-content three">
               <td className="left">
                 <p>
-                  <b>For our affiliates’ everyday business purposes –</b>
+                  <b>For our affiliates' everyday business purposes -</b>
                 </p>
                 information about your creditworthiness
               </td>
@@ -251,13 +251,13 @@ export const FinancialPrivacyModal = () => {
             </tr>
             <tr className="tr-white tr-col-2">
               <td>
-                <strong>Why can’t I limit all sharing?</strong>
+                <strong>Why can't I limit all sharing?</strong>
               </td>
               <td>
                 Federal law gives you the right to limit only
                 <ul>
                   <li>
-                    sharing for affiliates’ everyday business purposes –
+                    sharing for affiliates' everyday business purposes -
                     information about your creditworthiness
                   </li>
                   <li>

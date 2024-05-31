@@ -16,7 +16,6 @@ import {
   IconLinksMo,
   MobileIconLink
 } from "./Footer.styles";
-
 export type CLASSESTYPE = {
   root?: string;
   grid?: string;
