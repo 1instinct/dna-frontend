@@ -107,6 +107,18 @@ button:focus {
   margin-top: -5px;
 }
 
+#glowContainer {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 999;
+  overflow: hidden;
+  pointer-events: none;
+}
+#lblTime {
+  margin-top: -5px;
+}
+
 .bar__time {
   color: white;
   font-size: 16px;
