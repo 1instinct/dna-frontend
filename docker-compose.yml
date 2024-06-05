@@ -9,5 +9,5 @@ services:
       - "3000:3000"
     environment:
       - DEPLOY_ENV=prod
-    env_file:
-      - .env.production
+    secrets:
+      - dna-frontend-secrets
