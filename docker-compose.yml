@@ -1,19 +1,13 @@
-version: '3.4'
+version: '3.8'
 
 services:
   dna-frontend:
-    image: localhost:32000/dna-frontend:registry
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8080:3000"
+      - "3000:3000"
     environment:
       - DEPLOY_ENV=prod
-      - PORT=3000
-    secrets:
-      - dna-frontend-secrets
-
-secrets:
-  dna-frontend-secrets:
-    external: true
+    env_file:
+      - .env.production
