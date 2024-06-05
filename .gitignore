@@ -45,3 +45,8 @@ envvars.txt
 .env.DNA.production
 .env.DNA.staging
 .env.DNA.test
+
+secret.yml
+secret.yaml
+
+secrets-to-base64.sh
