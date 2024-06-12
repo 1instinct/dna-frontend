@@ -88,6 +88,24 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
+## Deploy to Microk8s (Kubernetes)
+
+- `ssh clusterIP`
+- `cd ./dna-frontend`
+- `cp ./secret.example.yml ./secret.yml`
+
+Convert .env values to base64:
+
+```shell
+echo -n 'The seed of a powerful beginning' | base64 && \
+echo -n 'hello@instinct.is' | base64 && \
+...
+```
+
+- It can be tricky, helps to use multiple cursors but:
+- paste base64 values into `secret.yml`
+- `microk8s kubectl apply -f secret.yml`
+
 # TODO:
 
 - Flow / Type Checking
