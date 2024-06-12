@@ -11,3 +11,7 @@ services:
       - DEPLOY_ENV=prod
     secrets:
       - dna-frontend-secrets
+
+secrets:
+  dna-frontend-secrets:
+    external: true
