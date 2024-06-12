@@ -3,6 +3,14 @@ FROM node:14-alpine
 # FROM node:alpine
 # FROM node:21-alpine3.18
 
+RUN apk add --no-cache \
+    git \
+    python3 \
+    make \
+    g++ \
+    libc6-compat \
+    vips-dev
+
 WORKDIR /app
 
 # COPY contrib/spree-storefront-api-v2-sdk-4.5.1003.tgz contrib/spree-storefront-api-v2-sdk-4.5.1003.tgz
@@ -13,6 +21,8 @@ RUN sed -i 's,file:spree-storefront-api-v2-sdk-4.5.1003.tgz,file:/app/spree-stor
 # RUN yarn add file:spree-storefront-api-v2-sdk-4.5.1003.tgz
 
 RUN npm install /app/spree-storefront-api-v2-sdk-4.5.1003.tgz
+
+RUN npm install sharp
 
 # RUN yarn install
 RUN yarn install --network-concurrency 1 --network-timeout 1000000
