@@ -20,8 +20,232 @@ spec:
         image: dna-frontend:0.1
         imagePullPolicy: Never
         env:
+        - name: NODE_ENV
+          value: "production"
         - name: DEPLOY_ENV
           value: "prod"
-        envFrom:
-        - secretRef:
-            name: dna-frontend-secrets
+        - name: NEXT_PUBLIC_COMING_SOON_COPY
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_COMING_SOON_COPY
+        - name: NEXT_PUBLIC_COMPANY_EMAIL
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_COMPANY_EMAIL
+        - name: NEXT_PUBLIC_COMPANY_LEGAL_URL
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_COMPANY_LEGAL_URL
+        - name: NEXT_PUBLIC_COMPANY_PHONE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_COMPANY_PHONE
+        - name: NEXT_PUBLIC_ENTITY_NAME
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_ENTITY_NAME
+        - name: NEXT_PUBLIC_FACEBOOK_URL
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_FACEBOOK_URL
+        - name: NEXT_PUBLIC_GA_DEBUG_MODE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_GA_DEBUG_MODE
+        - name: NEXT_PUBLIC_GA_TRACKING_CODE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_GA_TRACKING_CODE
+        - name: NEXT_PUBLIC_INSTAGRAM_URL
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_INSTAGRAM_URL
+        - name: NEXT_PUBLIC_IS_MAINT_MODE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_IS_MAINT_MODE
+        - name: NEXT_PUBLIC_IS_PREVIEW_MODE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_IS_PREVIEW_MODE
+        - name: NEXT_PUBLIC_IS_DEBUG_MODE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_IS_DEBUG_MODE
+        - name: NEXT_PUBLIC_LOGO_PATH
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_LOGO_PATH
+        - name: NEXT_PUBLIC_GOHIGHLEVEL_LOCATION_ID
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_GOHIGHLEVEL_LOCATION_ID
+        - name: NEXT_PUBLIC_GOHIGHLEVEL_FORM_ID
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_GOHIGHLEVEL_FORM_ID
+        - name: NEXT_PUBLIC_MAILCHIMP_API_KEY
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_MAILCHIMP_API_KEY
+        - name: NEXT_PUBLIC_MAILCHIMP_AUDIENCE_ID
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_MAILCHIMP_AUDIENCE_ID
+        - name: NEXT_PUBLIC_MAILCHIMP_CLIENT_KEY
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_MAILCHIMP_CLIENT_KEY
+        - name: NEXT_PUBLIC_MAILCHIMP_ID
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_MAILCHIMP_ID
+        - name: NEXT_PUBLIC_MAILCHIMP_U
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_MAILCHIMP_U
+        - name: NEXT_PUBLIC_MAILCHIMP_URL
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_MAILCHIMP_URL
+        - name: NEXT_PUBLIC_MAILCHIMP_USERNAME
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_MAILCHIMP_USERNAME
+        - name: NEXT_PUBLIC_MAILER
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_MAILER
+        - name: NEXT_PUBLIC_MUX_ACCESS_TOKEN_ID
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_MUX_ACCESS_TOKEN_ID
+        - name: NEXT_PUBLIC_MUX_SECRET_KEY
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_MUX_SECRET_KEY
+        - name: NEXT_PUBLIC_PAGE_DESC
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_PAGE_DESC
+        - name: NEXT_PUBLIC_PAGE_TITLE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_PAGE_TITLE
+        - name: NEXT_PUBLIC_SC_CLIENT_ID
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_SC_CLIENT_ID
+        - name: NEXT_PUBLIC_SC_CLIENT_SECRET
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_SC_CLIENT_SECRET
+        - name: NEXT_PUBLIC_SHORT_TITLE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_SHORT_TITLE
+        - name: NEXT_PUBLIC_SITE_SUBTITLE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_SITE_SUBTITLE
+        - name: NEXT_PUBLIC_SITE_TITLE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_SITE_TITLE
+        - name: NEXT_PUBLIC_SITE_URL
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_SITE_URL
+        - name: NEXT_PUBLIC_SPREE_ACCESS_TOKEN
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_SPREE_ACCESS_TOKEN
+        - name: NEXT_PUBLIC_SPREE_API_URL
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_SPREE_API_URL
+        - name: NEXT_PUBLIC_TRACKING
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_TRACKING
+        - name: NEXT_PUBLIC_TRACKING_GA_ON  
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_TRACKING_GA_ON
+        - name: NEXT_PUBLIC_TRACKING_KM_ON
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_TRACKING_KM_ON
+        - name: NEXT_PUBLIC_TRACKING_PROVIDER_GA
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_TRACKING_PROVIDER_GA
+        - name: NEXT_PUBLIC_TRACKING_PROVIDER_KM
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_TRACKING_PROVIDER_KM
+        - name: NEXT_PUBLIC_TRACKING_VERBOSE
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_TRACKING_VERBOSE
+        - name: NEXT_PUBLIC_TWITTER_URL
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_TWITTER_URL
+        - name: NEXT_PUBLIC_VIDEO_URL
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_VIDEO_URL
+        - name: NEXT_PUBLIC_KONTENT_PROJECT_ID
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_KONTENT_PROJECT_ID
+        - name: NEXT_PUBLIC_KONTENT_MGMT_KEY
+          valueFrom:
+          - secretKeyRef:
+              name: dna-frontend-secrets
+              key: NEXT_PUBLIC_KONTENT_MGMT_KEY
