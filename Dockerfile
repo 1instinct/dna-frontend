@@ -9,12 +9,11 @@ WORKDIR /app
 # COPY package.json yarn.lock ./
 COPY package.json yarn.lock contrib/spree-storefront-api-v2-sdk-4.5.1003.tgz ./
 
-RUN yarn install --network-concurrency 1 --network-timeout 1000000
-
 RUN sed -i 's,file:spree-storefront-api-v2-sdk-4.5.1003.tgz,file:/app/spree-storefront-api-v2-sdk-4.5.1003.tgz,' package.json
 RUN yarn add file:spree-storefront-api-v2-sdk-4.5.1003.tgz
 
 # RUN yarn install
+RUN yarn install --network-concurrency 1 --network-timeout 1000000
 
 COPY . .
 
