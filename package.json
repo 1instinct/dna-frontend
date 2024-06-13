@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "cross-env DEPLOY_ENV=dev next dev",
     "build": "cross-env DEPLOY_ENV=prod next build",
-    "start": "next start -p $PORT",
+    "start": "npx next start -p $PORT",
     "build:dev": "cross-env DEPLOY_ENV=dev next build",
     "build:staging": "cross-env DEPLOY_ENV=staging next build",
     "build:prod": "cross-env DEPLOY_ENV=prod next build",
