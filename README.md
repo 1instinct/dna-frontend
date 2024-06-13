@@ -105,6 +105,11 @@ echo -n 'hello@instinct.is' | base64 && \
 - It can be tricky, helps to use multiple cursors but:
 - paste base64 values into `secret.yml`
 - `microk8s kubectl apply -f secret.yml`
+- `docker build . -t localhost:32000/dna-frontend:registry`
+- `docker images` (copy ID of newly built image)
+- `docker tag <image_id> localhost:32000/dna-frontend:registry`
+- `docker push localhost:32000/dna-frontend:registry`
+- `microk8s kubectl rollout restart deployment/dna-frontend`
 
 # TODO:
 
