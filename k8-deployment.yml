@@ -20,6 +20,8 @@ spec:
         # image: dna-frontend:0.1
         image: localhost:32000/dna-frontend:registry
         # imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
         env:
         - name: NODE_ENV
           value: "production"
