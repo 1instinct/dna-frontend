@@ -1,0 +1,14 @@
+# k8 deployment service
+apiVersion: v1
+kind: Service
+metadata:
+  name: dna-frontend-service
+  namespace: default
+spec:
+  selector:
+    app: dna
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: LoadBalancer
