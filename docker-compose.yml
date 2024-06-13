@@ -2,9 +2,10 @@ version: '3.4'
 
 services:
   dna-frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: localhost:32000/dna-frontend:registry
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
