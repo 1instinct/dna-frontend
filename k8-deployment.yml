@@ -27,6 +27,8 @@ spec:
           value: "production"
         - name: DEPLOY_ENV
           value: "prod"
+        - name: PORT
+          value: "3000"
         - name: NEXT_PUBLIC_COMING_SOON_COPY
           valueFrom:
             secretKeyRef:
