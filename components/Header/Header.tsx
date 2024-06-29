@@ -36,15 +36,6 @@ import {
   AccountOption
 } from "./Header.styles";
 
-const dummyCategories = [
-  "Best Sellers",
-  "Latest",
-  "Seasonal",
-  "Luxury",
-  "On Sale",
-  "Coming Soon"
-];
-
 export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
   const router = useRouter();
   const { pathname } = useRouter();
