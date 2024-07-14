@@ -1,11 +1,16 @@
 import React from "react";
-import styled from "@emotion/styled";
-import { ProductDetailsProps } from "./types";
+import { RetailProductDetails } from "./RetailProductDetails";
+import { WholesaleProductDetails } from "./WholesaleProductDetails";
 
-const ProductDetailsWrapper = styled.div`
-  label: ProductDetailsWrapper;
-`;
+interface ProductDetailsProps {
+  props: any;
+  wholesale?: boolean;
+}
 
-export const ProductDetails: React.FC<ProductDetailsProps> = ({}) => {
-  return <ProductDetailsWrapper></ProductDetailsWrapper>;
+export const ProductDetails = ({ wholesale, props }: ProductDetailsProps) => {
+  if (wholesale) {
+    return <WholesaleProductDetails {...props} wholesale />;
+  } else {
+    return <RetailProductDetails {...props} wholesale />;
+  }
 };

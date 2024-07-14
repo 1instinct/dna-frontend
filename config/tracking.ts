@@ -1,5 +1,6 @@
-export const GA_TRACKING_CODE = process.env.GA_TRACKING_CODE;
-export const GA_DEBUG_MODE = process.env.GA_DEBUG_MODE;
+export const GA_TRACKING_CODE = process.env.NEXT_PUBLIC_GA_TRACKING_CODE;
+export const GA_DEBUG_MODE = process.env.NEXT_PUBLIC_GA_DEBUG_MODE;
+export const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID;
 
 export enum Action {
   PRESS_ENTER = "press-enter",
@@ -12,16 +13,16 @@ export enum Category {
   PRODUCT_DETAIL = "product-detail"
 }
 
-const TRACKING_ON = process.env.TRACKING !== "off";
-const TRACKING_VERBOSE = process.env.TRACKING_VERBOSE === "on";
+const TRACKING_ON = process.env.NEXT_PUBLIC_TRACKING !== "off";
+const TRACKING_VERBOSE = process.env.NEXT_PUBLIC_TRACKING_VERBOSE === "on";
 
-const TRACKING_GA_ON = process.env.TRACKING_PROVIDER_GA !== "off";
-const TRACKING_KM_ON = process.env.TRACKING_PROVIDER_KM !== "off";
+const TRACKING_GA_ON = process.env.NEXT_PUBLIC_TRACKING_PROVIDER_GA !== "off";
+const TRACKING_KM_ON = process.env.NEXT_PUBLIC_TRACKING_PROVIDER_KM !== "off";
 
 type TrackingEvent = {
   action: string;
   category: string;
-  label: string;
+  label?: string;
 };
 
 interface TrackingProvider {
@@ -41,17 +42,21 @@ const googleAnalyticsProvider: TrackingProvider = {
   },
 
   trackPageview: (url: string): void => {
-    window.gtag("config", GA_TRACKING_CODE, {
-      page_path: url
-    });
+    if (typeof window !== "undefined") {
+      window.gtag("config", GA_TRACKING_CODE, {
+        page_path: url
+      });
+    }
   },
 
   trackEvent: ({ action, category, label }: TrackingEvent): void => {
-    window.gtag("event", action, {
-      event_category: category,
-      event_label: label,
-      value: 0
-    });
+    if (typeof window !== "undefined") {
+      window.gtag("event", action, {
+        event_category: category,
+        event_label: label,
+        value: 0
+      });
+    }
   }
 };
 
@@ -73,7 +78,11 @@ export const trackPageview = (url: string): void => {
   }
 };
 
-export const trackEvent = ({ action, category, label }: TrackingEvent): void => {
+export const trackEvent = ({
+  action,
+  category,
+  label
+}: TrackingEvent): void => {
   if (!TRACKING_ON) {
     return;
   }
@@ -81,7 +90,11 @@ export const trackEvent = ({ action, category, label }: TrackingEvent): void => 
   for (let provider of trackingProviders) {
     if (provider.isActive()) {
       if (TRACKING_VERBOSE) {
-        console.log(provider.getName() + " - trackEvent", { action, category, label });
+        console.log(provider.getName() + " - trackEvent", {
+          action,
+          category,
+          label
+        });
       }
 
       provider.trackEvent({ action, category, label });

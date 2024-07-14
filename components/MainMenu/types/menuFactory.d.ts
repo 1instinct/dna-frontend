@@ -11,8 +11,17 @@ export type MenuFactoryStyles = {
   overlay?: (isOpen: boolean, width: string, right: boolean) => object;
   menuWrap?: (isOpen: boolean, width: string, right: boolean) => object;
   menu?: (isOpen: boolean, width: string, right: boolean) => object;
-  itemList?: (isOpen: boolean, width: string, right: boolean) => object | undefined;
-  item?: (isOpen: boolean, width: string, right: boolean, nthChild: number) => object;
+  itemList?: (
+    isOpen: boolean,
+    width: string,
+    right: boolean
+  ) => object | undefined;
+  item?: (
+    isOpen: boolean,
+    width: string,
+    right: boolean,
+    nthChild: number
+  ) => object;
   pageWrap?: (isOpen: boolean, width: string, right: boolean) => object;
   outerContainer?: (isOpen: boolean) => object;
   burgerIcon?: (isOpen: boolean, width: string, right: boolean) => object;
@@ -46,7 +55,10 @@ export interface MenuProps {
   id: string;
   className: string;
   morphShapeClassName: string;
-  itemListElement?: "div" | "nav" | FunctionComponent<{ className: string; style: object }>;
+  itemListElement?:
+    | "div"
+    | "nav"
+    | FunctionComponent<{ className: string; style: object }>;
   itemListClassName: string;
   itemClassName: string;
   customCrossIcon?: ReactElement | false;

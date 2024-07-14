@@ -1,5 +1,9 @@
-import { IOAuthToken, IToken } from "@spree/storefront-api-v2-sdk/types/interfaces/Token";
+import {
+  IOAuthToken,
+  IToken
+} from "@spree/storefront-api-v2-sdk/types/interfaces/Token";
 import { spreeClient } from "./spree";
+import constants from "../utilities/constants";
 
 const storage = {
   getToken: async (): Promise<IOAuthToken | undefined> => {
@@ -18,24 +22,59 @@ const storage = {
           storage.setToken(newToken);
           return newToken;
         } else {
-          console.warn("COULD NOT REFRESH TOKEN");
+          constants.IS_DEBUG && console.warn("COULD NOT REFRESH TOKEN");
           storage.clearToken();
         }
       }
       return JSON.parse(token);
     }
   },
-  setToken: (token: IOAuthToken) => window.localStorage.setItem("token", JSON.stringify(token)),
-  getGuestOrderToken: (): IToken | undefined => {
-    const token = window.localStorage.getItem("token");
+  isTokenExpired: (token: IOAuthToken): boolean => {
+    const expiresAt = token.created_at + token.expires_in;
+    const now = Math.round(Date.now() / 1000);
+    return now >= expiresAt;
+  },
+  refreshToken: async (
+    token: IOAuthToken
+  ): Promise<IOAuthToken | undefined> => {
+    const response = await spreeClient.authentication.refreshToken({
+      refresh_token: token.refresh_token
+    });
+    if (response.isSuccess()) {
+      const newToken = response.success();
+      storage.setToken(newToken);
+      return newToken;
+    } else {
+      constants.IS_DEBUG && console.warn("Failed to refresh token");
+      storage.clearToken();
+      return undefined;
+    }
+  },
+  setToken: (token: IOAuthToken) =>
+    window.localStorage.setItem("token", JSON.stringify(token)),
+  getGuestOrderToken: async (): Promise<string | undefined> => {
+    const token = window.localStorage.getItem("guestOrderToken");
     if (token) {
       return JSON.parse(token);
     }
   },
-  setGuestOrderToken: (token: IToken) => {
-    window.localStorage.setItem("guestOrderToekn", JSON.stringify(token));
+  setGuestOrderToken: (token: string) => {
+    window.localStorage.setItem("guestOrderToken", JSON.stringify(token));
   },
-  clearToken: () => window.localStorage.removeItem("token")
+  getOrderToken: async (): Promise<string | undefined> => {
+    const token = window.localStorage.getItem("orderToken");
+    if (token) {
+      return JSON.parse(token);
+    }
+  },
+  setOrderToken: (token: string) => {
+    window.localStorage.setItem("orderToken", JSON.stringify(token));
+  },
+  clearToken: () => {
+    window.localStorage.removeItem("token");
+    window.localStorage.removeItem("orderToken");
+    window.localStorage.removeItem("guestOrderToken");
+  }
 };
 
 export default storage;

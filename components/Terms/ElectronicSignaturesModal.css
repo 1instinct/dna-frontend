@@ -1,0 +1,48 @@
+/* Modal header container */
+.gkBGAw {
+  z-index: 1052;
+}
+
+/* Modal header h5 */
+.iJuqEf {
+  margin: 0 10%;
+}
+
+.es-modal-container {
+  margin-right: 10px;
+}
+
+.es-modal-btn-close {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: 17px;
+  margin-right: 20px;
+  width: 31px;
+  height: 31px;
+  background-size: cover;
+}
+
+.es-modal-content-container {
+  margin: 20px 0;
+  padding: 15px;
+}
+
+@media (max-width: 480px) {
+  .es-modal-content-container {
+    border: none !important;
+  }
+}
+
+.es-modal-text {
+  font-size: 14px;
+  line-height: 22px;
+  color: #696969;
+}
+
+.es-modal-content-title {
+  font-size: 16px;
+  color: #696969;
+  font-weight: 700;
+}

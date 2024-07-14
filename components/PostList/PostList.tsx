@@ -60,7 +60,10 @@ export const PostList: React.FC<PostListProps> = () => {
         ))}
       </MyUl>
       {postCount <= 90 && (
-        <MyButton onClick={() => setPostCount(postCount + 10)} disabled={isFetching}>
+        <MyButton
+          onClick={() => setPostCount(postCount + 10)}
+          disabled={isFetching}
+        >
           {isFetching ? "Loading..." : "Show More"}
         </MyButton>
       )}

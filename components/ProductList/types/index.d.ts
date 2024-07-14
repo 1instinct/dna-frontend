@@ -1,1 +1,4 @@
-export interface ProductListProps {}
+export interface ProductListProps {
+  products: any;
+  title: string;
+}

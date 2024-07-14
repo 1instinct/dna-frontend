@@ -21,9 +21,13 @@ const authConfig = {
   loadUser: async () => {
     const storage = (await import("./storage")).default;
     const token = await storage.getToken();
+    const guestOrderToken = await storage.getGuestOrderToken();
     console.warn("TOKEN: ", token);
+    console.warn("GUEST ORDER TOKEN: ", guestOrderToken);
     if (token?.access_token && token?.token_type === "Bearer") {
-      const response = await spreeClient.account.accountInfo({ bearerToken: token.access_token });
+      const response = await spreeClient.account.accountInfo({
+        bearerToken: token.access_token
+      });
       if (response.isSuccess()) {
         console.warn("USER LOADED: ", response.success());
         return response.success();
@@ -34,7 +38,9 @@ const authConfig = {
     return null;
   },
   loginFn: async (data: unknown) => {
-    const response = await spreeClient.authentication.getToken(data as LoginUser);
+    const response = await spreeClient.authentication.getToken(
+      data as LoginUser
+    );
     if (response.isSuccess()) {
       const result = response.success();
       const storage = (await import("./storage")).default;
@@ -66,4 +72,7 @@ const authConfig = {
   }
 };
 
-export const { AuthProvider, useAuth } = initReactQueryAuth<IAccount | null, string>(authConfig);
+export const { AuthProvider, useAuth } = initReactQueryAuth<
+  IAccount | null,
+  string
+>(authConfig);

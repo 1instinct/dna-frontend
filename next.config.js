@@ -28,17 +28,18 @@ Module.prototype.require = function (modulePath) {
 
   return originalRequire.call(this, modulePath);
 };
-const DEPLOY_ENV = process.env.DEPLOY_ENV && process.env.DEPLOY_ENV.toLowerCase();
+const DEPLOY_ENV =
+  process.env.DEPLOY_ENV && process.env.DEPLOY_ENV.toLowerCase();
 const DEPLOY_ENV_MAPPING = {
   dev: "development",
   staging: "staging",
   prod: "production"
 };
-const envFile = path.join(__dirname, `.env.DNA.${DEPLOY_ENV_MAPPING[DEPLOY_ENV]}`);
+const envFile = path.join(__dirname, `.env.${DEPLOY_ENV_MAPPING[DEPLOY_ENV]}`);
 loadEnvVariables();
 const isLocalDevEnvironment = !process.env.DEPLOY_ENV;
-console.log("process.env.TEST", process.env.TEST);
 module.exports = {
+  swcMinify: true,
   webpack: (config, { webpack }) => {
     config.plugins = config.plugins || [];
     config.plugins = [
@@ -53,7 +54,10 @@ module.exports = {
       alias: {
         ...config.resolve.alias,
         react$: resolveFrom(path.resolve("node_modules"), "react"),
-        "react-query$": resolveFrom(path.resolve("node_modules"), "react-query"),
+        "react-query$": resolveFrom(
+          path.resolve("node_modules"),
+          "react-query"
+        ),
         "react-dom$": resolveFrom(path.resolve("node_modules"), "react-dom")
       }
     };

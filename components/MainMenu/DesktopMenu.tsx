@@ -1,101 +1,110 @@
 import React, { useState, useCallback, useEffect } from "react";
+import { useRouter } from "next/router";
 import { IDesktopMenuProps } from "./types/DesktopMenu";
 import { menuDataItem } from "./types";
-import styled from "@emotion/styled";
-const Container = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  position: relative;
-  padding-bottom: 13px;
-  &:after {
-    position: absolute;
-    content: "";
-    left: 99px;
-    right: 99px;
-    height: 1px;
-    background-color: #000;
-    top: 99%;
-  }
-`;
-export interface MyMenuItemProps {
-  isActive: boolean;
-}
-const MyMenuItem = styled.div<MyMenuItemProps>`
-  margin-right: 82px;
-  font-family: "Bebas Neue";
-  font-size: 14px;
-  line-height: 150%;
-  color: #000;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  cursor: pointer;
-  &:after {
-    transition: transform 1s linear;
-    width: 57px;
-    height: 1px;
-    background-color: #000;
-    content: "";
-    position: absolute;
-    bottom: 0;
-    display: ${(props) => (props.isActive ? "block" : "none")};
-    transfrom: ${(props) => (props.isActive ? "translateX(0)" : "translateX(-100%)")};
-  }
-  &:first-child {
-    margin-left: 197px;
-  }
-`;
-export interface DropDownProps {
-  isActive: boolean;
-}
-let timer: any;
-const DropDown = styled.div<DropDownProps>`
-  position: absolute;
-  background-color: #fff;
-  left: 0;
-  top: 100%;
-  width: 100%;
-  transition: transform 1s linear;
-  display: ${(props) => (props.isActive ? "block" : "none")};
-  transform: ${(props) => (props.isActive ? "translateY(0)" : "translateY(-100%)")};
-`;
+
+import {
+  Container,
+  MenuItem,
+  DropDown,
+  DropDownLink,
+  DropDownColumn,
+  DropDownHeader,
+  DropDownAdvert,
+  Vr
+} from "./DesktopMenu.styles";
 
 const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
-  const { pcWrapClassName, menusData, pcMenuItemClassName, onMenuItemClick } = props;
+  const router = useRouter();
+  let timer: any;
+  const {
+    pcWrapClassName,
+    menusData,
+    menusLoading,
+    pcMenuItemClassName,
+    onMenuItemClick
+  } = props;
+
+  const menuItems =
+    menusData && menusData.menu_location_listing
+      ? menusData?.menu_location_listing[0]?.menu_item_listing
+      : [];
+
+  const desktopMenu = () => {
+    if (menusLoading) {
+      return [];
+    }
+    if (!menuItems) {
+      return [];
+    }
+    return menuItems?.map((item: any, index: number) => {
+      return (
+        <MenuItem
+          onMouseEnter={handleMouseEnter.bind(null, item)}
+          onMouseLeave={handleMouseLeave}
+          onClick={() => item.childrens?.length < 1 && router.push(item.url)}
+          isActive={currentKey == item.id}
+          key={`${index}-1`}
+        >
+          {item.name}
+        </MenuItem>
+      );
+    });
+  };
+
   const [currentKey, setCurrentKey] = useState();
-  const handleMouseEnter = useCallback((item) => {
+  const handleMouseEnter = useCallback((item: any) => {
     if (timer) {
       clearTimeout(timer);
     }
-    setCurrentKey(item.key);
+    setCurrentKey(item.id);
   }, []);
   const handleMouseLeave = useCallback(() => {
     timer = setTimeout(() => setCurrentKey(undefined), 300);
   }, []);
+  // useEffect(() => {
+  //   console.log(menusData);
+  // }, []);
+
+  if (menusLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!menuItems) {
+    return <></>;
+  }
+
   return (
     <Container className={pcWrapClassName}>
-      {menusData.map((item, index) => (
-        <MyMenuItem
-          onMouseLeave={handleMouseLeave}
-          isActive={currentKey == item.key}
-          key={index}
-          onMouseEnter={handleMouseEnter.bind(null, item)}>
-          {item.name}
-        </MyMenuItem>
-      ))}
-      {menusData.map((item, index) => (
-        <DropDown
-          onMouseLeave={handleMouseLeave}
-          onMouseEnter={handleMouseEnter.bind(null, item)}
-          isActive={currentKey == item.key}
-          key={index}>
-          {item.pcMenuItem}
-        </DropDown>
-      ))}
+      {desktopMenu()}
+      {menuItems?.map((item: any, index: any) => {
+        if (item.childrens.length) {
+          return (
+            <DropDown
+              // onClick={handleMouseEnter.bind(null, item)}
+              onMouseEnter={handleMouseEnter.bind(null, item)}
+              onMouseLeave={handleMouseLeave}
+              isActive={currentKey == item.id}
+              key={`${index}-2`}
+            >
+              {item.childrens?.map((child: any, index: any) => (
+                <DropDownColumn key={`${index}-column`}>
+                  {/* <DropDownHeader key={`${index}-header`}>
+                    {item.name}
+                  </DropDownHeader> */}
+                  <DropDownLink href={child.url} key={`${index}-link`}>
+                    {child.name}
+                  </DropDownLink>
+                </DropDownColumn>
+              ))}
+              <Vr />
+              <DropDownAdvert>
+                <h1>On Sale</h1>
+              </DropDownAdvert>
+            </DropDown>
+          );
+        }
+      })}
     </Container>
   );
 };

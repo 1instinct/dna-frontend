@@ -3,19 +3,19 @@
 .idea
 
 # dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp/
 .pnp.js
 
 # testing
-/coverage
+coverage/
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
@@ -26,11 +26,23 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env.local
+.env
+.env.dev
+.env.development
 .env.development.local
+.env.local
+.env.staging
+.env.staging.local
+.env.test
 .env.test.local
+.env.prod
+.env.production
 .env.production.local
+envvars.txt
 
 .env.DNA.development
 .env.DNA.production
 .env.DNA.staging
+.env.DNA.test
+
+tsconfig.tsbuildinfo

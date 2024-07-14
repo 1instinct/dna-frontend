@@ -1,0 +1,1 @@
+export { LegalLinks } from "./LegalLinks";

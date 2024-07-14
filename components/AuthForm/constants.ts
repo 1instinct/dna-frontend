@@ -3,7 +3,7 @@ import * as Yup from "yup";
 export enum AuthFormType {
   login = "login",
   signup = "signup",
-  forgot_password = "forgot_password",
+  reset_password = "reset_password",
   update_password = "update_password", // not implemented
   update_email = "update_email" // not implemented
 }
@@ -48,7 +48,7 @@ export const signupForm = {
   validate: SignupSchema
 };
 
-export const forgotPasswordForm = {
+export const resetPasswordForm = {
   title: "RESET PASSWORD",
   fields: {
     email: ""

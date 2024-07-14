@@ -11,6 +11,8 @@ const Info = styled.div`
   border-bottom: 1px solid #ececec;
 `;
 
-export const InfoBox: React.FC<InfoBoxProps> = ({ children }: { children: string }) => (
-  <Info>{children}</Info>
-);
+export const InfoBox: React.FC<InfoBoxProps> = ({
+  children
+}: {
+  children: string;
+}) => <Info>{children}</Info>;

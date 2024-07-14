@@ -316,7 +316,6 @@ background: 'rgba(0, 0, 0, 0.3)'
 import {MainMenu} from '../components'
 
 <div id="outer-container">
-<<<<<<< HEAD:components/MainMenu/readme.txt
  <MainMenu pageWrapId="page-wrap" outterContainerId="outer-container" animationType="slide" right={false} styles={styles}>
 
 # </MainMenu>
@@ -327,7 +326,6 @@ import {MainMenu} from '../components'
         <a id="contact" className="menu-item" href="/contact">Contact</a>
         <a onClick={ this.showSettings } className="menu-item--small" href="">Settings</a>
 </MainMenu>
->>>>>>> @aaron.smulktis/develop:components/MainMenu/Mainmenu-readme.md
 <main id="page-wrap">
 .
 .

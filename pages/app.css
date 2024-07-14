@@ -1,68 +1,27 @@
 @font-face {
-  font-family: Bebas;
-  src: url("../font/Bebas/Bebas.ttf");
+  font-family: "Bebas";
+  src: url("../public/fonts/Bebas/Bebas.ttf");
 }
 @font-face {
-  font-family: Bebas Neue;
-  src: url("../font/Bebas Neue/BebasNeue.otf");
+  font-family: "Bebas Neue";
+  src: url("../public/fonts/Bebas Neue/BebasNeue.otf");
 }
 @font-face {
-  font-family: Roboto;
-  src: url("../font/Roboto/Roboto-Black.ttf");
+  font-family: "Anonymous";
+  src: url("../public/fonts/Anonymous/Anonymous.woff") format("woff"),
+    url("../public/fonts/Anonymous/Anonymous.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 @font-face {
-  font-family: RobotoItalic;
-  src: url("../font/Roboto/Roboto-BlackItalic.ttf");
+  font-family: "Anybody Light";
+  src: url("../public/fonts/Anybody/Anybody-Light.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 @font-face {
-  font-family: RobotoBold;
-  src: url("../font/Roboto/Roboto-Bold.ttf");
-}
-@font-face {
-  font-family: RobotoBoldItalic;
-  src: url("../font/Roboto/Roboto-BoldItalic.ttf");
-}
-@font-face {
-  font-family: RobotoItalic;
-  src: url("../font/Roboto/Roboto-Italic.ttf");
-}
-@font-face {
-  font-family: RobotoLight;
-  src: url("../font/Roboto/Roboto-Light.ttf");
-}
-@font-face {
-  font-family: RobotoLightItalic;
-  src: url("../font/Roboto/Roboto-LightItalic.ttf");
-}
-@font-face {
-  font-family: RobotoMedium;
-  src: url("../font/Roboto/Roboto-Medium.ttf");
-}
-@font-face {
-  font-family: RobotoMediumItalic;
-  src: url("../font/Roboto/Roboto-MediumItalic.ttf");
-}
-@font-face {
-  font-family: Roboto Condensed;
-  src: url("../font/Roboto Condensed/RobotoCondensed-Regular.ttf");
-}
-@font-face {
-  font-family: Roboto CondensedBold;
-  src: url("../font/Roboto Condensed/RobotoCondensed-Bold.ttf");
-}
-@font-face {
-  font-family: Roboto CondensedBoldItalic;
-  src: url("../font/Roboto Condensed/RobotoCondensed-BoldItalic.ttf");
-}
-@font-face {
-  font-family: Roboto CondensedItalic;
-  src: url("../font/Roboto Condensed/RobotoCondensed-Italic.ttf");
-}
-@font-face {
-  font-family: Roboto CondensedLight;
-  src: url("../font/Roboto Condensed/RobotoCondensed-Light.ttf");
-}
-@font-face {
-  font-family: Roboto CondensedLightItalic;
-  src: url("../font/Roboto Condensed/RobotoCondensed-LightItalic.ttf");
+  font-family: "Anybody ExtraLight";
+  src: url("../public/fonts/Anybody/Anybody-ExtraLight.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }

@@ -1,0 +1,287 @@
+{
+  "memberList": [
+    {
+      "name": "Jane Jetson",
+      "avatar": "/1.png"
+    },
+    {
+      "name": "WILMA FLINTSTONE",
+      "avatar": "/2.png"
+    },
+    {
+      "name": "LUCILE BALL",
+      "avatar": "/3.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "DIANA PRINCE",
+      "avatar": "./4.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/5.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/6.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/7.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/8.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/9.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/10.png"
+    },
+    {
+      "name": "Jane Jetson",
+      "avatar": "/11.png"
+    }
+  ],
+  "productList": [
+    {
+      "title": "Maeve Tuesday Tee",
+      "subTitle": "Sheer Top",
+      "img": "./p1.png",
+      "influencer": "Influencer",
+      "rate": 5,
+      "viewer": "211k",
+      "avatar": "/avatar.png",
+      "status": 1,
+      "subText": "+ 7 more"
+    },
+    {
+      "img": "/p2.png",
+      "influencer": "Influencer",
+      "rate": 5,
+      "viewer": "302k",
+      "avatar": "/avatar.png",
+      "status": 2,
+      "title": "Whole Lotta Love",
+      "subTitle": "Sheer Top",
+      "subText": "+ 7 more"
+    },
+    {
+      "img": "/p2.png",
+      "influencer": "Influencer",
+      "rate": 5,
+      "viewer": "154k",
+      "avatar": "/avatar.png",
+      "status": 3,
+      "title": "Maeve Tuesday Tee",
+      "subTitle": "Sheer Top",
+      "subText": "+ 7 more"
+    },
+    {
+      "img": "/p2.png",
+      "influencer": "Influencer",
+      "rate": 5,
+      "viewer": "211k",
+      "avatar": "/avatar.png",
+      "status": 2,
+      "title": "Whole Lotta Love",
+      "subTitle": "Sheer Top",
+      "subText": "+ 7 more"
+    },
+    {
+      "img": "/p2.png",
+      "influencer": "Influencer",
+      "rate": 5,
+      "viewer": "154k",
+      "avatar": "/avatar.png",
+      "status": 3,
+      "title": "Maeve Tuesday Tee",
+      "subTitle": "Sheer Top",
+      "subText": "+ 7 more"
+    },
+    {
+      "img": "/p2.png",
+      "influencer": "Influencer",
+      "rate": 5,
+      "viewer": "302k",
+      "avatar": "/avatar.png",
+      "status": 3,
+      "title": "Maeve Tuesday Tee",
+      "subTitle": "Sheer Top",
+      "subText": "+ 7 more"
+    },
+    {
+      "img": "./p3.png",
+      "influencer": "Influencer",
+      "rate": 5,
+      "viewer": "211k",
+      "avatar": "/avatar.png",
+      "status": 2,
+      "title": "Whole Lotta Love",
+      "subTitle": "Sheer Top",
+      "subText": "+ 7 more"
+    },
+    {
+      "img": "./p4.png",
+      "influencer": "Influencer",
+      "rate": 5,
+      "viewer": "154k",
+      "avatar": "/avatar.png",
+      "status": 1,
+      "title": "Maeve Tuesday Tee",
+      "subTitle": "Sheer Top",
+      "subText": "+ 7 more"
+    },
+    {
+      "img": "./p5.png",
+      "influencer": "Influencer",
+      "rate": 5,
+      "viewer": "211k",
+      "avatar": "/avatar.png",
+      "status": 3,
+      "title": "Maeve Tuesday Tee",
+      "subTitle": "Sheer Top",
+      "subText": "+ 7 more"
+    },
+    {
+      "img": "./p6.png",
+      "influencer": "Influencer",
+      "rate": 5,
+      "viewer": "154k",
+      "avatar": "/avatar.png",
+      "status": 2,
+      "title": "Whole Lotta Love",
+      "subTitle": "Sheer Top",
+      "subText": "+ 7 more"
+    }
+  ],
+  "latestProducts": [
+    {
+      "img": "/latest1.png"
+    },
+    {
+      "img": "/latest2.png"
+    }
+  ],
+  "hotDigs": [
+    {
+      "title": "POLT130",
+      "desc": "ONLINE EXCLUSIVE",
+      "img": "/h1.png",
+      "rate": 5,
+      "price": "US$18.99"
+    },
+    {
+      "title": "POLT130",
+      "desc": "ONLINE EXCLUSIVE",
+      "img": "/h2.png",
+      "rate": 5,
+      "price": "US$18.99"
+    },
+    {
+      "title": "POLT130",
+      "desc": "ONLINE EXCLUSIVE",
+      "img": "/h3.png",
+      "rate": 5,
+      "price": "US$18.99"
+    },
+    {
+      "title": "POLT130",
+      "desc": "ONLINE EXCLUSIVE",
+      "img": "/h4.png",
+      "rate": 5,
+      "price": "US$18.99"
+    },
+    {
+      "title": "POLT130",
+      "desc": "ONLINE EXCLUSIVE",
+      "img": "/h4.png",
+      "rate": 5,
+      "price": "US$18.99"
+    },
+    {
+      "title": "POLT130",
+      "desc": "ONLINE EXCLUSIVE",
+      "img": "/h4.png",
+      "rate": 5,
+      "price": "US$18.99"
+    },
+    {
+      "title": "POLT130",
+      "desc": "ONLINE EXCLUSIVE",
+      "img": "/h4.png",
+      "rate": 5,
+      "price": "US$18.99"
+    },
+    {
+      "title": "POLT130",
+      "desc": "ONLINE EXCLUSIVE",
+      "img": "/h4.png",
+      "rate": 5,
+      "price": "US$18.99"
+    },
+    {
+      "title": "POLT130",
+      "desc": "ONLINE EXCLUSIVE",
+      "img": "/h4.png",
+      "rate": 5,
+      "price": "US$18.99"
+    },
+    {
+      "title": "POLT130",
+      "desc": "ONLINE EXCLUSIVE",
+      "img": "/h1.png",
+      "rate": 5,
+      "price": "US$18.99"
+    }
+  ],
+  "bigHotDig": {
+    "img": "/bh.png"
+  }
+}
