@@ -44,17 +44,26 @@ export const ProductVariations: React.FC<ProductVariationsProps> = () => {
       <Header>PACK PRICE</Header>
 
       <ColorCell colorName="Yellow Rod" colorValue="#F8CF51" />
-      <PackQtyCell packQty={3} updatePackQty={(delta) => updatePackQty(delta)} />
+      <PackQtyCell
+        packQty={3}
+        updatePackQty={(delta) => updatePackQty(delta)}
+      />
       <PieceQtyCell pieceQty={12} />
       <PackPriceCell packPrice={1000} />
 
       <ColorCell colorName="Carnelion" colorValue="#B22C31" />
-      <PackQtyCell packQty={5} updatePackQty={(delta) => updatePackQty(delta)} />
+      <PackQtyCell
+        packQty={5}
+        updatePackQty={(delta) => updatePackQty(delta)}
+      />
       <PieceQtyCell pieceQty={48} />
       <PackPriceCell packPrice={4000} />
 
       <ColorCell colorName="Grey Blue" colorValue="#3C8CBC" />
-      <PackQtyCell packQty={8} updatePackQty={(delta) => updatePackQty(delta)} />
+      <PackQtyCell
+        packQty={8}
+        updatePackQty={(delta) => updatePackQty(delta)}
+      />
       <PieceQtyCell pieceQty={24} />
       <PackPriceCell packPrice={2000} />
     </ProductVariationsWrapper>

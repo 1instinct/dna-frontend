@@ -17,7 +17,8 @@ const Cell = styled.div<CellProps>`
   justify-content: center;
   align-items: center;
   height: 37.75px;
-  border-right: ${(props) => (props.isFirst ? "1px solid transparent" : "1px solid #000")};
+  border-right: ${(props) =>
+    props.isFirst ? "1px solid transparent" : "1px solid #000"};
 `;
 
 export const QtyPerSize: React.FC<QtyPerSizeProps> = ({ size, qty }) => {

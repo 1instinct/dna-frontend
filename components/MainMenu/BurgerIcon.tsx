@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { BurgerIconProps } from "./types/BurgerIconProps";
 const BurgerIcon = (props: BurgerIconProps) => {
-  const { styles, customIcon, barClassName, className, onClick, onIconHoverChange } = props;
+  const {
+    styles,
+    customIcon,
+    barClassName,
+    className,
+    onClick,
+    onIconHoverChange
+  } = props;
   const [hover, setHover] = useState(false);
   const getLineStyle = (index: number) => {
     return {
@@ -51,7 +58,8 @@ const BurgerIcon = (props: BurgerIconProps) => {
             style={{
               ...getLineStyle(bar),
               ...styles?.bmBurgerBars
-            }}></span>
+            }}
+          ></span>
         ))}
       </span>
     );
@@ -62,7 +70,8 @@ const BurgerIcon = (props: BurgerIconProps) => {
       style={{
         ...{ zIndex: 1000 },
         ...styles?.bmBurgerButton
-      }}>
+      }}
+    >
       <button
         id="react-burger-menu-btn"
         onClick={onClick}
@@ -78,7 +87,8 @@ const BurgerIcon = (props: BurgerIconProps) => {
             onIconHoverChange({ isMouseIn: false });
           }
         }}
-        style={buttonStyle}>
+        style={buttonStyle}
+      >
         Open Menu
       </button>
       {icon}

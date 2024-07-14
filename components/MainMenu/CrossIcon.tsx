@@ -70,12 +70,14 @@ const CrossIcon = ({
       style={{
         ...buttonWrapperStyle,
         ...styles.bmCrossButton
-      }}>
+      }}
+    >
       <button
         id="react-burger-cross-btn"
         onClick={onClick}
         style={buttonStyle}
-        tabIndex={isOpen ? 0 : -1}>
+        tabIndex={isOpen ? 0 : -1}
+      >
         Close Menu
       </button>
       {icon}

@@ -7,7 +7,8 @@ const BUBBLE_WIDTH = 140;
 const styles: MenuFactoryStyles = {
   svg: {
     lib: Snap,
-    pathInitial: "M-7.312,0H0c0,0,0,113.839,0,400c0,264.506,0,400,0,400h-7.312V0z",
+    pathInitial:
+      "M-7.312,0H0c0,0,0,113.839,0,400c0,264.506,0,400,0,400h-7.312V0z",
     pathOpen:
       "M-7.312,0H15c0,0,66,113.339,66,399.5C81,664.006,15,800,15,800H-7.312V0z;M-7.312,0H100c0,0,0,113.839,0,400c0,264.506,0,400,0,400H-7.312V0z",
     animate(path: Path) {

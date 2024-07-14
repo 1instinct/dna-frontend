@@ -40,7 +40,9 @@ const styles: MenuFactoryStyles = {
       MozTransform: isOpen ? "" : "translate3d(0, " + nthChild * 500 + "px, 0)",
       MsTransform: isOpen ? "" : "translate3d(0, " + nthChild * 500 + "px, 0)",
       OTransform: isOpen ? "" : "translate3d(0, " + nthChild * 500 + "px, 0)",
-      WebkitTransform: isOpen ? "" : "translate3d(0, " + nthChild * 500 + "px, 0)",
+      WebkitTransform: isOpen
+        ? ""
+        : "translate3d(0, " + nthChild * 500 + "px, 0)",
       transform: isOpen ? "" : "translate3d(0, " + nthChild * 500 + "px, 0)",
       transition: isOpen
         ? "transform 0.8s cubic-bezier(0.7, 0, 0.3, 1)"

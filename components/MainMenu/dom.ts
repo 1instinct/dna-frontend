@@ -1,5 +1,7 @@
 export function focusOnFirstMenuItem() {
-  const firstItem = Array.from(document.getElementsByClassName("bm-item")).shift();
+  const firstItem = Array.from(
+    document.getElementsByClassName("bm-item")
+  ).shift();
   if (firstItem) {
     (firstItem as HTMLElement).focus();
   }
@@ -26,7 +28,9 @@ export function focusOnMenuButton() {
   }
 }
 
-export function focusOnMenuItem(siblingType: keyof typeof document.activeElement) {
+export function focusOnMenuItem(
+  siblingType: keyof typeof document.activeElement
+) {
   if (document?.activeElement?.className.includes("bm-item")) {
     const sibling = <HTMLElement>document.activeElement[siblingType];
     if (sibling) {
@@ -48,5 +52,7 @@ export function focusOnNextMenuItem() {
 }
 
 export function focusOnPreviousMenuItem() {
-  focusOnMenuItem("previousElementSibling" as keyof typeof document.activeElement);
+  focusOnMenuItem(
+    "previousElementSibling" as keyof typeof document.activeElement
+  );
 }

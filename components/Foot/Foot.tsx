@@ -67,9 +67,15 @@ export const Foot: React.FC<FootProps> = (props) => {
       <Grid className={gridClass}>
         {columns.map((item, index) => (
           <Column className={columnClass} key={index}>
-            {item.title && <ColumnTitle className={columnTitleClass}>{item.title}</ColumnTitle>}
+            {item.title && (
+              <ColumnTitle className={columnTitleClass}>
+                {item.title}
+              </ColumnTitle>
+            )}
             {item.subTitle && (
-              <ColumnSubTitle className={subTitleClass}>{item.subTitle}</ColumnSubTitle>
+              <ColumnSubTitle className={subTitleClass}>
+                {item.subTitle}
+              </ColumnSubTitle>
             )}
             {item.links &&
               item.links.map((v, i) => (

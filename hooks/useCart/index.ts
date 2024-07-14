@@ -101,7 +101,8 @@ export const useCart = () => {
 
 export const removeItemFromCart = async (itemId: string) => {
   const storage = (await import("../../config/storage")).default;
-  const orderToken = await storage.getOrderToken() || await storage.getGuestOrderToken();
+  const orderToken =
+    (await storage.getOrderToken()) || (await storage.getGuestOrderToken());
   if (!orderToken) {
     throw new Error("No cart token available");
   }
@@ -116,16 +117,15 @@ export const removeItemFromCart = async (itemId: string) => {
 
 export const updateItemQuantity = async (itemId: string, quantity: number) => {
   const storage = (await import("../../config/storage")).default;
-  const orderToken = await storage.getOrderToken() || await storage.getGuestOrderToken();
+  const orderToken =
+    (await storage.getOrderToken()) || (await storage.getGuestOrderToken());
   if (!orderToken) {
     throw new Error("No cart token available");
   }
 
-  const response = await spreeClient.cart.removeItem(
-    { orderToken },
-    itemId,
-    { quantity }
-  );
+  const response = await spreeClient.cart.removeItem({ orderToken }, itemId, {
+    quantity
+  });
 
   if (response.isSuccess()) {
     return response.success();

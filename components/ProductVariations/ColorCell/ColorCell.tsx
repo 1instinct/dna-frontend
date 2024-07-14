@@ -33,7 +33,10 @@ const ColorName = styled.span`
   color: #000;
 `;
 
-export const ColorCell: React.FC<ColorCellProps> = ({ colorName, colorValue }) => {
+export const ColorCell: React.FC<ColorCellProps> = ({
+  colorName,
+  colorValue
+}) => {
   return (
     <ColorCellWrapper>
       <ColorDot dotColor={colorValue} />

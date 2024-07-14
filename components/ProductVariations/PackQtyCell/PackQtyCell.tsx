@@ -22,7 +22,10 @@ const Counter = styled.span`
   margin: 0 15px;
 `;
 
-export const PackQtyCell: React.FC<PackQtyCellProps> = ({ packQty, updatePackQty }) => {
+export const PackQtyCell: React.FC<PackQtyCellProps> = ({
+  packQty,
+  updatePackQty
+}) => {
   return (
     <PackQtyCellWrapper>
       <Button onClick={() => updatePackQty(1)}>-</Button>

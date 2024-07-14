@@ -10,7 +10,11 @@ import {
 } from "./dom";
 import BurgerIcon from "./BurgerIcon";
 import CrossIcon from "./CrossIcon";
-import { MenuFactoryStyles, MenuFactoryStylesKey, MenuProps } from "./types/menuFactory";
+import {
+  MenuFactoryStyles,
+  MenuFactoryStylesKey,
+  MenuProps
+} from "./types/menuFactory";
 import { BaseStyles, BaseStylesKey } from "./types/baseStyles";
 import { BurgerIconStyles } from "./types/BurgerIconProps";
 import { CrossIconStyles } from "./types/CrossIcon";
@@ -127,7 +131,9 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
 
       // Ensures wrapper styles are applied before the menu is toggled
       setTimeout(() => {
-        setIsOpen((open) => (typeof options.isOpen !== "undefined" ? options.isOpen : !open));
+        setIsOpen((open) =>
+          typeof options.isOpen !== "undefined" ? options.isOpen : !open
+        );
       });
     }
 
@@ -148,7 +154,12 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
     }
 
     function getStyle(
-      style: (isOpen: boolean, formattedWidth: string, right: boolean, index: number) => any,
+      style: (
+        isOpen: boolean,
+        formattedWidth: string,
+        right: boolean,
+        index: number
+      ) => any,
       index?: number
     ) {
       const { width, right } = props;
@@ -158,7 +169,8 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
 
     // Builds styles incrementally for a given element
     function getStyles(el: BaseStylesKey, index?: any, inline?: any) {
-      const propName = "bm" + el.replace(el.charAt(0), el.charAt(0).toUpperCase());
+      const propName =
+        "bm" + el.replace(el.charAt(0), el.charAt(0).toUpperCase());
 
       // Set base styles
       let output = baseStyles[el] ? getStyle(baseStyles[el]) : {};
@@ -172,7 +184,11 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
       }
 
       // Add custom styles
-      if (props && props.styles && props.styles[propName as keyof BurgerIconStyles]) {
+      if (
+        props &&
+        props.styles &&
+        props.styles[propName as keyof BurgerIconStyles]
+      ) {
         output = {
           ...output,
           ...props.styles[propName as keyof BurgerIconStyles]
@@ -212,7 +228,9 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
 
       for (const prop in builtStyles) {
         if (builtStyles.hasOwnProperty(prop)) {
-          wrapper.style[prop as unknown as number] = set ? builtStyles[prop] : "";
+          wrapper.style[prop as unknown as number] = set
+            ? builtStyles[prop]
+            : "";
         }
       }
 
@@ -237,10 +255,16 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
         el.classList[set ? "add" : "remove"](className);
 
       if (props.htmlClassName) {
-        applyClass(document.querySelector("html") as HTMLElement, props.htmlClassName);
+        applyClass(
+          document.querySelector("html") as HTMLElement,
+          props.htmlClassName
+        );
       }
       if (props.bodyClassName) {
-        applyClass(document.querySelector("body") as HTMLElement, props.bodyClassName);
+        applyClass(
+          document.querySelector("body") as HTMLElement,
+          props.bodyClassName
+        );
       }
 
       if (styles.pageWrap && props.pageWrapId) {
@@ -248,7 +272,11 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
       }
 
       if (styles.outerContainer && props.outerContainerId) {
-        handleExternalWrapper(props.outerContainerId, styles.outerContainer, set);
+        handleExternalWrapper(
+          props.outerContainerId,
+          styles.outerContainer,
+          set
+        );
       }
 
       const menuWrap = document.querySelector(".bm-menu-wrap");
@@ -296,7 +324,9 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
     function onKeyDownClosed(e: KeyboardEvent) {
       const anyEvent = e;
       // Key downs came from menu button
-      if (anyEvent.target === document.getElementById("react-burger-menu-btn")) {
+      if (
+        anyEvent.target === document.getElementById("react-burger-menu-btn")
+      ) {
         switch (anyEvent.key) {
           case ARROW_DOWN:
           case SPACE:
@@ -314,7 +344,8 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
     function handleOverlayClick() {
       if (
         props.disableOverlayClick === true ||
-        (typeof props.disableOverlayClick === "function" && props.disableOverlayClick())
+        (typeof props.disableOverlayClick === "function" &&
+          props.disableOverlayClick())
       ) {
         return;
       } else {
@@ -347,18 +378,28 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
           id={props.id}
           className={`bm-menu-wrap ${props.className}`.trim()}
           style={getStyles("menuWrap")}
-          aria-hidden={!isOpen}>
+          aria-hidden={!isOpen}
+        >
           {styles.svg && (
             <div
               id="bm-morph-shape"
               className={`bm-morph-shape ${props.morphShapeClassName}`.trim()}
-              style={getStyles("morphShape" as keyof BaseStyles)}>
-              <svg width="100%" height="100%" viewBox="0 0 100 800" preserveAspectRatio="none">
+              style={getStyles("morphShape" as keyof BaseStyles)}
+            >
+              <svg
+                width="100%"
+                height="100%"
+                viewBox="0 0 100 800"
+                preserveAspectRatio="none"
+              >
                 <path d={styles.svg.pathInitial} />
               </svg>
             </div>
           )}
-          <div className={`bm-menu ${props.menuClassName}`.trim()} style={getStyles("menu")}>
+          <div
+            className={`bm-menu ${props.menuClassName}`.trim()}
+            style={getStyles("menu")}
+          >
             {React.createElement(
               props.itemListElement as
                 | "div"
@@ -370,7 +411,11 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
               },
               React.Children.map(props.children, (item, index) => {
                 if (item) {
-                  const classList = ["bm-item", props.itemClassName, item.props.className]
+                  const classList = [
+                    "bm-item",
+                    props.itemClassName,
+                    item.props.className
+                  ]
                     .filter((className) => !!className)
                     .join(" ");
                   const extraProps = {
@@ -408,8 +453,14 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
     className: PropTypes.string,
     crossButtonClassName: PropTypes.string,
     crossClassName: PropTypes.string,
-    customBurgerIcon: PropTypes.oneOfType([PropTypes.element, PropTypes.oneOf([false])]),
-    customCrossIcon: PropTypes.oneOfType([PropTypes.element, PropTypes.oneOf([false])]),
+    customBurgerIcon: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.oneOf([false])
+    ]),
+    customCrossIcon: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.oneOf([false])
+    ]),
     customOnKeyDown: PropTypes.func,
     disableAutoFocus: PropTypes.bool,
     disableCloseOnEsc: PropTypes.bool,
@@ -429,9 +480,14 @@ const MenuFactory = (styles: MenuFactoryStyles) => {
     onOpen: PropTypes.func,
     onStateChange: PropTypes.func,
     outerContainerId:
-      styles && styles.outerContainer ? PropTypes.string.isRequired : PropTypes.string,
+      styles && styles.outerContainer
+        ? PropTypes.string.isRequired
+        : PropTypes.string,
     overlayClassName: PropTypes.string,
-    pageWrapId: styles && styles.pageWrap ? PropTypes.string.isRequired : PropTypes.string,
+    pageWrapId:
+      styles && styles.pageWrap
+        ? PropTypes.string.isRequired
+        : PropTypes.string,
     right: PropTypes.bool,
     styles: PropTypes.object,
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
