@@ -15,16 +15,16 @@ const fetchStreams = async (page: number = 1) => {
     method: "GET",
     headers: requestHeaders
   })
-  .then((response) => {
-    // constants.IS_DEBUG && console.log("RESPONSE: ", response);
-    if (!response.ok) throw new Error("Streams request failed");
-    else return response.json();
-  })
-  // .then((data) => console.log(data))
-  .catch((err) => {
-    constants.IS_DEBUG && console.log(err);
-    throw new Error("Streams request failed");
-  });
+    .then((response) => {
+      // constants.IS_DEBUG && console.log("RESPONSE: ", response);
+      if (!response.ok) throw new Error("Streams request failed");
+      else return response.json();
+    })
+    // .then((data) => console.log(data))
+    .catch((err) => {
+      constants.IS_DEBUG && console.log(err);
+      throw new Error("Streams request failed");
+    });
   // console.log(response)
   return response;
 };

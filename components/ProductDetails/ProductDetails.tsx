@@ -13,4 +13,4 @@ export const ProductDetails = ({ wholesale, props }: ProductDetailsProps) => {
   } else {
     return <RetailProductDetails {...props} wholesale />;
   }
-}
+};

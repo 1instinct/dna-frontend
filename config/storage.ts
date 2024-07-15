@@ -34,7 +34,9 @@ const storage = {
     const now = Math.round(Date.now() / 1000);
     return now >= expiresAt;
   },
-  refreshToken: async (token: IOAuthToken): Promise<IOAuthToken | undefined> => {
+  refreshToken: async (
+    token: IOAuthToken
+  ): Promise<IOAuthToken | undefined> => {
     const response = await spreeClient.authentication.refreshToken({
       refresh_token: token.refresh_token
     });
@@ -72,7 +74,7 @@ const storage = {
     window.localStorage.removeItem("token");
     window.localStorage.removeItem("orderToken");
     window.localStorage.removeItem("guestOrderToken");
-  },
+  }
 };
 
 export default storage;

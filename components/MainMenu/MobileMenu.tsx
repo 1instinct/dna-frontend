@@ -45,10 +45,10 @@ export const MobileMenu = ({
   const [open, setOpen] = useState(false);
   const [keyPath, setKeyPath] = useState("");
   const menuItems =
-      menusData?.menu_location_listing?.length > 0
-        ? menusData?.menu_location_listing[0].menu_item_listing
-        : [];
-  
+    menusData?.menu_location_listing?.length > 0
+      ? menusData?.menu_location_listing[0].menu_item_listing
+      : [];
+
   const toggleMenu = () => setOpen((value: any) => !value);
 
   const handleClick = useCallback(
@@ -68,7 +68,12 @@ export const MobileMenu = ({
     [onMenuItemClick]
   );
 
-  const handleItemClick = (item: any, hasChildren: boolean, pathSlug: string, slug: string) => {
+  const handleItemClick = (
+    item: any,
+    hasChildren: boolean,
+    pathSlug: string,
+    slug: string
+  ) => {
     if (hasChildren) {
       handleClick(pathSlug, slug);
     } else {
@@ -83,7 +88,7 @@ export const MobileMenu = ({
     level: number
   ) => {
     const paddingLeft = level * 20 + "px";
-    
+
     if (menuData.length) {
       return (
         <StyledList disablePadding>
@@ -98,13 +103,20 @@ export const MobileMenu = ({
                 <MenuItem
                   key={`${pathSlug}-1`}
                   paddingLeft={paddingLeft}
-                  onClick={() => handleItemClick(item, hasChildren, pathSlug, slug)}
+                  onClick={() =>
+                    handleItemClick(item, hasChildren, pathSlug, slug)
+                  }
                   button
                 >
                   {/* <StyledListItemIcon>{item.icon ? item.icon() : null}</StyledListItemIcon> */}
                   {/* <StyledListItemText primary={item.name.replace("/", "_")} /> */}
                   <StyledListItemText primary={item.name} />
-                  {hasChildren && (keyPath.indexOf(pathSlug) !== -1 ? <ExpandLess /> : <ExpandMore />)}
+                  {hasChildren &&
+                    (keyPath.indexOf(pathSlug) !== -1 ? (
+                      <ExpandLess />
+                    ) : (
+                      <ExpandMore />
+                    ))}
                 </MenuItem>
                 {hasChildren && (
                   <Collapse

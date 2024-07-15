@@ -88,7 +88,10 @@ interface RetailProductDetailsProps {
   wholesale?: boolean;
 }
 
-export const RetailProductDetails = ({ wholesale, props }: RetailProductDetailsProps) => {
+export const RetailProductDetails = ({
+  wholesale,
+  props
+}: RetailProductDetailsProps) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const { asPath: productSlug } = router;
@@ -261,7 +264,7 @@ export const RetailProductDetails = ({ wholesale, props }: RetailProductDetailsP
   useEffect(() => {
     setAddItem({
       variant_id: foundVariants ? foundVariants[0].id : "",
-      quantity: 1,
+      quantity: 1
       // public_metadata: {
       //   first_item_order: true
       // },
@@ -280,9 +283,8 @@ export const RetailProductDetails = ({ wholesale, props }: RetailProductDetailsP
       console.log("PRODUCT ID: ", thisProduct?.data?.id);
     }
   }, [thisProduct]);
-  
-  const renderWholesaleOptions = () => {
 
+  const renderWholesaleOptions = () => {
     const handleUpdatePackSelections = (e: any, variantId: any) => {
       // logic to update the chosenVariantQty state
       setChosenVariantQty(e.target.value);
@@ -333,7 +335,8 @@ export const RetailProductDetails = ({ wholesale, props }: RetailProductDetailsP
     const productImgs =
       thisProduct &&
       thisProduct?.included?.filter((e: any) => e["type"] === "image");
-    const primaryImg = productImgs && productImgs[0]?.attributes?.styles[9]?.url;
+    const primaryImg =
+      productImgs && productImgs[0]?.attributes?.styles[9]?.url;
     const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${primaryImg}`;
     if (productImgs && productImgs.length < 1) {
       return <Loading />;
@@ -513,7 +516,7 @@ export const RetailProductDetails = ({ wholesale, props }: RetailProductDetailsP
               </div>
 
               <BuyButton className="" onClick={() => handleAddToCart(addItem)}>
-              {/* <BuyButton className="" onClick={addAllToCart}> */}
+                {/* <BuyButton className="" onClick={addAllToCart}> */}
                 add to cart
               </BuyButton>
               <div style={{ textAlign: "left" }}>

@@ -15,13 +15,13 @@ import { Content } from "./Home.styles";
 import Featured from "./Featured";
 import MemberList from "./MemberList";
 import { StreamList } from "../StreamList";
-import PolProductList from "../PolProductList";
 import { useMediaQuery } from "react-responsive";
 import MobileLatest from "./MobileLatest";
 import { Loading } from "../Loading";
 import homeData from "./home.json";
 import { VideoJS } from "..";
 import constants from "../../utilities/constants";
+import Products from "./Products";
 
 export const Home = (props: any) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -94,9 +94,8 @@ export const Home = (props: any) => {
   const advertListMobile = isMobile ? (
     <MobileLatest products={productsData} title={""}></MobileLatest>
   ) : null;
-  const polProductList = isMobile ? null : (
-    // <PolProductList data={homeData.hotDigs} title={"New Drops This Week"} />
-    <PolProductList products={productsData} title={"New Drops This Week"} />
+  const productList = isMobile ? null : (
+    <Products products={productsData} title={"New Drops This Week"} />
   );
   const banner = isMobile ? null : <Banner data={homeData.bigHotDig} />;
 
@@ -113,13 +112,18 @@ export const Home = (props: any) => {
       <Hero />
       <Content>
         {/* {memberList} */}
-        {streamsData && <StreamList data={streamsData?.response_data} title={"Live-Shopping"} />}
-        {!productsAreLoading && polProductList}
+        {streamsData && (
+          <StreamList
+            data={streamsData?.response_data}
+            title={"Live-Shopping"}
+          />
+        )}
+        {!productsAreLoading && productList}
         {/* {mobileMemberList} */}
         <Featured data={homeData.latestProducts} title="" />;
         <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
         {advertListMobile}
-        {!productsAreLoading && polProductList}
+        {!productsAreLoading && productList}
         {banner}
       </Content>
     </Layout>
