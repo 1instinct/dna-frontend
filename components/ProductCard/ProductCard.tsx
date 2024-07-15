@@ -28,24 +28,7 @@ import constants from "@utilities/constants";
 
 export const ProductCard = ({ imgSrc, item, opts }: any) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const addToCart = useMutation(addItemToCart, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(QueryKeys.CART);
-      constants.IS_DEBUG && console.log("Item added to cart successfully");
-    },
-    onError: (error: any) => {
-      console.error("Failed to add item to cart:", error);
-    }
-  });
-
-  const handleAddToCart = (item: AddItem) => {
-    constants.IS_DEBUG && console.log("Adding to cart:", item);
-    addToCart.mutate(item);
-  };
-
-  // constants.IS_DEBUG && console.log("Product Card: ", item, "Opts: ", opts);
+  console.log("Card: ", item, "Opts: ", opts);
   return (
     <ProductCardWrapper>
       <>
@@ -61,7 +44,7 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
             {/* <ProductDesc>{item.attributes.description}</ProductDesc> */}
             <ThreeDot>
               {opts?.slice(0, 2).map((opt: any, index: any) => {
-                // constants.IS_DEBUG && console.log("opt: ", opt);
+                // console.log("opt: ", opt);
                 return (
                   <Dot
                     key={`color-${index}`}

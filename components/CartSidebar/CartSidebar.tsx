@@ -1,12 +1,12 @@
-import * as BurgerMenu from "react-burger-menu";
-const Menu = BurgerMenu.slide as unknown as React.ComponentType<any>;
+import { slide as BurgerMenu } from "react-burger-menu";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "react-query";
 import { Loading, LoadingWrapper } from "..";
-import { useCart, updateItemQuantity } from "../../hooks/useCart";
-import { useProducts } from "../../hooks";
-import { QueryKeys } from "../../hooks/queryKeys";
+import {
+  useCart,
+  removeItemFromCart,
+  updateItemQuantity
+} from "../../hooks/useCart";
+import { useProducts } from "../../hooks/useProducts";
 import cartStyles from "./cartStyles";
 
 import {
@@ -19,8 +19,7 @@ import {
   QuantitySelector,
   QuantityAdjuster,
   TotalLine,
-  EmptyCartMessage,
-  Actions
+  EmptyCartMessage
 } from "./CartSidebar.styles";
 import {
   IProduct,
@@ -35,9 +34,6 @@ interface Props {
 
 export const CartSidebar = ({ isVisible, toggle }: Props) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const [quantities, setQuantities] = useState<Record<string, number>>({});
-
   const {
     data: cartData,
     isLoading: cartIsLoading,
@@ -46,21 +42,79 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
 
   const { data: productsData } = useProducts(1);
 
-  // Initialize quantities from item_count when cart loads
-  useEffect(() => {
-    if (
-      cartData?.data?.attributes?.item_count &&
-      cartData?.data?.relationships?.line_items?.data
-    ) {
-      const lineItems = cartData.data.relationships.line_items.data;
-      const itemCount = cartData.data.attributes.item_count;
-      const lineItemsArray = Array.isArray(lineItems) ? lineItems : [lineItems];
-      const avgQty = Math.ceil(itemCount / lineItemsArray.length);
+  const foundProduct = (productId: string, productsData: IProducts) => {
+    // Check if productsData and productsData.data exist and are iterable
+    if (!productsData || !Array.isArray(productsData.data)) {
+      console.error("Invalid or missing productsData");
+      return null;
+    }
 
-      const initialQuantities: Record<string, number> = {};
-      lineItemsArray.forEach((item: any) => {
-        if (!quantities[item.id]) {
-          initialQuantities[item.id] = avgQty;
+    for (const product of productsData.data) {
+      // Also check if the relationships and variants exist and are iterable
+      if (
+        product.relationships &&
+        product.relationships.variants &&
+        Array.isArray(product.relationships.variants.data)
+      ) {
+        const variant = product.relationships.variants.data.find(
+          (variant) => variant.id === productId
+        );
+        if (variant) {
+          return product;
+        }
+      }
+    }
+
+    return null;
+  };
+
+  const handleUpdateItemQuantity = async (
+    itemId: string,
+    newQuantity: number
+  ) => {
+    if (newQuantity < 1) {
+      await removeItemFromCart(itemId);
+    } else {
+      await updateItemQuantity(itemId, newQuantity);
+    }
+  };
+
+  const renderCartItems = () => {
+    if (Array.isArray(cartData?.data?.relationships?.variants?.data)) {
+      return cartData?.data?.relationships?.variants?.data?.map(
+        (item, index): any => {
+          if (productsData !== undefined) {
+            const itemCount = cartData?.data?.attributes?.item_count;
+            const product = foundProduct(item.id, productsData);
+
+            return (
+              <CartItem key={`cart-item-${index}`}>
+                <CartItemDescription>
+                  {product?.attributes?.name} - ${product?.attributes?.price}
+                </CartItemDescription>
+                <QuantityAdjusterWrapper>
+                  <QuantityAdjuster
+                    onClick={() =>
+                      handleUpdateItemQuantity(item.id, itemCount - 1)
+                    }
+                  >
+                    -
+                  </QuantityAdjuster>
+                  <QuantitySelector value={itemCount} />
+                  <QuantityAdjuster
+                    onClick={() =>
+                      handleUpdateItemQuantity(item.id, itemCount + 1)
+                    }
+                  >
+                    +
+                  </QuantityAdjuster>
+                </QuantityAdjusterWrapper>
+              </CartItem>
+            );
+          } else {
+            console.error("productsData is undefined");
+            return null;
+          }
         }
       });
 
@@ -286,13 +340,9 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
           <TotalLine>Subtotal: {display_item_total}</TotalLine>
           <TotalLine>Tax: {included_tax_total}</TotalLine>
           <TotalLine>Total: {display_total}</TotalLine>
-          <Actions>
-            <Button variant="outline" onClick={() => router.push("/cart")}>
-              View Cart
-            </Button>
-            <Button onClick={() => router.push("/checkout")}>Checkout</Button>
-          </Actions>
-        </Menu>
+          <Button onClick={() => router.push("/cart")}>View Cart</Button>
+          <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+        </BurgerMenu>
         <style jsx>{`
           .cart-modal {
             background-color: white;

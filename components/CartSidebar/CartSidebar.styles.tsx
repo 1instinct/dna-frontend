@@ -41,14 +41,10 @@ export const CartItem = styled.div`
   align-items: center;
   padding: 10px;
   border-bottom: 1px solid #ccc;
-  font-family: ${(p) => p.theme.typography.bodyMD.fontFamily};
-  line-height: ${(p) => p.theme.typography.bodyMD.lineHeight};
 `;
 
 export const CartItemDescription = styled.span`
   font-size: 16px;
-  font-family: ${(p) => p.theme.typography.bodyMD.fontFamily};
-  line-height: ${(p) => p.theme.typography.bodyMD.lineHeight};
 `;
 
 export const QuantityAdjusterWrapper = styled.div`
@@ -85,10 +81,4 @@ export const TotalLine = styled.div`
 export const EmptyCartMessage = styled.p`
   text-align: center;
   padding: 20px;
-`;
-
-export const Actions = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
 `;

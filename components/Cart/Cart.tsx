@@ -25,7 +25,7 @@ import {
 
 export const Cart = () => {
   const router = useRouter();
-  const { data: cartData, isLoading, isError, error } = useCart();
+  const { data: cartData, isLoading } = useCart();
 
   const { data: productsData } = useProducts(1);
 
@@ -78,61 +78,55 @@ export const Cart = () => {
     newQuantity: number
   ) => {
     if (newQuantity < 1) {
-      await handleRemoveItem(itemId); // Remove item if quantity is zero
+      await removeItemFromCart(itemId);
     } else {
-      try {
-        await updateItemQuantity(itemId, newQuantity);
-        console.log(`Item quantity updated to ${newQuantity}`);
-      } catch (error) {
-        console.error("Failed to update item quantity:", error);
-      }
+      await updateItemQuantity(itemId, newQuantity);
     }
   };
 
   const renderCartItems = () => {
-    if (Array.isArray(cartData?.included) && productsData) {
-      return cartData?.included
-        .filter((includedItem) => includedItem.type === "line_item")
-        .map((lineItem) => {
-          const product = foundProduct(
-            lineItem.relationships.variant.data.id,
-            productsData
-          );
+    if (Array.isArray(cartData?.data?.relationships?.variants?.data)) {
+      return cartData?.data?.relationships?.variants?.data?.map(
+        (item, index): any => {
+          if (productsData !== undefined) {
+            const itemCount = cartData?.data?.attributes?.item_count;
+            const product = foundProduct(item.id, productsData);
 
-          const lineItemId = lineItem.id;
-          const quantity = lineItem.attributes.quantity;
-
-          return (
-            <CartItem key={`cart-item-${lineItemId}`}>
-              <CartItemDescription>
-                {product?.attributes?.name} - ${product?.attributes?.price}
-              </CartItemDescription>
-              <QuantityAdjusterWrapper>
-                <QuantityAdjuster
-                  onClick={() =>
-                    handleUpdateItemQuantity(lineItemId, quantity - 1)
-                  }
-                >
-                  -
-                </QuantityAdjuster>
-                <QuantitySelector value={quantity} readOnly />
-                <QuantityAdjuster
-                  onClick={() =>
-                    handleUpdateItemQuantity(lineItemId, quantity + 1)
-                  }
-                >
-                  +
-                </QuantityAdjuster>
-              </QuantityAdjusterWrapper>
-            </CartItem>
-          );
-        });
+            return (
+              <CartItem key={`cart-item-${index}`}>
+                <CartItemDescription>
+                  {product?.attributes?.name} - ${product?.attributes?.price}
+                </CartItemDescription>
+                <QuantityAdjusterWrapper>
+                  <QuantityAdjuster
+                    onClick={() =>
+                      handleUpdateItemQuantity(item.id, itemCount - 1)
+                    }
+                  >
+                    -
+                  </QuantityAdjuster>
+                  <QuantitySelector value={itemCount} />
+                  <QuantityAdjuster
+                    onClick={() =>
+                      handleUpdateItemQuantity(item.id, itemCount + 1)
+                    }
+                  >
+                    +
+                  </QuantityAdjuster>
+                </QuantityAdjusterWrapper>
+              </CartItem>
+            );
+          } else {
+            console.error("productsData is undefined");
+            return null;
+          }
+        }
+      );
     }
     return null;
   };
 
   if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error: {error.message}</p>;
 
   const {
     item_count = 0,
