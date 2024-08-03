@@ -1,6 +1,9 @@
 import styled from "@emotion/styled";
 export const Container = styled.div`
-  background: ${(p) => p.theme.colors.black.primary};
+  background: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.black.primary
+      : p.theme.colors.white.primary};
   padding-top: 41px;
   color: ${(p) =>
     p.theme.isDarkMode

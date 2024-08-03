@@ -41,6 +41,18 @@ const isLocalDevEnvironment = !process.env.DEPLOY_ENV;
 module.exports = {
   swcMinify: true,
   webpack: (config, { webpack }) => {
+    config.resolve.alias['@components'] = path.join(__dirname, 'components');
+    config.resolve.alias['@config'] = path.join(__dirname, 'config');
+    config.resolve.alias['@contrib'] = path.join(__dirname, 'contrib');
+    config.resolve.alias['@data'] = path.join(__dirname, 'data');
+    config.resolve.alias['@hooks'] = path.join(__dirname, 'hooks');
+    config.resolve.alias['@lib'] = path.join(__dirname, 'lib');
+    config.resolve.alias['@models'] = path.join(__dirname, 'models');
+    config.resolve.alias['@pages'] = path.join(__dirname, 'pages');
+    config.resolve.alias['@public'] = path.join(__dirname, 'public');
+    config.resolve.alias['@styles'] = path.join(__dirname, 'styles');
+    config.resolve.alias['@typings'] = path.join(__dirname, 'typings');
+    config.resolve.alias['@utilities'] = path.join(__dirname, 'utilities');
     config.plugins = config.plugins || [];
     config.plugins = [
       ...config.plugins,
