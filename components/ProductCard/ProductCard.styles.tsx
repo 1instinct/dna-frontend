@@ -62,16 +62,13 @@ export const Price = styled.h3`
   text-align: right;
 `;
 
-export const AddToCartButton = styled(Button)`
-  font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
+export const AddToCartButton = styled.button`
+  background: ${(p) => p.theme.colors.brand.primary};
+  color: ${(p) => p.theme.colors.white.primary};
+  padding: ${pxPC(8)} ${pxPC(16)};
   margin-top: ${pxPC(18)};
   border: none;
   cursor: pointer;
-  padding: 3px 5px;
-
-  & i {
-    color: ${(p) => p.theme.colors.white.primary} !important;
-  }
 `;
 
 export const ThreeDot = styled.div`

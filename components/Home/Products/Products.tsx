@@ -6,6 +6,7 @@ import { SwiperWrap, Title } from "./Products.styles";
 import SwiperCore, { Navigation, Thumbs } from "swiper/core";
 import { useMediaQuery } from "react-responsive";
 import { IProducts } from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
+import constants from "@utilities/constants";
 export type product = {
   title: string;
   subTitle: string;
@@ -25,7 +26,7 @@ SwiperCore.use([Navigation, Thumbs]);
 const Products: React.FC<ProductsProps> = (props) => {
   const { products, title } = props;
   const isMobile = useMediaQuery({ maxWidth: 767 });
-  console.log("products: ", products);
+  constants.IS_DEBUG && console.log("products: ", products);
 
   const optionValuesLookup = products?.included
     ?.filter((item) => item.type === "option_value")
@@ -49,7 +50,7 @@ const Products: React.FC<ProductsProps> = (props) => {
         watchSlidesProgress={true}
       >
         {products?.data?.map((item: any, index: any) => {
-          console.log(item);
+          constants.IS_DEBUG && console.log(item);
           const defaultImg =
             "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
           const productImg = item.relationships?.images?.data[0]?.id;
@@ -83,7 +84,7 @@ const Products: React.FC<ProductsProps> = (props) => {
           let foundOptions =
             productVariantColors !== null
               ? productVariantColors.filter((i: any) => {
-                  console.log(
+                  constants.IS_DEBUG && console.log(
                     "foundOption: ",
                     i.relationships.option_type.data.id
                   );

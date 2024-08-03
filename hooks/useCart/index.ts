@@ -32,13 +32,14 @@ export const showCart = async () => {
           throw new Error(newCart.fail().message);
         }
       }
-    } catch (error) {
-      // If cart.show fails, create a new cart
-      constants.IS_DEBUG && console.log("Cart fetch failed, creating new cart");
-      const newCart = await spreeClient.cart.create(
-        { bearerToken: token.access_token },
-        { include: "line_items,variants" }
-      );
+    );
+    if (getCart.isSuccess()) {
+      constants.IS_DEBUG && console.log("HAS USER CART");
+      return getCart.success();
+    } else {
+      const newCart = await spreeClient.cart.create({
+        bearerToken: token.access_token
+      });
       if (newCart.isSuccess()) {
         return newCart.success();
       } else {
