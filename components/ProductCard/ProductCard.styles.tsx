@@ -55,13 +55,28 @@ export const Price = styled.h3`
       : p.theme.colors.black.primary};
   text-align: right;
 `;
+
+export const AddToCartButton = styled.button`
+  background: ${(p) => p.theme.colors.brand.primary};
+  color: ${(p) => p.theme.colors.white.primary};
+  padding: ${pxPC(8)} ${pxPC(16)};
+  margin-top: ${pxPC(18)};
+  border: none;
+  cursor: pointer;
+`;
+
 export const ThreeDot = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
   margin-top: ${pxPC(3)};
 `;
-export const Dot = styled.div`
+
+type DotProps = {
+  color: string;
+};
+
+export const Dot = styled.div<DotProps>`
   width: ${pxPC(12)};
   height: ${pxPC(12)};
   border-radius: 50%;
@@ -71,8 +86,9 @@ export const Dot = styled.div`
         ? p.theme.colors.white.primary
         : p.theme.colors.black.primary};
   margin-right: ${pxPC(8)};
-  background: ${(p) => p.color};
+  background-color: ${(p) => p.color};
 `;
+
 // export const Dot1 = styled(Dot)`
 //   background: #cbc8bf;
 // `;

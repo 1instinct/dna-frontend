@@ -1,9 +1,9 @@
 import { AddItem } from "@spree/storefront-api-v2-sdk/types/interfaces/endpoints/CartClass";
 import { IOrder } from "@spree/storefront-api-v2-sdk/types/interfaces/Order";
 import { useQuery } from "react-query";
-import { spreeClient } from "../../config/spree";
-import { QueryKeys } from "../queryKeys";
-import constants from "../../utilities/constants";
+import { spreeClient } from "@config/spree";
+import { QueryKeys } from "@hooks/queryKeys";
+import constants from "@utilities/constants";
 
 export const showCart = async () => {
   const storage = (await import("../../config/storage")).default;
@@ -16,7 +16,7 @@ export const showCart = async () => {
       }
     );
     if (getCart.isSuccess()) {
-      console.log("HAS USER CART");
+      constants.IS_DEBUG && console.log("HAS USER CART");
       return getCart.success();
     } else {
       const newCart = await spreeClient.cart.create({
