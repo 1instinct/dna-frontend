@@ -60,8 +60,12 @@ export const addItemToCart = async (item: AddItem) => {
   const storage = (await import("../../config/storage")).default;
   let orderToken = await storage.getOrderToken();
 
-  // If no user order token, check for or create a guest order token
+  constants.IS_DEBUG && console.log("ORDER TOKEN: ", orderToken);
+
+  // If no user order token, try creating user order token, otherwise check for or create a guest order token
   if (!orderToken) {
+    constants.IS_DEBUG && console.log("NO USER ORDER TOKEN");
+
     orderToken = await storage.getGuestOrderToken();
 
     // No guest order token, create new cart and store new token
