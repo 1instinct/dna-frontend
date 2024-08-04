@@ -105,7 +105,12 @@ export const Cart = () => {
                   >
                     -
                   </QuantityAdjuster>
-                  <QuantitySelector value={itemCount} />
+                  <QuantitySelector
+                    value={itemCount}
+                    onChange={() => {
+                      console.log("Quantity changed");
+                    }}
+                  />
                   <QuantityAdjuster
                     onClick={() =>
                       handleUpdateItemQuantity(item.id, itemCount + 1)

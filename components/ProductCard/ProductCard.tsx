@@ -38,14 +38,17 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
 
   const handleAddToCart = (item: AddItem) => {
     addToCart.mutate(item);
-  }
+  };
 
-  constants.IS_DEBUG && console.log("Card: ", item, "Opts: ", opts);
+  constants.IS_DEBUG && console.log("Product Card: ", item, "Opts: ", opts);
   return (
     <ProductCardWrapper>
       <>
         <ProductImgWrapper>
-          <ProductImg src={imgSrc} onClick={(e) => router.push(`${item.attributes.slug}`)} />
+          <ProductImg
+            src={imgSrc}
+            onClick={(e) => router.push(`${item.attributes.slug}`)}
+          />
         </ProductImgWrapper>
         <ProductFooter>
           <ProductFooterLeft>
@@ -68,20 +71,24 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
             {/* <ProductRate name="simple-controlled" value={item.attributes.rate} /> */}
             <Price>${item.attributes.price}</Price>
             <AddToCartButton
-              onClick={() => handleAddToCart({
-                variant_id: item.relationships.default_variant.data.id,
-                quantity: 1
-                // public_metadata: {
-                //   first_item_order: true
-                // },
-                // private_metadata: {
-                //   recommended_by_us: false
-                // }
-                // options?: {
-                //     [key: string]: string;
-                // };
-              })}
-            >Add to cart</AddToCartButton>
+              onClick={() =>
+                handleAddToCart({
+                  variant_id: item.relationships.default_variant.data.id,
+                  quantity: 1
+                  // public_metadata: {
+                  //   first_item_order: true
+                  // },
+                  // private_metadata: {
+                  //   recommended_by_us: false
+                  // }
+                  // options?: {
+                  //     [key: string]: string;
+                  // };
+                })
+              }
+            >
+              Add to cart
+            </AddToCartButton>
           </ProductFooterRight>
         </ProductFooter>
       </>
