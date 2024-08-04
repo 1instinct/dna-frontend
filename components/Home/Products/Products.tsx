@@ -70,7 +70,7 @@ const Products: React.FC<ProductsProps> = (props) => {
 
           const optionTypes = item.relationships?.option_types?.data || [];
           const productOptions = optionTypes
-            .map((ot) => optionValuesLookup[ot.id])
+            .map((ot: any) => optionValuesLookup[ot.id])
             .filter(Boolean);
           let productOptionIds = optionTypes.map((i: any) => i.id);
           let allOptions =
@@ -84,10 +84,11 @@ const Products: React.FC<ProductsProps> = (props) => {
           let foundOptions =
             productVariantColors !== null
               ? productVariantColors.filter((i: any) => {
-                  constants.IS_DEBUG && console.log(
-                    "foundOption: ",
-                    i.relationships.option_type.data.id
-                  );
+                  constants.IS_DEBUG &&
+                    console.log(
+                      "foundOption: ",
+                      i.relationships.option_type.data.id
+                    );
                   return productOptionIds.includes(
                     i.relationships.option_type.data.id
                   );

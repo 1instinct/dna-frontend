@@ -6,7 +6,7 @@ import {
   removeItemFromCart,
   updateItemQuantity
 } from "../../hooks/useCart";
-import { useProducts } from "../../hooks/useProducts";
+import { useProducts } from "../../hooks";
 import cartStyles from "./cartStyles";
 
 import {
@@ -83,38 +83,42 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
     if (Array.isArray(cartData?.data?.relationships?.variants?.data)) {
       return cartData?.data?.relationships?.variants?.data?.map(
         (item, index): any => {
-          if (productsData !== undefined) {
-            const itemCount = cartData?.data?.attributes?.item_count;
-            const product = foundProduct(item.id, productsData);
-
-            return (
-              <CartItem key={`cart-item-${index}`}>
-                <CartItemDescription>
-                  {product?.attributes?.name} - ${product?.attributes?.price}
-                </CartItemDescription>
-                <QuantityAdjusterWrapper>
-                  <QuantityAdjuster
-                    onClick={() =>
-                      handleUpdateItemQuantity(item.id, itemCount - 1)
-                    }
-                  >
-                    -
-                  </QuantityAdjuster>
-                  <QuantitySelector value={itemCount} />
-                  <QuantityAdjuster
-                    onClick={() =>
-                      handleUpdateItemQuantity(item.id, itemCount + 1)
-                    }
-                  >
-                    +
-                  </QuantityAdjuster>
-                </QuantityAdjusterWrapper>
-              </CartItem>
-            );
-          } else {
-            console.error("productsData is undefined");
+          if (!productsData || !Array.isArray(productsData.data)) {
+            console.error("Invalid or missing productsData");
             return null;
           }
+          const itemCount = cartData?.data?.attributes?.item_count;
+          const product = foundProduct(item.id, productsData);
+
+          return (
+            <CartItem key={`cart-item-${index}`}>
+              <CartItemDescription>
+                {product?.attributes?.name} - ${product?.attributes?.price}
+              </CartItemDescription>
+              <QuantityAdjusterWrapper>
+                <QuantityAdjuster
+                  onClick={() =>
+                    handleUpdateItemQuantity(item.id, itemCount - 1)
+                  }
+                >
+                  -
+                </QuantityAdjuster>
+                <QuantitySelector
+                  value={itemCount}
+                  onChange={() => {
+                    console.log("onChange");
+                  }}
+                />
+                <QuantityAdjuster
+                  onClick={() =>
+                    handleUpdateItemQuantity(item.id, itemCount + 1)
+                  }
+                >
+                  +
+                </QuantityAdjuster>
+              </QuantityAdjusterWrapper>
+            </CartItem>
+          );
         }
       });
 
