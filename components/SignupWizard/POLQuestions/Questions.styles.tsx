@@ -16,19 +16,21 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
     "" /* background: ${props => props.theme.colors.white.primary};
   color: ${props => props.theme.colors.brand.primary};
   box-shadow: 1px 3px 8px rgba(0,0,0,0.123);
-  width: 100%;
   margin: 15px 15px 0 0px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px; */
   }
-  margin: -50px 15px 15px 15px;
+  margin: -120px 15px 15px 15px;
   text-align: center;
   @media (max-width: ${(props) => props.theme.breakpoints.values.sm}px) {
     margin: 0 auto;
     padding: 30px 0px 0px 0px;
   }
   & [data-qa="title"] {
-    color: ${(props) => props.theme.colors.brand.primary};
+    color: ${(props) =>
+      props.theme.isDarkMode
+        ? props.theme.colors.white.primary
+        : props.theme.colors.brand.primary};
     font-size: 1.6rem;
   }
   & .carousel .thumbs-wrapper {
@@ -44,14 +46,20 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
   & .carousel .control-dots .dot {
     width: 5px;
     height: 5px;
-    background: ${(props) => props.theme.colors.gray.primary};
+    background: ${(props) =>
+      props.theme.isDarkMode
+        ? props.theme.colors.white.primary
+        : props.theme.colors.brand.primary};
     box-shadow: none;
     &:focus {
       outline: none;
     }
   }
   & .carousel .control-dots .dot.selected {
-    background: ${(props) => props.theme.colors.white.primary};
+    background: ${(props) =>
+      props.theme.isDarkMode
+        ? props.theme.colors.white.primary
+        : props.theme.colors.white.primary};
     box-shadow: 0 0 0 7px ${(props) => props.theme.colors.brand.primary};
   }
 `;
@@ -59,6 +67,8 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
 export const InputWrapper = styled.div<GenericThemeType>`
   text-align: left;
   margin: 10px 25px;
+  display: flex;
+  flex-direction: column;
 
   & .MuiFormControl-root.MuiTextField-root {
     width: 100%;
@@ -66,7 +76,7 @@ export const InputWrapper = styled.div<GenericThemeType>`
 `;
 
 export const Title = styled.h1<GenericThemeType>`
-  margin: 5px 15px;
+  margin: 5px 15px 15px 15px;
   color: ${(props) => props.theme.colors.brand.primary};
 `;
 
@@ -87,7 +97,6 @@ export const LinkOut = styled.a`
 `;
 
 export const TermsWrapper = styled.div`
-  width: 100%;
   display: flex;
   flex-flow: row nowrap;
   align-items: start;
@@ -120,6 +129,7 @@ export const TermsStatement = styled.p<TermsStatementType>`
   max-width: 420px;
 
   & button {
+    font-size: 0.7rem;
     cursor: pointer;
     display: contents;
     font-weight: 700;
@@ -138,6 +148,8 @@ export const TermsStatement = styled.p<TermsStatementType>`
 export const StyledModalContent = styled.div`
   ${"" /* Modal Header Container */}
   max-width: 50%;
+  height: 100%;
+  margin: 40px auto;
   overflow-y: scroll;
   background: ${(p) => p.theme.colors.white.primary};
 `;

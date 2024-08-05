@@ -3,7 +3,6 @@ import { Field } from "formik";
 import { TextField, Checkbox } from "@material-ui/core";
 
 export const BasicField = styled(Field)`
-  width: 100%;
   border-width: 2px;
   border-style: dashed;
   border-color: ${(p: any) => p.theme.colors.gray.primary};
@@ -11,9 +10,9 @@ export const BasicField = styled(Field)`
   padding: 10px;
   font-size: 1em;
   color: ${(p: any) =>
-    p.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
-  background: ${(p: any) =>
     p.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+  background: ${(p: any) =>
+    p.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
   outline: none;
   transition: all 0.3s ease-in-out;
   font-family: "Anonymous";
@@ -24,7 +23,6 @@ export const BasicField = styled(Field)`
 `;
 
 export const Error = styled.div`
-  position: absolute;
   bottom: -20px;
   color: ${(p: any) => p.theme.colors.red.primary};
   font-size: 0.8em;

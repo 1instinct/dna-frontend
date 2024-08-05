@@ -4,6 +4,7 @@ import { string } from "prop-types";
 declare module "@emotion/react" {
   export interface Theme {
     isDarkMode: boolean;
+    isSimpleSignup: boolean;
     colors: {
       purple?: {
         light: string;

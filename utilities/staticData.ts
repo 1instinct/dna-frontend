@@ -9,7 +9,7 @@ const Static = {
   questions: {
     account: {
       sebastian: "Thanks so much!",
-      title: "Almost done!",
+      title: "Almost done",
       subtitle: `One more step.`,
       description: `We'll send you a unique code to login.`
     }
@@ -26,11 +26,11 @@ const Static = {
   },
   errors: {
     isRequired: "Required",
-    minDateOfBirth: "You cannot have a Date of Birth prior to 1900",
+    minDateOfBirth: "You cannot have a birthday prior to 1900",
     maxDateOfBirth: "You must be 18 years of age",
     annualIncomeMin: "Annual Income must be at least $4,000",
     annualIncomeMax: "Annual Income cannot be greater than $9,999,999",
-    phoneNumberValid: "Please enter a valid Phone Number",
+    phoneNumberValid: "Please enter a valid phone number",
     passwordValid:
       "Password must contain a letter AND a number or special character",
     passwordMin: `Password must be at least ${constants.MIN_PASSWORD_LENGTH} characters`,

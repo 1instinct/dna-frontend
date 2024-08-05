@@ -17,6 +17,7 @@ export const FormikInput = ({
         // selectedTheme="dark"
         {...props}
         {...fields}
+        placeholder={props.label}
         styles={errors.length > 0 && { border: "solid 1px red" }}
         invalid={Boolean(touched[fields.name] && errors[fields.name])}
         // variant="outlined"

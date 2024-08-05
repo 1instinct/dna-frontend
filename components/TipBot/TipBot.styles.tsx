@@ -78,7 +78,7 @@ export const BubbleWrapper = styled.div`
   background: ${(props: any) =>
     props.theme.isDarkMode
       ? props.theme.colors.black.light
-      : props.theme.colors.white.primary};
+      : props.theme.colors.gray.background};
   margin: 0 0 -35px 0;
   padding: 15px;
   &:after {

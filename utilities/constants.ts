@@ -13,7 +13,7 @@ export default {
   MIN_PASSWORD_LENGTH: 8,
   MAX_PASSWORD_LENGTH: 128,
   MAX_EMAIL_LENGTH: 50,
-  PHONE_LENGTH: 14,
+  PHONE_LENGTH: 15,
   ALABAMA_REGEX: new RegExp(/AL/),
   EMAIL_REGEX: new RegExp(
     /^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$/

@@ -61,7 +61,8 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
   const isMaint = process.env.NEXT_PUBLIC_IS_MAINT_MODE || "false";
   const siteTitle = process.env.NEXT_PUBLIC_SHORT_TITLE || "DNA";
 
-  const logoPath = process.env.NEXT_PUBLIC_LOGO_PATH || null;
+  const logoPath =
+    process.env.NEXT_PUBLIC_LOGO_PATH || "images/open-graph-instinct-dna.jpg";
 
   const {
     data: cartData,
