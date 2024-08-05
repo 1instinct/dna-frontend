@@ -120,7 +120,7 @@ export const Home = (props: any) => {
         )}
         {!productsAreLoading && productList}
         {/* {mobileMemberList} */}
-        <Featured data={homeData.latestProducts} title="" />;
+        <Featured data={homeData.latestProducts} title="" />
         <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
         {advertListMobile}
         {!productsAreLoading && productList}

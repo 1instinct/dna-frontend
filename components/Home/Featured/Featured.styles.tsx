@@ -19,16 +19,21 @@ export const FeaturedBox = styled.div`
     flex-direction: column;
   }
 `;
-export const FeaturedItem = styled.div`
+type FeaturedItemProps = {
+  background: string;
+};
+export const FeaturedItem = styled.div<FeaturedItemProps>`
+  background-image: url(${(p) => p.background});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  position: relative;
-  margin-bottom: ${pxPC(20)};
+  height: 450px;
   @media (max-width: ${(p) => p.theme.breakpoints.values.xs}px) {
   }
-`;
-export const FeaturedImg = styled.img`
-  object-fit: cover;
-  width: 100%;
 `;
 export const FeaturedButton = styled(Button)`
   position: absolute !important;
