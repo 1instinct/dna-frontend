@@ -26,6 +26,7 @@ const MyH1 = styled.h1`
 const MySection = styled.section`
   width: 100%;
   padding-bottom: 20px;
+  margin-bottom: 20px;
 `;
 const MyLi = styled.li`
   display: block;

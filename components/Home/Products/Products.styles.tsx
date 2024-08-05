@@ -20,6 +20,7 @@ export const Title = styled(XlargeTitle)`
 
 export const SwiperWrap = styled.div`
   margin-top: ${pxPC(30)};
+  margin-bottom: ${pxPC(30)};
   overflow: hidden;
   @media (max-width: 375px) {
     margin-top: ${pxIphone(19)};

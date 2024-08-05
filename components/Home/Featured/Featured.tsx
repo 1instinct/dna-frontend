@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import {
   FeaturedContainer,
   FeaturedButton,
-  FeaturedImg,
   FeaturedItem,
   FeaturedBox,
   FeaturedTitle
@@ -23,9 +22,8 @@ const Featured: React.FC<FeaturedProps> = (props) => {
       <FeaturedTitle>{props.title}</FeaturedTitle>
       <FeaturedBox>
         {data.map((item, index) => (
-          <FeaturedItem key={index}>
-            <FeaturedImg src={item.img} />
-            <FeaturedButton width={200} onClick={() => router.push("/about")}>Shop Now</FeaturedButton>
+          <FeaturedItem key={index} background={item.img}>
+            <FeaturedButton width={300} onClick={() => router.push("/about")}>Shop Now</FeaturedButton>
           </FeaturedItem>
         ))}
       </FeaturedBox>

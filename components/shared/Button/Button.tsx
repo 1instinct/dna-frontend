@@ -10,7 +10,7 @@ interface ButtonProps {
 }
 
 const ButtonElement = styled.button<ButtonProps>`
-  width: ${(p) => `${p.width}px` || "auto"};
+  width: ${(p) => p.width ? `${p.width}px` : "100%"};
   margin: 0;
   padding: 5px 10px 8px 10px;
   background-size: 100%;
