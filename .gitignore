@@ -46,3 +46,5 @@ envvars.txt
 .env.DNA.test
 
 tsconfig.tsbuildinfo
+
+.anima/
