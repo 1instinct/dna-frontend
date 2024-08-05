@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import { Formik, Field, ErrorMessage } from "formik";
 import styled from "@emotion/styled";
 
-import { loginForm } from "../AuthForm/constants";
-import { useAuth } from "../../config/auth";
+import { loginForm } from "@components/AuthForm/constants";
+import { useAuth } from "@config/auth";
 
 import { FormikInput } from "../FormikWrappers";
 
@@ -15,7 +15,7 @@ import {
   InputWrapper,
   Subtext
 } from "./Login.styles";
-import constants from "../../utilities/constants";
+import constants from "@utilities/constants";
 
 export const Login = () => {
   const [email, setEmail] = useState("");

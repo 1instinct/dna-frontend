@@ -1,321 +1,313 @@
-import { useCallback } from "react";
-import Link from "next/link";
-import { useMediaQuery } from "react-responsive";
-import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
-import FormikWizard from "formik-wizard";
-import { useFormikContext } from "formik";
-import { withWizard } from "react-albus";
-import { AuthFormType, signupForm } from "../AuthForm/constants";
-import { useAuth } from "../../config/auth";
-import { SlideInLeft, SlideOutLeft } from "../Animations";
-// import { Questions } from "./Questions";
-import { Questions } from "./POLQuestions";
-import { Alert } from "../Alerts";
+// Vendor
+import React, { useState, useCallback, createRef } from "react";
+import { useRouter } from "next/router";
+import { Carousel } from "react-responsive-carousel";
+import { Formik, Form, Field, useFormikContext } from "formik";
+import parse from "html-react-parser";
+import { Modal } from "@material-ui/core";
 
-import FormikWizardStepType from "formik-wizard";
-
+// Local
+import constants from "@utilities/constants";
+import { useAuth } from "@config/auth";
+import { signupForm } from "@components/AuthForm/constants";
+import TipBot from "@components/TipBot";
+import Static from "@utilities/staticData";
+import { FormikInput, FormikCheckbox } from "@components/FormikWrappers";
 import {
-  MainWrapper,
-  InitialTitle,
   Title,
   Subtitle,
+  Description,
+  QuestionWrapper,
+  InputGroupWrapper,
+  InputWrapper,
+  TermsWrapper,
+  TermsStatement,
+  Term,
+  StyledModalContent
+} from "@components/SignupWizard/Questions/Questions.styles";
+import {
+  MainWrapper,
   ContentWrapper,
-  LeftHalf,
-  RightHalf,
-  WizardForm,
-  WizardActions,
-  PreviousButton,
-  NextButton,
-  SkipAction,
-  LoginAction,
-  Disclaimer,
-  CongratsWrapper
+  SignupFormWrapper,
+  SignupActions,
+  NextButton
 } from "./SignupForm.styles";
-
-const FormWrapper: React.FC<any> = ({
-  steps,
-  children,
-  // onEachStepSubmit,
-  // onSubmit,
-  // onNext,
-  wizard,
-  isLastStep,
-  status,
-  goToPreviousStep,
-  // getErrorMessage,
-  canGoBack,
-  // onFinalSubmit,
-  showNextStep,
-  actionLabel
-}: any) => {
-  // const [state, setState] = useState({
-  //   errorMessage: '',
-  //   stepNumber: 0
-  // });
-  // const { errorMessage, stepNumber } = state;
-
-  // useEffect(() => {
-  //   window.addEventListener('keydown', keyCommand);
-  //   return () => {
-  //     window.removeEventListener('keydown', keyCommand);
-  //   };
-  // });
-
-  // const keyCommand = e => {
-  //   if (e.keyCode === 13) {
-  //     wizard.next();
-  //     return true;
-  //   }
-  //   return false;
-  // };
-
-  const isMobile = useMediaQuery({
-    // query: `(min-device-width: ${props => props.theme.breakpoints.values.lg}px)`
-    query: `(max-device-width: 768px)`
-  });
-
-  // const { values, Formik, Form, Field } = useFormikContext();
-  const { values }: any = useFormikContext();
-
-  // const { step } = this.props;
-  const termsAccepted = !!(
-    (values.acceptSignatureTerms && values.acceptPrivacyTerms)
-    // values.acceptReportingTerms &&
-    // values.acceptAuthorizeTerms
-  );
-
-  // We assume this method cannot be called on the first step
-  // const goToNextStep = () => {
-  //   console.log('next step: ', steps[stepNumber + 1]);
-  //   const nextStepId = steps[stepNumber + 1].id;
-  //   // setState({step: { id: "personal-info" }});
-  //   setState(prevState => ({ ...prevState, stepNumber: prevState.stepNumber + 1, step: { id: nextStepId} }));
-  // };
-
-  switch (status ? status.code : status) {
-    case 200:
-      window.scrollTo(0, 0);
-      return (
-        <CongratsWrapper>
-          <Title>{status.message}</Title>
-          <Subtitle>{status.subtitle}</Subtitle>
-
-          {/* <p>Need to fix something?</p>
-          <PreviousButton onClick={goToPreviousStep} disabled={!canGoBack}>← Go Back</PreviousButton> */}
-        </CongratsWrapper>
-      );
-    default:
-      return (
-        <WizardForm canGoBack={canGoBack}>
-          <InitialTitle>
-            {isMobile && !canGoBack && (
-              <h1>Welcome! Let's get you started..</h1>
-            )}
-          </InitialTitle>
-          {children}
-          <WizardActions>
-            {canGoBack && (
-              <PreviousButton
-                variant="outlined"
-                onClick={goToPreviousStep}
-                disabled={!canGoBack}
-                ghost
-              >
-                <i className="bts bt-angles-left" />
-              </PreviousButton>
-            )}
-            {/* <NextButton type="submit" onClick={() => console.log(wizard, wizard.step, wizard.next)} disabled={isLastStep && !termsAccepted}>{actionLabel || (isLastStep ? 'Submit' : 'Next step')}</NextButton> */}
-            {/* <NextButton type={isLastStep ? "submit" : "button"} onClick={() => { */}
-            {isLastStep ? (
-              <NextButton
-                variant="contained"
-                color="primary"
-                type={isLastStep ? "submit" : "button"}
-                onClick={() => {
-                  // console.log('next: ', values, wizard, isLastStep);
-                  // console.log("next: ", wizard, isLastStep);
-                  wizard.next();
-                }}
-                disabled={isLastStep && !termsAccepted}
-              >
-                {actionLabel || (isLastStep ? "Submit" : "Next")}
-              </NextButton>
-            ) : (
-              <NextButton
-                variant="contained"
-                color="primary"
-                type={isLastStep ? "submit" : "button"}
-                onClick={() => {
-                  // console.log('next: ', values, wizard, isLastStep);
-                  // console.log("next: ", wizard, isLastStep);
-                  wizard.next();
-                }}
-                disabled={isLastStep && !termsAccepted}
-              >
-                {actionLabel || (isLastStep ? "Submit" : "Next")}
-              </NextButton>
-            )}
-          </WizardActions>
-          {!canGoBack && (
-            <Disclaimer>
-              <Link href="/login">Already have an account?</Link>
-            </Disclaimer>
-          )}
-          {/* {<div><pre>VALUE: {JSON.stringify(values, null, 2)}</pre></div>} */}
-          {canGoBack && (
-            <Disclaimer>
-              Don’t worry your information is safe{" "}
-              <span role="img" aria-label="lock">
-                🔐
-              </span>{" "}
-              and we never share your information without your consent.
-              {/* <Subtitle>– or –</Subtitle> */}
-              <LoginAction>
-                {/* <Link href="/login" target="_blank" rel="noopener noreferrer">
-                  Already have an account?
-                </Link> */}
-                <Link href="/login">Already have an account?</Link>
-              </LoginAction>
-            </Disclaimer>
-          )}
-        </WizardForm>
-      );
-  }
-};
+import { ElectronicSignaturesModal } from "@components/Terms/ElectronicSignaturesModal";
+import { FinancialPrivacyModal } from "@components/Terms/FinancialPrivacyModal";
 
 export const SignupForm = () => {
-  // useEffect(() => {
-  //   getWizard();
-  // });
+  // const { values, form, submitForm } = useFormikContext();
+  // console.log("FORM: ", values, useFormikContext);
+  // const { errors, touched } = useFormikContext();
+  const router = useRouter();
+  const { register } = useAuth();
+  const [openSignatureModal, setOpenSignatureModal] = useState(false);
+  const [openPrivacyModal, setOpenPrivacyModal] = useState(false);
 
-  // const [hasAcceptedTerms, setTerms] = useState(false);
-  // const [hasErrorModal, setErrorModal] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState('');
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  // const toggleErrorModal = () => {
-  //   setErrorModal(!hasErrorModal);
+  const [signatureTerms, setSignatureCheckbox] = useState(false);
+  const [privacyTerms, setPrivacyCheckbox] = useState(false);
+  const [reportingTerms, setReportingCheckbox] = useState(false);
+  const [authorizeTerms, setAuthorizeCheckbox] = useState(false);
+
+  const toggleSignatureModal = () => {
+    setOpenSignatureModal(!openSignatureModal);
+  };
+
+  const togglePrivacyModal = () => {
+    setOpenPrivacyModal(!openPrivacyModal);
+  };
+
+  // const updateCurrentSlide = index => {
+  //   if (currentSlide !== index) {
+  //     setCurrentSlide(index);
+  //   }
   // };
 
-  const isLargeDevice = useMediaQuery({
-    // query: `(min-device-width: ${props => props.theme.breakpoints.values.}px)`
-    query: `(min-device-width: 768px)`
-  });
+  const nextSlide = () => {
+    setCurrentSlide(currentSlide + 1);
+  };
 
-  const { register } = useAuth();
+  const handleSignatureCheckbox = (field: any) => {
+    setSignatureCheckbox(!signatureTerms);
+    // form.setFieldValue('acceptSignatureTerms', signatureTerms, false);
+  };
 
-  const handleSubmit = useCallback((values: any) => {
-    new Promise((resolve, reject) => {
-      // const { firstName, lastName, middleName, suffix } = values[
-      //   'personal-info'
-      // ];
-      // const { homeAddress, unitNumber } = values['home-address'];
-      // const { yearlyIncome } = values['yearly-income'];
-      // const { phone, email, password } = values['account-details'];
-      // createUser(
-      //   firstName,
-      //   lastName,
-      //   middleName,
-      //   suffix,
-      //   homeAddress,
-      //   unitNumber,
-      //   yearlyIncome,
-      //   email,
-      //   password,
-      //   phone
-      // )
-      // .then(res => resolve('createUser caller res:', res))
-      // .catch(err => reject(err));
+  const handlePrivacyCheckbox = (field: any) => {
+    setPrivacyCheckbox(!privacyTerms);
+    // form.setFieldValue(field.name, privacyTerms, false);
+  };
 
-      register({ user: values })
-        .then((res) => {
-          console.log("yup: ", res);
-          // setSubmitting(false);
-          // router.push("/");
-        })
-        .catch((err) => {
-          console.log("nope: ", err);
-          // setSubmitting(false);
-        });
+  const handleReportingCheckbox = (field: any) => {
+    setReportingCheckbox(!reportingTerms);
+    // form.setFieldValue(field.name, reportingTerms, false);
+  };
 
-      console.log("new Promise");
-      return Promise.resolve({
-        code: 200,
-        status: 200,
-        message: "Congrats!",
-        subtitle: `Your new User ID is: ###`
-      });
-    })
-      .then((res) => {
-        console.log("handleSubmit res: ", res);
-      })
-      .catch((err) => {
-        console.log("handleSubmit error: ", err);
-        // toggleErrorModal();
-        // setErrorMessage(err);
-        Alert.fire({ icon: "error", title: "Uh oh!", text: err });
-        // return Promise.resolve({
-        //   message: 'Uh oh.',
-        //   subtitle: err
-        // })
-      });
+  const handleAuthorizeCheckbox = (field: any) => {
+    setAuthorizeCheckbox(!authorizeTerms);
+    // form.setFieldValue(field.name, authorizeTerms, false);
+  };
+
+  const speechMarkup = useCallback(() => {
+    return { __html: "Signup for an account to get started." };
   }, []);
 
-  // We assume this method cannot be called on the last step
-  // const showNextStep = ({ setFieldTouched }) => {
-  //   // TODO: Only untouch if value is '' or []
-  //   const nextStepFieldNames = Object.keys(steps[stepNumber + 1].initialValues);
-  //   nextStepFieldNames.forEach(fieldName => setFieldTouched(fieldName, false));
-  //   setState(prevState => ({ ...prevState, stepNumber: prevState.stepNumber + 1 }));
-  // };
+  const { title, subtitle, description } = Static.questions.account;
 
-  // We assume this method cannot be called on the first step
-  // const showPreviousStep = ({ setFieldTouched }) => {
-  //   // TODO: Only untouch if value is '' or []
-  //   const previousStepFieldNames = Object.keys(steps[stepNumber - 1].initialValues);
-  //   previousStepFieldNames.forEach(fieldName => setFieldTouched(fieldName, false));
-
-  //   setState(prevState => ({ ...prevState, stepNumber: prevState.stepNumber - 1 }));
-  // };
-
-  // const handleError = error => {
-  //   setState(prevState => ({ ...prevState, errorMessage: getErrorMessage(error) }));
-  // };
+  const passwordRef = createRef();
 
   return (
     <MainWrapper>
       <ContentWrapper>
-        <LeftHalf show={isLargeDevice ? "none" : "flex"}>
-          <Title>
-            Enjoy The Journey{" "}
-            <span role="img" aria-label="sunglasses">
-              😎
-            </span>
-          </Title>
-        </LeftHalf>
-        <RightHalf isLargeDevice={isLargeDevice}>
-          <SlideInLeft>
-            <FormikWizard
-              steps={Questions}
-              // onSubmit={(values: any, { formikProps: { isSubmitting } }: any) => handleSubmit(values, isSubmitting)}
-              onSubmit={(values) => handleSubmit(values)}
-              // onSubmit={(values) => {
-              //   register({ user: values })
-              //     .then(() => {
-              //       // setSubmitting(false);
-              //       // router.push("/");
-              //     })
-              //     .catch(() => {
-              //       // setSubmitting(false);
-              //     });
-              // }}
-              // step={0}
-              // validator={() => ({})}
-              // albusProps={{step: 0, onNext: (context) => handleSubmit.bind(this, context)}}
-              // albusProps={{(context) => console.log(context)}}
-              render={FormWrapper}
-            />
-          </SlideInLeft>
-        </RightHalf>
+        <Formik
+          initialValues={signupForm.fields}
+          validationSchema={signupForm.validate}
+          onSubmit={(values, { setSubmitting }) => {
+            setSubmitting(true);
+            register(values)
+              .then((res: any) => {
+                console.log("LOGIN SUCCESS: ", res);
+                setSubmitting(false);
+                router.push("/");
+              })
+              .catch((e: any) => {
+                constants.IS_DEBUG && console.log("LOGIN FAIL: ", e);
+                setSubmitting(false);
+              });
+          }}
+        >
+          {({ isSubmitting }) => (
+            <SignupFormWrapper>
+              <TipBot speech={speechMarkup()} />
+              <InputGroupWrapper>
+                <Title>Signup</Title>
+                <Description>{parse(description)}</Description>
+
+                <InputWrapper>
+                  <Field
+                    name="email"
+                    id="email"
+                    component={FormikInput}
+                    label="Email"
+                  />
+                </InputWrapper>
+
+                <InputWrapper>
+                  <Field
+                    name="password"
+                    id="password"
+                    variant="password"
+                    component={FormikInput}
+                    label="Password"
+                    ref={passwordRef}
+                    type="password"
+                  />
+                </InputWrapper>
+
+                <InputWrapper>
+                  <Field
+                    name="passwordConfirm"
+                    id="passwordConfirm"
+                    variant="password"
+                    component={FormikInput}
+                    label="Re-type Password"
+                    ref={passwordRef}
+                    type="password"
+                  />
+                </InputWrapper>
+
+                <TermsWrapper>
+                  {/* https://jasonwatmore.com/post/2020/02/08/react-formik-required-checkbox-example */}
+                  <Carousel
+                    showArrows={false}
+                    // renderIndicator={false}
+                    showStatus={false}
+                    showThumbs={false}
+                    selectedItem={currentSlide}
+                    onChange={setCurrentSlide}
+                  >
+                    {/* <Term>
+                      <Field type="checkbox" name="acceptSignatureTerms">
+                        {(formikProps: any) => (
+                          <FormikCheckbox
+                            {...formikProps}
+                            nextTerm={nextSlide}
+                            accepted={signatureTerms}
+                            handleTermCheckbox={handleSignatureCheckbox}
+                          />
+                        )}
+                      </Field>
+                      <TermsStatement accepted={signatureTerms}>
+                        I have read and agree to the{" "}
+                        <button type="button" onClick={toggleSignatureModal}>
+                          E-SIGN Consent
+                        </button>{" "}
+                        that enables all transactions and disclosure delivery to occur electronically.
+                      </TermsStatement>
+                    </Term> */}
+                    <Term>
+                      <Field type="checkbox" name="acceptPrivacyTerms">
+                        {(formikProps: any) => (
+                          <FormikCheckbox
+                            {...formikProps}
+                            nextTerm={nextSlide}
+                            accepted={privacyTerms}
+                            handleTermCheckbox={handlePrivacyCheckbox}
+                          />
+                        )}
+                      </Field>
+                      <TermsStatement accepted={privacyTerms}>
+                        I have received and read the&nbsp;
+                        <button type="button" onClick={togglePrivacyModal}>
+                          Privacy Policy
+                        </button>
+                        .
+                      </TermsStatement>
+                    </Term>
+                    <Term>
+                      <Field type="checkbox" name="acceptReportingTerms">
+                        {(formikProps: any) => (
+                          <FormikCheckbox
+                            {...formikProps}
+                            nextTerm={nextSlide}
+                            accepted={reportingTerms}
+                            handleTermCheckbox={handleReportingCheckbox}
+                          />
+                        )}
+                      </Field>
+                      <TermsStatement accepted={reportingTerms}>
+                        By clicking &quot;Signup&quot; I agree to the&nbsp;
+                        <button type="button" onClick={toggleSignatureModal}>
+                          Terms &amp; Conditions
+                        </button>
+                      </TermsStatement>
+                    </Term>
+                    {/* <Term>
+                      <Field type="checkbox" name="acceptAuthorizeTerms">
+                        {(formikProps: any) => (
+                          <FormikCheckbox
+                            {...formikProps}
+                            nextTerm={nextSlide}
+                            accepted={authorizeTerms}
+                            handleTermCheckbox={handleAuthorizeCheckbox}
+                          />
+                        )}
+                      </Field>
+                      <TermsStatement accepted={authorizeTerms}>
+                        That by providing my phone number, {process.env.NEXT_PUBLIC_SITE_TITLE}, or{" "}
+                        {process.env.NEXT_PUBLIC_SITE_TITLE}&apos;s authorized representatives*, may call and/or send
+                        text messages (including by using equipment to automatically dial telephone numbers)
+                        about my interest in a purchase, for marketing/sales purposes, or for any other
+                        servicing or informational purpose related to my account. You do not have to consent
+                        to receiving calls or texts to purchase from {process.env.NEXT_PUBLIC_SITE_TITLE}.
+                        <br />
+                        <strong>
+                          *Including, but not limited to, Bridgecrest Credit Company, GO Financial and
+                          SilverRock Automotive.
+                        </strong>
+                      </TermsStatement>
+                    </Term> */}
+                    {/* Below term appears below current Softpull form submit buttons */}
+                    {/* <Term>
+                      <Field type="checkbox" name="acceptConstentTerms" component={FormikCheckbox} className={'form-check-input ' + (errors.acceptTerms && touched.acceptTerms ? ' is-invalid' : '')} />
+                      <TermsStatement accepted={Terms}>
+                        Consumer Report: By clicking &quot;GET TERMS&quot;, I give {process.env.NEXT_PUBLIC_SITE_TITLE} written consent to obtain consumer reports from one or more consumer reporting agencies to show me credit options I prequalify for when financing with {process.env.NEXT_PUBLIC_SITE_TITLE}. Retrieving my pre-qualification credit terms generates a soft credit inquiry, which is visible only to me and does not affect my credit score.
+                      </TermsStatement>
+                    </Term> */}
+                  </Carousel>
+
+                  <Modal
+                    aria-labelledby="modal-title"
+                    aria-describedby="modal-description"
+                    onClose={toggleSignatureModal}
+                    open={openSignatureModal}
+                  >
+                    <StyledModalContent>
+                      <ElectronicSignaturesModal />
+                      <button
+                        onClick={togglePrivacyModal}
+                        role="button"
+                        onKeyDown={togglePrivacyModal}
+                        tabIndex={0}
+                      ></button>
+                    </StyledModalContent>
+                  </Modal>
+
+                  <Modal
+                    aria-labelledby="modal-title"
+                    aria-describedby="modal-description"
+                    onClose={togglePrivacyModal}
+                    open={openPrivacyModal}
+                  >
+                    <StyledModalContent>
+                      <FinancialPrivacyModal />
+                      <button
+                        onClick={togglePrivacyModal}
+                        role="button"
+                        onKeyDown={togglePrivacyModal}
+                        tabIndex={0}
+                      ></button>
+                    </StyledModalContent>
+                  </Modal>
+                </TermsWrapper>
+              </InputGroupWrapper>
+              <SignupActions>
+                <NextButton
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  onClick={() => {
+                    console.log("SUBMITTING FORM");
+                  }}
+                  disabled={!(privacyTerms || !reportingTerms)}
+                >
+                  Submit
+                </NextButton>
+              </SignupActions>
+            </SignupFormWrapper>
+          )}
+        </Formik>
       </ContentWrapper>
     </MainWrapper>
   );

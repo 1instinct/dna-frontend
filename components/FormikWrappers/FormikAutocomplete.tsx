@@ -12,6 +12,7 @@ import PlacesAutocomplete, {
 import {
   Error,
   HiddenInput,
+  BasicField,
   SuggestionWrapper,
   SuggestionLoader,
   SuggestionItem
@@ -66,13 +67,14 @@ export const FormikAutocomplete = ({
       >
         {({ suggestions, getInputProps, getSuggestionItemProps, loading }) => (
           <>
-            <TextField
+            <BasicField
               {...getInputProps({
                 label: addressTitle ? addressTitle + "Address" : "Address",
                 className: "location-search-input"
               })}
               type="text"
               variant="outlined"
+              placeholder={addressTitle ? addressTitle + "Address" : "Address"}
               // selectedTheme="dark"
               // invalid={Boolean(touched[fields.name] && errors[fields.name])}
             />

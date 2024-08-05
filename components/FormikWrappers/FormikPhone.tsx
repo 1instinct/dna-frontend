@@ -3,7 +3,7 @@ import InputMask from "react-input-mask";
 import { TextField } from "@material-ui/core";
 // import { Field, useFormikContext } from 'formik';
 
-import { Error } from "./FormikInput.styles";
+import { BasicField, Error } from "./FormikInput.styles";
 
 export const FormikPhone = ({
   field: { ...fields },
@@ -17,12 +17,14 @@ export const FormikPhone = ({
       mask="+1 999 999 9999"
       maskChar=" "
       id="phoneNumber"
-      selectedTheme="dark"
+      // selectedTheme="dark"
       {...props}
       {...fields}
       invalid={touched[fields.name] && errors[fields.name] ? 1 : 0}
     >
-      {(inputProps: any) => <TextField variant="outlined" {...props} />}
+      {(inputProps: any) => (
+        <BasicField variant="outlined" placeholder={props.label} {...props} />
+      )}
     </InputMask>
     {touched[fields.name] && errors[fields.name] ? (
       <Error>{errors[fields.name]}</Error>

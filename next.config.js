@@ -22,7 +22,7 @@ Module.prototype.require = function (modulePath) {
     try {
       modulePath = resolveFrom(node_modules, modulePath);
     } catch (err) {
-      //
+      // ignored
     }
   }
 

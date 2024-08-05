@@ -1,7 +1,8 @@
 import React from "react";
 import { TextField } from "@material-ui/core";
 
-import { Error } from "./FormikInput.styles";
+import { BasicField, Error } from "./FormikInput.styles";
+import InputMask from "react-input-mask";
 
 export const FormikDateOfBirth = ({
   field: { ...fields },
@@ -9,14 +10,20 @@ export const FormikDateOfBirth = ({
   ...props
 }: any) => (
   <>
-    <TextField
+    <InputMask
       id="dateOfBirth"
-      variant="outlined"
-      selectedTheme="dark"
+      mask="99/99/9999"
+      maskChar=" "
+      // variant="outlined"
+      // selectedTheme="dark"
       {...props}
       {...fields}
       invalid={Boolean(touched[fields.name] && errors[fields.name]).toString()}
-    />
+    >
+      {(inputProps: any) => (
+        <BasicField variant="outlined" placeholder={props.label} {...props} />
+      )}
+    </InputMask>
     {touched[fields.name] && errors[fields.name] ? (
       <Error>{errors[fields.name]}</Error>
     ) : (
