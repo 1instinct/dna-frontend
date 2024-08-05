@@ -11,7 +11,7 @@
     "title": "Information",
     "links": [
       {
-        "text": "accessibility statement",
+        "text": "Privacy",
         "url": ""
       },
       {
@@ -26,7 +26,7 @@
         "text": "Rewards",
         "url": ""
       },
-      { "text": "Returns / exchanges / damages", "url": "/privacy" },
+      { "text": "Returns & Exchanges", "url": "/privacy" },
       { "text": "Terms of Use & Privacy Policy", "url": "/terms" },
       { "text": "contact us", "url": "/contact" }
     ]

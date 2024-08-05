@@ -20,7 +20,7 @@ const PageTitle = styled.div`
       : p.theme.colors.black.primary};
   text-transform: uppercase;
   transform: rotate(-90deg);
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   &:after {
     position: absolute;
     content: "";
@@ -58,7 +58,7 @@ const MyInputLabel = styled.div`
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-transform: uppercase;
 `;
 const PageBottom = styled.div`

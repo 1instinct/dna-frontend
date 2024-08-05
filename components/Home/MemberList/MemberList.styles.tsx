@@ -9,7 +9,7 @@ export const Title = styled.div`
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
   text-align: center;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   margin-top: 19px;
 `;
 export const MySwiperContainer = styled.div`
@@ -38,7 +38,7 @@ export const MemberName = styled.div`
       : p.theme.colors.black.primary};
   line-height: ${pxPC(22)};
   text-align: center;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   @media (max-width: 375px) {
     margin-top: ${pxIphone(9)};
     line-height: ${pxIphone(24)};

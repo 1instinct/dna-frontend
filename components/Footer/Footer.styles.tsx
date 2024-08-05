@@ -25,7 +25,7 @@ export const Grid = styled.div`
   justify-content: space-between;
   grid-template-columns: 111px 148px 67px 173px;
   justify-items: center;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
   @media (max-width: ${(p) => p.theme.breakpoints.values.xs}px) {
     display: flex;
     flex-direction: column;
@@ -52,7 +52,7 @@ export const Column = styled.div`
   flex-direction: column;
 `;
 export const ColumnTitle = styled.div`
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
   font-size: 14px;
   line-height: 17px;
   color: ${(p) =>
@@ -70,14 +70,14 @@ export const ColumnTitle = styled.div`
   }
 `;
 export const ColumnSubTitle = styled.div`
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
 `;
 export const LinkItem = styled.a`
   font-size: 14px;
   line-height: 150%;
   color: ${(p) => p.theme.colors.gray.medium};
   font-weight: 400;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.bodyMD.fontFamily};
 `;
 export const Description = styled.div`
   color: ${(p) => p.theme.colors.gray.medium};
@@ -85,7 +85,7 @@ export const Description = styled.div`
   line-height: 150%;
   font-weight: 400;
   margin-bottom: 5px;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.bodyMD.fontFamily};
 `;
 export const IconLink = styled.a``;
 export const IconLinkWrapper = styled.div`

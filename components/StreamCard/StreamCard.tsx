@@ -17,9 +17,11 @@ import {
   StreamCardDesc,
   StreamChecked
 } from "./StreamCard.styles";
+import constants from "@utilities/constants";
 
 export const StreamCard = ({ isPast, item }: any) => {
   const router = useRouter();
+  constants.IS_DEBUG && console.log("StreamCard item: ", item);
   return (
     <StreamCardWrapper
       key={`${item}-card`}
@@ -32,9 +34,11 @@ export const StreamCard = ({ isPast, item }: any) => {
         <StreamImgWrapper>
           {!isPast ? <StreamMask /> : null}
           {!isPast ? (
-            <StreamChecked>
-              {"Streaming " + moment(item.start_date).fromNow()}
-            </StreamChecked>
+            <StreamStatusWrapper>
+              <StreamStatus>
+                {"Streaming " + moment(item.start_date).fromNow()}
+              </StreamStatus>
+            </StreamStatusWrapper>
           ) : null}
           {isPast ? (
             <StreamStatusWrapper>
@@ -42,11 +46,11 @@ export const StreamCard = ({ isPast, item }: any) => {
             </StreamStatusWrapper>
           ) : null}
           <StreamImg src="/3.png" alt={""} />
-          <InfluencerBox>
-            <InfluencerAvatar src="/1.png" />
-            <InfluencerName as={"span"}>Jane Doe</InfluencerName>
-          </InfluencerBox>
         </StreamImgWrapper>
+        <InfluencerBox>
+          <InfluencerAvatar src="/1.png" />
+          <InfluencerName as={"span"}>Jane Doe</InfluencerName>
+        </InfluencerBox>
         <StreamCardTitle>{item.title}</StreamCardTitle>
         <StreamCardDesc>{item.description}</StreamCardDesc>
       </>

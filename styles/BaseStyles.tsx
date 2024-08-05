@@ -7,7 +7,7 @@ export const ProductTitle = styled.div`
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-align: left;
 `;
 export const PriceText = styled.div`
@@ -17,7 +17,7 @@ export const PriceText = styled.div`
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-align: center;
 `;
 export const Title = styled.div`
@@ -28,7 +28,7 @@ export const Title = styled.div`
       : p.theme.colors.black.primary};
   line-height: ${pxPC(22)};
   text-align: center;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
 `;
 export const BigTitle = styled.div`
   font-family: "Montserrat";
@@ -42,7 +42,7 @@ export const BigTitle = styled.div`
       : p.theme.colors.black.primary};
 `;
 export const LargeTitle = styled.div`
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   font-size: ${pxPC(39)};
   line-height: ${pxPC(48)};
   text-align: center;
@@ -52,7 +52,7 @@ export const LargeTitle = styled.div`
       : p.theme.colors.black.primary};
 `;
 export const XlargeTitle = styled.div`
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   font-size: ${pxPC(44)};
   line-height: ${pxPC(54)};
   text-align: center;
@@ -66,7 +66,7 @@ export const XlargeTitle = styled.div`
   }
 `;
 export const BtnTitle = styled.div`
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   font-size: ${pxPC(18)};
   line-height: ${pxPC(22)};
   color: ${(p) => p.theme.colors.white.primary};
@@ -100,7 +100,7 @@ export const WhiteText = styled.div`
   font-size: ${pxPC(14)};
   line-height: ${pxPC(17)};
   color: ${(p) => p.theme.colors.gray.medium};
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
 `;
 export const DescText = styled.div`
   font-size: ${pxPC(16)};

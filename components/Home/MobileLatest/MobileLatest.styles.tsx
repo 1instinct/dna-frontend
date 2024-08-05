@@ -14,7 +14,7 @@ export const LatestTitle = styled.div`
       : p.theme.colors.black.primary};
   font-size: 44px;
   height: 67px;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-decoration: underline;
   margin-top: 19px;
   margin-bottom: 19px;

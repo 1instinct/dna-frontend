@@ -84,39 +84,7 @@ export const GlobalStyles = ({ theme, children }: any) => (
         select:focus {
           outline: none;
         }
-
-        button {
-          background-color: ${theme.colors.brand.primary};
-          border: 0;
-          color: ${theme.colors.white.primary};
-          width: 100%;
-          max-width: 400px;
-          font-size: 29.24px;
-          line-height: 35.09px;
-          font-weight: bold;
-          padding: 10px 10px;
-          cursor: pointer;
-        }
-
-        button:hover {
-          background-color: ${saturate(0.5, theme.colors.brand.primary)};
-        }
-
-        button:active {
-          background-color: ${saturate(0.5, theme.colors.brand.primary)};
-        }
-
-        button:focus,
-        .size-selection button:focus {
-          outline: none;
-        }
-        i {
-          color: ${
-            theme.isDarkMode
-              ? theme.colors.white.primary
-              : theme.colors.black.primary
-          };
-        }
+        
         .pc-menu-item {
           color: ${
             theme.isDarkMode

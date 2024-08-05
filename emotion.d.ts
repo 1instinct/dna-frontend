@@ -36,6 +36,7 @@ declare module "@emotion/react" {
         bright?: string;
         primary: string;
         secondary: string;
+        dark: string;
         light: string;
       };
       todo: {

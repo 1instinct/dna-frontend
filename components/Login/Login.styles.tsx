@@ -27,6 +27,11 @@ export const FormWrapper = styled(Form)`
   width: 100%;
 `;
 
+export const Title = styled.h1`
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
+  font-size: ${(p) => p.theme.typography.titleLG.fontSize};
+`;
+
 export const InputWrapper = styled.div<GenericThemeType>`
   display: flex;
   flex-direction: column;

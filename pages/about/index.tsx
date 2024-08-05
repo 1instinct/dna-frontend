@@ -24,7 +24,7 @@ const PageTitle = styled.div`
       : p.theme.colors.black.primary};
   text-transform: uppercase;
   transform: rotate(-90deg);
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   &:after {
     position: absolute;
     content: "";
@@ -45,7 +45,7 @@ const SectionOneTitle = styled.div`
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-align: center;
   text-transform: uppercase;
 `;
@@ -73,7 +73,7 @@ const SectionTwoTitle = styled.div`
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-align: center;
   text-transform: uppercase;
 `;
@@ -95,7 +95,7 @@ const SectionThreeTitle = styled.div`
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-align: center;
   text-transform: uppercase;
 `;
@@ -115,7 +115,7 @@ const SectionFourTitle = styled.div`
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-align: center;
   text-transform: uppercase;
 `;

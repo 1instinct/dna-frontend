@@ -87,7 +87,7 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
                 })
               }
             >
-              Add to cart
+              + <i className="bts bt-shopping-cart" />
             </AddToCartButton>
           </ProductFooterRight>
         </ProductFooter>

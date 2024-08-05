@@ -7,7 +7,7 @@ import {
   XsmallText
 } from "../../styles/BaseStyles";
 export const Title = styled(XlargeTitle)`
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   margin-bottom: ${pxPC(30)};
   font-size: 44px;
   line-height: 54px;
@@ -59,7 +59,7 @@ export const MaskTitle = styled.div`
   margin: auto;
   font-size: 24px;
   line-height: 30px;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-align: center;
   color: ${(p: any) => p.theme.colors.gray.medium};
   @media (max-width: 375px) {
@@ -79,7 +79,7 @@ export const MaskTitleChecked = styled.div`
   margin: auto;
   font-size: 24px;
   line-height: 30px;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-align: center;
   color: #707070;
   @media (max-width: 375px) {
