@@ -36,7 +36,7 @@ export const BannerBtn = styled(ButtonBase)`
       : p.theme.colors.black.primary};
   left: 0;
   right: 0;
-  font-family: "Bebas Neue";
+  font-family: ${(p: any) => p.theme.typography.titleLG.fontFamily};
   font-size: ${pxPC(18)};
   line-height: ${pxPC(22)};
   text-align: center;

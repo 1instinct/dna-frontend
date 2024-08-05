@@ -21,7 +21,7 @@ import constants from "@utilities/constants";
 
 export const StreamCard = ({ isPast, item }: any) => {
   const router = useRouter();
-  // constants.IS_DEBUG && console.log("StreamCard item: ", item);
+  constants.IS_DEBUG && console.log("StreamCard item: ", item);
   return (
     <StreamCardWrapper
       key={`${item}-card`}

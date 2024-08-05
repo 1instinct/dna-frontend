@@ -41,10 +41,14 @@ export const CartItem = styled.div`
   align-items: center;
   padding: 10px;
   border-bottom: 1px solid #ccc;
+  font-family: ${(p) => p.theme.typography.bodyMD.fontFamily};
+  line-height: ${(p) => p.theme.typography.bodyMD.lineHeight};
 `;
 
 export const CartItemDescription = styled.span`
   font-size: 16px;
+  font-family: ${(p) => p.theme.typography.bodyMD.fontFamily};
+  line-height: ${(p) => p.theme.typography.bodyMD.lineHeight};
 `;
 
 export const QuantityAdjusterWrapper = styled.div`

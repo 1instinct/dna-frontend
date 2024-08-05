@@ -17,6 +17,7 @@ import {
   Subtext
 } from "./Login.styles";
 import constants from "@utilities/constants";
+import { Button } from "@components/shared";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -75,7 +76,9 @@ export const Login = () => {
                 label="Password"
               />
             </InputWrapper>
-            <SubmitButton />
+            <Button type="submit" disabled={isSubmitting}>
+              Submit
+            </Button>
             <Subtext>
               <Link href="/authenticate/signup">Register</Link>
               &nbsp;&nbsp;|&nbsp;&nbsp;

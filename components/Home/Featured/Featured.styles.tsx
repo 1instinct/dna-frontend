@@ -35,6 +35,10 @@ export const FeaturedItem = styled.div<FeaturedItemProps>`
   @media (max-width: ${(p) => p.theme.breakpoints.values.xs}px) {
   }
 `;
+export const FeaturedImg = styled.img`
+  object-fit: cover;
+  width: 100%;
+`;
 export const FeaturedButton = styled(Button)`
   position: absolute !important;
   bottom: ${pxPC(84)};

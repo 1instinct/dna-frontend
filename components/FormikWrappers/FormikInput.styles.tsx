@@ -17,8 +17,8 @@ export const BasicField = styled(Field)`
   background: ${(p: any) =>
     p.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
   outline: none;
-  transition: border-color 0.3s ease-in-out;
-
+  transition: all 0.3s ease-in-out;
+  font-family: ${(p: any) => p.theme.typography.bodyMD.fontFamily};
   &:focus {
     border-color: ${(props) => props.theme.colors.brand.primary};
   }

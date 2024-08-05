@@ -8,12 +8,8 @@ const Hero: React.FC<HeroProps> = (props) => {
   return (
     <Container>
       <HeroAction>
-        <HeroTitle>
-          NEW <span>SPRING / SUMMER</span> LOOKS ARE HERE
-        </HeroTitle>
-        <Button width={200} onClick={() => router.push("/about")}>
-          BROWSE NOW
-        </Button>
+        <HeroTitle>NEW <span>SPRING / SUMMER</span> LOOKS ARE HERE</HeroTitle>
+        <Button width={200} onClick={() => router.push("/about")}>BROWSE NOW</Button>
       </HeroAction>
     </Container>
   );
