@@ -30,7 +30,7 @@ const MenuItem = styled(StyledListItem, {
   padding: 0 0 0 ${(props) => props.paddingLeft} !important;
   margin: 5px 0;
   & div span {
-    font-family: "Bebas Neue";
+    font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   }
 `;
 

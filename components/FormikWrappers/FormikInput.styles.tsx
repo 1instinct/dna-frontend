@@ -15,7 +15,7 @@ export const BasicField = styled(Field)`
     p.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
   outline: none;
   transition: all 0.3s ease-in-out;
-  font-family: "Anonymous";
+  font-family: ${(p: any) => p.theme.typography.bodyMD.fontFamily};
   &:focus {
     transition: all 0.3s ease-in-out;
     border: 2px solid ${(p: any) => p.theme.colors.brand.primary};

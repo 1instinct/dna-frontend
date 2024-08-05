@@ -12,10 +12,12 @@ import { FormikInput } from "../FormikWrappers";
 import {
   LoginWrapper,
   FormWrapper,
+  Title,
   InputWrapper,
   Subtext
 } from "./Login.styles";
 import constants from "@utilities/constants";
+import { Button } from "@components/shared";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +26,7 @@ export const Login = () => {
   const router = useRouter();
   return (
     <LoginWrapper>
-      <h1>{loginForm.title}</h1>
+      <Title>{loginForm.title}</Title>
       <Formik
         initialValues={loginForm.fields}
         validationSchema={loginForm.validate}
@@ -62,9 +64,9 @@ export const Login = () => {
                 label="Password"
               />
             </InputWrapper>
-            <button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting}>
               Submit
-            </button>
+            </Button>
             <Subtext>
               <Link href="/authenticate/signup">Register</Link>
               &nbsp;&nbsp;|&nbsp;&nbsp;

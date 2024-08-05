@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/router";
 import {
   FeaturedContainer,
   FeaturedButton,
@@ -15,6 +16,7 @@ export interface FeaturedProps {
   title: string;
 }
 const Featured: React.FC<FeaturedProps> = (props) => {
+  const router = useRouter();
   const { data } = props;
   return (
     <FeaturedContainer>
@@ -23,7 +25,7 @@ const Featured: React.FC<FeaturedProps> = (props) => {
         {data.map((item, index) => (
           <FeaturedItem key={index}>
             <FeaturedImg src={item.img} />
-            <FeaturedButton>BUTTON</FeaturedButton>
+            <FeaturedButton width={200} onClick={() => router.push("/about")}>Shop Now</FeaturedButton>
           </FeaturedItem>
         ))}
       </FeaturedBox>

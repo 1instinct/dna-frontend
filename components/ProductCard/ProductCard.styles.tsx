@@ -3,6 +3,7 @@ import Link from "next/link";
 import Rating from "@material-ui/lab/Rating";
 import { pxPC } from "../../utilities/device-sizes";
 import { XlargeTitle, DescText, PriceText } from "../../styles/BaseStyles";
+import { Button } from "@components/shared";
 
 export const ProductCardWrapper = styled.div`
   margin-top: ${pxPC(30)};
@@ -15,7 +16,6 @@ export const ProductImgWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
 
   @media (max-width: ${(p) => p.theme.breakpoints.values.sm}) {
     flex-direction: column;
@@ -43,7 +43,13 @@ export const ProductFooter = styled.div`
   align-self: stretch;
 `;
 export const ProductFooterLeft = styled.div``;
-export const ProductFooterRight = styled.div``;
+export const ProductFooterRight = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  overflow: visible;
+`;
 export const ProductRate = styled(Rating)`
   margin-top: ${pxPC(18)};
 `;
@@ -56,13 +62,16 @@ export const Price = styled.h3`
   text-align: right;
 `;
 
-export const AddToCartButton = styled.button`
-  background: ${(p) => p.theme.colors.brand.primary};
-  color: ${(p) => p.theme.colors.white.primary};
-  padding: ${pxPC(8)} ${pxPC(16)};
+export const AddToCartButton = styled(Button)`
+  font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
   margin-top: ${pxPC(18)};
   border: none;
   cursor: pointer;
+  padding: 3px 5px;
+
+  & i {
+    color: ${(p) => p.theme.colors.white.primary} !important;
+  }
 `;
 
 export const ThreeDot = styled.div`

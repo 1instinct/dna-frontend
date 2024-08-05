@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import { pxPC } from "../../../utilities/device-sizes";
-import { XlargeTitle } from "../../../styles/BaseStyles";
-import { ButtonBase } from "@material-ui/core";
+import { pxPC } from "@utilities/device-sizes";
+import { XlargeTitle } from "@styles/BaseStyles";
+import { Button } from "@components/shared";
 export const FeaturedContainer = styled.div`
   margin-top: ${pxPC(30)};
 `;
@@ -30,22 +30,11 @@ export const FeaturedImg = styled.img`
   object-fit: cover;
   width: 100%;
 `;
-export const FeaturedButton = styled(ButtonBase)`
-  background: ${(p) => p.theme.colors.brand.primary} !important;
-  /* width: ${pxPC(234)};
-  height: ${pxPC(36)}; */
-  width: 50%;
+export const FeaturedButton = styled(Button)`
   position: absolute !important;
   bottom: ${pxPC(84)};
   left: 0;
   right: 0;
-  margin: auto !important;
-  font-family: "Bebas Neue";
-  /* font-size: ${pxPC(18)};
-  line-height: ${pxPC(22)}; */
-  color: ${(p: any) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
+  margin: 0 auto;
   text-align: center;
 `;

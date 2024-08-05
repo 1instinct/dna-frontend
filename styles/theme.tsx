@@ -1,4 +1,4 @@
-import { lighten } from "polished";
+import { lighten, darken, saturate } from "polished";
 const darkMode = process.env.NEXT_PUBLIC_DARK_MODE || "false";
 const simpleSignup = process.env.NEXT_PUBLIC_SIMPLE_SIGNUP || "true";
 export const theme = {
@@ -30,7 +30,9 @@ export const theme = {
     brand: {
       primary: "#EB8B8B",
       secondary: "#E6CDC0",
-      light: "#F9F2EA"
+      bright: saturate(0.33, "#EB8B8B"),
+      dark: darken(0.33, "#EB8B8B"),
+      light: lighten(0.33, "#EB8B8B")
     },
     todo: {
       primary: "#BFB081",
@@ -91,42 +93,42 @@ export const theme = {
   },
   typography: {
     titleXXL: {
-      fontFamily: "Anybody Light",
+      fontFamily: "ibmplexmono_body_bold",
       fontWeight: "bold",
       fontSize: "72px",
       lineHeight: "86px",
       color: "#000"
     },
     titleXL: {
-      fontFamily: "Anybody Light",
+      fontFamily: "ibmplexmono_body_bold",
       fontWeight: "bold",
       fontSize: "33.8681px",
       lineHeight: "41px",
       color: "#000"
     },
     titleLG: {
-      fontFamily: "Anybody Light",
+      fontFamily: "ibmplexmono_body_bold",
       fontWeight: "bold",
       fontSize: "24px",
       lineHeight: "30px",
       color: "#000"
     },
     titleMD: {
-      fontFamily: "Anybody ExtraLight",
+      fontFamily: "ibmplexmono_body_bold",
       fontWeight: "bold",
       fontSize: "20px",
       lineHeight: "24px",
       color: "#000"
     },
     titleSM: {
-      fontFamily: "Anybody ExtraLight",
+      fontFamily: "ibmplexmono_body_bold",
       fontWeight: "normal",
       fontSize: "14px",
       lineHeight: "1.5rem",
       color: "#000"
     },
     titleXS: {
-      fontFamily: "Anybody ExtraLight",
+      fontFamily: "ibmplexmono_body_bold",
       fontWeight: "normal",
       fontSize: "10px",
       lineHeight: "0.9rem",

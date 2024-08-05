@@ -19,7 +19,7 @@ const MyTableTitle = styled.div`
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-transform: uppercase;
   border-bottom: 2px solid #000;
   align-self: start;
@@ -48,7 +48,7 @@ const MyButton = styled(ButtonBase)`
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
   font-size: 20px;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-transform: uppercase;
 `;
 const OtherHistory = () => {

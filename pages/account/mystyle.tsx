@@ -38,14 +38,14 @@ const ProductTitle = styled.div`
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   text-transform: uppercase;
   align-self: flex-start;
 `;
 const PriceText = styled.div`
   font-size: 19px;
   line-height: 23px;
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   margin-top: ${pxPC(10.96)};
   color: ${(p: any) =>
     p.theme.isDarkMode

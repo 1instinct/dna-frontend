@@ -9,7 +9,7 @@ import {
 } from "../../../styles/BaseStyles";
 
 export const Title = styled(XlargeTitle)`
-  font-family: "Bebas Neue";
+  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
   margin-bottom: ${pxPC(30)};
   font-size: 44px;
   line-height: 54px;

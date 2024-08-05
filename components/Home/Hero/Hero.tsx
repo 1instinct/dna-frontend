@@ -1,14 +1,16 @@
 import React from "react";
-import { HeroBtn, HeroTitle, Container } from "./Hero.styles";
+import { useRouter } from "next/router";
+import { HeroAction, HeroTitle, Container } from "./Hero.styles";
+import { Button } from "@components/shared";
 export interface HeroProps {}
 const Hero: React.FC<HeroProps> = (props) => {
+  const router = useRouter();
   return (
     <Container>
-      <HeroTitle>
-        <span>BROWSE ALL THE NEW</span>
-        <span>SPRING/ SUMMER LOOKS</span>
-        <HeroBtn>SHOW ME</HeroBtn>
-      </HeroTitle>
+      <HeroAction>
+        <HeroTitle>NEW <span>SPRING / SUMMER</span> LOOKS ARE HERE</HeroTitle>
+        <Button width={200} onClick={() => router.push("/about")}>BROWSE NOW</Button>
+      </HeroAction>
     </Container>
   );
 };
