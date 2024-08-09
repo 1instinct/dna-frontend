@@ -8,8 +8,8 @@ import { withWizard } from "react-albus";
 import { AuthFormType, signupForm } from "../AuthForm/constants";
 import { useAuth } from "../../config/auth";
 import { SlideInLeft, SlideOutLeft } from "../Animations";
-// import { Questions } from "./Questions";
-import { Questions } from "./POLQuestions";
+import { Questions } from "./Questions";
+// import { Questions } from "./POLQuestions";
 import { Alert } from "../Alerts";
 
 import FormikWizardStepType from "formik-wizard";
@@ -31,6 +31,7 @@ import {
   Disclaimer,
   CongratsWrapper
 } from "./SignupWizard.styles";
+import { ThreeViewer } from "@components/shared/ThreeViewer";
 
 const FormWrapper: React.FC<any> = ({
   steps,
@@ -266,13 +267,14 @@ export const SignupWizard = () => {
   return (
     <MainWrapper>
       <ContentWrapper>
-        <LeftHalf show={isLargeDevice ? "none" : "flex"}>
+        <LeftHalf show={isLargeDevice ? "flex" : "flex"}>
           <Title>
             Enjoy The Journey{" "}
             <span role="img" aria-label="sunglasses">
               😎
             </span>
           </Title>
+          <ThreeViewer />
         </LeftHalf>
         <RightHalf isLargeDevice={isLargeDevice}>
           <SlideInLeft>

@@ -36,6 +36,15 @@ import {
 } from "./Header.styles";
 import { Logo } from "@components/shared/Logo";
 
+const dummyCategories = [
+  "Best Sellers",
+  "Latest",
+  "Seasonal",
+  "Luxury",
+  "On Sale",
+  "Coming Soon"
+];
+
 export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
   const router = useRouter();
   const { pathname } = useRouter();
