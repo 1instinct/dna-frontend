@@ -10,7 +10,7 @@ interface ButtonProps {
 }
 
 const ButtonElement = styled.button<ButtonProps>`
-  width: ${(p) => p.width ? `${p.width}px` : "100%"};
+  width: ${(p) => (p.width ? `${p.width}px` : "100%")};
   margin: 0;
   padding: 5px 10px 8px 10px;
   background-size: 100%;
@@ -48,5 +48,9 @@ const ButtonElement = styled.button<ButtonProps>`
 `;
 
 export const Button = ({ props, children, width, onClick }: ButtonProps) => {
-  return <ButtonElement onClick={onClick} width={width} {...props}>{children}</ButtonElement>;
+  return (
+    <ButtonElement onClick={onClick} width={width} {...props}>
+      {children}
+    </ButtonElement>
+  );
 };

@@ -22,12 +22,13 @@ export const FogEffect = () => {
   });
 
   return (
-    <instancedMesh ref={fogRef} args={[undefined, undefined, count]}>
+    <instancedMesh ref={fogRef} args={[null, null, count]}>
       <sphereGeometry args={[0.1, 32, 32]} attach="geometry">
         {" "}
         {/* Increase size of particles */}
         <bufferAttribute
-          attach="attributes-position"
+          ref={bufferRef}
+          attachObject={["attributes", "position"]}
           array={fogParticles}
           itemSize={3}
         />

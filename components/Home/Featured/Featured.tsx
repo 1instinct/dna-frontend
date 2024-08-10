@@ -23,7 +23,9 @@ const Featured: React.FC<FeaturedProps> = (props) => {
       <FeaturedBox>
         {data.map((item, index) => (
           <FeaturedItem key={index} background={item.img}>
-            <FeaturedButton width={300} onClick={() => router.push("/about")}>Shop Now</FeaturedButton>
+            <FeaturedButton width={300} onClick={() => router.push("/about")}>
+              Shop Now
+            </FeaturedButton>
           </FeaturedItem>
         ))}
       </FeaturedBox>

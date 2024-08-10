@@ -11,13 +11,11 @@ export const BannerContainer = styled.div<BannerContainerProps>`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  
+
   display: flex;
   justify-content: center;
   align-items: center;
   height: 450px;
 `;
 export const BannerTitle = styled(XlargeTitle)``;
-export const BannerBtn = styled(Button)`
-  
-`;
+export const BannerBtn = styled(Button)``;

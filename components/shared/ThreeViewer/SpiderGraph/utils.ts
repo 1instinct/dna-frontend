@@ -17,7 +17,7 @@ export const generatePoints = (data: any) => {
     points.push([x, y, z]);
   }
 
-  console.log('Generated Points:', points); // Debugging log
+  console.log("Generated Points:", points); // Debugging log
 
   return points;
 };
@@ -41,4 +41,3 @@ export const generatePoints = (data: any) => {
 //     </group>
 //   );
 // };
-  

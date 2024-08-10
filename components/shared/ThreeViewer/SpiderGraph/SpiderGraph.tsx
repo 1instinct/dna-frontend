@@ -1,5 +1,4 @@
 import React, { useRef, useMemo } from "react";
-import { useTheme } from "@emotion/react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { GroupProps, Vector3 } from "@react-three/fiber";
 import { generatePoints } from "./utils";
@@ -15,7 +14,6 @@ interface SpiderGraphProps {
 type Point = [number, number, number];
 
 export const SpiderGraph: React.FC<SpiderGraphProps> = ({ data }) => {
-  const theme = useTheme();
   const groupRef = useRef<THREE.Group>(null);
   const points: Point[] = useMemo(
     () => generatePoints(data) as Point[],
@@ -43,14 +41,14 @@ export const SpiderGraph: React.FC<SpiderGraphProps> = ({ data }) => {
       <mesh position={[0, 0, 0]}>
         <sphereGeometry args={[0.22, 25, 25]} />
         <meshPhysicalMaterial
-          color={theme.isDarkMode ? "black" : "white"}
+          color="black"
           transmission={0.5}
           roughness={0.1}
           metalness={0.9}
           reflectivity={0.9}
         />
       </mesh>
-      {/* {points.map(([x, y, z], i) => (
+      {points.map(([x, y, z], i) => (
         <React.Fragment key={i}>
           <mesh position={[x, y, z]}>
             <sphereGeometry args={[0.05, 16, 16]} />
@@ -68,7 +66,7 @@ export const SpiderGraph: React.FC<SpiderGraphProps> = ({ data }) => {
             position={[x, y, z]}
           />
         </React.Fragment>
-      ))} */}
+      ))}
       {points.map(([x, y, z], i) => (
         <React.Fragment key={`tube-${i}`}>
           <Tube start={[0, 0, 0]} end={[x, y, z]} radius={0.02} />

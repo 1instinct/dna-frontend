@@ -24,7 +24,7 @@ export const HeroAction = styled.div`
   left: ${pxPC(100)};
   bottom: ${pxPC(200)};
   width: 66%;
-  
+
   @media (max-width: 768px) {
     left: auto;
     margin: 0 20px;

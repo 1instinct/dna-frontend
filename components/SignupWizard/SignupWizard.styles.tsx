@@ -13,19 +13,19 @@ export const MainWrapper = styled.div`
   padding: 0 0 80px 0;
 `;
 
-export const InitialTitle = styled.div`
+export const InitialTitle = styled.h1`
   box-sizing: border-box;
   color: ${(props) =>
     props.theme.isDarkMode
       ? props.theme.colors.white.primary
       : props.theme.colors.black.primary};
-  font-size: 2rem;
+  font-size: ${(props) => props.theme.typography.titleSM.fontSize};
   font-weight: 900;
   text-transform: uppercase;
   text-align: center;
   padding: 40px 0 15px;
   position: absolute;
-  margin-top: -290px;
+  margin-top: 0px;
 `;
 
 export const Title = styled.div`
@@ -80,8 +80,14 @@ export const LeftHalf = styled.div<LeftHalfType>`
   ${"" /* flex: 1; */}
   ${"" /* flex-grow: 1; */}
   ${"" /* flex-basis: 50%; */}
-  background: ${(props) => props.theme.colors.white.primary};
-  color: ${(props) => props.theme.colors.brand.primary};
+  background: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.black.primary
+      : props.theme.colors.white.primary};
+  color: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.white.primary
+      : props.theme.colors.black.primary};
   /* box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.123); */
   ${"" /* width: 100%; */}
   ${"" /* margin: 15px; */}
@@ -90,7 +96,10 @@ export const LeftHalf = styled.div<LeftHalfType>`
   padding: 15px 15px 60px 15px;
   text-align: center;
   & [data-qa="title"] {
-    color: ${(props) => props.theme.colors.brand.primary};
+    color: ${(props) =>
+      props.theme.isDarkMode
+        ? props.theme.colors.white.primary
+        : props.theme.colors.black.primary};
     font-size: 1.6rem;
   }
 
@@ -143,7 +152,7 @@ export const WizardForm = styled.div<WizardFormType>`
   ${"" /* margin-top: ${props => props.canGoBack ? '120px' : '225px'}; */}
   background: ${(props) =>
     props.theme.isDarkMode
-      ? props.theme.colors.black.light
+      ? props.theme.colors.black.dark
       : props.theme.colors.white.primary};
   color: ${(props) =>
     props.theme.isDarkMode

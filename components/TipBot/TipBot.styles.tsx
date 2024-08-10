@@ -96,8 +96,8 @@ export const TipBotImage = styled.div`
       "" /* left: 25px;
     bottom: -35px; */
     }
-    left: 30px;
-    bottom: -120px;
+    left: 40px;
+    bottom: -100px;
   }
 `;
 
@@ -109,7 +109,7 @@ export const BubbleWrapper = styled.div`
     props.theme.isDarkMode
       ? props.theme.colors.black.light
       : props.theme.colors.gray.background};
-  margin: 0 0 -35px 0;
+  margin: 0 0 5px 0;
   padding: 15px;
   &:after {
     display: block;
