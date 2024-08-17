@@ -140,10 +140,14 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
               <LinkDiv href="/login" isActive={pathname !== "/login"}>
                 LOGIN
               </LinkDiv>
+<<<<<<< HEAD
               <LinkDiv
                 href="/signup"
                 isActive={pathname !== "/authenticate/signup"}
               >
+=======
+              <LinkDiv href="/authenticate/signup" isActive={pathname !== "/authenticate/signup"}>
+>>>>>>> 4733611 (.)
                 SIGN UP
               </LinkDiv>
             </HeaderOptions>
