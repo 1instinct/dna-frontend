@@ -18,7 +18,7 @@ const fetchProduct = async (slug: string): Promise<IProduct> => {
       }
     })
     .catch((err) => {
-      // console.log("Uh oh ERR: ", err);
+      console.log("Uh oh ERR: ", err);
       throw new Error(`Product request failed: ${err.statusText}`);
     });
 
