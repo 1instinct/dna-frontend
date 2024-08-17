@@ -9,7 +9,7 @@ import { Logo } from "@components/shared/Logo";
 import { Container, Content } from "./Layout.styles";
 
 type LogoTypeFC = {
-  imageFile: string;
+  imageFile?: string;
   darkMode?: boolean;
 };
 
