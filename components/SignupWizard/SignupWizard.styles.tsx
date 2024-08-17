@@ -44,7 +44,7 @@ export const Title = styled.div`
   text-transform: uppercase;
   text-align: center;
   padding: 40px 0 15px;
-  
+
   position: absolute;
   top: 50%;
   left: 50%;
@@ -100,8 +100,8 @@ export const LeftHalf = styled.div<LeftHalfType>`
   border-radius: 8px;
   padding: 15px;
   text-align: center;
-  position: relative;  /* Add this line */
-  
+  position: relative; /* Add this line */
+
   @media (max-width: ${(props) => props.theme.breakpoints.values.sm}px) {
     margin: 15px 0 0 0;
     display: none;
@@ -215,7 +215,7 @@ export const WizardActions = styled.div`
 export const PreviousButton = styled(Button)`
   flex-basis: 30%; /* Adjust the proportion of the width */
   flex-grow: 1; /* Allow the button to grow to fill available space */
-  
+
   @media (max-width: ${(p) => p.theme.breakpoints.values.sm}px) {
     flex-basis: 45%; /* Adjust width for smaller screens */
   }
