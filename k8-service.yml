@@ -6,9 +6,9 @@ metadata:
   namespace: default
 spec:
   selector:
-    app: dna
+    app: dna-frontend
   ports:
     - protocol: TCP
-      port: 3000
+      port: 80
       targetPort: 3000
   type: ClusterIP
