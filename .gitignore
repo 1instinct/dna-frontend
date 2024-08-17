@@ -1,5 +1,4 @@
 # IDE
-.anima
 .vscode
 .idea
 
@@ -52,3 +51,6 @@ secret.yaml
 
 secrets-to-base64.sh
 tsconfig.tsbuildinfo
+tsconfig.tsbuildinfo
+
+.anima/
