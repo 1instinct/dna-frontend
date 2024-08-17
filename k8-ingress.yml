@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dna-frontend-ingress
+  namespace: default
+  annotations:
+    class: public
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # If you're using cert-manager for SSL
+  labels:
+    app: dna-frontend
+spec:
+  rules:
+    - host: dna-frontend.instinct.is
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dna-entrypoint-service
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - dna-frontend.instinct.is
+          # secretName: dna-tls  # This is the secret that will store the SSL certificate

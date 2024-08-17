@@ -24,7 +24,7 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
   }
   margin: -120px 15px 15px 15px;
   text-align: center;
-  
+
   & [data-qa="title"] {
     color: ${(props) => props.theme.colors.brand.primary};
     font-size: 1.6rem;
@@ -54,7 +54,7 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
   }
 
   @media (max-width: ${(props) => props.theme.breakpoints.values.sm}px) {
-    margin: ${(p) => p.isIntro ? '-80px' : '125px'} auto 0;
+    margin: ${(p) => (p.isIntro ? "-80px" : "125px")} auto 0;
     padding: 10px 0px 0px 0px;
   }
 `;

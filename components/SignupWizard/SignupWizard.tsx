@@ -159,7 +159,8 @@ const FormWrapper: React.FC<any> = ({
                 variant="solid"
                 type={isLastStep ? "submit" : "button"}
                 onClick={() => {
-                  constants.IS_DEBUG && console.log("next: ", values, wizard, isLastStep);
+                  constants.IS_DEBUG &&
+                    console.log("next: ", values, wizard, isLastStep);
                   // console.log("next: ", wizard, isLastStep);
                   wizard.next();
                 }}
@@ -266,9 +267,7 @@ export const SignupWizard = () => {
       <ContentWrapper>
         <LeftHalf show={isLargeDevice ? "flex" : "flex"}>
           <ThreeViewer />
-          <Title>
-            See Your Soul
-          </Title>
+          <Title>See Your Soul</Title>
         </LeftHalf>
         <RightHalf isLargeDevice={isLargeDevice}>
           <SlideInLeft>

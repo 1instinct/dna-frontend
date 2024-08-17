@@ -218,7 +218,9 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
           <TotalLine>Tax: {included_tax_total}</TotalLine>
           <TotalLine>Total: {display_total}</TotalLine>
           <Actions>
-            <Button variant="outline" onClick={() => router.push("/cart")}>View Cart</Button>
+            <Button variant="outline" onClick={() => router.push("/cart")}>
+              View Cart
+            </Button>
             <Button onClick={() => router.push("/checkout")}>Checkout</Button>
           </Actions>
         </BurgerMenu>
