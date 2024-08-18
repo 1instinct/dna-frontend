@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: dna-frontend-ingress
+  name: dna-frontend
   namespace: default
   annotations:
     class: public
@@ -18,7 +18,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: dna-frontend-service
+                name: dna-frontend
                 port:
                   number: 8080
   tls:
