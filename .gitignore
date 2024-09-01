@@ -48,6 +48,8 @@ envvars.txt
 tsconfig.tsbuildinfo
 secret.yml
 secret.yaml
+secrets.yml
+secrets.yaml
 
 secrets-to-base64.sh
 tsconfig.tsbuildinfo
