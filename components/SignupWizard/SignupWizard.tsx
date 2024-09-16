@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useMediaQuery } from "react-responsive";
 import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
 import FormikWizard from "formik-wizard";
@@ -31,8 +32,16 @@ import {
   Disclaimer,
   CongratsWrapper
 } from "./SignupWizard.styles";
-import { ThreeViewer } from "@components/shared/ThreeViewer";
 import constants from "@utilities/constants";
+import { Loading } from "..";
+
+const ThreeViewer = dynamic(
+  () => import("@components/shared/ThreeViewer").then((mod) => mod.ThreeViewer),
+  {
+    loading: () => <Loading />,
+    ssr: false
+  }
+);
 
 const FormWrapper: React.FC<any> = ({
   steps,
@@ -47,30 +56,11 @@ const FormWrapper: React.FC<any> = ({
   // getErrorMessage,
   canGoBack,
   // onFinalSubmit,
+  hasError,
+  isDirty,
   showNextStep,
   actionLabel
 }: any) => {
-  // const [state, setState] = useState({
-  //   errorMessage: '',
-  //   stepNumber: 0
-  // });
-  // const { errorMessage, stepNumber } = state;
-
-  // useEffect(() => {
-  //   window.addEventListener('keydown', keyCommand);
-  //   return () => {
-  //     window.removeEventListener('keydown', keyCommand);
-  //   };
-  // });
-
-  // const keyCommand = e => {
-  //   if (e.keyCode === 13) {
-  //     wizard.next();
-  //     return true;
-  //   }
-  //   return false;
-  // };
-
   const isMobile = useMediaQuery({
     // query: `(min-device-width: ${props => props.theme.breakpoints.values.lg}px)`
     query: `(max-device-width: 768px)`
@@ -164,7 +154,9 @@ const FormWrapper: React.FC<any> = ({
                   // console.log("next: ", wizard, isLastStep);
                   wizard.next();
                 }}
-                disabled={isLastStep && !termsAccepted}
+                disabled={
+                  (isLastStep && !termsAccepted) || hasError || !isDirty
+                }
               >
                 {actionLabel || (isLastStep ? "Submit" : "Next")}
               </NextButton>
@@ -241,27 +233,6 @@ export const SignupWizard = () => {
       });
   }, []);
 
-  // We assume this method cannot be called on the last step
-  // const showNextStep = ({ setFieldTouched }) => {
-  //   // TODO: Only untouch if value is '' or []
-  //   const nextStepFieldNames = Object.keys(steps[stepNumber + 1].initialValues);
-  //   nextStepFieldNames.forEach(fieldName => setFieldTouched(fieldName, false));
-  //   setState(prevState => ({ ...prevState, stepNumber: prevState.stepNumber + 1 }));
-  // };
-
-  // We assume this method cannot be called on the first step
-  // const showPreviousStep = ({ setFieldTouched }) => {
-  //   // TODO: Only untouch if value is '' or []
-  //   const previousStepFieldNames = Object.keys(steps[stepNumber - 1].initialValues);
-  //   previousStepFieldNames.forEach(fieldName => setFieldTouched(fieldName, false));
-
-  //   setState(prevState => ({ ...prevState, stepNumber: prevState.stepNumber - 1 }));
-  // };
-
-  // const handleError = error => {
-  //   setState(prevState => ({ ...prevState, errorMessage: getErrorMessage(error) }));
-  // };
-
   return (
     <MainWrapper>
       <ContentWrapper>
@@ -275,20 +246,6 @@ export const SignupWizard = () => {
               steps={Questions}
               // onSubmit={(values: any, { formikProps: { isSubmitting } }: any) => handleSubmit(values, isSubmitting)}
               onSubmit={(values) => handleSubmit(values)}
-              // onSubmit={(values) => {
-              //   register({ user: values })
-              //     .then(() => {
-              //       // setSubmitting(false);
-              //       // router.push("/");
-              //     })
-              //     .catch(() => {
-              //       // setSubmitting(false);
-              //     });
-              // }}
-              // step={0}
-              // validator={() => ({})}
-              // albusProps={{step: 0, onNext: (context) => handleSubmit.bind(this, context)}}
-              // albusProps={{(context) => console.log(context)}}
               render={FormWrapper}
             />
           </SlideInLeft>

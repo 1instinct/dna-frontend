@@ -87,7 +87,7 @@
     "react-responsive-masonry": "2.7.1",
     "react-spring": "^9.2.4",
     "react-sticky-el": "^2.0.6",
-    "react-text-mask": "^5.5.0",
+    "react-text-mask": "5.5.0",
     "react-typist": "^2.0.5",
     "react-youtube": "^7.13.1",
     "recoil": "^0.7.7",
