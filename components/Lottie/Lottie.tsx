@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import type { LottiePlayer } from 'lottie-web';
+import type { LottiePlayer } from "lottie-web";
 
 export const Lottie = ({
   animationOptions = {
@@ -10,8 +10,8 @@ export const Lottie = ({
     width: "400px",
     height: "400px",
     className: "",
-    style: {},
-  },
+    style: {}
+  }
 }: {
   animationOptions?: {
     data: any;
@@ -21,7 +21,7 @@ export const Lottie = ({
     height?: string;
     className?: string;
     style?: React.CSSProperties;
-  }
+  };
 }) => {
   const animationRef = useRef<HTMLDivElement>(null);
   const animationInstance = useRef<any>(null); // Use any to avoid TypeScript issues with AnimationItem
@@ -29,7 +29,7 @@ export const Lottie = ({
   const [lottie, setLottie] = useState<LottiePlayer | null>(null);
 
   useEffect(() => {
-    import('lottie-web').then((Lottie) => setLottie(Lottie.default || Lottie));
+    import("lottie-web").then((Lottie) => setLottie(Lottie.default || Lottie));
   }, []);
 
   useEffect(() => {
@@ -42,8 +42,8 @@ export const Lottie = ({
         animationData: animationOptions.data,
         rendererSettings: {
           preserveAspectRatio: "xMidYMid slice",
-          className: `lottie-animation ${animationOptions.className}`,
-        },
+          className: `lottie-animation ${animationOptions.className}`
+        }
       });
 
       return () => {
@@ -62,8 +62,8 @@ export const Lottie = ({
         pointerEvents: "none",
         width: animationOptions.width,
         height: animationOptions.height,
-        ...animationOptions.style,
+        ...animationOptions.style
       }}
     />
   );
-}
+};

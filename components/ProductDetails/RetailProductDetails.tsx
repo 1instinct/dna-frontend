@@ -114,7 +114,7 @@ export const RetailProductDetails = ({
   const productSizes =
     productOptions &&
     productOptions?.filter((e: any) =>
-      ["XS", "S", "M", "L", "XL"].some(size =>
+      ["XS", "S", "M", "L", "XL"].some((size) =>
         e.attributes.presentation.includes(size)
       )
     );

@@ -23,7 +23,8 @@ export const Tube = ({ start, end, color, radius = 0.01 }: any) => {
     if (bulbRef.current && lightRef.current) {
       // Create a flickering effect
       const flickerIntensity = Math.random() * 0.33;
-      (bulbRef.current.material as THREE.MeshPhongMaterial).emissiveIntensity = flickerIntensity;
+      (bulbRef.current.material as THREE.MeshPhongMaterial).emissiveIntensity =
+        flickerIntensity;
       lightRef.current.intensity = flickerIntensity * 2; // Adjust as needed
     }
     if (bulbCapRef.current) {

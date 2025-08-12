@@ -2,7 +2,7 @@ import React, { Fragment, useState, useCallback, useRef } from "react";
 import styled from "@emotion/styled";
 import isPropValid from "@emotion/is-prop-valid";
 import * as BurgerMenu from "react-burger-menu";
-const Menu = (BurgerMenu.slide as unknown) as React.ComponentType<any>;
+const Menu = BurgerMenu.slide as unknown as React.ComponentType<any>;
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import Collapse from "@material-ui/core/Collapse";
