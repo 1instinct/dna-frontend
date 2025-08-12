@@ -1,4 +1,5 @@
-import { slide as BurgerMenu } from "react-burger-menu";
+import * as BurgerMenu from "react-burger-menu";
+const Menu = (BurgerMenu.slide as unknown) as React.ComponentType<any>;
 import { useRouter } from "next/router";
 import { Loading, LoadingWrapper } from "..";
 import {
@@ -351,7 +352,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
             </Button>
             <Button onClick={() => router.push("/checkout")}>Checkout</Button>
           </Actions>
-        </BurgerMenu>
+        </Menu>
         <style jsx>{`
           .cart-modal {
             background-color: white;

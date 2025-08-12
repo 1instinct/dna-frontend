@@ -89,7 +89,8 @@ interface WholesaleProductDetailsProps {
 }
 
 export const WholesaleProductDetails = ({
-  props
+  wholesale,
+  ...props
 }: WholesaleProductDetailsProps) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });

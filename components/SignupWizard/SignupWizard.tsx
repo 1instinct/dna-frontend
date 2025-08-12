@@ -134,7 +134,7 @@ const FormWrapper: React.FC<any> = ({
             {isLastStep ? (
               <NextButton
                 variant="solid"
-                type={isLastStep ? "submit" : "button"}
+                // type={isLastStep ? "submit" : "button"}
                 onClick={() => {
                   console.log("next: ", values, wizard, isLastStep);
                   // console.log("next: ", wizard, isLastStep);
@@ -147,7 +147,7 @@ const FormWrapper: React.FC<any> = ({
             ) : (
               <NextButton
                 variant="solid"
-                type={isLastStep ? "submit" : "button"}
+                // type={isLastStep ? "submit" : "button"}
                 onClick={() => {
                   constants.IS_DEBUG &&
                     console.log("next: ", values, wizard, isLastStep);

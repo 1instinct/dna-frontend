@@ -90,7 +90,7 @@ interface RetailProductDetailsProps {
 
 export const RetailProductDetails = ({
   wholesale,
-  props
+  ...props
 }: RetailProductDetailsProps) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -114,7 +114,7 @@ export const RetailProductDetails = ({
   const productSizes =
     productOptions &&
     productOptions?.filter((e: any) =>
-      ["XS", "S", "M", "L", "XL"].some((size) =>
+      ["XS", "S", "M", "L", "XL"].some(size =>
         e.attributes.presentation.includes(size)
       )
     );

@@ -295,7 +295,7 @@ export const SignupForm = () => {
               <SignupActions>
                 <NextButton
                   variant="solid"
-                  type="submit"
+                  // type="submit"
                   onClick={() => {
                     console.log("SUBMITTING FORM");
                   }}

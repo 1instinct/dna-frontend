@@ -28,7 +28,7 @@ export const Login = () => {
   // Component to handle button click
   const SubmitButton = () => {
     const { submitForm, isSubmitting } = useFormikContext();
-
+    
     return (
       <Button onClick={submitForm} disabled={isSubmitting}>
         Submit
@@ -76,9 +76,7 @@ export const Login = () => {
                 label="Password"
               />
             </InputWrapper>
-            <Button type="submit" disabled={isSubmitting}>
-              Submit
-            </Button>
+            <SubmitButton />
             <Subtext>
               <Link href="/authenticate/signup">Register</Link>
               &nbsp;&nbsp;|&nbsp;&nbsp;

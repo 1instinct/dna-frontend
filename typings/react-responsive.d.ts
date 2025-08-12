@@ -19,13 +19,8 @@ declare module "react-responsive" {
 
   // Explicitly define ResponsiveContext to include Provider
   export const ResponsiveContext: Context<MediaQueryAllQueryable> & {
-    Provider: ComponentType<{
-      value: MediaQueryAllQueryable;
-      children?: ReactNode;
-    }>;
-    Consumer: ComponentType<{
-      children: (value: MediaQueryAllQueryable) => ReactNode;
-    }>;
+    Provider: ComponentType<{ value: MediaQueryAllQueryable; children?: ReactNode }>;
+    Consumer: ComponentType<{ children: (value: MediaQueryAllQueryable) => ReactNode }>;
   };
 
   export function useMediaQuery(
