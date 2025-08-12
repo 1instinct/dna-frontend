@@ -161,14 +161,19 @@ export const ComingSoon = () => {
         {previewMode && (
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '16px',
-              width: '100%',
-              margin: '32px 0',
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: "16px",
+              width: "100%",
+              margin: "32px 0"
             }}
           >
-            {renderProductThumbnails(productsData, setIsSlideshow) as React.ReactNode}
+            {
+              renderProductThumbnails(
+                productsData,
+                setIsSlideshow
+              ) as React.ReactNode
+            }
           </div>
         )}
         {comingSoonText !== "" && <Text>{comingSoonText}</Text>}
