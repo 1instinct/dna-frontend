@@ -16,6 +16,8 @@ declare module "react-places-autocomplete" {
 
   const PlacesAutocomplete: ComponentType<PlacesAutocompleteProps>;
   export function geocodeByAddress(address: string): Promise<any>;
-  export function getLatLng(results: any): Promise<{ lat: number; lng: number }>;
+  export function getLatLng(
+    results: any
+  ): Promise<{ lat: number; lng: number }>;
   export default PlacesAutocomplete;
 }

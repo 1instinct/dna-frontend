@@ -73,7 +73,10 @@ export const Cart = () => {
     }
   };
 
-  const handleUpdateItemQuantity = async (itemId: string, newQuantity: number) => {
+  const handleUpdateItemQuantity = async (
+    itemId: string,
+    newQuantity: number
+  ) => {
     if (newQuantity < 1) {
       await handleRemoveItem(itemId); // Remove item if quantity is zero
     } else {
@@ -84,7 +87,7 @@ export const Cart = () => {
         console.error("Failed to update item quantity:", error);
       }
     }
-  };  
+  };
 
   const renderCartItems = () => {
     if (Array.isArray(cartData?.included) && productsData) {
@@ -95,10 +98,10 @@ export const Cart = () => {
             lineItem.relationships.variant.data.id,
             productsData
           );
-  
+
           const lineItemId = lineItem.id;
           const quantity = lineItem.attributes.quantity;
-  
+
           return (
             <CartItem key={`cart-item-${lineItemId}`}>
               <CartItemDescription>
@@ -106,16 +109,17 @@ export const Cart = () => {
               </CartItemDescription>
               <QuantityAdjusterWrapper>
                 <QuantityAdjuster
-                  onClick={() => handleUpdateItemQuantity(lineItemId, quantity - 1)}
+                  onClick={() =>
+                    handleUpdateItemQuantity(lineItemId, quantity - 1)
+                  }
                 >
                   -
                 </QuantityAdjuster>
-                <QuantitySelector
-                  value={quantity}
-                  readOnly
-                />
+                <QuantitySelector value={quantity} readOnly />
                 <QuantityAdjuster
-                  onClick={() => handleUpdateItemQuantity(lineItemId, quantity + 1)}
+                  onClick={() =>
+                    handleUpdateItemQuantity(lineItemId, quantity + 1)
+                  }
                 >
                   +
                 </QuantityAdjuster>

@@ -110,26 +110,31 @@ export const ComingSoon = () => {
   }, [productsData]);
 
   const renderProductThumbnails = useCallback(
-  (productsData: ProductsData | undefined, setIsSlideshow: (value: boolean) => void) => {
-    return productsData?.data.map((i: Product) => {
-      const productImg = i.relationships?.images?.data[0]?.id;
-      const allImages = productsData?.included?.filter((e) => e.type === "image") || [];
-      const foundImg = allImages.filter((e) => e.id === productImg);
-      const imgUrl = foundImg.length > 0 ? foundImg[0]?.attributes?.styles[3]?.url : "";
-      const imgSrc = productImg ? `${spreeApiUrl}${imgUrl}` : "";
-      return (
-        <div
-          key={`image-${i.id}`}
-          onClick={() => setIsSlideshow(true)}
-          style={{ cursor: "pointer" }}
-        >
-          <img src={imgSrc} alt={`Product ${i.id}`} />
-        </div>
-      );
-    });
-  },
-  [spreeApiUrl]
-);
+    (
+      productsData: ProductsData | undefined,
+      setIsSlideshow: (value: boolean) => void
+    ) => {
+      return productsData?.data.map((i: Product) => {
+        const productImg = i.relationships?.images?.data[0]?.id;
+        const allImages =
+          productsData?.included?.filter((e) => e.type === "image") || [];
+        const foundImg = allImages.filter((e) => e.id === productImg);
+        const imgUrl =
+          foundImg.length > 0 ? foundImg[0]?.attributes?.styles[3]?.url : "";
+        const imgSrc = productImg ? `${spreeApiUrl}${imgUrl}` : "";
+        return (
+          <div
+            key={`image-${i.id}`}
+            onClick={() => setIsSlideshow(true)}
+            style={{ cursor: "pointer" }}
+          >
+            <img src={imgSrc} alt={`Product ${i.id}`} />
+          </div>
+        );
+      });
+    },
+    [spreeApiUrl]
+  );
 
   useEffect(() => {
     if (productsSuccess) {
@@ -156,17 +161,15 @@ export const ComingSoon = () => {
         {previewMode && (
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "16px",
-              width: "100%",
-              margin: "32px 0"
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: '16px',
+              width: '100%',
+              margin: '32px 0',
             }}
           >
-            {/* <Masonry> */}
-              {renderProductThumbnails(productsData, setIsSlideshow) as React.ReactNode}
-            {/* </Masonry> */}
-          </ResponsiveMasonry>
+            {renderProductThumbnails(productsData, setIsSlideshow) as React.ReactNode}
+          </div>
         )}
         {comingSoonText !== "" && <Text>{comingSoonText}</Text>}
         <NotifyForm />
