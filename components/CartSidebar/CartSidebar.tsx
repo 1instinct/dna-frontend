@@ -4,10 +4,7 @@ import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { Loading, LoadingWrapper } from "..";
-import {
-  useCart,
-  updateItemQuantity
-} from "../../hooks/useCart";
+import { useCart, updateItemQuantity } from "../../hooks/useCart";
 import { useProducts } from "../../hooks";
 import { QueryKeys } from "../../hooks/queryKeys";
 import cartStyles from "./cartStyles";
@@ -40,7 +37,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [quantities, setQuantities] = useState<Record<string, number>>({});
-  
+
   const {
     data: cartData,
     isLoading: cartIsLoading,
@@ -51,24 +48,30 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
 
   // Initialize quantities from item_count when cart loads
   useEffect(() => {
-    if (cartData?.data?.attributes?.item_count && cartData?.data?.relationships?.line_items?.data) {
+    if (
+      cartData?.data?.attributes?.item_count &&
+      cartData?.data?.relationships?.line_items?.data
+    ) {
       const lineItems = cartData.data.relationships.line_items.data;
       const itemCount = cartData.data.attributes.item_count;
       const lineItemsArray = Array.isArray(lineItems) ? lineItems : [lineItems];
       const avgQty = Math.ceil(itemCount / lineItemsArray.length);
-      
+
       const initialQuantities: Record<string, number> = {};
       lineItemsArray.forEach((item: any) => {
         if (!quantities[item.id]) {
           initialQuantities[item.id] = avgQty;
         }
       });
-      
+
       if (Object.keys(initialQuantities).length > 0) {
-        setQuantities(prev => ({ ...prev, ...initialQuantities }));
+        setQuantities((prev) => ({ ...prev, ...initialQuantities }));
       }
     }
-  }, [cartData?.data?.attributes?.item_count, cartData?.data?.relationships?.line_items?.data]);
+  }, [
+    cartData?.data?.attributes?.item_count,
+    cartData?.data?.relationships?.line_items?.data
+  ]);
 
   const updateQuantityMutation = useMutation(
     ({ itemId, quantity }: { itemId: string; quantity: number }) =>
@@ -76,7 +79,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
     {
       onMutate: async ({ itemId, quantity }) => {
         // Optimistically update local state
-        setQuantities(prev => ({ ...prev, [itemId]: quantity }));
+        setQuantities((prev) => ({ ...prev, [itemId]: quantity }));
       },
       onSuccess: () => {
         console.log("Quantity updated successfully");
@@ -85,7 +88,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
       onError: (error: any, { itemId, quantity }) => {
         console.error("Failed to update quantity:", error);
         // Revert on error
-        setQuantities(prev => {
+        setQuantities((prev) => {
           const newQuantities = { ...prev };
           delete newQuantities[itemId];
           return newQuantities;
@@ -136,12 +139,15 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
     const lineItemRefs = cartData?.data?.relationships?.line_items?.data || [];
     const variantRefs = cartData?.data?.relationships?.variants?.data || [];
 
-    if (Array.isArray(variantRefs) && variantRefs.length > 0 && Array.isArray(lineItemRefs)) {
+    if (
+      Array.isArray(variantRefs) &&
+      variantRefs.length > 0 &&
+      Array.isArray(lineItemRefs)
+    ) {
       return variantRefs.map((variantRef, index): any => {
-
         // Match line_item by index (they should be in the same order)
         const lineItemRef = lineItemRefs[index];
-        
+
         if (!lineItemRef) {
           console.error("Could not find line_item at index", index);
           return null;
