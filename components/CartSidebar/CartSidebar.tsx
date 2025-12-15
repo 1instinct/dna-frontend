@@ -1,13 +1,15 @@
 import * as BurgerMenu from "react-burger-menu";
 const Menu = BurgerMenu.slide as unknown as React.ComponentType<any>;
 import { useRouter } from "next/router";
+import React, { useState, useEffect } from "react";
+import { useMutation, useQueryClient } from "react-query";
 import { Loading, LoadingWrapper } from "..";
 import {
   useCart,
-  removeItemFromCart,
   updateItemQuantity
 } from "../../hooks/useCart";
 import { useProducts } from "../../hooks";
+import { QueryKeys } from "../../hooks/queryKeys";
 import cartStyles from "./cartStyles";
 
 import {
@@ -36,6 +38,9 @@ interface Props {
 
 export const CartSidebar = ({ isVisible, toggle }: Props) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  
   const {
     data: cartData,
     isLoading: cartIsLoading,
@@ -43,6 +48,51 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   } = useCart();
 
   const { data: productsData } = useProducts(1);
+
+  // Initialize quantities from item_count when cart loads
+  useEffect(() => {
+    if (cartData?.data?.attributes?.item_count && cartData?.data?.relationships?.line_items?.data) {
+      const lineItems = cartData.data.relationships.line_items.data;
+      const itemCount = cartData.data.attributes.item_count;
+      const lineItemsArray = Array.isArray(lineItems) ? lineItems : [lineItems];
+      const avgQty = Math.ceil(itemCount / lineItemsArray.length);
+      
+      const initialQuantities: Record<string, number> = {};
+      lineItemsArray.forEach((item: any) => {
+        if (!quantities[item.id]) {
+          initialQuantities[item.id] = avgQty;
+        }
+      });
+      
+      if (Object.keys(initialQuantities).length > 0) {
+        setQuantities(prev => ({ ...prev, ...initialQuantities }));
+      }
+    }
+  }, [cartData?.data?.attributes?.item_count, cartData?.data?.relationships?.line_items?.data]);
+
+  const updateQuantityMutation = useMutation(
+    ({ itemId, quantity }: { itemId: string; quantity: number }) =>
+      updateItemQuantity(itemId, quantity),
+    {
+      onMutate: async ({ itemId, quantity }) => {
+        // Optimistically update local state
+        setQuantities(prev => ({ ...prev, [itemId]: quantity }));
+      },
+      onSuccess: () => {
+        console.log("Quantity updated successfully");
+        queryClient.invalidateQueries(QueryKeys.CART);
+      },
+      onError: (error: any, { itemId, quantity }) => {
+        console.error("Failed to update quantity:", error);
+        // Revert on error
+        setQuantities(prev => {
+          const newQuantities = { ...prev };
+          delete newQuantities[itemId];
+          return newQuantities;
+        });
+      }
+    }
+  );
 
   const foundProduct = (productId: string, productsData: IProducts) => {
     // Check if productsData and productsData.data exist and are iterable
@@ -70,59 +120,71 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
     return null;
   };
 
-  const handleUpdateItemQuantity = async (
-    itemId: string,
-    newQuantity: number
-  ) => {
-    if (newQuantity < 1) {
-      await removeItemFromCart(itemId);
-    } else {
-      await updateItemQuantity(itemId, newQuantity);
-    }
+  const handleUpdateItemQuantity = (itemId: string, newQuantity: number) => {
+    console.log("Updating item:", itemId, "to quantity:", newQuantity);
+    // Use setQuantity with 0 instead of removeItem to avoid CORS issues
+    const quantity = Math.max(0, newQuantity);
+    updateQuantityMutation.mutate({ itemId, quantity });
   };
 
   const renderCartItems = () => {
-    if (Array.isArray(cartData?.data?.relationships?.variants?.data)) {
-      return cartData?.data?.relationships?.variants?.data?.map(
-        (item, index): any => {
-          if (!productsData || !Array.isArray(productsData.data)) {
-            console.error("Invalid or missing productsData");
-            return null;
-          }
-          const itemCount = cartData?.data?.attributes?.item_count;
-          const product = foundProduct(item.id, productsData);
+    // Early return if productsData isn't loaded yet
+    if (!productsData || !Array.isArray(productsData.data)) {
+      return null;
+    }
 
-          return (
-            <CartItem key={`cart-item-${index}`}>
-              <CartItemDescription>
-                {product?.attributes?.name} - ${product?.attributes?.price}
-              </CartItemDescription>
-              <QuantityAdjusterWrapper>
-                <QuantityAdjuster
-                  onClick={() =>
-                    handleUpdateItemQuantity(item.id, itemCount - 1)
-                  }
-                >
-                  -
-                </QuantityAdjuster>
-                <QuantitySelector
-                  value={itemCount}
-                  onChange={() => {
-                    console.log("onChange");
-                  }}
-                />
-                <QuantityAdjuster
-                  onClick={() =>
-                    handleUpdateItemQuantity(item.id, itemCount + 1)
-                  }
-                >
-                  +
-                </QuantityAdjuster>
-              </QuantityAdjusterWrapper>
-            </CartItem>
-          );
+    const lineItemRefs = cartData?.data?.relationships?.line_items?.data || [];
+    const variantRefs = cartData?.data?.relationships?.variants?.data || [];
+
+    if (Array.isArray(variantRefs) && variantRefs.length > 0 && Array.isArray(lineItemRefs)) {
+      return variantRefs.map((variantRef, index): any => {
+
+        // Match line_item by index (they should be in the same order)
+        const lineItemRef = lineItemRefs[index];
+        
+        if (!lineItemRef) {
+          console.error("Could not find line_item at index", index);
+          return null;
         }
-      );
+
+        // Use local quantity state
+        const quantity = quantities[lineItemRef.id] || 1;
+        const product = foundProduct(variantRef.id, productsData);
+
+        return (
+          <CartItem key={lineItemRef.id || `cart-item-${index}`}>
+            <CartItemDescription>
+              {product?.attributes?.name} - ${product?.attributes?.price}
+            </CartItemDescription>
+            <QuantityAdjusterWrapper>
+              <QuantityAdjuster
+                onClick={() =>
+                  handleUpdateItemQuantity(lineItemRef.id, quantity - 1)
+                }
+              >
+                -
+              </QuantityAdjuster>
+              <QuantitySelector
+                type="number"
+                value={quantity}
+                onChange={(e: any) => {
+                  const newQty = parseInt(e.target.value) || 1;
+                  if (newQty > 0) {
+                    handleUpdateItemQuantity(lineItemRef.id, newQty);
+                  }
+                }}
+              />
+              <QuantityAdjuster
+                onClick={() =>
+                  handleUpdateItemQuantity(lineItemRef.id, quantity + 1)
+                }
+              >
+                +
+              </QuantityAdjuster>
+            </QuantityAdjusterWrapper>
+          </CartItem>
+        );
+      });
     }
     return null;
   };
