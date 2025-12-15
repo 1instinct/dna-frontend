@@ -33,10 +33,15 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
   const addToCart = useMutation(addItemToCart, {
     onSuccess: () => {
       queryClient.invalidateQueries(QueryKeys.CART);
+      constants.IS_DEBUG && console.log("Item added to cart successfully");
+    },
+    onError: (error: any) => {
+      console.error("Failed to add item to cart:", error);
     }
   });
 
   const handleAddToCart = (item: AddItem) => {
+    constants.IS_DEBUG && console.log("Adding to cart:", item);
     addToCart.mutate(item);
   };
 

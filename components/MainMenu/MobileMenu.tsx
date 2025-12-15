@@ -101,9 +101,9 @@ export const MobileMenu = ({
             const pathSlug = parentKeyPath + "/" + slug;
 
             return (
-              <Fragment key={pathSlug}>
+              <Fragment key={`${pathSlug}-${index}`}>
                 <MenuItem
-                  key={`${pathSlug}-1`}
+                  key={`${pathSlug}-${index}-item`}
                   paddingLeft={paddingLeft}
                   onClick={() =>
                     handleItemClick(item, hasChildren, pathSlug, slug)

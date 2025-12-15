@@ -36,15 +36,6 @@ import {
 } from "./Header.styles";
 import { Logo } from "@components/shared/Logo";
 
-const dummyCategories = [
-  "Best Sellers",
-  "Latest",
-  "Seasonal",
-  "Luxury",
-  "On Sale",
-  "Coming Soon"
-];
-
 export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
   const router = useRouter();
   const { pathname } = useRouter();
@@ -140,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
                 </AccountOption>
               </AccountMenu>
               {/* <UserIconMo src={"/user.png"} /> */}
-              <Badge badgeContent={4} color="secondary">
+              <Badge badgeContent={4} color="secondary" overlap="rectangular">
                 <FavoriteIcon />
               </Badge>
             </HeaderAccount>
@@ -161,6 +152,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
             <Badge
               badgeContent={cartData ? cartData.data.attributes.item_count : 0}
               color="primary"
+              overlap="rectangular"
             >
               <CartSidebar isVisible={cartVisible} toggle={toggleCart} />
             </Badge>

@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import isPropValid from "@emotion/is-prop-valid";
 import { Popover } from "@material-ui/core";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
@@ -35,7 +36,9 @@ export interface LinkDivProps {
   props?: any;
 }
 
-export const LinkDiv = styled(Link)<LinkDivProps>`
+export const LinkDiv = styled(Link, {
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== "isActive"
+})<LinkDivProps>`
   font-size: 14px;
   text-decoration: none;
   ${(p) =>
