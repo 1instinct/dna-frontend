@@ -48,11 +48,11 @@ const MobileLatest: React.FC<MobileLatestProps> = (props) => {
           });
           // console.log(item, productImg, foundImg, imgUrl);
           return (
-            <ProductCard
+            <ProductCard 
               key={item.id || `product-${index}`}
-              item={item}
-              imgSrc={imgSrc}
-              opts={foundOptions}
+              item={item} 
+              imgSrc={imgSrc} 
+              opts={foundOptions} 
             />
           );
         })}

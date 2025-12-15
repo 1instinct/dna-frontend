@@ -8,23 +8,21 @@ import constants from "@utilities/constants";
 export const showCart = async () => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
-
+  
   if (token) {
     try {
-      const getCart = await spreeClient.cart.show(
-        { bearerToken: token.access_token },
-        { include: "line_items,variants" }
-      );
+      const getCart = await spreeClient.cart.show({
+        bearerToken: token.access_token
+      });
       if (getCart.isSuccess()) {
         constants.IS_DEBUG && console.log("HAS USER CART");
         return getCart.success();
       } else {
         // Cart doesn't exist, create a new one
         constants.IS_DEBUG && console.log("Creating new user cart");
-        const newCart = await spreeClient.cart.create(
-          { bearerToken: token.access_token },
-          { include: "line_items,variants" }
-        );
+        const newCart = await spreeClient.cart.create({
+          bearerToken: token.access_token
+        });
         if (newCart.isSuccess()) {
           constants.IS_DEBUG && console.log("new cart: ", newCart.success());
           return newCart.success();
@@ -32,11 +30,9 @@ export const showCart = async () => {
           throw new Error(newCart.fail().message);
         }
       }
-    );
-    if (getCart.isSuccess()) {
-      constants.IS_DEBUG && console.log("HAS USER CART");
-      return getCart.success();
-    } else {
+    } catch (error) {
+      // If cart.show fails, create a new cart
+      constants.IS_DEBUG && console.log("Cart fetch failed, creating new cart");
       const newCart = await spreeClient.cart.create({
         bearerToken: token.access_token
       });
@@ -50,19 +46,16 @@ export const showCart = async () => {
     const guestOrderToken = await storage.getGuestOrderToken();
     if (guestOrderToken) {
       try {
-        const response = await spreeClient.cart.show(
-          { orderToken: guestOrderToken as string },
-          { include: "line_items,variants" }
-        );
+        const response = await spreeClient.cart.show({
+          orderToken: guestOrderToken as string
+        });
         if (response.isSuccess()) {
           constants.IS_DEBUG && console.log("guest cart: ", response.success());
           return response.success();
         } else {
           // Guest cart doesn't exist, create new one
           constants.IS_DEBUG && console.log("Creating new guest cart");
-          const newResponse = await spreeClient.cart.create(undefined, {
-            include: "line_items,variants"
-          });
+          const newResponse = await spreeClient.cart.create();
           if (newResponse.isSuccess()) {
             const result = newResponse.success();
             storage.setGuestOrderToken(result.data.attributes.token);
@@ -73,11 +66,8 @@ export const showCart = async () => {
         }
       } catch (error) {
         // If cart.show fails, create a new cart
-        constants.IS_DEBUG &&
-          console.log("Guest cart fetch failed, creating new cart");
-        const response = await spreeClient.cart.create(undefined, {
-          include: "line_items,variants"
-        });
+        constants.IS_DEBUG && console.log("Guest cart fetch failed, creating new cart");
+        const response = await spreeClient.cart.create();
         if (response.isSuccess()) {
           const result = response.success();
           storage.setGuestOrderToken(result.data.attributes.token);
@@ -88,9 +78,7 @@ export const showCart = async () => {
       }
     } else {
       // No guest token, create new cart
-      const response = await spreeClient.cart.create(undefined, {
-        include: "line_items,variants"
-      });
+      const response = await spreeClient.cart.create();
       if (response.isSuccess()) {
         constants.IS_DEBUG &&
           console.log("creating cart: ", response.success());
