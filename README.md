@@ -144,6 +144,7 @@ echo -n 'hello@instinct.is' | base64 && \
 - Chat widget
 - RSS feeds
 - Chatbot (Rasa)
+- Masonry ([react-responsive-masonry](https://www.npmjs.com/package/react-responsive-masonry))
 - Browser Feature Detection
 - Speed/Performance Benchmarking (GTMetrix.com API?)
 - Header tags customization (NextJS: `next/header`)
