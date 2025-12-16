@@ -62,3 +62,4 @@ secret.yml
 secret.yaml
 
 secrets-to-base64.sh
+tsconfig.tsbuildinfo
