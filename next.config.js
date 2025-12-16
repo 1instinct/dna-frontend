@@ -59,6 +59,11 @@ module.exports = {
           "react-query"
         ),
         "react-dom$": resolveFrom(path.resolve("node_modules"), "react-dom")
+      },
+      fallback: {
+        // Polyfill Node built-ins that some deps expect in the browser
+        ...(config.resolve?.fallback || {}),
+        util: require.resolve("util/")
       }
     };
     return config;

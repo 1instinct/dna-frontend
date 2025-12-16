@@ -12,21 +12,21 @@
     "links": [
       {
         "text": "accessibility statement",
-        "url": ""
+        "url": "/accessibility"
       },
       {
         "text": "CA Privacy Right",
-        "url": ""
+        "url": "/ca-privacy-right"
       },
       {
         "text": "Prop 65",
-        "url": ""
+        "url": "/prop65"
       },
       {
         "text": "Rewards",
-        "url": ""
+        "url": "/rewards"
       },
-      { "text": "Returns / exchanges / damages", "url": "/privacy" },
+      { "text": "Returns / exchanges / damages", "url": "/returns" },
       { "text": "Terms of Use & Privacy Policy", "url": "/terms" },
       { "text": "contact us", "url": "/contact" }
     ]
