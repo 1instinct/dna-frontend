@@ -99,7 +99,14 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
         )}
         <LogoDiv>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <LinkDiv isActive href="/">
+=======
+          <LinkDiv
+            isActive
+            href="/"
+          >
+>>>>>>> 8a8e6bf (fix up signup, change auth routes, add svg button, tweak buttons globally, tweak theme, add types)
             {logoPath ? (
               // <MyLogo imageFile={logoPath} darkMode={darkMode} />
               <Logo />
