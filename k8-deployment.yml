@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dna-frontend
+  namespace: default
+  labels:
+    app: dna
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dna
+  template:
+    metadata:
+      labels:
+        app: dna
+    spec:
+      containers:
+      - name: dna-frontend
+        image: dna-frontend:0.1
+        imagePullPolicy: Never
+        env:
+        - name: DEPLOY_ENV
+          value: "prod"
+        envFrom:
+        - secretRef:
+            name: dna-frontend-secrets
