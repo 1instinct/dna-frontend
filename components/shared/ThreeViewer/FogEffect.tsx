@@ -1,8 +1,8 @@
-import React, { useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import React, { useRef, useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 
-const FogEffect = () => {
+export const FogEffect = () => {
   const fogRef = useRef<THREE.InstancedMesh>(null!);
   const bufferRef = useRef<THREE.BufferGeometry>(null!);
   const count = 2000; // Increase number of particles
@@ -23,10 +23,23 @@ const FogEffect = () => {
 
   return (
     <instancedMesh ref={fogRef} args={[null, null, count]}>
-      <sphereGeometry args={[0.1, 32, 32]} attach="geometry"> {/* Increase size of particles */}
-        <bufferAttribute ref={bufferRef} attachObject={['attributes', 'position']} array={fogParticles} itemSize={3} />
+      <sphereGeometry args={[0.1, 32, 32]} attach="geometry">
+        {" "}
+        {/* Increase size of particles */}
+        <bufferAttribute
+          ref={bufferRef}
+          attachObject={["attributes", "position"]}
+          array={fogParticles}
+          itemSize={3}
+        />
       </sphereGeometry>
-      <meshStandardMaterial attach="material" color="pink" opacity={0.5} transparent /> {/* Increase opacity */}
+      <meshStandardMaterial
+        attach="material"
+        color="pink"
+        opacity={0.5}
+        transparent
+      />{" "}
+      {/* Increase opacity */}
     </instancedMesh>
   );
 };

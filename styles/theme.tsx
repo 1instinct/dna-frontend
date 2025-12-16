@@ -14,6 +14,7 @@ export const theme = {
     },
     black: {
       primary: "#000",
+      dark: "#333",
       medium: "#585858",
       light: lighten(0.33, "#000")
     },

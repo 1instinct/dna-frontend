@@ -22,7 +22,14 @@ export const DateOfBirth = () => {
   return (
     <QuestionWrapper>
       <TipBot speech={speechMarkup()} />
-      <InputGroupWrapper></InputGroupWrapper>
+      <InputWrapper>
+        <Field
+          name="dateOfBirth"
+          id="dateOfBirth"
+          component={FormikDateOfBirth}
+          label="Date of Birth"
+        />
+      </InputWrapper>
     </QuestionWrapper>
   );
 };

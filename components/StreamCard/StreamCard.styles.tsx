@@ -60,15 +60,21 @@ export const StreamStatusWrapper = styled.div`
 `;
 export const StreamStatus = styled.h4`
   color: ${(p) => p.theme.colors.white.primary};
-  // color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
-  // background: ${(p) => p.theme.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
+  // color: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.white.primary
+      : p.theme.colors.black.primary};
+  // background: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.black.primary
+      : p.theme.colors.white.primary};
   margin: 60px auto 0 auto;
   font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
   font-size: ${(p) => p.theme.typography.titleSM.fontSize};
   text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.66);
   text-align: center;
   padding: 40px;
-  
+
   @media (max-width: 375px) {
     font-size: 19px;
     line-height: 23px;
@@ -88,8 +94,14 @@ export const StreamChecked = styled.div`
   font-size: 0.8em;
   line-height: 30px;
   font-family: ${(p) => p.theme.typography.bodyMD.fontFamily};
-  color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
-  background: ${(p) => p.theme.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
+  color: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.white.primary
+      : p.theme.colors.black.primary};
+  background: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.black.primary
+      : p.theme.colors.white.primary};
   text-align: center;
   @media (max-width: 375px) {
     font-size: 19px;
@@ -140,6 +152,9 @@ export const InfluencerName = styled.span`
   font-size: ${(p) => p.theme.typography.bodyXS.fontSize};
   font-family: ${(p) => p.theme.typography.bodyXS.fontFamily};
   line-height: ${(p) => p.theme.typography.bodyXS.lineHeight};
-  color: ${(p) => p.theme.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+  color: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.white.primary
+      : p.theme.colors.black.primary};
   font-family: ${(p) => p.theme.typography.bodyMD.fontFamily};
 `;
