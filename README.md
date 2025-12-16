@@ -45,6 +45,7 @@ We manage our global styles in several files:
 
 Unset all Heroku env vars:
 `heroku config:unset $(heroku config --shell | sed 's/=.*//' | xargs) -a app-name`
+## Deploy URLS
 
 POL Admin Interface & API
 <http://dna-admin-dev.instinct.is/>
@@ -114,6 +115,10 @@ echo -n 'hello@instinct.is' | base64 && \
 
 # TODO:
 
+- Move data fetching into on `getInitialProps`
+- Setup Redux
+
+- ~~Flow / Type Checking~~ (TypeScript)
 - ~~React~~
 - ~~SSR~~ (NextJS)
 - ~~State Mgmt~~ (hooks/useContext... no Redux, yet)
