@@ -35,6 +35,7 @@ import {
   AccountMenu,
   AccountOption
 } from "./Header.styles";
+import { Logo } from "@components/shared/Logo";
 
 const dummyCategories = [
   "Best Sellers",
@@ -102,7 +103,8 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
             }}
           >
             {logoPath ? (
-              <MyLogo imageFile={logoPath} darkMode={darkMode} />
+              // <MyLogo imageFile={logoPath} darkMode={darkMode} />
+              <Logo />
             ) : (
               <h1>{siteTitle}</h1>
             )}

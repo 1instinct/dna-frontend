@@ -59,6 +59,8 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
 export const InputWrapper = styled.div<GenericThemeType>`
   text-align: left;
   margin: 10px 25px;
+  display: flex;
+  flex-direction: column;
 
   & .MuiFormControl-root.MuiTextField-root {
     width: 100%;

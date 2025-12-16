@@ -78,7 +78,7 @@ export const Account = () => {
   };
 
   const speechMarkup = useCallback(() => {
-    return { __html: Static.questions.account.sebastian };
+    return { __html: "Great! You're so close. Just need a super secure password." };
   }, []);
 
   const { title, subtitle, description } = Static.questions.account;
