@@ -129,6 +129,7 @@ export const PolElectronicSignaturesModal = () => {
             </a>
             ). The browser must have cookies enabled.
           </li>
+          <li>Access to the email address used to create an account for {`${window.location}`}.</li>
           <li>
             Access to the email address used to create an account for{" "}
             {`${window.location}`}.
