@@ -118,7 +118,7 @@ export const Home = (props: any) => {
             title={"Live-Shopping"}
           />
         )}
-        {!productsAreLoading && productList}
+        {!productsAreLoading && polProductList}
         {/* {mobileMemberList} */}
         <Featured data={homeData.latestProducts} title="" />
         <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />

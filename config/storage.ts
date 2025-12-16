@@ -70,16 +70,10 @@ const storage = {
   setOrderToken: (token: string) => {
     window.localStorage.setItem("orderToken", JSON.stringify(token));
   },
-  clearToken: (token?: string) => {
-    if (token === "guestOrderToken") {
-      window.localStorage.removeItem("guestOrderToken");
-    } else if (token === "orderToken") {
-      window.localStorage.removeItem("orderToken");
-    } else {
-      window.localStorage.removeItem("token");
-      window.localStorage.removeItem("orderToken");
-      window.localStorage.removeItem("guestOrderToken");
-    }
+  clearToken: () => {
+    window.localStorage.removeItem("token");
+    window.localStorage.removeItem("orderToken");
+    window.localStorage.removeItem("guestOrderToken");
   }
 };
 

@@ -92,6 +92,7 @@ export const RetailProductDetails = ({
   wholesale,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   ...props
 =======
   props
@@ -99,6 +100,9 @@ export const RetailProductDetails = ({
 =======
   ...props
 >>>>>>> 3b3bcf6 (FIX TYPES)
+=======
+  props
+>>>>>>> dddb555 (linter fixes, default returns for product details)
 }: RetailProductDetailsProps) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -547,10 +551,14 @@ export const RetailProductDetails = ({
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   return <Loading />;
 =======
   return null;
 >>>>>>> 3b3bcf6 (FIX TYPES)
+=======
+  return <Loading />;
+>>>>>>> dddb555 (linter fixes, default returns for product details)
 };
 
 export async function getServerSideProps() {
