@@ -45,31 +45,7 @@ export const Login = () => {
         {({ isSubmitting }) => (
           <FormWrapper>
             <InputWrapper>
-              <Field
-                type="email"
-                name="username"
-                component={FormikInput}
-                label="Email"
-                style={{
-                  "& label.Mui-focused": {
-                    color: "green"
-                  },
-                  "& .MuiInput-underline:after": {
-                    borderBottomColor: "green"
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "red"
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "yellow"
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "green"
-                    }
-                  }
-                }}
-              />
+              <Field type="email" name="username" component={FormikInput} label="Email" />
             </InputWrapper>
             <InputWrapper>
               <Field
