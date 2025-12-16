@@ -36,6 +36,7 @@
     "**/*.ts",
     "**/*.tsx",
     "typings",
+    "typings/**/*.d.ts",
     "pages/api/subscribe.js"
   ],
   "exclude": ["node_modules"]

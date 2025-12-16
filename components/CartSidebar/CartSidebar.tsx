@@ -1,4 +1,5 @@
-import { slide as BurgerMenu } from "react-burger-menu";
+import * as BurgerMenu from "react-burger-menu";
+const Menu = (BurgerMenu.slide as unknown) as React.ComponentType<any>;
 import { useRouter } from "next/router";
 import { Loading, LoadingWrapper } from "..";
 import {
@@ -132,7 +133,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
         {/* <CartButton onClick={toggle}>
           
         </CartButton> */}
-        <BurgerMenu
+        <Menu
           right
           customBurgerIcon={<i className="btb bt-lg bt-shopping-cart" />}
           isOpen={isVisible}
@@ -143,7 +144,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
           <LoadingWrapper>
             <Loading />
           </LoadingWrapper>
-        </BurgerMenu>
+        </Menu>
         <style jsx>{`
           .cart-modal {
             background-color: white;
@@ -164,7 +165,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
         <CartButton onClick={toggle}>
           <i className="btb bt-lg bt-shopping-cart" />
         </CartButton>
-        <BurgerMenu
+        <Menu
           right
           isOpen={isVisible}
           onOpen={toggle}
@@ -173,7 +174,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
         >
           <CartTitle>Cart</CartTitle>
           <p>Cart Error</p>
-        </BurgerMenu>
+        </Menu>
         <style jsx>{`
           .cart-modal {
             background-color: white;
@@ -201,7 +202,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
         <CartButton onClick={toggle}>
           <i className="btb bt-lg bt-shopping-cart" />
         </CartButton>
-        <BurgerMenu
+        <Menu
           right
           isOpen={isVisible}
           onOpen={toggle}
@@ -223,7 +224,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
             </Button>
             <Button onClick={() => router.push("/checkout")}>Checkout</Button>
           </Actions>
-        </BurgerMenu>
+        </Menu>
         <style jsx>{`
           .cart-modal {
             background-color: white;

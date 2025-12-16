@@ -7,7 +7,8 @@ import PropTypes from "prop-types";
 import { useMediaQuery } from "react-responsive";
 // import { useSpring, useTransition, config, animated } from 'react-spring';
 import { useSpring, animated } from "react-spring";
-import Typist from "react-typist";
+import TypistModule from "react-typist";
+const Typist = (TypistModule as any).default || TypistModule;
 import parse from "html-react-parser";
 
 // Local

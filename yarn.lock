@@ -1092,10 +1092,10 @@
   resolved "https://registry.yarnpkg.com/@types/react-animations/-/react-animations-1.0.3.tgz#4d9e7a4df366def9425c07d09aed6d38056694e7"
   integrity sha512-mQNYCtLtemP9KtM8jCtjop2tj2alwZN7ImrzX+f3RxbzF7qaqgjOQ5YwF+qPJOEe/Mo6z+VlMjwBXuwCe/muLQ==
 
-"@types/react-burger-menu@2.8.2":
-  version "2.8.2"
-  resolved "https://registry.yarnpkg.com/@types/react-burger-menu/-/react-burger-menu-2.8.2.tgz#bbf000b39f2829fcb28f69da3d13c8195862eaa6"
-  integrity sha512-WpFyppWeN6bJmaf7YlthgkHG0wiBbaYJZeEoqcpzIzlnrrXMnXXvI2N7yc5WAOOpPesVd/OJJGfLnmHKLz9uGA==
+"@types/react-burger-menu@2.8.7":
+  version "2.8.7"
+  resolved "https://registry.yarnpkg.com/@types/react-burger-menu/-/react-burger-menu-2.8.7.tgz#587498c5e74a7fe3f1f610601c81b6efa7334a53"
+  integrity sha512-MNAvK/pXRtGGpmeV1id2Xd9W9rkIC9ehULPmBiIIcF2oo7C8WPGfHcIBx17HqExbeJIXARXFkenQ7tg2pHZPvQ==
   dependencies:
     "@types/react" "*"
 
@@ -1111,7 +1111,7 @@
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.26.tgz#fa7891ba70fd39ddbaa7e85b6ff9175bb546bc1b"
   integrity sha512-Z+2VcYXJwOqQ79HreLU/1fyQ88eXSSFh6I3JdrEHQIfYSI0kCQpTGvOrbE6jFGGYXKsHuwY9tBa/w5Uo6KzrEg==
 
-"@types/react-input-mask@^3.0.1":
+"@types/react-input-mask@3.0.6":
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/@types/react-input-mask/-/react-input-mask-3.0.6.tgz#1bc7d625405b81c4b0c1c0bd4ccd4a1f4b199ce5"
   integrity sha512-+5I18WKyG3eWIj7TVPWfK1VitI9mPpS9y6jE/BfmTCe+iL27NfBw/yzKRvCFp1DRBvlvvcsiZf05bub0YC1k8A==
@@ -1125,7 +1125,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-places-autocomplete@^7.2.8":
+"@types/react-places-autocomplete@7.2.14":
   version "7.2.14"
   resolved "https://registry.yarnpkg.com/@types/react-places-autocomplete/-/react-places-autocomplete-7.2.14.tgz#dac4b248b0647f45f477b62fb0be0e7dc5b28e31"
   integrity sha512-5ywNgYR/oDbEcZaSdmVRa+AZlOjBlc1YnWnvp1Ufr/ww00tOds4MT+9qTmelSbdN/5y3sybYIeKeRKMJaKVDqg==
@@ -1145,10 +1145,10 @@
   resolved "https://registry.yarnpkg.com/@types/react-reconciler/-/react-reconciler-0.28.9.tgz#d24b4864c384e770c83275b3fe73fba00269c83b"
   integrity sha512-HHM3nxyUZ3zAylX8ZEyrDNd2XZOnQ0D5XfunJF5FLQnZbHHYq4UWvW1QfelQNXv1ICNkwYhfxjwfnqivYB6bFg==
 
-"@types/react-responsive-masonry@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@types/react-responsive-masonry/-/react-responsive-masonry-2.1.0.tgz#0aa746f829c520b83697e1e4b7b2aa39c247622f"
-  integrity sha512-gbo9TMKGsgkER/AKycuTtpUJA4Rmzfm5ol7jBzNOdgjpZFBS/SmaNTVAa0qDDRu3xKEuCOcip+RtbC7TaXllnA==
+"@types/react-responsive-masonry@2.6.0":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@types/react-responsive-masonry/-/react-responsive-masonry-2.6.0.tgz#03a0858a5cbbcb7c683b03cbea04ad1c93c8b412"
+  integrity sha512-MF2ql1CjzOoL9fLWp6L3ABoyzBUP/YV71wyb3Fx+cViYNj7+tq3gDCllZHbLg1LQfGOQOEGbV2P7TOcUeGiR6w==
   dependencies:
     "@types/react" "*"
 
@@ -6563,10 +6563,10 @@ react-responsive-carousel@^3.2.21:
     prop-types "^15.5.8"
     react-easy-swipe "^0.0.21"
 
-react-responsive-masonry@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-responsive-masonry/-/react-responsive-masonry-2.2.0.tgz#95ba1fe16295f2071dbe98e72420167aad4e7e8f"
-  integrity sha512-IYbnfe2tWCZ3pvyTLyBWPj7uv5ZmNOULYMcAZi5a47ZLhSotOck1vkkISq6gP2qiyWdMvPfeMhjvYzUYGw9BOQ==
+react-responsive-masonry@2.7.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/react-responsive-masonry/-/react-responsive-masonry-2.7.1.tgz#d27b734fe579034cf26af12f42e42f29a332c0b3"
+  integrity sha512-Q+u+nOH87PzjqGFd2PgTcmLpHPZnCmUPREHYoNBc8dwJv6fi51p9U6hqwG8g/T8MN86HrFjrU+uQU6yvETU7cA==
 
 react-responsive@^8.2.0:
   version "8.2.0"

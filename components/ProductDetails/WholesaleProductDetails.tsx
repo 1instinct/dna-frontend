@@ -84,11 +84,13 @@ const productColors: ColorOptionType[] = [
 ];
 
 interface WholesaleProductDetailsProps {
-  props: any;
+  wholesale?: boolean;
+  [key: string]: any;
 }
 
 export const WholesaleProductDetails = ({
-  props
+  wholesale,
+  ...props
 }: WholesaleProductDetailsProps) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -112,7 +114,9 @@ export const WholesaleProductDetails = ({
   const productSizes =
     productOptions &&
     productOptions?.filter((e: any) =>
-      e.attributes.presentation.includes("XS" || "S" || "M" || "L" || "XL")
+      ["XS", "S", "M", "L", "XL"].some((size) =>
+        e.attributes.presentation.includes(size)
+      )
     );
   const productProperties =
     thisProduct &&

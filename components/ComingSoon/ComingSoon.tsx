@@ -40,6 +40,28 @@ const mailerId = process.env.NEXT_PUBLIC_MAILCHIMP_ID || "";
 const mailerUser = process.env.NEXT_PUBLIC_MAILCHIMP_U || "";
 const spreeApiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL || "";
 
+interface ProductImage {
+  id: string;
+  type: string;
+  attributes: {
+    styles: Array<{ url: string }>;
+  };
+}
+
+interface Product {
+  id: string;
+  relationships?: {
+    images?: {
+      data: Array<{ id: string }>;
+    };
+  };
+}
+
+interface ProductsData {
+  data: Product[];
+  included?: ProductImage[];
+}
+
 export const ComingSoon = () => {
   const mailChimpUrl = `${mailerUrl}?u=${mailerId}&id=${mailerUser}`;
   const [isSlideshow, setIsSlideshow] = useState(false);
@@ -60,7 +82,7 @@ export const ComingSoon = () => {
   } = useProducts(1);
 
   const renderProductSlides = useCallback(() => {
-    return productsData.data.map((i: any) => {
+    return productsData.data.flatMap((i: any) => {
       const productImg = i.relationships?.images?.data[0]?.id;
       const allImages = productsData
         ? productsData?.included?.filter((e: any) => e.type == "image")
@@ -88,32 +110,26 @@ export const ComingSoon = () => {
   }, [productsData]);
 
   const renderProductThumbnails = useCallback(
-    (productsData: any, setIsSlideshow: any) => {
-      return productsData?.data?.map((i: any) => {
-        const productImg = i.relationships?.images?.data[0]?.id;
-        const allImages = productsData
-          ? productsData?.included?.filter((e: any) => e.type == "image")
-          : [];
-        const foundImg = allImages
-          ? allImages.filter((e: any) => e["id"] == productImg)
-          : undefined;
-        console.log("foundImg: ", foundImg);
-        const imgUrl =
-          foundImg !== undefined ? foundImg[0]?.attributes?.styles[3]?.url : "";
-        const imgSrc = productImg ? `${spreeApiUrl}${imgUrl}` || "" : "";
-        return (
-          <div
-            key={`image-${i.id}`}
-            onClick={() => setIsSlideshow(true)}
-            style={{ cursor: "pointer" }}
-          >
-            <img src={imgSrc} />
-          </div>
-        );
-      });
-    },
-    [productsData]
-  );
+  (productsData: ProductsData | undefined, setIsSlideshow: (value: boolean) => void) => {
+    return productsData?.data.map((i: Product) => {
+      const productImg = i.relationships?.images?.data[0]?.id;
+      const allImages = productsData?.included?.filter((e) => e.type === "image") || [];
+      const foundImg = allImages.filter((e) => e.id === productImg);
+      const imgUrl = foundImg.length > 0 ? foundImg[0]?.attributes?.styles[3]?.url : "";
+      const imgSrc = productImg ? `${spreeApiUrl}${imgUrl}` : "";
+      return (
+        <div
+          key={`image-${i.id}`}
+          onClick={() => setIsSlideshow(true)}
+          style={{ cursor: "pointer" }}
+        >
+          <img src={imgSrc} alt={`Product ${i.id}`} />
+        </div>
+      );
+    });
+  },
+  [spreeApiUrl]
+);
 
   useEffect(() => {
     if (productsSuccess) {
@@ -141,9 +157,9 @@ export const ComingSoon = () => {
           <ResponsiveMasonry
             columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}
           >
-            <Masonry>
-              {renderProductThumbnails(productsData, setIsSlideshow)}
-            </Masonry>
+            {/* <Masonry> */}
+              {renderProductThumbnails(productsData, setIsSlideshow) as React.ReactNode}
+            {/* </Masonry> */}
           </ResponsiveMasonry>
         )}
         {comingSoonText !== "" && <Text>{comingSoonText}</Text>}

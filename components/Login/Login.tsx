@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Formik, Field, ErrorMessage } from "formik";
+import { Formik, Field, ErrorMessage, useFormikContext } from "formik";
 import styled from "@emotion/styled";
 
 import { loginForm } from "@components/AuthForm/constants";
@@ -24,6 +24,18 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const { login } = useAuth();
   const router = useRouter();
+
+  // Component to handle button click
+  const SubmitButton = () => {
+    const { submitForm, isSubmitting } = useFormikContext();
+    
+    return (
+      <Button onClick={submitForm} disabled={isSubmitting}>
+        Submit
+      </Button>
+    );
+  };
+
   return (
     <LoginWrapper>
       <Title>{loginForm.title}</Title>
@@ -44,7 +56,7 @@ export const Login = () => {
             });
         }}
       >
-        {({ isSubmitting }) => (
+        {() => (
           <FormWrapper>
             <InputWrapper>
               <Field
@@ -64,9 +76,7 @@ export const Login = () => {
                 label="Password"
               />
             </InputWrapper>
-            <Button type="submit" disabled={isSubmitting}>
-              Submit
-            </Button>
+            <SubmitButton />
             <Subtext>
               <Link href="/authenticate/signup">Register</Link>
               &nbsp;&nbsp;|&nbsp;&nbsp;

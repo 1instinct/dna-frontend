@@ -23,7 +23,7 @@ export const Tube = ({ start, end, color, radius = 0.01 }: any) => {
     if (bulbRef.current && lightRef.current) {
       // Create a flickering effect
       const flickerIntensity = Math.random() * 0.33;
-      bulbRef.current.material.emissiveIntensity = flickerIntensity;
+      (bulbRef.current.material as THREE.MeshPhongMaterial).emissiveIntensity = flickerIntensity;
       lightRef.current.intensity = flickerIntensity * 2; // Adjust as needed
     }
     if (bulbCapRef.current) {
@@ -54,7 +54,6 @@ export const Tube = ({ start, end, color, radius = 0.01 }: any) => {
           emissive={color}
           emissiveIntensity={22}
           color={color}
-          roughness={0.1}
           side={THREE.DoubleSide}
           shininess={10}
         />
@@ -70,7 +69,6 @@ export const Tube = ({ start, end, color, radius = 0.01 }: any) => {
           color={color}
           roughness={0.1}
           side={THREE.DoubleSide}
-          shininess={10}
         />
         <pointLight ref={lightRef} color={color} intensity={1} distance={2} />
       </mesh>
@@ -85,7 +83,6 @@ export const Tube = ({ start, end, color, radius = 0.01 }: any) => {
           roughness={0.1}
           metalness={0.01}
           reflectivity={0.05}
-          shininess={10}
         />
       </mesh>
       <mesh ref={tubeCapRef} position={end}>
@@ -98,7 +95,6 @@ export const Tube = ({ start, end, color, radius = 0.01 }: any) => {
           roughness={0.1}
           metalness={0.01}
           reflectivity={0.05}
-          shininess={10}
         />
       </mesh>
     </>
