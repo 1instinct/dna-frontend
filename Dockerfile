@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 FROM node:18-bullseye
 # FROM node:16-alpine
 # FROM node:alpine
@@ -27,24 +26,13 @@ RUN npm install sharp@0.26.3
 
 # RUN yarn install
 RUN yarn install --network-concurrency 1 --network-timeout 1000000
-=======
-FROM node:14-alpine
-
-WORKDIR /app
-
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
->>>>>>> 4a34e52 (update env.example, add Dockerfile, add k8-deploy)
 
 COPY . .
 
 RUN yarn build
 
-<<<<<<< HEAD
 ENV PORT 3000
 
-=======
->>>>>>> 4a34e52 (update env.example, add Dockerfile, add k8-deploy)
 EXPOSE 3000
 
 CMD ["yarn", "start"]

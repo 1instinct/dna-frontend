@@ -57,3 +57,7 @@ tsconfig.tsbuildinfo
 tsconfig.tsbuildinfo
 
 .anima/
+secret.yml
+secret.yaml
+
+secrets-to-base64.sh
