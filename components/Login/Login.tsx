@@ -45,7 +45,13 @@ export const Login = () => {
         {({ isSubmitting }) => (
           <FormWrapper>
             <InputWrapper>
-              <Field type="email" name="username" component={FormikInput} label="Email" />
+              <Field
+                type="email"
+                name="username"
+                placeholder="Email"
+                component={FormikInput}
+                label="Email"
+              />
             </InputWrapper>
             <InputWrapper>
               <Field
