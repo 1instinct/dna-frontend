@@ -9,7 +9,7 @@ export const BannerContainer = styled.div`
 export const BannerTitle = styled(XlargeTitle)``;
 export const BannerImg = styled.img`
   object-fit: cover;
-  min-width: 100%;
+  width: 100%;
   margin-top: ${pxPC(30)};
 `;
 export const BannerBtn = styled(ButtonBase)`

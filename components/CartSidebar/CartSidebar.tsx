@@ -1,9 +1,31 @@
 import { slide as BurgerMenu } from "react-burger-menu";
+import { useRouter } from "next/router";
 import { Loading, LoadingWrapper } from "..";
-import { useCart } from "../../hooks/useCart";
+import {
+  useCart,
+  removeItemFromCart,
+  updateItemQuantity
+} from "../../hooks/useCart";
+import { useProducts } from "../../hooks/useProducts";
 import cartStyles from "./cartStyles";
 
-import { CartWrapper, CartTitle, CartButton } from "./CartSidebar.styles";
+import {
+  CartWrapper,
+  CartTitle,
+  CartButton,
+  CartItem,
+  CartItemDescription,
+  QuantityAdjusterWrapper,
+  QuantitySelector,
+  QuantityAdjuster,
+  TotalLine,
+  EmptyCartMessage
+} from "./CartSidebar.styles";
+import {
+  IProduct,
+  IProducts
+} from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
+import { Button } from "../shared";
 
 interface Props {
   isVisible: boolean;
@@ -11,17 +33,88 @@ interface Props {
 }
 
 export const CartSidebar = ({ isVisible, toggle }: Props) => {
+  const router = useRouter();
   const {
     data: cartData,
     isLoading: cartIsLoading,
     isError: cartHasError
   } = useCart();
 
+  const { data: productsData } = useProducts(1);
+
+  const foundProduct = (productId: string, productsData: IProducts) => {
+    // Check if productsData and productsData.data exist and are iterable
+    if (!productsData || !Array.isArray(productsData.data)) {
+      console.error("Invalid or missing productsData");
+      return null;
+    }
+
+    for (const product of productsData.data) {
+      // Also check if the relationships and variants exist and are iterable
+      if (
+        product.relationships &&
+        product.relationships.variants &&
+        Array.isArray(product.relationships.variants.data)
+      ) {
+        const variant = product.relationships.variants.data.find(
+          (variant) => variant.id === productId
+        );
+        if (variant) {
+          return product;
+        }
+      }
+    }
+
+    return null;
+  };
+
+  const handleUpdateItemQuantity = async (
+    itemId: string,
+    newQuantity: number
+  ) => {
+    if (newQuantity < 1) {
+      await removeItemFromCart(itemId);
+    } else {
+      await updateItemQuantity(itemId, newQuantity);
+    }
+  };
+
   const renderCartItems = () => {
     if (Array.isArray(cartData?.data?.relationships?.variants?.data)) {
       return cartData?.data?.relationships?.variants?.data?.map(
         (item, index): any => {
-          return <li key={`cart-item-${index}`}>item: {item.id} | qty: </li>;
+          if (productsData !== undefined) {
+            const itemCount = cartData?.data?.attributes?.item_count;
+            const product = foundProduct(item.id, productsData);
+
+            return (
+              <CartItem key={`cart-item-${index}`}>
+                <CartItemDescription>
+                  {product?.attributes?.name} - ${product?.attributes?.price}
+                </CartItemDescription>
+                <QuantityAdjusterWrapper>
+                  <QuantityAdjuster
+                    onClick={() =>
+                      handleUpdateItemQuantity(item.id, itemCount - 1)
+                    }
+                  >
+                    -
+                  </QuantityAdjuster>
+                  <QuantitySelector value={itemCount} />
+                  <QuantityAdjuster
+                    onClick={() =>
+                      handleUpdateItemQuantity(item.id, itemCount + 1)
+                    }
+                  >
+                    +
+                  </QuantityAdjuster>
+                </QuantityAdjusterWrapper>
+              </CartItem>
+            );
+          } else {
+            console.error("productsData is undefined");
+            return null;
+          }
         }
       );
     }
@@ -109,13 +202,18 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
           onOpen={toggle}
           styles={cartStyles()}
           onClose={toggle}
+          width={360}
         >
           <CartTitle>Cart</CartTitle>
-          <div>{item_count} items in your cart</div>
+          <div>
+            {item_count} {item_count > 1 ? "items" : "item"} in your cart
+          </div>
           <div>{renderCartItems()}</div>
-          <div>Subtotal: {display_item_total}</div>
-          <div>Tax: {included_tax_total}</div>
-          <div>Total: {display_total}</div>
+          <TotalLine>Subtotal: {display_item_total}</TotalLine>
+          <TotalLine>Tax: {included_tax_total}</TotalLine>
+          <TotalLine>Total: {display_total}</TotalLine>
+          <Button onClick={() => router.push("/cart")}>View Cart</Button>
+          <Button onClick={() => router.push("/checkout")}>Checkout</Button>
         </BurgerMenu>
         <style jsx>{`
           .cart-modal {

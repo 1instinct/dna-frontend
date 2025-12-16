@@ -21,7 +21,7 @@ import {
 
 export const ProductCard = ({ imgSrc, item, opts }: any) => {
   const router = useRouter();
-  // console.log("Card: ", item);
+  console.log("Card: ", item, "Opts: ", opts);
   return (
     <ProductCardWrapper onClick={(e) => router.push(`${item.attributes.slug}`)}>
       <>
@@ -33,7 +33,7 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
             <ProductTitle>{item.attributes.name}</ProductTitle>
             {/* <ProductDesc>{item.attributes.description}</ProductDesc> */}
             <ThreeDot>
-              {opts.slice(0, 5).map((opt: any, index: any) => {
+              {opts?.slice(0, 2).map((opt: any, index: any) => {
                 // console.log("opt: ", opt);
                 return (
                   <Dot

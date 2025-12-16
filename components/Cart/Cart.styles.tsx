@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 
 export const CartWrapper = styled.div`
   font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
-  padding: 10px 5px 0 0;
+  padding: 10px;
 
   @media (max-width: ${(p) => p.theme.breakpoints.values.xs}px) {
     padding: 5px 10px 0 0;
