@@ -91,10 +91,14 @@ interface RetailProductDetailsProps {
 export const RetailProductDetails = ({
   wholesale,
 <<<<<<< HEAD
+<<<<<<< HEAD
   ...props
 =======
   props
 >>>>>>> 6d1f1a3 (add cart & checkout pages, update cart sidebar, linter fixes)
+=======
+  ...props
+>>>>>>> 3b3bcf6 (FIX TYPES)
 }: RetailProductDetailsProps) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -118,7 +122,11 @@ export const RetailProductDetails = ({
   const productSizes =
     productOptions &&
     productOptions?.filter((e: any) =>
+<<<<<<< HEAD
       ["XS", "S", "M", "L", "XL"].some((size) =>
+=======
+      ["XS", "S", "M", "L", "XL"].some(size =>
+>>>>>>> 3b3bcf6 (FIX TYPES)
         e.attributes.presentation.includes(size)
       )
     );
@@ -538,7 +546,11 @@ export const RetailProductDetails = ({
     );
   }
 
+<<<<<<< HEAD
   return <Loading />;
+=======
+  return null;
+>>>>>>> 3b3bcf6 (FIX TYPES)
 };
 
 export async function getServerSideProps() {

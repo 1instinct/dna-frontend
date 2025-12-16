@@ -1,5 +1,5 @@
 import * as BurgerMenu from "react-burger-menu";
-const Menu = BurgerMenu.slide as unknown as React.ComponentType<any>;
+const Menu = (BurgerMenu.slide as unknown) as React.ComponentType<any>;
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "react-query";
