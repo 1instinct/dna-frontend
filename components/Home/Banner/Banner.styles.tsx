@@ -18,4 +18,26 @@ export const BannerContainer = styled.div<BannerContainerProps>`
   height: 450px;
 `;
 export const BannerTitle = styled(XlargeTitle)``;
-export const BannerBtn = styled(Button)``;
+export const BannerImg = styled.img`
+  object-fit: cover;
+  width: 100%;
+  margin-top: ${pxPC(30)};
+`;
+export const BannerBtn = styled(ButtonBase)`
+  width: ${pxPC(228)};
+  height: ${pxPC(35)};
+  position: absolute !important;
+  bottom: ${pxPC(43)};
+  margin: auto !important;
+  background-color: ${(p: any) => p.theme.colors.brand.primary} !important;
+  color: ${(p: any) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.white.primary
+      : p.theme.colors.black.primary};
+  left: 0;
+  right: 0;
+  font-family: "Bebas Neue";
+  font-size: ${pxPC(18)};
+  line-height: ${pxPC(22)};
+  text-align: center;
+`;

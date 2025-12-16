@@ -90,7 +90,11 @@ interface RetailProductDetailsProps {
 
 export const RetailProductDetails = ({
   wholesale,
+<<<<<<< HEAD
   ...props
+=======
+  props
+>>>>>>> 6d1f1a3 (add cart & checkout pages, update cart sidebar, linter fixes)
 }: RetailProductDetailsProps) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });

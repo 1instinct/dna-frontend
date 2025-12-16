@@ -146,6 +146,42 @@ export const addItemToCart = async (item: AddItem) => {
   }
 };
 
+export const removeItemFromCart = async (itemId: string) => {
+  const storage = (await import("../../config/storage")).default;
+  const orderToken =
+    (await storage.getOrderToken()) || (await storage.getGuestOrderToken());
+  if (!orderToken) {
+    throw new Error("No cart token available");
+  }
+
+  const response = await spreeClient.cart.removeItem({ orderToken }, itemId);
+  if (response.isSuccess()) {
+    return response.success();
+  } else {
+    throw new Error(response.fail().message);
+  }
+};
+
+export const updateItemQuantity = async (itemId: string, quantity: number) => {
+  const storage = (await import("../../config/storage")).default;
+  const orderToken =
+    (await storage.getOrderToken()) || (await storage.getGuestOrderToken());
+  if (!orderToken) {
+    throw new Error("No cart token available");
+  }
+
+  const response = await spreeClient.cart.setQuantity(
+    { orderToken },
+    { line_item_id: itemId, quantity }
+  );
+
+  if (response.isSuccess()) {
+    return response.success();
+  } else {
+    throw new Error(response.fail().message);
+  }
+};
+
 export const useCart = () => {
   return useQuery<IOrder, Error>([QueryKeys.CART], showCart, {
     onError: (error) => {
