@@ -35,6 +35,18 @@ import {
   AccountOption
 } from "./Header.styles";
 import { Logo } from "@components/shared/Logo";
+<<<<<<< HEAD
+=======
+
+const dummyCategories = [
+  "Best Sellers",
+  "Latest",
+  "Seasonal",
+  "Luxury",
+  "On Sale",
+  "Coming Soon"
+];
+>>>>>>> 5e30af0 (get better svg logo, tweak questions, add ThreeViewer)
 
 export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
   const router = useRouter();
@@ -101,8 +113,17 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
               router.push("/");
             }}
           >
+<<<<<<< HEAD
             <MyLogo imageFile={logoPath} darkMode={darkMode} />
 >>>>>>> bb99d7b (buncha styles)
+=======
+            {logoPath ? (
+              // <MyLogo imageFile={logoPath} darkMode={darkMode} />
+              <Logo />
+            ) : (
+              <h1>{siteTitle}</h1>
+            )}
+>>>>>>> 5e30af0 (get better svg logo, tweak questions, add ThreeViewer)
           </LinkDiv>
         </LogoDiv>
         <RightSide>
