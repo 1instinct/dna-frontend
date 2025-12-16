@@ -4,7 +4,7 @@ import React from "react";
 
 // import { Close } from '@material-ui/icons';
 
-export const PolElectronicSignaturesModal = () => {
+export const ElectronicSignaturesModal = () => {
   return (
     <div className="es-modal-container">
       <div className="es-modal-content-container">

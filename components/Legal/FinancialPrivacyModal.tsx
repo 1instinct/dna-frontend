@@ -3,7 +3,7 @@ import React from "react";
 
 // import { Close } from '@carvana/icons';
 
-export const PolFinancialPrivacyModal = () => {
+export const FinancialPrivacyModal = () => {
   const entityName = process.env.NEXT_PUBLIC_ENTITY_NAME;
   const currYear = new Date().getFullYear();
   return (

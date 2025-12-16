@@ -13,7 +13,7 @@ const Banner: React.FC<BannerProps> = (props) => {
   return (
     <BannerContainer background={data.img}>
       <BannerBtn width={300} onClick={() => router.push("/about")}>
-        SHOP NOw
+        SHOP NOW
       </BannerBtn>
     </BannerContainer>
   );
