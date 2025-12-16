@@ -138,6 +138,16 @@ export const RightHalf = styled.div<RightHalfType>`
       font-size: 1.6rem;
     }
   }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.values.sm}px) {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  @media (min-width: ${(props) => props.theme.breakpoints.values.lg}px) {
+    width: ${(props) => (props.isLargeDevice ? "48%" : "100%")};
+    max-width: ${(props) => (props.isLargeDevice ? "48%" : "100%")};
+  }
 `;
 
 interface WizardFormType {

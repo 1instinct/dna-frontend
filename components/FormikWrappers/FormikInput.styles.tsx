@@ -5,28 +5,38 @@ import { TextField, Checkbox } from "@material-ui/core";
 export const BasicField = styled(Field)`
   border-width: 2px;
   border-style: dashed;
-  border-color: ${(p: any) => p.theme.colors.gray.primary};
+  border-color: ${(props) =>
+    props.invalid
+      ? props.theme.colors.red.primary
+      : props.theme.colors.gray.primary};
   border-radius: 5px;
   padding: 10px;
-  font-size: 1em;
-  color: ${(p: any) =>
-    p.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
-  background: ${(p: any) =>
-    p.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
+  font-size: ${(props) => props.theme.typography.bodyMD.fontSize};
+  line-height: ${(props) => props.theme.typography.bodyMD.lineHeight};
+  font-family: ${(props) => props.theme.typography.bodyMD.fontFamily};
+  color: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.white.primary
+      : props.theme.colors.black.primary};
+  background-color: ${(props) =>
+    props.theme.isDarkMode
+      ? props.theme.colors.black.primary
+      : props.theme.colors.white.primary};
   outline: none;
-  transition: all 0.3s ease-in-out;
-  font-family: ${(p: any) => p.theme.typography.bodyMD.fontFamily};
+  transition: border-color 0.3s ease-in-out;
+
   &:focus {
-    transition: all 0.3s ease-in-out;
-    border: 2px solid ${(p: any) => p.theme.colors.brand.primary};
+    border-color: ${(props) => props.theme.colors.brand.primary};
   }
 `;
-
 export const Error = styled.div`
-  bottom: -20px;
-  color: ${(p: any) => p.theme.colors.red.primary};
-  font-size: 0.8em;
+  margin: 5px 0 0 0;
+  color: ${(p) => p.theme.colors.red.primary};
+  font-size: ${(p) => p.theme.typography.bodySM.fontSize};
+  line-height: ${(p) => p.theme.typography.bodySM.lineHeight};
+  font-family: ${(p) => p.theme.typography.bodySMBold.fontFamily};
   text-align: left;
+  font-weight: bold;
 `;
 
 export const HiddenInput = styled.div`
@@ -34,22 +44,34 @@ export const HiddenInput = styled.div`
 `;
 
 export const SuggestionWrapper = styled.div`
-  background: ${(p: any) => p.theme.colors.white.primary};
-  position: relative;
-  margin-top: 15px;
+  background: ${(p: any) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.black.primary
+      : p.theme.colors.gray.background};
+  color: ${(p: any) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.gray.dark
+      : p.theme.colors.black.primary};
+  position: absolute;
+  margin-top: 54px;
+  margin-left: 0px;
   align-items: flex-start;
   justify-content: center;
   flex-flow: column nowrap;
   min-width: 250px;
+  width: 100%;
   max-width: 500px;
   max-height: 200px;
   overflow: scroll;
   z-index: 1;
   display: flex;
   box-shadow: 1px 3px 30px rgba(0, 0, 0, 0.23);
-  margin-top: 15px;
-  border-radius: 3px;
-  border: 1px solid ${(p: any) => p.theme.colors.gray.light};
+  border-radius: 4px;
+  border: 2px dashed
+    ${(p: any) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.gray.medium
+        : p.theme.colors.black.primary};
   transition: all 0.3s ease-in-out;
 
   @media (max-width: ${(p: any) => p.theme.breakpoints.values.sm}px) {
@@ -67,11 +89,21 @@ export const SuggestionItem = styled.div`
   padding: 5px 10px;
   width: 100%;
   text-align: left;
-  color: ${(p: any) => p.theme.colors.gray.medium};
+  background: ${(p: any) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.black.primary
+      : p.theme.colors.gray.background};
+  color: ${(p: any) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.gray.medium
+      : p.theme.colors.black.primary};
   &.active {
     cursor: pointer;
     color: ${(p: any) => p.theme.colors.brand.primary};
-    background: ${(p: any) => p.theme.colors.gray.background};
+    background: ${(p: any) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.gray.dark
+        : p.theme.colors.gray.background};
   }
 `;
 

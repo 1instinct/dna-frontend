@@ -22,7 +22,7 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
   border-top-left-radius: 8px;
   border-top-right-radius: 8px; */
   }
-  margin: -120px 15px 15px 15px;
+  margin: -85px 15px 15px 15px;
   text-align: center;
 
   & [data-qa="title"] {

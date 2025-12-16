@@ -149,6 +149,13 @@ export const theme = {
       lineHeight: "16px",
       color: "#000"
     },
+    bodySMBold: {
+      fontFamily: "Anybody Light",
+      fontWeight: "bold",
+      fontSize: "14px",
+      lineHeight: "16px",
+      color: "#000"
+    },
     bodyXS: {
       fontFamily: "Anybody ExtraLight",
       fontWeight: "normal",

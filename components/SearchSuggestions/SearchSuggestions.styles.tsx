@@ -14,7 +14,10 @@ export const StyledSearchSuggestions = styled.div<StyledSearchSuggestionsProps>`
   width: 100%;
   max-height: 245px;
 
-  background: white;
+  background: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.black.medium
+      : p.theme.colors.white.primary};
   border-radius: 0px 0px 12px 12px;
   box-shadow: 0 7px 13px 1px rgba(24, 41, 60, 0.1);
   overflow-y: auto;

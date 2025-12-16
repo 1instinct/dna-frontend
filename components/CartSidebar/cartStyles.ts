@@ -29,7 +29,9 @@ const cartStyles = () => {
       width: "24px"
     },
     bmCross: {
-      background: "#000"
+      background: isDarkMode
+        ? theme.colors.white.primary
+        : theme.colors.black.primary
     },
     bmMenuWrap: {
       position: "fixed",
@@ -38,7 +40,7 @@ const cartStyles = () => {
     },
     bmMenu: {
       background: isDarkMode
-        ? theme.colors.black.light
+        ? theme.colors.black.dark
         : theme.colors.white.primary,
       padding: "10%",
       fontsize: "1.15em",
@@ -46,7 +48,7 @@ const cartStyles = () => {
       /* width: '100vw' */
     },
     bmMorphShape: {
-      fill: "#fff"
+      fill: isDarkMode ? theme.colors.white.primary : theme.colors.black.primary
     },
     bmItemList: {
       color: "#b8b7ad",
@@ -56,14 +58,19 @@ const cartStyles = () => {
     bmItem: {
       display: "block",
       padding: "0.8em",
-      color: "#000"
+      color: isDarkMode
+        ? theme.colors.white.primary
+        : theme.colors.black.primary
     },
     bmOverlay: {
       top: "0",
       left: "0",
       right: "0",
       bottom: "0",
-      background: "rgba(0, 0, 0, 0.3)"
+      // background: "rgba(0, 0, 0, 0.3)",
+      background: isDarkMode
+        ? "rgba(0, 0, 0, 0.66)"
+        : "rgba(255, 255, 255, 0.66)"
     }
   };
 };

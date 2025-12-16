@@ -13,7 +13,7 @@ export const TopHeader = styled.div`
   justify-content: center;
 
   @media (max-width: ${(p) => p.theme.breakpoints.values.sm}px) {
-    height: 30px;
+    height: 50px;
   }
 `;
 
@@ -25,6 +25,7 @@ export const LogoDiv = styled.div`
   justify-content: center;
   cursor: pointer;
 `;
+
 export const HeaderDiv = styled.header`
   z-index: 9;
 `;
@@ -70,16 +71,16 @@ export const Category = styled(Link)`
 `;
 
 export const LeftSide = styled.div`
-  width: auto;
   display: flex;
   position: absolute;
   left: 10px;
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   z-index: 2;
 
   @media (max-width: ${(p) => p.theme.breakpoints.values.sm}px) {
+    left: initial;
+    right: 10px;
     justify-content: flex-end;
   }
 `;
@@ -135,7 +136,7 @@ export const CartToggle = styled.div`
   }
 
   @media (max-width: ${(p) => p.theme.breakpoints.values.xs}px) {
-    margin: 10px 10px 0 0;
+    margin: 0;
   }
 `;
 
