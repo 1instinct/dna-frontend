@@ -86,6 +86,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
           </LeftSide>
         )}
         <LogoDiv>
+<<<<<<< HEAD
           <LinkDiv isActive href="/">
             {logoPath ? (
               // <MyLogo imageFile={logoPath} darkMode={darkMode} />
@@ -93,6 +94,15 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
             ) : (
               <h1>{siteTitle}</h1>
             )}
+=======
+          <LinkDiv
+            isActive
+            onClick={() => {
+              router.push("/");
+            }}
+          >
+            <MyLogo imageFile={logoPath} darkMode={darkMode} />
+>>>>>>> bb99d7b (buncha styles)
           </LinkDiv>
         </LogoDiv>
         <RightSide>
