@@ -21,8 +21,8 @@ import {
   Term,
   StyledModalContent
 } from "./Questions.styles";
-import { PolElectronicSignaturesModal } from "../../POLTerms/ElectronicSignaturesModal";
-import { PolFinancialPrivacyModal } from "../../POLTerms/FinancialPrivacyModal";
+import { ElectronicSignaturesModal } from "../../Legal/ElectronicSignaturesModal";
+import { FinancialPrivacyModal } from "../../Legal/FinancialPrivacyModal";
 
 export const Account = () => {
   // const { values, form, submitForm } = useFormikContext();
@@ -222,8 +222,8 @@ export const Account = () => {
             open={openSignatureModal}
           >
             <StyledModalContent>
-              {/* <PolElectronicSignaturesModal handleClose={() => setOpenSignatureModal(!openSignatureModal)} /> */}
-              <PolElectronicSignaturesModal />
+              {/* <ElectronicSignaturesModal handleClose={() => setOpenSignatureModal(!openSignatureModal)} /> */}
+              <ElectronicSignaturesModal />
               {/* <button
                 onClick={togglePrivacyModal}
                 role="button"
@@ -240,7 +240,7 @@ export const Account = () => {
             open={openPrivacyModal}
           >
             <StyledModalContent>
-              <PolFinancialPrivacyModal />
+              <FinancialPrivacyModal />
               {/* <button
                 onClick={togglePrivacyModal}
                 role="button"

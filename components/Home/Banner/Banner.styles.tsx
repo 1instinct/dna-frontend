@@ -23,8 +23,12 @@ export const BannerImg = styled.img`
   width: 100%;
   margin-top: ${pxPC(30)};
 `;
-export const BannerBtn = styled(ButtonBase)`
-  width: ${pxPC(228)};
+
+type BannerBtnProps = {
+  width?: number;
+};
+export const BannerBtn = styled(ButtonBase)<BannerBtnProps>`
+  width: ${(p) => (p.width ? pxPC(p.width) : pxPC(228))};
   height: ${pxPC(35)};
   position: absolute !important;
   bottom: ${pxPC(43)};

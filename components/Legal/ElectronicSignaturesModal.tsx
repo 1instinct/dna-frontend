@@ -4,7 +4,7 @@ import React from "react";
 
 // import { Close } from '@material-ui/icons';
 
-export const PolElectronicSignaturesModal = () => {
+export const ElectronicSignaturesModal = () => {
   return (
     <div className="es-modal-container">
       <div className="es-modal-content-container">
@@ -129,7 +129,10 @@ export const PolElectronicSignaturesModal = () => {
             </a>
             ). The browser must have cookies enabled.
           </li>
-          <li>Access to the email address used to create an account for {`${window.location}`}.</li>
+          <li>
+            Access to the email address used to create an account for{" "}
+            {`${window.location}`}.
+          </li>
           <li>
             Access to the email address used to create an account for{" "}
             {`${window.location}`}.

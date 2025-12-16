@@ -244,10 +244,6 @@ export const SignupWizard = () => {
               😎
             </span>
           </Title>
-          <ThreeViewer />
-          <Title>
-            See Your Soul
-          </Title>
         </LeftHalf>
         <RightHalf isLargeDevice={isLargeDevice}>
           <SlideInLeft>

@@ -29,12 +29,14 @@ const withResponsiveContext = (App: any, req: any) => {
     typeof window !== "undefined" ? (
       <App {...props} />
     ) : (
-      <ResponsiveContext.Provider
-        value={contextValue as MediaQueryAllQueryable}
-      >
-        <App {...props} />
-      </ResponsiveContext.Provider>
-    ) as React.ReactElement;
+      ((
+        <ResponsiveContext.Provider
+          value={contextValue as MediaQueryAllQueryable}
+        >
+          <App {...props} />
+        </ResponsiveContext.Provider>
+      ) as React.ReactElement)
+    );
 };
 
 class MyDocument extends Document {

@@ -43,7 +43,10 @@ export const LinkDiv = styled(Link, {
   text-decoration: none;
   ${(p) =>
     p.isActive
-      ? null
+      ? "color: " +
+        (p.theme.isDarkMode
+          ? p.theme.colors.white.dark
+          : p.theme.colors.black.medium)
       : `
     pointer-events: none;
     cursor: default;

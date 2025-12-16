@@ -1,10 +1,10 @@
-import { PolFinancialPrivacyModal } from "../components";
+import { FinancialPrivacyModal } from "../components";
 import { Layout } from "../components";
 
 const PrivacyPage = () => {
   return (
     <Layout>
-      <PolFinancialPrivacyModal />
+      <FinancialPrivacyModal />
     </Layout>
   );
 };
