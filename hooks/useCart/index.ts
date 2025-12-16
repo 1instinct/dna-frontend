@@ -175,12 +175,18 @@ export const updateItemQuantity = async (itemId: string, quantity: number) => {
     { line_item_id: itemId, quantity }
   );
 
+  console.log("UPDATE ITEM RESPONSE: ", response);
+
   if (response.isSuccess()) {
     return response.success();
   } else {
     throw new Error(response.fail().message);
   }
 };
+
+// export const useCart = () => {
+//   return useQuery<IOrder, false>([QueryKeys.CART], () => showCart());
+// };
 
 export const useCart = () => {
   return useQuery<IOrder, Error>([QueryKeys.CART], showCart, {
