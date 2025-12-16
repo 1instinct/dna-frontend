@@ -12,6 +12,7 @@ export * from "./Layout";
 export * from "./LegalLinks";
 export * from "./Loading";
 export * from "./Login";
+export * from "./Lottie";
 export * from "./MainMenu";
 export * from "./NotifyForm";
 export * from "./PostList";

@@ -1,3 +1,4 @@
+"use client";
 import styled from "@emotion/styled";
 import Lottie from "react-lottie";
 import loadingAnimation from "./loading.json";
@@ -29,7 +30,7 @@ export const Loading = () => {
   };
   return (
     <LoadingWrapper>
-      <Lottie options={animationOptions} width={100} height={30} />
+      {/* <Lottie options={animationOptions} width={100} height={30} /> */}
     </LoadingWrapper>
   );
 };

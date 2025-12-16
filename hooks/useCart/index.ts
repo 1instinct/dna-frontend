@@ -128,6 +128,8 @@ export const updateItemQuantity = async (itemId: string, quantity: number) => {
     { line_item_id: itemId, quantity }
   );
 
+  console.log("UPDATE ITEM RESPONSE: ", response);
+
   if (response.isSuccess()) {
     return response.success();
   } else {
@@ -135,6 +137,17 @@ export const updateItemQuantity = async (itemId: string, quantity: number) => {
   }
 };
 
+// export const useCart = () => {
+//   return useQuery<IOrder, false>([QueryKeys.CART], () => showCart());
+// };
+
 export const useCart = () => {
-  return useQuery<IOrder, false>([QueryKeys.CART], () => showCart());
+  return useQuery<IOrder, Error>([QueryKeys.CART], showCart, {
+    onError: (error) => {
+      console.error("Failed to fetch cart:", error.message);
+    },
+    onSuccess: (data) => {
+      constants.IS_DEBUG && console.log("Cart fetched successfully:", data);
+    }
+  });
 };

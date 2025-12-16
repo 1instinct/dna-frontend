@@ -1,3 +1,4 @@
+"use client";
 import Lottie from "react-lottie";
 import { Layout } from "../components";
 import girlAnimation from "../../data/girl.json";
@@ -20,12 +21,12 @@ export const FourOhFour = () => {
   return (
     <Layout>
       <NotFoundContainer>
-        <Lottie
+        {/* <Lottie
           options={animationOptions}
           width={300}
           height={300}
           style={{ pointerEvents: "none" }}
-        />
+        /> */}
         <NotFoundTitle>404</NotFoundTitle>
         <NotFoundSubtitle>Whoops, keep looking...</NotFoundSubtitle>
       </NotFoundContainer>

@@ -83,7 +83,11 @@ Done!
 - `git checkout main`
 - `git pull upstream main`
 
-## TODO
+## Deploy on Heroku
+
+`cat .env.production | grep -v '^#' | xargs -L 1 heroku config:set -a dna-frontend-prod`
+
+## Deploy on Vercel
 
 - Move data fetching into on `getInitialProps`
 - Setup Redux
