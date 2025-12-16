@@ -32,6 +32,7 @@ import {
   CongratsWrapper
 } from "./SignupWizard.styles";
 import { ThreeViewer } from "@components/shared/ThreeViewer";
+import constants from "@utilities/constants";
 
 const FormWrapper: React.FC<any> = ({
   steps,
@@ -130,10 +131,10 @@ const FormWrapper: React.FC<any> = ({
           <WizardActions>
             {canGoBack && (
               <PreviousButton
-                variant="outlined"
+                variant="outline"
                 onClick={goToPreviousStep}
                 disabled={!canGoBack}
-                ghost
+                width={20}
               >
                 <i className="bts bt-angles-left" />
               </PreviousButton>
@@ -142,8 +143,7 @@ const FormWrapper: React.FC<any> = ({
             {/* <NextButton type={isLastStep ? "submit" : "button"} onClick={() => { */}
             {isLastStep ? (
               <NextButton
-                variant="contained"
-                color="primary"
+                variant="solid"
                 type={isLastStep ? "submit" : "button"}
                 onClick={() => {
                   console.log("next: ", values, wizard, isLastStep);
@@ -156,11 +156,10 @@ const FormWrapper: React.FC<any> = ({
               </NextButton>
             ) : (
               <NextButton
-                variant="contained"
-                color="primary"
+                variant="solid"
                 type={isLastStep ? "submit" : "button"}
                 onClick={() => {
-                  console.log("next: ", values, wizard, isLastStep);
+                  constants.IS_DEBUG && console.log("next: ", values, wizard, isLastStep);
                   // console.log("next: ", wizard, isLastStep);
                   wizard.next();
                 }}
@@ -266,13 +265,10 @@ export const SignupWizard = () => {
     <MainWrapper>
       <ContentWrapper>
         <LeftHalf show={isLargeDevice ? "flex" : "flex"}>
-          <Title>
-            Enjoy The Journey{" "}
-            <span role="img" aria-label="sunglasses">
-              😎
-            </span>
-          </Title>
           <ThreeViewer />
+          <Title>
+            See Your Soul
+          </Title>
         </LeftHalf>
         <RightHalf isLargeDevice={isLargeDevice}>
           <SlideInLeft>

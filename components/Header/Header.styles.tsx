@@ -36,9 +36,7 @@ export interface LinkDivProps {
   props?: any;
 }
 
-export const LinkDiv = styled(Link, {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== "isActive"
-})<LinkDivProps>`
+export const LinkDiv = styled(Link)<LinkDivProps>`
   font-size: 14px;
   text-decoration: none;
   ${(p) =>

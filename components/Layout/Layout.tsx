@@ -13,7 +13,9 @@ type LogoTypeFC = {
   darkMode?: boolean;
 };
 
-export const MyLogo = ({ imageFile, darkMode }: LogoTypeFC) => <Logo />;
+export const MyLogo = ({ imageFile, darkMode }: LogoTypeFC) => (
+  <Logo />
+);
 
 export const Layout: React.FC<LayoutProps> = ({
   children

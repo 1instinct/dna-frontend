@@ -96,8 +96,8 @@ export const TipBotImage = styled.div`
       "" /* left: 25px;
     bottom: -35px; */
     }
-    left: 40px;
-    bottom: -100px;
+    left: 30px;
+    bottom: -120px;
   }
 `;
 
