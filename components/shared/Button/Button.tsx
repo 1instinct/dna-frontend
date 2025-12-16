@@ -134,8 +134,8 @@ export const Button = ({
   if (isSvg) {
     return (
       <ButtonLink
-        href="javascript:void(0);"
-        onClick={() => onClick()}
+        href="#"
+        onClick={(e) => { e.preventDefault(); onClick(); }}
         style={{ width: width || "100%" }}
       >
         <SvgWrapper
