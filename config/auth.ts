@@ -85,7 +85,9 @@ async function mergeCarts(guestOrderToken: string) {
         )
       : undefined;
     const quantity =
-      fullLineItem && fullLineItem.attributes && typeof fullLineItem.attributes.quantity === "number"
+      fullLineItem &&
+      fullLineItem.attributes &&
+      typeof fullLineItem.attributes.quantity === "number"
         ? fullLineItem.attributes.quantity
         : 1;
     constants.IS_DEBUG &&
@@ -108,7 +110,7 @@ async function mergeCarts(guestOrderToken: string) {
   }
 
   constants.IS_DEBUG && console.log("Clearing guest order token...");
-  storage.clearToken("guestOrderToken");
+  storage.clearToken();
   constants.IS_DEBUG && console.log("Guest order token cleared.");
 }
 
@@ -147,7 +149,7 @@ const authConfig = {
       if (guestOrderToken) {
         await mergeCarts(guestOrderToken); // Merge guest cart into the user's cart
         // Clear the guest order token after merging
-        storage.clearToken("guestOrderToken");
+        storage.clearToken();
       }
 
       return user;

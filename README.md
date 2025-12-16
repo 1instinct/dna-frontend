@@ -45,6 +45,7 @@ We manage our global styles in several files:
 
 Unset all Heroku env vars:
 `heroku config:unset $(heroku config --shell | sed 's/=.*//' | xargs) -a app-name`
+
 ## Deploy URLS
 
 POL Admin Interface & API

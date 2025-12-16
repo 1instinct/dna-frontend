@@ -135,7 +135,10 @@ export const Button = ({
     return (
       <ButtonLink
         href="#"
-        onClick={(e) => { e.preventDefault(); onClick(); }}
+        onClick={(e) => {
+          e.preventDefault();
+          onClick();
+        }}
         style={{ width: width || "100%" }}
       >
         <SvgWrapper
@@ -220,4 +223,3 @@ export const Button = ({
     </ButtonSolid>
   );
 };
-
