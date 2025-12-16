@@ -1,6 +1,4 @@
 import styled from "@emotion/styled";
-import Lottie from "react-lottie";
-import loadingAnimation from "./loading.json";
 
 export const LoadingWrapper = styled.div`
   height: 80vh;
@@ -8,28 +6,16 @@ export const LoadingWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
-  div svg g g g path {
-    stroke: white;
-  }
+  color: white;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
 `;
 
 export const LoadingIcon = styled.i`
   margin: 0 auto;
 `;
 
+// SSR-safe fallback without react-lottie (lottie requires `document`)
 export const Loading = () => {
-  const animationOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: loadingAnimation,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice"
-    }
-  };
-  return (
-    <LoadingWrapper>
-      <Lottie options={animationOptions} width={100} height={30} />
-    </LoadingWrapper>
-  );
+  return <LoadingWrapper>Loading…</LoadingWrapper>;
 };

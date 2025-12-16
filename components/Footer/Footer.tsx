@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import classnames from "classnames";
+import Link from "next/link";
 import { SocialLinks } from "..";
 
 import {
@@ -80,9 +81,15 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
             )}
             {item.links &&
               item.links.map((v, i) => (
-                <LinkItem className={linkItemClass} key={i} href={v.url}>
-                  {v.text}
-                </LinkItem>
+                v.url?.startsWith("/") ? (
+                  <LinkItem className={linkItemClass} as={Link} href={v.url} key={i}>
+                    {v.text}
+                  </LinkItem>
+                ) : (
+                  <LinkItem className={linkItemClass} key={i} href={v.url}>
+                    {v.text}
+                  </LinkItem>
+                )
               ))}
             {item.descriptions &&
               item.descriptions.map((desc, idx) => (

@@ -5,8 +5,11 @@ import {
 import { spreeClient } from "./spree";
 import constants from "../utilities/constants";
 
+const hasWindow = typeof window !== "undefined";
+
 const storage = {
   getToken: async (): Promise<IOAuthToken | undefined> => {
+    if (!hasWindow) return undefined;
     const token = window.localStorage.getItem("token");
     if (token) {
       const parsedToken: IOAuthToken = JSON.parse(token);
@@ -51,26 +54,34 @@ const storage = {
     }
   },
   setToken: (token: IOAuthToken) =>
+    hasWindow &&
     window.localStorage.setItem("token", JSON.stringify(token)),
   getGuestOrderToken: async (): Promise<string | undefined> => {
+    if (!hasWindow) return undefined;
     const token = window.localStorage.getItem("guestOrderToken");
     if (token) {
       return JSON.parse(token);
     }
   },
   setGuestOrderToken: (token: string) => {
-    window.localStorage.setItem("guestOrderToken", JSON.stringify(token));
+    if (hasWindow) {
+      window.localStorage.setItem("guestOrderToken", JSON.stringify(token));
+    }
   },
   getOrderToken: async (): Promise<string | undefined> => {
+    if (!hasWindow) return undefined;
     const token = window.localStorage.getItem("orderToken");
     if (token) {
       return JSON.parse(token);
     }
   },
   setOrderToken: (token: string) => {
-    window.localStorage.setItem("orderToken", JSON.stringify(token));
+    if (hasWindow) {
+      window.localStorage.setItem("orderToken", JSON.stringify(token));
+    }
   },
   clearToken: () => {
+    if (!hasWindow) return;
     window.localStorage.removeItem("token");
     window.localStorage.removeItem("orderToken");
     window.localStorage.removeItem("guestOrderToken");
