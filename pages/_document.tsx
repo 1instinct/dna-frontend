@@ -34,7 +34,7 @@ const withResponsiveContext = (App: any, req: any) => {
       >
         <App {...props} />
       </ResponsiveContext.Provider>
-    );
+    ) as React.ReactElement;
 };
 
 class MyDocument extends Document {
