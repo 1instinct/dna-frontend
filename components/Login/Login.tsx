@@ -17,7 +17,6 @@ import {
   Subtext
 } from "./Login.styles";
 import constants from "@utilities/constants";
-import { Button } from "@components/shared";
 
 export const Login = () => {
   const [email, setEmail] = useState("");

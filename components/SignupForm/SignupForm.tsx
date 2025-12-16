@@ -294,8 +294,9 @@ export const SignupForm = () => {
               </InputGroupWrapper>
               <SignupActions>
                 <NextButton
-                  variant="solid"
-                  // type="submit"
+                  variant="contained"
+                  color="primary"
+                  type="submit"
                   onClick={() => {
                     console.log("SUBMITTING FORM");
                   }}

@@ -119,34 +119,34 @@ export const Welcome = () => {
         >
           <div>
             {/* <ColorizedCalendar className="bts bt-calendar" /> */}
-            {/* <Lottie
+            <Lottie
               options={shippingAnimationOptions}
               width={200}
               height={300}
               style={{ pointerEvents: "none" }}
-            /> */}
+            />
             <Title>Free Shipping</Title>
             <Description>(On your first order)</Description>
           </div>
           <div>
             {/* <ColorizedLoan className="bts bt-folder" /> */}
-            {/* <Lottie
+            <Lottie
               options={rewardAnimationOptions}
               width={300}
               height={200}
               style={{ pointerEvents: "none" }}
-            /> */}
+            />
             <Title>Rewards</Title>
             <Description>Cash back on purchases</Description>
           </div>
           <div>
             {/* <ColorizedCart className="bts bt-shopping-cart" /> */}
-            {/* <Lottie
+            <Lottie
               options={streamAnimationOptions}
               width={300}
               height={300}
               style={{ pointerEvents: "none" }}
-            /> */}
+            />
             <Title>Live-Stream Shopping</Title>
             <Description>Chat with sellers and buy in real-time</Description>
           </div>

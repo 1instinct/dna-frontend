@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { useMediaQuery } from "react-responsive";
 import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
 import FormikWizard from "formik-wizard";
@@ -9,8 +8,8 @@ import { withWizard } from "react-albus";
 import { AuthFormType, signupForm } from "../AuthForm/constants";
 import { useAuth } from "../../config/auth";
 import { SlideInLeft, SlideOutLeft } from "../Animations";
-import { Questions } from "./Questions";
-// import { Questions } from "./POLQuestions";
+// import { Questions } from "./Questions";
+import { Questions } from "./POLQuestions";
 import { Alert } from "../Alerts";
 
 import FormikWizardStepType from "formik-wizard";
@@ -32,16 +31,6 @@ import {
   Disclaimer,
   CongratsWrapper
 } from "./SignupWizard.styles";
-import constants from "@utilities/constants";
-import { Loading } from "..";
-
-const ThreeViewer = dynamic(
-  () => import("@components/shared/ThreeViewer").then((mod) => mod.ThreeViewer),
-  {
-    loading: () => <Loading />,
-    ssr: false
-  }
-);
 
 const FormWrapper: React.FC<any> = ({
   steps,
@@ -56,11 +45,30 @@ const FormWrapper: React.FC<any> = ({
   // getErrorMessage,
   canGoBack,
   // onFinalSubmit,
-  hasError,
-  isDirty,
   showNextStep,
   actionLabel
 }: any) => {
+  // const [state, setState] = useState({
+  //   errorMessage: '',
+  //   stepNumber: 0
+  // });
+  // const { errorMessage, stepNumber } = state;
+
+  // useEffect(() => {
+  //   window.addEventListener('keydown', keyCommand);
+  //   return () => {
+  //     window.removeEventListener('keydown', keyCommand);
+  //   };
+  // });
+
+  // const keyCommand = e => {
+  //   if (e.keyCode === 13) {
+  //     wizard.next();
+  //     return true;
+  //   }
+  //   return false;
+  // };
+
   const isMobile = useMediaQuery({
     // query: `(min-device-width: ${props => props.theme.breakpoints.values.lg}px)`
     query: `(max-device-width: 768px)`
@@ -114,17 +122,19 @@ const FormWrapper: React.FC<any> = ({
     default:
       return (
         <WizardForm canGoBack={canGoBack}>
-          {/* {isMobile && !canGoBack && (
-            <InitialTitle>Welcome! Let's get you started..</InitialTitle>
-          )} */}
+          <InitialTitle>
+            {isMobile && !canGoBack && (
+              <h1>Welcome! Let's get you started..</h1>
+            )}
+          </InitialTitle>
           {children}
           <WizardActions>
             {canGoBack && (
               <PreviousButton
-                variant="outline"
+                variant="outlined"
                 onClick={goToPreviousStep}
                 disabled={!canGoBack}
-                width={20}
+                ghost
               >
                 <i className="bts bt-angles-left" />
               </PreviousButton>
@@ -133,8 +143,9 @@ const FormWrapper: React.FC<any> = ({
             {/* <NextButton type={isLastStep ? "submit" : "button"} onClick={() => { */}
             {isLastStep ? (
               <NextButton
-                variant="solid"
-                // type={isLastStep ? "submit" : "button"}
+                variant="contained"
+                color="primary"
+                type={isLastStep ? "submit" : "button"}
                 onClick={() => {
                   console.log("next: ", values, wizard, isLastStep);
                   // console.log("next: ", wizard, isLastStep);
@@ -146,17 +157,15 @@ const FormWrapper: React.FC<any> = ({
               </NextButton>
             ) : (
               <NextButton
-                variant="solid"
-                // type={isLastStep ? "submit" : "button"}
+                variant="contained"
+                color="primary"
+                type={isLastStep ? "submit" : "button"}
                 onClick={() => {
-                  constants.IS_DEBUG &&
-                    console.log("next: ", values, wizard, isLastStep);
+                  console.log("next: ", values, wizard, isLastStep);
                   // console.log("next: ", wizard, isLastStep);
                   wizard.next();
                 }}
-                disabled={
-                  (isLastStep && !termsAccepted) || hasError || !isDirty
-                }
+                disabled={isLastStep && !termsAccepted}
               >
                 {actionLabel || (isLastStep ? "Submit" : "Next")}
               </NextButton>
@@ -233,12 +242,37 @@ export const SignupWizard = () => {
       });
   }, []);
 
+  // We assume this method cannot be called on the last step
+  // const showNextStep = ({ setFieldTouched }) => {
+  //   // TODO: Only untouch if value is '' or []
+  //   const nextStepFieldNames = Object.keys(steps[stepNumber + 1].initialValues);
+  //   nextStepFieldNames.forEach(fieldName => setFieldTouched(fieldName, false));
+  //   setState(prevState => ({ ...prevState, stepNumber: prevState.stepNumber + 1 }));
+  // };
+
+  // We assume this method cannot be called on the first step
+  // const showPreviousStep = ({ setFieldTouched }) => {
+  //   // TODO: Only untouch if value is '' or []
+  //   const previousStepFieldNames = Object.keys(steps[stepNumber - 1].initialValues);
+  //   previousStepFieldNames.forEach(fieldName => setFieldTouched(fieldName, false));
+
+  //   setState(prevState => ({ ...prevState, stepNumber: prevState.stepNumber - 1 }));
+  // };
+
+  // const handleError = error => {
+  //   setState(prevState => ({ ...prevState, errorMessage: getErrorMessage(error) }));
+  // };
+
   return (
     <MainWrapper>
       <ContentWrapper>
-        <LeftHalf show={isLargeDevice ? "flex" : "flex"}>
-          <ThreeViewer />
-          <Title>See Your Soul</Title>
+        <LeftHalf show={isLargeDevice ? "none" : "flex"}>
+          <Title>
+            Enjoy The Journey{" "}
+            <span role="img" aria-label="sunglasses">
+              😎
+            </span>
+          </Title>
         </LeftHalf>
         <RightHalf isLargeDevice={isLargeDevice}>
           <SlideInLeft>
@@ -246,6 +280,20 @@ export const SignupWizard = () => {
               steps={Questions}
               // onSubmit={(values: any, { formikProps: { isSubmitting } }: any) => handleSubmit(values, isSubmitting)}
               onSubmit={(values) => handleSubmit(values)}
+              // onSubmit={(values) => {
+              //   register({ user: values })
+              //     .then(() => {
+              //       // setSubmitting(false);
+              //       // router.push("/");
+              //     })
+              //     .catch(() => {
+              //       // setSubmitting(false);
+              //     });
+              // }}
+              // step={0}
+              // validator={() => ({})}
+              // albusProps={{step: 0, onNext: (context) => handleSubmit.bind(this, context)}}
+              // albusProps={{(context) => console.log(context)}}
               render={FormWrapper}
             />
           </SlideInLeft>

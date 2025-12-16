@@ -11,17 +11,11 @@ export const BasicField = styled(Field)`
       : props.theme.colors.gray.primary};
   border-radius: 5px;
   padding: 10px;
-  font-size: ${(props) => props.theme.typography.bodyMD.fontSize};
-  line-height: ${(props) => props.theme.typography.bodyMD.lineHeight};
-  font-family: ${(props) => props.theme.typography.bodyMD.fontFamily};
-  color: ${(props) =>
-    props.theme.isDarkMode
-      ? props.theme.colors.white.primary
-      : props.theme.colors.black.primary};
-  background-color: ${(props) =>
-    props.theme.isDarkMode
-      ? props.theme.colors.black.primary
-      : props.theme.colors.white.primary};
+  font-size: 1em;
+  color: ${(p: any) =>
+    p.isDarkMode ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+  background: ${(p: any) =>
+    p.isDarkMode ? p.theme.colors.black.primary : p.theme.colors.white.primary};
   outline: none;
   transition: border-color 0.3s ease-in-out;
 
@@ -30,11 +24,9 @@ export const BasicField = styled(Field)`
   }
 `;
 export const Error = styled.div`
-  margin: 5px 0 0 0;
-  color: ${(p) => p.theme.colors.red.primary};
-  font-size: ${(p) => p.theme.typography.bodySM.fontSize};
-  line-height: ${(p) => p.theme.typography.bodySM.lineHeight};
-  font-family: ${(p) => p.theme.typography.bodySMBold.fontFamily};
+  bottom: -20px;
+  color: ${(p: any) => p.theme.colors.red.primary};
+  font-size: 0.8em;
   text-align: left;
   font-weight: bold;
 `;
