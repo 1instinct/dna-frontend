@@ -46,3 +46,7 @@ envvars.txt
 .env.DNA.test
 
 tsconfig.tsbuildinfo
+secret.yml
+secret.yaml
+
+secrets-to-base64.sh
