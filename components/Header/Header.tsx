@@ -35,18 +35,6 @@ import {
   AccountOption
 } from "./Header.styles";
 import { Logo } from "@components/shared/Logo";
-<<<<<<< HEAD
-=======
-
-const dummyCategories = [
-  "Best Sellers",
-  "Latest",
-  "Seasonal",
-  "Luxury",
-  "On Sale",
-  "Coming Soon"
-];
->>>>>>> 5e30af0 (get better svg logo, tweak questions, add ThreeViewer)
 
 export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
   const router = useRouter();
@@ -98,39 +86,13 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
           </LeftSide>
         )}
         <LogoDiv>
-<<<<<<< HEAD
-<<<<<<< HEAD
           <LinkDiv isActive href="/">
-=======
-          <LinkDiv
-            isActive
-            href="/"
-          >
->>>>>>> 8a8e6bf (fix up signup, change auth routes, add svg button, tweak buttons globally, tweak theme, add types)
             {logoPath ? (
               // <MyLogo imageFile={logoPath} darkMode={darkMode} />
               <Logo />
             ) : (
               <h1>{siteTitle}</h1>
             )}
-=======
-          <LinkDiv
-            isActive
-            onClick={() => {
-              router.push("/");
-            }}
-          >
-<<<<<<< HEAD
-            <MyLogo imageFile={logoPath} darkMode={darkMode} />
->>>>>>> bb99d7b (buncha styles)
-=======
-            {logoPath ? (
-              // <MyLogo imageFile={logoPath} darkMode={darkMode} />
-              <Logo />
-            ) : (
-              <h1>{siteTitle}</h1>
-            )}
->>>>>>> 5e30af0 (get better svg logo, tweak questions, add ThreeViewer)
           </LinkDiv>
         </LogoDiv>
         <RightSide>
@@ -178,14 +140,10 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
               <LinkDiv href="/login" isActive={pathname !== "/login"}>
                 LOGIN
               </LinkDiv>
-<<<<<<< HEAD
-              <LinkDiv
+s           <LinkDiv
                 href="/signup"
                 isActive={pathname !== "/authenticate/signup"}
               >
-=======
-              <LinkDiv href="/authenticate/signup" isActive={pathname !== "/authenticate/signup"}>
->>>>>>> 4733611 (.)
                 SIGN UP
               </LinkDiv>
             </HeaderOptions>
