@@ -73,10 +73,7 @@ export const Cart = () => {
     }
   };
 
-  const handleUpdateItemQuantity = async (
-    itemId: string,
-    newQuantity: number
-  ) => {
+  const handleUpdateItemQuantity = async (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) {
       await handleRemoveItem(itemId); // Remove item if quantity is zero
     } else {
@@ -87,7 +84,7 @@ export const Cart = () => {
         console.error("Failed to update item quantity:", error);
       }
     }
-  };
+  };  
 
   const renderCartItems = () => {
     if (Array.isArray(cartData?.included) && productsData) {

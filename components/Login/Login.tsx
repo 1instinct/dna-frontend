@@ -28,7 +28,6 @@ export const Login = () => {
   // Component to handle button click
   const SubmitButton = () => {
     const { submitForm, isSubmitting } = useFormikContext();
-
     return (
       <Button onClick={submitForm} disabled={isSubmitting}>
         Submit

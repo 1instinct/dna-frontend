@@ -77,12 +77,26 @@ async function mergeCarts(guestOrderToken: string) {
     ? guestCart.data.relationships.line_items.data
     : [guestCart.data.relationships.line_items.data];
   for (const item of lineItems) {
-    constants.IS_DEBUG && console.log("Adding item to user cart:", item.id);
+    // Find the full line item object in guestCart.included to get the quantity
+    const fullLineItem = Array.isArray(guestCart.included)
+      ? guestCart.included.find(
+          (includedItem) =>
+            includedItem.type === "line_item" && includedItem.id === item.id
+        )
+      : undefined;
+    const quantity =
+      fullLineItem && fullLineItem.attributes && typeof fullLineItem.attributes.quantity === "number"
+        ? fullLineItem.attributes.quantity
+        : 1;
+    constants.IS_DEBUG &&
+      console.log(
+        `Adding item to user cart: ${item.id} with quantity: ${quantity}`
+      );
     const addItemResponse = await spreeClient.cart.addItem(
       { bearerToken: userToken?.access_token },
       {
         variant_id: item.id,
-        quantity: 1 // Ensure to use the correct quantity from guest cart if needed
+        quantity: quantity
       }
     );
     if (!addItemResponse.isSuccess()) {

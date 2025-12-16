@@ -238,7 +238,16 @@ export const SignupWizard = () => {
       <ContentWrapper>
         <LeftHalf show={isLargeDevice ? "flex" : "flex"}>
           <ThreeViewer />
-          <Title>See Your Soul</Title>
+          <Title>
+            Enjoy The Journey{" "}
+            <span role="img" aria-label="sunglasses">
+              😎
+            </span>
+          </Title>
+          <ThreeViewer />
+          <Title>
+            See Your Soul
+          </Title>
         </LeftHalf>
         <RightHalf isLargeDevice={isLargeDevice}>
           <SlideInLeft>
