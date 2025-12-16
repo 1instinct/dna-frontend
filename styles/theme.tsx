@@ -33,7 +33,7 @@ export const theme = {
       secondary: "#E6CDC0",
       bright: saturate(0.33, "#EB8B8B"),
       dark: darken(0.33, "#EB8B8B"),
-      light: lighten(0.33, "#EB8B8B")
+      light: lighten(0.05, "#EB8B8B")
     },
     todo: {
       primary: "#BFB081",

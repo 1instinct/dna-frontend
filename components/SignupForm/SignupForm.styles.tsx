@@ -1,4 +1,4 @@
-import { Button } from "@material-ui/core";
+import { Button } from "@components/shared/Button";
 import styled from "@emotion/styled";
 import { Form } from "formik";
 

@@ -14,6 +14,7 @@ export const FormikDateOfBirth = ({
       id="dateOfBirth"
       mask="99/99/9999"
       maskChar=" "
+      width={"100%"}
       // variant="outlined"
       // selectedTheme="dark"
       {...props}

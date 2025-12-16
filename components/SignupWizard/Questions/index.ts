@@ -1,5 +1,5 @@
 export * from "./Questions";
-export * from "./GetPreQualified";
+export * from "./Welcome";
 export * from "./PersonalInfo";
 export * from "./DateOfBirth";
 export * from "./HomeAddress";

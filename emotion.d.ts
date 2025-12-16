@@ -34,7 +34,7 @@ declare module "@emotion/react" {
         light: string;
       };
       brand: {
-        bright?: string;
+        bright: string;
         primary: string;
         secondary: string;
         dark: string;

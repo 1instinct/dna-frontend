@@ -86,3 +86,9 @@ export const EmptyCartMessage = styled.p`
   text-align: center;
   padding: 20px;
 `;
+
+export const Actions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+`;

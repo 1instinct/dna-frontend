@@ -1,4 +1,4 @@
-import { Button } from "@material-ui/core";
+import { Button } from "@components/shared/Button";
 import styled from "@emotion/styled";
 
 interface GenericThemeType {
@@ -29,6 +29,11 @@ export const InitialTitle = styled.h1`
 `;
 
 export const Title = styled.div`
+  pointer-events: none;
+  font-family: ${(props) => props.theme.typography.titleXXL.fontFamily};
+  font-size: ${(props) => props.theme.typography.titleXXL.fontSize};
+  line-height: ${(props) => props.theme.typography.titleXXL.lineHeight};
+  text-shadow: 0px 2px 22px rgba(255, 255, 255, 1);
   box-sizing: border-box;
   color: ${(props) =>
     props.theme.isDarkMode
@@ -39,6 +44,12 @@ export const Title = styled.div`
   text-transform: uppercase;
   text-align: center;
   padding: 40px 0 15px;
+  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 `;
 
 export const Subtitle = styled.div`
@@ -77,9 +88,6 @@ export const LeftHalf = styled.div<LeftHalfType>`
   flex-direction: column;
   flex-basis: 100%;
   flex: 0 0 48%;
-  ${"" /* flex: 1; */}
-  ${"" /* flex-grow: 1; */}
-  ${"" /* flex-basis: 50%; */}
   background: ${(props) =>
     props.theme.isDarkMode
       ? props.theme.colors.black.primary
@@ -88,28 +96,18 @@ export const LeftHalf = styled.div<LeftHalfType>`
     props.theme.isDarkMode
       ? props.theme.colors.white.primary
       : props.theme.colors.black.primary};
-  /* box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.123); */
-  ${"" /* width: 100%; */}
-  ${"" /* margin: 15px; */}
   margin: 15px 15px 0 0;
   border-radius: 8px;
-  padding: 15px 15px 60px 15px;
+  padding: 15px;
   text-align: center;
-  & [data-qa="title"] {
-    color: ${(props) =>
-      props.theme.isDarkMode
-        ? props.theme.colors.white.primary
-        : props.theme.colors.black.primary};
-    font-size: 1.6rem;
-  }
-
+  position: relative;  /* Add this line */
+  
   @media (max-width: ${(props) => props.theme.breakpoints.values.sm}px) {
     margin: 15px 0 0 0;
     display: none;
   }
 
   @media (min-width: ${(props) => props.theme.breakpoints.values.lg}px) {
-    ${"" /* margin: 15px; */}
     margin: 15px 15px 0 0;
   }
 `;
@@ -200,39 +198,36 @@ export const WizardForm = styled.div<WizardFormType>`
 `;
 
 export const WizardActions = styled.div`
-  margin: 0 10px 0 10px;
+  margin: 0 10px;
+  padding: 0 15px 5px 15px;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  padding: 0 15px 5px 15px;
   text-align: center;
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-
-  & .BtcsS {
-    display: none;
-  }
+  justify-content: space-between;
+  gap: 15px; /* Adds the 15px space between buttons */
 
   @media (min-width: ${(props) => props.theme.breakpoints.values.sm}px) {
-    margin: 0 25px 0 25px;
+    margin: 0 25px;
   }
 `;
 
-interface PreviousButtonType {
-  ghost?: boolean;
-}
-
-export const PreviousButton = styled(Button)<PreviousButtonType>`
-  flex-basis: 30%;
-  flex-grow: 1;
-  margin-right: 0.5rem !important;
+export const PreviousButton = styled(Button)`
+  flex-basis: 30%; /* Adjust the proportion of the width */
+  flex-grow: 1; /* Allow the button to grow to fill available space */
+  
+  @media (max-width: ${(p) => p.theme.breakpoints.values.sm}px) {
+    flex-basis: 45%; /* Adjust width for smaller screens */
+  }
 `;
 
 export const NextButton = styled(Button)`
-  background: ${(p) => p.theme.colors.brand.primary} !important;
-  margin-left: 0.5rem !important;
-  flex-basis: 70%;
-  flex-grow: 2;
+  flex-basis: 70%; /* Adjust the proportion of the width */
+  flex-grow: 1; /* Allow the button to grow to fill available space */
+
+  @media (max-width: ${(p) => p.theme.breakpoints.values.sm}px) {
+    flex-basis: 55%; /* Adjust width for smaller screens */
+  }
 `;
 
 export const SkipAction = styled.div<GenericThemeType>`

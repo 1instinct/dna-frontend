@@ -56,6 +56,8 @@ export const TipBotImage = styled.div`
   bottom: 20px;
   background: url("/tip-bot.png") no-repeat;
   background-size: 48px 48px;
+  border-radius: 100%;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.33);
   width: 48px;
   height: 48px;
 
@@ -94,14 +96,15 @@ export const TipBotImage = styled.div`
       "" /* left: 25px;
     bottom: -35px; */
     }
-    left: 40px;
-    bottom: -100px;
+    left: 30px;
+    bottom: -120px;
   }
 `;
 
 export const BubbleWrapper = styled.div`
   border-radius: 8px;
-  /* border: 1px solid ${(props: any) => props.theme.colors.gray.medium}; */
+  // border: 1px solid ${(props: any) => props.theme.colors.gray.medium};
+  background-image: url("images/stripes-light.webp") repeat;
   background: ${(props: any) =>
     props.theme.isDarkMode
       ? props.theme.colors.black.light

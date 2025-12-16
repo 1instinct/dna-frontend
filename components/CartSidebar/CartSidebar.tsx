@@ -19,7 +19,8 @@ import {
   QuantitySelector,
   QuantityAdjuster,
   TotalLine,
-  EmptyCartMessage
+  EmptyCartMessage,
+  Actions
 } from "./CartSidebar.styles";
 import {
   IProduct,
@@ -216,8 +217,10 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
           <TotalLine>Subtotal: {display_item_total}</TotalLine>
           <TotalLine>Tax: {included_tax_total}</TotalLine>
           <TotalLine>Total: {display_total}</TotalLine>
-          <Button onClick={() => router.push("/cart")}>View Cart</Button>
-          <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+          <Actions>
+            <Button variant="outline" onClick={() => router.push("/cart")}>View Cart</Button>
+            <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+          </Actions>
         </BurgerMenu>
         <style jsx>{`
           .cart-modal {

@@ -3,6 +3,7 @@ import { Popover } from "@material-ui/core";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import { pxIphone } from "../../utilities/device-sizes";
+import Link from "next/link";
 
 export const TopHeader = styled.div`
   padding: 10px 0 12px 0;
@@ -30,9 +31,10 @@ export const HeaderDiv = styled.header`
 
 export interface LinkDivProps {
   isActive: boolean;
+  props?: any;
 }
 
-export const LinkDiv = styled.a<LinkDivProps>`
+export const LinkDiv = styled(Link)<LinkDivProps>`
   font-size: 14px;
   text-decoration: none;
   ${(p) =>
@@ -63,7 +65,7 @@ export const BottomHeader = styled.div`
   }
 `;
 
-export const Category = styled.a`
+export const Category = styled(Link)`
   padding: 15px;
 `;
 

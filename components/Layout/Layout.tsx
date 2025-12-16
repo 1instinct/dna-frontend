@@ -4,8 +4,9 @@ import { ClassNames } from "@emotion/react";
 import { LayoutProps } from "./types";
 import { Footer } from "../Footer/Footer";
 import columns from "../Footer/footer.json";
+import { Logo } from "@components/shared/Logo";
 
-import { Container, Content, Logo } from "./Layout.styles";
+import { Container, Content } from "./Layout.styles";
 
 type LogoTypeFC = {
   imageFile: string;
@@ -13,7 +14,7 @@ type LogoTypeFC = {
 };
 
 export const MyLogo = ({ imageFile, darkMode }: LogoTypeFC) => (
-  <Logo src={imageFile} darkMode={darkMode || false} />
+  <Logo />
 );
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -29,7 +30,7 @@ export const Layout: React.FC<LayoutProps> = ({
           {({ css, cx }) => (
             <Footer
               footerData={{
-                logo: <MyLogo imageFile="/pol-logo.png" darkMode={true} />,
+                logo: <MyLogo />,
                 columns
               }}
             />

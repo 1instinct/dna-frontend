@@ -4,11 +4,12 @@ import { Modal } from "@material-ui/core";
 export const QuestionWrapper = styled.div`
   color: ${(props) => props.theme.colors.brand.primary};
   ${"" /* width: 100%; */}
-  margin: 15px 0 15px 0;
+  margin: -20px 0 15px 0;
 `;
 
 interface GenericThemeType {
   theme?: any;
+  isIntro?: boolean | true;
 }
 
 export const InputGroupWrapper = styled.div<GenericThemeType>`
@@ -21,12 +22,9 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
   border-top-left-radius: 8px;
   border-top-right-radius: 8px; */
   }
-  margin: -50px 15px 15px 15px;
+  margin: -120px 15px 15px 15px;
   text-align: center;
-  @media (max-width: ${(props) => props.theme.breakpoints.values.sm}px) {
-    margin: 0 auto;
-    padding: 30px 0px 0px 0px;
-  }
+  
   & [data-qa="title"] {
     color: ${(props) => props.theme.colors.brand.primary};
     font-size: 1.6rem;
@@ -54,6 +52,11 @@ export const InputGroupWrapper = styled.div<GenericThemeType>`
     background: ${(props) => props.theme.colors.white.primary};
     box-shadow: 0 0 0 7px ${(props) => props.theme.colors.brand.primary};
   }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.values.sm}px) {
+    margin: ${(p) => p.isIntro ? '-80px' : '125px'} auto 0;
+    padding: 10px 0px 0px 0px;
+  }
 `;
 
 export const InputWrapper = styled.div<GenericThemeType>`
@@ -69,6 +72,9 @@ export const InputWrapper = styled.div<GenericThemeType>`
 
 export const Title = styled.h1<GenericThemeType>`
   margin: 5px 15px;
+  font-family: ${(props) => props.theme.typography.titleSM.fontFamily};
+  font-size: ${(props) => props.theme.typography.titleMD.fontSize};
+  line-height: ${(props) => props.theme.typography.titleSM.lineHeight};
   color: ${(props) => props.theme.colors.brand.primary};
 `;
 

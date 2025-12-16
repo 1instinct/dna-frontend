@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { Badge } from "@material-ui/core";
 import Sticky from "react-sticky-el";
 import { HeaderProps } from "./types";
@@ -21,10 +20,10 @@ import {
   LogoDiv,
   HeaderDiv,
   LinkDiv,
-  BottomHeader,
-  Category,
-  UserIconMo,
-  CartMo,
+  // BottomHeader,
+  // Category,
+  // UserIconMo,
+  // CartMo,
   CartToggle,
   HeaderAccount,
   HeaderOptions,
@@ -98,9 +97,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
         <LogoDiv>
           <LinkDiv
             isActive
-            onClick={() => {
-              router.push("/");
-            }}
+            href="/"
           >
             {logoPath ? (
               // <MyLogo imageFile={logoPath} darkMode={darkMode} />
@@ -156,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
                 LOGIN
               </LinkDiv>
               <LinkDiv
-                href="/authenticate/signup"
+                href="/signup"
                 isActive={pathname !== "/authenticate/signup"}
               >
                 SIGN UP
