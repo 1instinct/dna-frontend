@@ -7,6 +7,7 @@ import { Loading, LoadingWrapper } from "..";
 import { useCart, updateItemQuantity } from "../../hooks/useCart";
 import { useProducts } from "../../hooks";
 import { QueryKeys } from "../../hooks/queryKeys";
+import { useAuth } from "../../config/auth";
 import cartStyles from "./cartStyles";
 
 import {
@@ -37,6 +38,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const { user } = useAuth();
 
   const {
     data: cartData,
@@ -52,8 +54,8 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
       cartData?.data?.attributes?.item_count &&
       cartData?.data?.relationships?.line_items?.data
     ) {
-      const lineItems = cartData.data.relationships.line_items.data;
-      const itemCount = cartData.data.attributes.item_count;
+      const lineItems = cartData?.data.relationships.line_items.data;
+      const itemCount = cartData?.data.attributes.item_count;
       const lineItemsArray = Array.isArray(lineItems) ? lineItems : [lineItems];
       const avgQty = Math.ceil(itemCount / lineItemsArray.length);
 
@@ -198,9 +200,6 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   if (cartIsLoading) {
     return (
       <CartWrapper>
-        {/* <CartButton onClick={toggle}>
-          
-        </CartButton> */}
         <Menu
           right
           customBurgerIcon={<i className="btb bt-lg bt-shopping-cart" />}
@@ -290,7 +289,24 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
             <Button variant="outline" onClick={() => router.push("/cart")}>
               View Cart
             </Button>
-            <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+            {user ? (
+              <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+            ) : (
+              <>
+                <Button onClick={() => router.push("/checkout")}>
+                  Checkout as Guest
+                </Button>
+                <Button variant="outline" onClick={() => router.push("/login")}>
+                  Login
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => router.push("/signup")}
+                >
+                  Signup
+                </Button>
+              </>
+            )}
           </Actions>
         </Menu>
         <style jsx>{`

@@ -56,12 +56,21 @@ const ButtonOutline = styled.button<ButtonProps>`
   height: 60px;
   margin: 0;
   padding: 5px 10px 8px 10px;
-  border: 3px solid ${(p) => p.theme.colors.black.primary};
+  border: 3px solid
+    ${(p) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.white.primary
+        : p.theme.colors.black.primary};
   background: transparent;
-  color: ${(p) => p.theme.colors.black.primary};
+  color: ${(p) =>
+    p.theme.isDarkMode
+      ? p.theme.colors.white.primary
+      : p.theme.colors.black.primary};
   cursor: pointer;
   border-radius: 12px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 6px
+    ${(p) =>
+      p.theme.isDarkMode ? "rgba(255, 255, 255, 0.33)" : "rgba(0, 0, 0, 0.1)"};
   text-transform: uppercase;
   font-size: ${(p) => p.theme.typography.titleMD.fontSize};
   font-family: ${(p) => p.theme.typography.titleMD.fontFamily};

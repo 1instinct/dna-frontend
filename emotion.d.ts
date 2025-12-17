@@ -144,6 +144,13 @@ declare module "@emotion/react" {
         lineHeight: string;
         color: string;
       };
+      bodyLG: {
+        fontFamily: string;
+        fontWeight: string;
+        fontSize: string;
+        lineHeight: string;
+        color: string;
+      };
       bodyMD: {
         fontFamily: string;
         fontWeight: string;

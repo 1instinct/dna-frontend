@@ -136,6 +136,13 @@ export const theme = {
       lineHeight: "0.9rem",
       color: "#000"
     },
+    bodyLG: {
+      fontFamily: "Anybody ExtraLight",
+      fontWeight: "normal",
+      fontSize: "20px",
+      lineHeight: "22px",
+      color: "#000"
+    },
     bodyMD: {
       fontFamily: "Anybody ExtraLight",
       fontWeight: "normal",

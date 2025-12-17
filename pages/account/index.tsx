@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "@emotion/styled";
-import { InputBase } from "@material-ui/core";
-import { pxPC } from "../../utilities/device-sizes";
-import { Layout } from "../../components";
+import { pxPC } from "@utilities/device-sizes";
+import { useRouter } from "next/router";
+import { Layout, Loading } from "../../components";
+import { InputBase } from "@mui/material";
+
+const AccountRedirect = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect to orders page
+    router.push("/account/orders");
+  }, [router]);
+
+  return <Loading />;
+};
 
 const Content = styled.div`
   min-height: calc(100vh - 543px);
@@ -114,6 +126,7 @@ const FormLabel = styled.div`
   margin-top: ${pxPC(13)};
   width: 100%;
 `;
+
 const Account = () => {
   return (
     <Layout>

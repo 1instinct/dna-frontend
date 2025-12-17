@@ -142,7 +142,9 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
           )}
           <CartToggle>
             <Badge
-              badgeContent={cartData ? cartData.data.attributes.item_count : 0}
+              badgeContent={
+                cartData ? cartData?.data?.attributes?.item_count : 0
+              }
               color="primary"
               overlap="rectangular"
             >
