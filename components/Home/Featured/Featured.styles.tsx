@@ -32,14 +32,29 @@ export const FeaturedItem = styled.div<FeaturedItemProps>`
   justify-content: center;
   width: 100%;
   height: 450px;
+  position: relative;
   @media (max-width: ${(p) => p.theme.breakpoints.values.xs}px) {
   }
 `;
 export const FeaturedButton = styled(Button)`
-  position: absolute !important;
+  position: absolute;
   bottom: ${pxPC(84)};
-  left: 0;
-  right: 0;
-  margin: 0 auto;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
   text-align: center;
+  z-index: 10;
+
+  @media (min-width: ${(p) => p.theme.breakpoints.values.sm}px) {
+    width: 60%;
+  }
+
+  @media (min-width: ${(p) => p.theme.breakpoints.values.md}px) {
+    width: 50%;
+  }
+
+  @media (min-width: ${(p) => p.theme.breakpoints.values.lg}px) {
+    width: 40%;
+  }
 `;
