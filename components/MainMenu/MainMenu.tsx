@@ -26,7 +26,6 @@ export const MainMenu = (props: MainMenuProps) => {
     onMenuItemClick,
     animationType,
     children,
-    menusData,
     ...others
   } = props;
 
@@ -79,7 +78,6 @@ export const MainMenu = (props: MainMenuProps) => {
             pcMenuItemClassName={pcMenuItemClassName}
             menusLoading={menuItemsIsLoading}
             menusData={menuItemsData ? menuItemsData?.response_data : []}
-            // menusData={menusData}
           />
         ) : null}
       </HiddenOnMobile>
