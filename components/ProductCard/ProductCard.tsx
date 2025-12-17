@@ -45,6 +45,9 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
     addToCart.mutate(item);
   };
 
+  console.log("ProductCard opts:", opts);
+  console.log("ProductCard item:", item.attributes.name);
+
   // constants.IS_DEBUG && console.log("Product Card: ", item, "Opts: ", opts);
   return (
     <ProductCardWrapper>
@@ -60,7 +63,7 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
             <ProductTitle>{item.attributes.name}</ProductTitle>
             {/* <ProductDesc>{item.attributes.description}</ProductDesc> */}
             <ThreeDot>
-              {opts?.slice(0, 2).map((opt: any, index: any) => {
+              {opts?.map((opt: any, index: any) => {
                 // constants.IS_DEBUG && console.log("opt: ", opt);
                 return (
                   <Dot

@@ -76,6 +76,7 @@ export const AddToCartButton = styled(Button)`
 
 export const ThreeDot = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
   margin-top: ${pxPC(3)};
