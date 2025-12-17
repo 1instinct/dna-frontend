@@ -14,7 +14,7 @@ interface ButtonProps {
 }
 
 const ButtonSolid = styled.button<ButtonProps>`
-  width: ${(p) => (p.width ? `${p.width}px` : '100%')};
+  width: ${(p) => (p.width ? `${p.width}px` : "100%")};
   height: 60px;
   margin: 0;
   padding: 5px 10px 8px 10px;
@@ -52,7 +52,7 @@ const ButtonSolid = styled.button<ButtonProps>`
 `;
 
 const ButtonOutline = styled.button<ButtonProps>`
-  width: ${(p) => (p.width ? `${p.width}px` : '100%')};
+  width: ${(p) => (p.width ? `${p.width}px` : "100%")};
   height: 60px;
   margin: 0;
   padding: 5px 10px 8px 10px;
@@ -211,14 +211,24 @@ export const Button = ({
 
   if (variant === "outline") {
     return (
-      <ButtonOutline onClick={onClick} width={width} className={className} {...props}>
+      <ButtonOutline
+        onClick={onClick}
+        width={width}
+        className={className}
+        {...props}
+      >
         {children}
       </ButtonOutline>
     );
   }
 
   return (
-    <ButtonSolid onClick={onClick} width={width} className={className} {...props}>
+    <ButtonSolid
+      onClick={onClick}
+      width={width}
+      className={className}
+      {...props}
+    >
       {children}
     </ButtonSolid>
   );
