@@ -10,10 +10,11 @@ interface ButtonProps {
   width?: number;
   onClick: () => void;
   disabled?: boolean;
+  className?: string;
 }
 
 const ButtonSolid = styled.button<ButtonProps>`
-  width: 100%;
+  width: ${(p) => (p.width ? `${p.width}px` : "100%")};
   height: 60px;
   margin: 0;
   padding: 5px 10px 8px 10px;
@@ -45,14 +46,13 @@ const ButtonSolid = styled.button<ButtonProps>`
   }
 
   @media (max-width: ${(p) => p.theme.breakpoints.values.sm}px) {
-    width: 100%;
     font-size: ${(p) => p.theme.typography.titleSM.fontSize};
     padding: 5px 10px 6px 10px;
   }
 `;
 
 const ButtonOutline = styled.button<ButtonProps>`
-  width: 100%;
+  width: ${(p) => (p.width ? `${p.width}px` : "100%")};
   height: 60px;
   margin: 0;
   padding: 5px 10px 8px 10px;
@@ -78,7 +78,6 @@ const ButtonOutline = styled.button<ButtonProps>`
   }
 
   @media (max-width: ${(p) => p.theme.breakpoints.values.sm}px) {
-    width: 100%;
     font-size: ${(p) => p.theme.typography.titleSM.fontSize};
     padding: 5px 10px 6px 10px;
   }
@@ -128,7 +127,8 @@ export const Button = ({
   props,
   children,
   width,
-  onClick
+  onClick,
+  className
 }: ButtonProps) => {
   const theme = useTheme();
   if (isSvg) {
@@ -211,14 +211,24 @@ export const Button = ({
 
   if (variant === "outline") {
     return (
-      <ButtonOutline onClick={onClick} width={width} {...props}>
+      <ButtonOutline
+        onClick={onClick}
+        width={width}
+        className={className}
+        {...props}
+      >
         {children}
       </ButtonOutline>
     );
   }
 
   return (
-    <ButtonSolid onClick={onClick} width={width} {...props}>
+    <ButtonSolid
+      onClick={onClick}
+      width={width}
+      className={className}
+      {...props}
+    >
       {children}
     </ButtonSolid>
   );

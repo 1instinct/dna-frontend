@@ -5,37 +5,17 @@ import { useRouter } from "next/router";
 import { ProductListProps } from "./types";
 import styled from "@emotion/styled";
 
-const ProductsRow = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-`;
-const ProductContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-const MyImg = styled.img`
-  height: 300px;
-  width: 240px;
-  object-fit: contain;
-`;
-const MyH1 = styled.h1`
-  font-size: 20px;
-`;
-const MySection = styled.section`
-  width: 100%;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
-`;
-const MyLi = styled.li`
-  display: block;
-  margin-bottom: 10px;
-`;
-const MyDiv = styled.div`
-  align-items: center;
-  display: flex;
-`;
+import {
+  ProductsRow,
+  ProductContainer,
+  MyImg,
+  MyH1,
+  MySection,
+  MyLi,
+  MyDiv
+} from "./ProductList.styles";
+import { Loading } from "@components/Loading";
+
 export const ProductList: React.FC<ProductListProps> = (props: any) => {
   const router = useRouter();
   const { products, title } = props;
@@ -46,7 +26,7 @@ export const ProductList: React.FC<ProductListProps> = (props: any) => {
   //   return <MyDiv>Could not load products</MyDiv>;
   // }
 
-  if (!products) return <MyDiv>Loading</MyDiv>;
+  if (!products) return <Loading />;
 
   return (
     <MySection>

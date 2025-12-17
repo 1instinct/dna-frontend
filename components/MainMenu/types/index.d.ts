@@ -40,7 +40,6 @@ export interface MainMenuProps {
   pcWrapClassName?: string;
   pcMenuItemClassName?: string;
   onMenuItemClick?: (keyPath: string, key: string) => void;
-  menusData: menuDataItem[];
   animationType?: keyof BurgerMenu;
   children?: JSX.Element<type, props, key> | JSX.Element<type, props, key>[];
   bodyClassName?: string;

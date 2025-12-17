@@ -6,10 +6,7 @@ import Sticky from "react-sticky-el";
 import { HeaderProps } from "./types";
 import { useAuth } from "../../config/auth";
 import { useCart } from "../../hooks/useCart";
-import { MyLogo } from "../Layout/Layout";
 import SearchBar from "../SearchBar";
-import { MainMenu } from "../MainMenu";
-import { menusData } from "../MainMenu/data/menusData";
 import { CartSidebar } from "../CartSidebar/CartSidebar";
 import { SocialLinks } from "..";
 
@@ -87,12 +84,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
         )}
         <LogoDiv>
           <LinkDiv isActive href="/">
-            {logoPath ? (
-              // <MyLogo imageFile={logoPath} darkMode={darkMode} />
-              <Logo />
-            ) : (
-              <h1>{siteTitle}</h1>
-            )}
+            {logoPath ? <Logo /> : <h1>{siteTitle}</h1>}
           </LinkDiv>
         </LogoDiv>
         <RightSide>
