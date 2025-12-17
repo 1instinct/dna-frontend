@@ -84,11 +84,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
         )}
         <LogoDiv>
           <LinkDiv isActive href="/">
-            {logoPath ? (
-              <Logo />
-            ) : (
-              <h1>{siteTitle}</h1>
-            )}
+            {logoPath ? <Logo /> : <h1>{siteTitle}</h1>}
           </LinkDiv>
         </LogoDiv>
         <RightSide>

@@ -12,7 +12,7 @@ import {
   MyH1,
   MySection,
   MyLi,
-  MyDiv,
+  MyDiv
 } from "./ProductList.styles";
 import { Loading } from "@components/Loading";
 
