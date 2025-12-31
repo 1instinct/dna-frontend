@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import { Badge } from "@material-ui/core";
 import Sticky from "react-sticky-el";
 import { HeaderProps } from "./types";
@@ -84,7 +85,19 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
         )}
         <LogoDiv>
           <LinkDiv isActive href="/">
-            {logoPath ? <Logo /> : <h1>{siteTitle}</h1>}
+            {logoPath ? (
+              <Image
+                src={logoPath.startsWith('/') || logoPath.startsWith('http') ? logoPath : `/${logoPath}`}
+                alt={siteTitle}
+                width={0}
+                height={0}
+                sizes="(max-width: 768px) 100px, 141px"
+                style={{ width: 'auto', height: '65px' }}
+                priority
+              />
+            ) : (
+              <Logo />
+            )}
           </LinkDiv>
         </LogoDiv>
         <RightSide>

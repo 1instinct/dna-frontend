@@ -1,6 +1,15 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useMemo } from "react";
 import classnames from "classnames";
+import { QueryClient } from "react-query";
+import { dehydrate } from "react-query/hydration";
+import {
+  fetchMenuLocation,
+  fetchMenuItems,
+  useMenuLocation,
+  useMenuItems
+} from "../../hooks";
 import { SocialLinks } from "..";
+import hardcodedColumns from "./footer.json";
 
 import {
   Container,
@@ -52,6 +61,32 @@ export interface FootProps {
   footerData: FooterDataType;
 }
 export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
+  const {
+    data: menuItemsData,
+    isLoading: menuItemsIsLoading,
+    isSuccess: menuItemsIsSuccess
+  } = useMenuItems(2);
+
+  // Transform API menu data to footer columns format
+  const apiColumns = useMemo(() => {
+    if (!menuItemsIsSuccess || !menuItemsData?.response_data) return null;
+
+    const menuItems = menuItemsData?.response_data?.menu_location_listing?.length > 0
+      ? menuItemsData.response_data.menu_location_listing[0].menu_item_listing
+      : [];
+
+    return menuItems.map((menuItem: any) => ({
+      title: menuItem.name,
+      links: menuItem.childrens?.map((child: any) => ({
+        text: child.name,
+        url: child.link || ""
+      })) || []
+    }));
+  }, [menuItemsIsSuccess, menuItemsData]);
+
+  // Use API columns if available, otherwise use passed footerData columns or hardcoded fallback
+  const columns = apiColumns || footerData.columns || hardcodedColumns;
+
   const Logo = footerData.logo as ReactNode;
   const gridClass = classes?.grid || "";
   const columnClass = classes?.columnClassWrapper || "";
@@ -60,45 +95,36 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
   const linkItemClass = classes?.linkItem || "";
   const descClass = classes?.description || "";
   const iconWrapperClass = classes?.iconWrapperClass || "";
-  const columns = footerData.columns;
   const mobileIconLinks = footerData.mobileIconLinks;
   return (
     <Container className={classnames(classes?.root)}>
       {Logo && <LogoDiv>{Logo ? Logo : null}</LogoDiv>}
       <Grid className={gridClass}>
-        {columns.map((item, index) => (
+        {columns.map((item: Column, index: number) => (
           <Column className={columnClass} key={index}>
             {item.title && (
               <ColumnTitle className={columnTitleClass}>
-                {item.title}
+          {item.title}
               </ColumnTitle>
             )}
             {item.subTitle && (
               <ColumnSubTitle className={subTitleClass}>
-                {item.subTitle}
+          {item.subTitle}
               </ColumnSubTitle>
             )}
-            {item.links &&
-              item.links.map((v, i) => (
-                <LinkItem className={linkItemClass} key={i} href={v.url}>
-                  {v.text}
-                </LinkItem>
-              ))}
-            {item.descriptions &&
-              item.descriptions.map((desc, idx) => (
-                <Description className={descClass} key={idx}>
-                  {desc}
-                </Description>
-              ))}
-            {item.iconLinks && (
-              <IconLinkWrapper className={iconWrapperClass}>
-                {item.iconLinks.map((icon, iconId) => (
-                  <IconLink key={iconId} href={icon.url}>
-                    {icon.icon}
-                  </IconLink>
-                ))}
-              </IconLinkWrapper>
-            )}
+            {item.links && item.links.map((v: Link, i: number) => v.url !== "" ? (
+              <LinkItem
+                className={linkItemClass}
+                href={v.url}
+                key={i}
+              >
+                {v.text}
+              </LinkItem>
+            ) : (
+              <Description className={descClass} key={i}>
+                {v.text}
+              </Description>
+            ))}
           </Column>
         ))}
       </Grid>
@@ -106,3 +132,18 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
     </Container>
   );
 };
+
+export async function getServerSideProps() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery(["menu_location", 2], () =>
+    fetchMenuLocation(2)
+  );
+  await queryClient.prefetchQuery(["menu_items", 2], () => fetchMenuItems(2));
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient)
+    }
+  };
+}
