@@ -239,7 +239,9 @@ export const FavoriteButton = styled.button<FavoriteButtonProps>`
 
   &:hover {
     background: ${(p) =>
-      p.isFavorited ? p.theme.colors.red.primary : p.theme.colors.brand.primary};
+      p.isFavorited
+        ? p.theme.colors.red.primary
+        : p.theme.colors.brand.primary};
     color: ${(p) => p.theme.colors.white.primary};
     transform: translateY(-2px);
   }

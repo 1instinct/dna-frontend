@@ -106,7 +106,8 @@ export const RetailProductDetails = ({
     error: productError
   } = useProduct(`${productSlug.toLowerCase().replace("/", "")}`);
 
-  const defaultVariantData = thisProduct?.data?.relationships?.default_variant?.data;
+  const defaultVariantData =
+    thisProduct?.data?.relationships?.default_variant?.data;
   const defaultVariantId = Array.isArray(defaultVariantData)
     ? defaultVariantData[0]?.id || ""
     : defaultVariantData?.id || "";
