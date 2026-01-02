@@ -52,10 +52,10 @@ const storage = {
   },
   setToken: (token: IOAuthToken) => {
     window.localStorage.setItem("token", JSON.stringify(token));
-    // Also set cookie for middleware access - using "auth_token" to avoid conflicts
+    // Also set cookie for middleware access
     const isSecure = window.location.protocol === "https:";
     const tokenStr = JSON.stringify(token);
-    const cookieString = `auth_token=${encodeURIComponent(
+    const cookieString = `token=${encodeURIComponent(
       tokenStr
     )}; path=/; max-age=${token.expires_in}; SameSite=Lax${
       isSecure ? "; Secure" : ""
@@ -75,7 +75,7 @@ const storage = {
     constants.IS_DEBUG &&
       console.log(
         "[Storage] Cookie after set:",
-        document.cookie.includes("auth_token") ? "SUCCESS" : "FAILED"
+        document.cookie.includes("token") ? "SUCCESS" : "FAILED"
       );
   },
   getGuestOrderToken: async (): Promise<string | undefined> => {
@@ -100,9 +100,9 @@ const storage = {
     window.localStorage.removeItem("token");
     window.localStorage.removeItem("orderToken");
     window.localStorage.removeItem("guestOrderToken");
-    // Also clear the cookie - using "auth_token" to avoid conflicts
+    // Also clear the cookie
     document.cookie =
-      "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
   },
   clearGuestToken: () => {
     // Only clear guest-related tokens, preserve auth token

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -10,6 +11,7 @@ import {
 import { Layout, Loading } from "../components";
 import { useCart } from "../../hooks/useCart";
 import { useProducts } from "../../hooks";
+import { useAuth } from "../../config/auth";
 import {
   useUpdateCheckout,
   useAdvanceCheckout,
@@ -61,6 +63,7 @@ const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
+  const { user } = useAuth();
   const { data: cartData, isLoading: cartLoading } = useCart();
   const { data: productsData } = useProducts(1);
 
@@ -460,7 +463,25 @@ const CheckoutForm = () => {
     <Layout>
       <CheckoutContainer>
         <CheckoutTitle>Checkout</CheckoutTitle>
+        {!user && (
+          <div>
+            <p style={{ margin: "0 0 10px 0", fontSize: "16px" }}>
+              Already have an account?{" "}
+              <Link
+                href="/login?redirect=/checkout"
+                style={{
+                  textDecoration: "underline",
+                  fontWeight: "bold"
+                }}
+              >
+                Login
+              </Link>{" "}
+              to checkout faster with saved addresses and payment methods.
+            </p>
+          </div>
+        )}
 
+        
         <CheckoutGrid>
           <StyledCheckoutForm as="form" onSubmit={handleSubmit}>
             {/* Contact Information */}

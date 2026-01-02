@@ -8,7 +8,7 @@ import { Modal } from "@material-ui/core";
 // Local
 import TipBot from "../../TipBot";
 import Static from "../../../utilities/staticData";
-import { FormikInput, FormikPhone, FormikCheckbox } from "../../FormikWrappers";
+import { FormikInput, FormikPhone, FormikPassword, FormikCheckbox } from "../../FormikWrappers";
 import {
   Title,
   Subtitle,
@@ -116,11 +116,8 @@ export const Account = () => {
           <Field
             name="password"
             id="password"
-            variant="password"
-            component={FormikInput}
+            component={FormikPassword}
             label="Password"
-            ref={passwordRef}
-            type="password"
           />
         </InputWrapper>
 
@@ -128,11 +125,8 @@ export const Account = () => {
           <Field
             name="passwordConfirm"
             id="passwordConfirm"
-            variant="password"
-            component={FormikInput}
+            component={FormikPassword}
             label="Re-type Password"
-            ref={passwordRef}
-            type="password"
           />
         </InputWrapper>
 

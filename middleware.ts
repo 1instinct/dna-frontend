@@ -9,16 +9,15 @@ import type { NextRequest } from "next/server";
  * 2. Prevents authenticated users from accessing auth pages (redirects to /)
  * 3. Preserves the original URL in a redirect query param for post-login redirect
  *
- * Protected routes: /account/*, /checkout, /thank-you, /update-email, /update-password
+ * Protected routes: /account/*, /thank-you, /update-email, /update-password
  * Auth routes: /login, /signup
  *
- * The middleware checks for an "auth_token" cookie set by config/storage.ts
+ * The middleware checks for a "token" cookie set by config/storage.ts
  */
 
 // Define protected routes that require authentication
 const protectedRoutes = [
   "/account",
-  "/checkout",
   "/thank-you",
   "/update-email",
   "/update-password"
@@ -30,8 +29,8 @@ const authRoutes = ["/login", "/signup"];
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Get the token from cookies - using "auth_token" to avoid conflicts
-  const tokenCookie = request.cookies.get("auth_token")?.value;
+  // Get the token from cookies
+  const tokenCookie = request.cookies.get("token")?.value;
 
   // Parse and validate the token
   let isAuthenticated = false;

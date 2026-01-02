@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Formik, Field, ErrorMessage, useFormikContext } from "formik";
+import { useQueryClient } from "react-query";
 import styled from "@emotion/styled";
 
 import { loginForm } from "@components/AuthForm/constants";
 import { useAuth } from "@config/auth";
 
-import { FormikInput } from "../FormikWrappers";
+import { FormikInput, FormikPassword } from "../FormikWrappers";
 
 import {
   LoginWrapper,
@@ -34,6 +35,7 @@ export const Login = () => {
   const [loginError, setLoginError] = useState<string | null>(null);
   const { login } = useAuth();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   // Get redirect URL from query params (set by middleware)
   const redirectUrl = (router.query.redirect as string) || "/";
@@ -70,9 +72,13 @@ export const Login = () => {
               constants.IS_DEBUG &&
                 console.log("Cookie after login: ", document.cookie);
 
-              // Small delay to ensure cookie is fully written
-              await new Promise((resolve) => setTimeout(resolve, 100));
+              await queryClient.invalidateQueries("CART");
+              constants.IS_DEBUG && console.log("Cart cache invalidated");
 
+              // Small delay to ensure cookie is fully written and cart refetched
+              await new Promise((resolve) => setTimeout(resolve, 200));
+
+              // Use router.push to navigat
               // Use window.location for full page reload to ensure middleware picks up the cookie
               router.push(redirectUrl);
             } else {
@@ -117,10 +123,9 @@ export const Login = () => {
             </InputWrapper>
             <InputWrapper>
               <Field
-                type="password"
                 name="password"
                 placeholder="Password"
-                component={FormikInput}
+                component={FormikPassword}
                 label="Password"
               />
             </InputWrapper>

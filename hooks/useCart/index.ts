@@ -105,26 +105,44 @@ export const showCart = async () => {
 
 export const addItemToCart = async (item: AddItem) => {
   const storage = (await import("../../config/storage")).default;
-  let orderToken = await storage.getOrderToken();
+  const token = await storage.getToken();
 
-  constants.IS_DEBUG && console.log("ORDER TOKEN: ", orderToken);
-
-  // If no user order token, try creating user order token, otherwise check for or create a guest order token
-  if (!orderToken) {
-    constants.IS_DEBUG && console.log("NO USER ORDER TOKEN");
-
-    orderToken = await storage.getGuestOrderToken();
-
-    // No guest order token, create new cart and store new token
-    if (!orderToken) {
-      const newCart = await spreeClient.cart.create();
-      if (newCart.isSuccess()) {
-        orderToken = newCart.success().data.attributes.token;
-        storage.setGuestOrderToken(orderToken);
-        constants.IS_DEBUG && console.log("ORDER TOKEN CREATED: ", orderToken);
-      } else {
-        throw new Error("Failed to create new cart: " + newCart.fail().message);
+  // If user is authenticated, use bearer token
+  if (token?.access_token) {
+    constants.IS_DEBUG && console.log("Adding item to authenticated user cart");
+    
+    const response = await spreeClient.cart.addItem(
+      { bearerToken: token.access_token },
+      {
+        variant_id: item.variant_id,
+        quantity: item.quantity,
+        include: "line_items,variants"
       }
+    );
+
+    if (response.isSuccess()) {
+      constants.IS_DEBUG && console.log("ADD ITEM SUCCESSFUL");
+      return response.success();
+    } else {
+      constants.IS_DEBUG && console.log("ADD ITEM FAILED");
+      throw new Error(response.fail().message);
+    }
+  }
+
+  // Guest user logic
+  let orderToken = await storage.getGuestOrderToken();
+
+  constants.IS_DEBUG && console.log("GUEST ORDER TOKEN: ", orderToken);
+
+  // No guest order token, create new cart and store new token
+  if (!orderToken) {
+    const newCart = await spreeClient.cart.create();
+    if (newCart.isSuccess()) {
+      orderToken = newCart.success().data.attributes.token;
+      storage.setGuestOrderToken(orderToken);
+      constants.IS_DEBUG && console.log("ORDER TOKEN CREATED: ", orderToken);
+    } else {
+      throw new Error("Failed to create new cart: " + newCart.fail().message);
     }
   }
 
@@ -148,8 +166,23 @@ export const addItemToCart = async (item: AddItem) => {
 
 export const removeItemFromCart = async (itemId: string) => {
   const storage = (await import("../../config/storage")).default;
-  const orderToken =
-    (await storage.getOrderToken()) || (await storage.getGuestOrderToken());
+  const token = await storage.getToken();
+
+  // If user is authenticated, use bearer token
+  if (token?.access_token) {
+    const response = await spreeClient.cart.removeItem(
+      { bearerToken: token.access_token },
+      itemId
+    );
+    if (response.isSuccess()) {
+      return response.success();
+    } else {
+      throw new Error(response.fail().message);
+    }
+  }
+
+  // Guest user logic
+  const orderToken = await storage.getGuestOrderToken();
   if (!orderToken) {
     throw new Error("No cart token available");
   }
@@ -164,8 +197,26 @@ export const removeItemFromCart = async (itemId: string) => {
 
 export const updateItemQuantity = async (itemId: string, quantity: number) => {
   const storage = (await import("../../config/storage")).default;
-  const orderToken =
-    (await storage.getOrderToken()) || (await storage.getGuestOrderToken());
+  const token = await storage.getToken();
+
+  // If user is authenticated, use bearer token
+  if (token?.access_token) {
+    const response = await spreeClient.cart.setQuantity(
+      { bearerToken: token.access_token },
+      { line_item_id: itemId, quantity }
+    );
+
+    console.log("UPDATE ITEM RESPONSE: ", response);
+
+    if (response.isSuccess()) {
+      return response.success();
+    } else {
+      throw new Error(response.fail().message);
+    }
+  }
+
+  // Guest user logic
+  const orderToken = await storage.getGuestOrderToken();
   if (!orderToken) {
     throw new Error("No cart token available");
   }

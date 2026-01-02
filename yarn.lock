@@ -1254,6 +1254,18 @@
   resolved "https://registry.yarnpkg.com/@types/stats.js/-/stats.js-0.17.3.tgz#705446e12ce0fad618557dd88236f51148b7a935"
   integrity sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==
 
+"@types/text-mask-addons@3.8.4":
+  version "3.8.4"
+  resolved "https://registry.yarnpkg.com/@types/text-mask-addons/-/text-mask-addons-3.8.4.tgz#bb68699a9b360fec4654bcd375aed3af415e05b3"
+  integrity sha512-IUhjHDkPAIx14CqNKuyX95VTDvgaYAQwx8PEHeyXEvrruvcNSczyJt8SAv/0iSVh5sTnz+jEQmwWoPnrFEQdQw==
+  dependencies:
+    "@types/text-mask-core" "*"
+
+"@types/text-mask-core@*":
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/@types/text-mask-core/-/text-mask-core-5.1.3.tgz#fe3fce8b28b5c833f62a6c3e2526fd0aea80ed37"
+  integrity sha512-+ZQmTTFl2sJbZe13FHgRTA3EqWzB6nU73Pp8xd363RNypRIpwsUQKewlGNtjhrPa5hEPuz07RDwQq0LSYAeV+Q==
+
 "@types/three@*":
   version "0.176.0"
   resolved "https://registry.yarnpkg.com/@types/three/-/three-0.176.0.tgz#b6eced2b05e839395a6171e066c4631bc5b0a1e0"
@@ -7728,6 +7740,11 @@ terser@^4.1.2:
     commander "^2.20.0"
     source-map "~0.6.1"
     source-map-support "~0.5.12"
+
+text-mask-addons@3.8.0:
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/text-mask-addons/-/text-mask-addons-3.8.0.tgz#17b61ef665a4f36811f2ea1f01a223b4be61ab26"
+  integrity sha512-VSZSdc/tKn4zGxgpJ+uNBzoW1t472AoAFIlbw1K7hSNXz0DfSBYDJNRxLqgxOfWw1BY2z6DQpm7g0sYZn5qLpg==
 
 text-table@^0.2.0:
   version "0.2.0"

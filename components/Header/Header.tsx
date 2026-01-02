@@ -128,9 +128,21 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
                   horizontal: "center"
                 }}
               >
-                <AccountOption>
-                  <div>Account Settings</div>
-                </AccountOption>
+                <LinkDiv href="/account" isActive={pathname !== "/account"}>
+                  <AccountOption>
+                    <div>My Account</div>
+                  </AccountOption>
+                </LinkDiv>
+                <LinkDiv href="/account/orders" isActive={pathname !== "/account/orders"}>
+                  <AccountOption>
+                    <div>My Orders</div>
+                  </AccountOption>
+                </LinkDiv>
+                <LinkDiv href="/account/settings" isActive={pathname !== "/account/settings"}>
+                  <AccountOption>
+                    <div>Account Settings</div>
+                  </AccountOption>
+                </LinkDiv>
                 <AccountOption>
                   <div>Need Help?</div>
                 </AccountOption>

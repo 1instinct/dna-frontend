@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { pxPC } from "@utilities/device-sizes";
-import { InputBase } from "@mui/material";
+import { FormikInput } from "@components/FormikWrappers";
 export const Content = styled.div`
   min-height: calc(100vh - 543px);
   position: relative;
@@ -37,7 +37,7 @@ export const InputWrapper = styled.div`
   margin-top: ${pxPC(123)};
   margin-right: ${pxPC(58)};
 `;
-export const MyInput = styled(InputBase)`
+export const MyInput = styled(FormikInput)`
   width: ${pxPC(312)};
   height: 24px;
   border-bottom: 2px solid
@@ -92,7 +92,7 @@ export const FormItem = styled.div`
     margin-bottom: 0;
   }
 `;
-export const FormInput = styled(InputBase)`
+export const FormInput = styled(FormikInput)`
   font-size: 14px;
   color: ${(p) =>
     p.theme.isDarkMode
