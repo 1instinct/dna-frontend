@@ -3,15 +3,15 @@ import type { NextRequest } from "next/server";
 
 /**
  * Next.js Middleware for route protection
- * 
+ *
  * This middleware runs on every request and:
  * 1. Protects routes that require authentication (redirects to /login)
  * 2. Prevents authenticated users from accessing auth pages (redirects to /)
  * 3. Preserves the original URL in a redirect query param for post-login redirect
- * 
+ *
  * Protected routes: /account/*, /checkout, /thank-you, /update-email, /update-password
  * Auth routes: /login, /signup
- * 
+ *
  * The middleware checks for an "auth_token" cookie set by config/storage.ts
  */
 
@@ -32,7 +32,7 @@ export function middleware(request: NextRequest) {
 
   // Get the token from cookies - using "auth_token" to avoid conflicts
   const tokenCookie = request.cookies.get("auth_token")?.value;
-  
+
   // Parse and validate the token
   let isAuthenticated = false;
   let parseError = null;
@@ -40,16 +40,20 @@ export function middleware(request: NextRequest) {
     try {
       const tokenData = JSON.parse(decodeURIComponent(tokenCookie));
       // Check if token has access_token and hasn't expired
-      if (tokenData.access_token && tokenData.created_at && tokenData.expires_in) {
+      if (
+        tokenData.access_token &&
+        tokenData.created_at &&
+        tokenData.expires_in
+      ) {
         const expiresAt = tokenData.created_at + tokenData.expires_in;
         const now = Math.floor(Date.now() / 1000);
         isAuthenticated = now < expiresAt;
       } else {
-        parseError = 'Missing required token fields';
+        parseError = "Missing required token fields";
       }
     } catch (e) {
       // Invalid token format, treat as not authenticated
-      parseError = e instanceof Error ? e.message : 'Parse error';
+      parseError = e instanceof Error ? e.message : "Parse error";
       isAuthenticated = false;
     }
   }
@@ -60,8 +64,8 @@ export function middleware(request: NextRequest) {
     hasToken: !!tokenCookie,
     isAuthenticated,
     parseError,
-    tokenPreview: tokenCookie ? tokenCookie.substring(0, 30) + '...' : 'none',
-    allCookies: request.cookies.getAll().map(c => c.name)
+    tokenPreview: tokenCookie ? tokenCookie.substring(0, 30) + "..." : "none",
+    allCookies: request.cookies.getAll().map((c) => c.name)
   });
 
   // Check if the current path is a protected route

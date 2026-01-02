@@ -44,11 +44,11 @@ export const InputWrapper = styled.div<GenericThemeType>`
 export const Subtext = styled.div`
   margin-top: 20px;
   font-size: 14px;
-  
+
   a {
     color: ${(p) => p.theme.colors.brand.primary};
     text-decoration: none;
-    
+
     &:hover {
       text-decoration: underline;
     }

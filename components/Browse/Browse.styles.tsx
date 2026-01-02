@@ -30,7 +30,9 @@ export const ContentWrapper = styled.div`
 
 export const FilterSidebar = styled.aside`
   background: ${(p) =>
-    p.theme.isDarkMode ? p.theme.colors.black.medium : p.theme.colors.white.medium};
+    p.theme.isDarkMode
+      ? p.theme.colors.black.medium
+      : p.theme.colors.white.medium};
   padding: 24px;
   border-radius: 8px;
   box-shadow: ${(p) =>
@@ -54,7 +56,7 @@ export const ProductsArea = styled.main`
 export const FilterSection = styled.div`
   margin-bottom: 32px;
   padding-bottom: 24px;
-  border-bottom: 1px solid ${(p) => p.theme.colors.gray?.light || '#e0e0e0'};
+  border-bottom: 1px solid ${(p) => p.theme.colors.gray?.light || "#e0e0e0"};
 
   &:last-of-type {
     border-bottom: none;
@@ -115,7 +117,9 @@ export const SortContainer = styled.div`
   margin-bottom: 24px;
   padding: 16px 20px;
   background: ${(p) =>
-    p.theme.isDarkMode ? p.theme.colors.black.medium : p.theme.colors.white.medium};
+    p.theme.isDarkMode
+      ? p.theme.colors.black.medium
+      : p.theme.colors.white.medium};
   border-radius: 8px;
   box-shadow: ${(p) =>
     p.theme.isDarkMode
@@ -147,13 +151,16 @@ export const SortLabel = styled.span`
 
 export const SortSelect = styled.select`
   padding: 8px 32px 8px 12px;
-  border: 1px solid ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.gray.dark
-      : p.theme.colors.gray?.light || '#e0e0e0'};
+  border: 1px solid
+    ${(p) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.gray.dark
+        : p.theme.colors.gray?.light || "#e0e0e0"};
   border-radius: 6px;
   background: ${(p) =>
-    p.theme.isDarkMode ? p.theme.colors.black.dark : p.theme.colors.white.primary};
+    p.theme.isDarkMode
+      ? p.theme.colors.black.dark
+      : p.theme.colors.white.primary};
   color: ${(p) =>
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
@@ -181,13 +188,16 @@ export const SearchBar = styled.div`
 export const SearchInput = styled.input`
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.gray.dark
-      : p.theme.colors.gray?.light || '#e0e0e0'};
+  border: 1px solid
+    ${(p) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.gray.dark
+        : p.theme.colors.gray?.light || "#e0e0e0"};
   border-radius: 6px;
   background: ${(p) =>
-    p.theme.isDarkMode ? p.theme.colors.black.dark : p.theme.colors.white.primary};
+    p.theme.isDarkMode
+      ? p.theme.colors.black.dark
+      : p.theme.colors.white.primary};
   color: ${(p) =>
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
@@ -262,7 +272,9 @@ export const EmptyState = styled.div`
   padding: 80px 20px;
   text-align: center;
   background: ${(p) =>
-    p.theme.isDarkMode ? p.theme.colors.black.medium : p.theme.colors.white.medium};
+    p.theme.isDarkMode
+      ? p.theme.colors.black.medium
+      : p.theme.colors.white.medium};
   border-radius: 8px;
 
   h2 {
@@ -304,13 +316,16 @@ export const PriceInputs = styled.div`
 export const PriceInput = styled.input`
   flex: 1;
   padding: 8px 10px;
-  border: 1px solid ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.gray.dark
-      : p.theme.colors.gray?.light || '#e0e0e0'};
+  border: 1px solid
+    ${(p) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.gray.dark
+        : p.theme.colors.gray?.light || "#e0e0e0"};
   border-radius: 6px;
   background: ${(p) =>
-    p.theme.isDarkMode ? p.theme.colors.black.dark : p.theme.colors.white.primary};
+    p.theme.isDarkMode
+      ? p.theme.colors.black.dark
+      : p.theme.colors.white.primary};
   color: ${(p) =>
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
@@ -337,7 +352,7 @@ export const PriceInput = styled.input`
   }
 
   /* Remove spinner arrows in Firefox */
-  &[type=number] {
+  &[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
   }

@@ -11,7 +11,7 @@ interface ProtectedRouteProps {
 /**
  * Client-side route protection component
  * Use this to wrap page components that require authentication
- * 
+ *
  * Example usage:
  * ```tsx
  * const AccountPage = () => {
@@ -37,9 +37,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       // Still loading
       return;
     }
-    
+
     setIsChecking(false);
-    
+
     if (!user) {
       // Not authenticated, redirect to login
       router.push(`${redirectTo}?redirect=${router.asPath}`);

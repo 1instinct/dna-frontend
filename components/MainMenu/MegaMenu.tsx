@@ -70,7 +70,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ menuItems, loading }) => {
       const isActive = activeSubmenu === item.id;
 
       return (
-        <div key={item.id} style={{ position: 'relative' }}>
+        <div key={item.id} style={{ position: "relative" }}>
           <SubMenuItem
             onMouseEnter={() => hasChildren && handleSubmenuEnter(item.id)}
             onClick={() => handleItemClick(item.url, hasChildren || false)}
@@ -147,10 +147,8 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ menuItems, loading }) => {
             <MegaGrid columnCount={Math.min(columns.length, 4)}>
               {columns.map((columnItems, colIdx) => (
                 <MegaColumn key={`col-${colIdx}`}>
-                  <ColumnTitle>{colIdx === 0 ? item.name : ''}</ColumnTitle>
-                  <SubMenuList>
-                    {renderNestedMenu(columnItems)}
-                  </SubMenuList>
+                  <ColumnTitle>{colIdx === 0 ? item.name : ""}</ColumnTitle>
+                  <SubMenuList>{renderNestedMenu(columnItems)}</SubMenuList>
                 </MegaColumn>
               ))}
               {/* Optional: Featured/Highlight section */}

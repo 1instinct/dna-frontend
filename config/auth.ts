@@ -104,7 +104,10 @@ async function mergeCarts(guestOrderToken: string) {
       );
       if (!addItemResponse.isSuccess()) {
         const error = addItemResponse.fail();
-        console.warn(`Failed to add item ${item.id} to cart (may already exist):`, error.message || error);
+        console.warn(
+          `Failed to add item ${item.id} to cart (may already exist):`,
+          error.message || error
+        );
         // Continue with other items instead of failing completely
       } else {
         constants.IS_DEBUG &&
@@ -169,7 +172,9 @@ const authConfig = {
       const error = response.fail();
       constants.IS_DEBUG && console.warn(error);
       // Throw error so it can be caught in the Login component
-      throw new Error(error.message || "Invalid email or password. Please try again.");
+      throw new Error(
+        error.message || "Invalid email or password. Please try again."
+      );
     }
   },
   registerFn: async (data: unknown) => {

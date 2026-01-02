@@ -67,14 +67,15 @@ export const MegaDropdown = styled.div<DropdownProps>`
       ? p.theme.colors.black.primary
       : p.theme.colors.white.primary};
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  border-top: 1px solid ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.light
-      : p.theme.colors.gray.light};
+  border-top: 1px solid
+    ${(p) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.white.light
+        : p.theme.colors.gray.light};
   z-index: 1000;
   opacity: ${(p) => (p.isActive ? 1 : 0)};
-  visibility: ${(p) => (p.isActive ? 'visible' : 'hidden')};
-  transform: translateY(${(p) => (p.isActive ? '0' : '-10px')});
+  visibility: ${(p) => (p.isActive ? "visible" : "hidden")};
+  transform: translateY(${(p) => (p.isActive ? "0" : "-10px")});
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
   max-height: 600px;
   overflow-y: auto;
@@ -117,10 +118,11 @@ export const ColumnTitle = styled.h4`
   color: ${(p) => p.theme.colors.brand.primary};
   margin: 0 0 12px 0;
   padding-bottom: 8px;
-  border-bottom: 1px solid ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.light
-      : p.theme.colors.gray.light};
+  border-bottom: 1px solid
+    ${(p) =>
+      p.theme.isDarkMode
+        ? p.theme.colors.white.light
+        : p.theme.colors.gray.light};
 `;
 
 export const SubMenuList = styled.div`
@@ -135,12 +137,13 @@ interface SubMenuItemProps {
 }
 
 export const SubMenuItem = styled.div<SubMenuItemProps>`
-  font-size: ${(p) => (p.level === 0 ? '14px' : '13px')};
+  font-size: ${(p) => (p.level === 0 ? "14px" : "13px")};
   color: ${(p) =>
     p.theme.isDarkMode
       ? p.theme.colors.white.primary
       : p.theme.colors.black.primary};
-  padding: ${(p) => (p.level === 0 ? '8px 12px' : '6px 12px 6px ' + (12 + p.level * 16) + 'px')};
+  padding: ${(p) =>
+    p.level === 0 ? "8px 12px" : "6px 12px 6px " + (12 + p.level * 16) + "px"};
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.2s ease;
@@ -151,9 +154,7 @@ export const SubMenuItem = styled.div<SubMenuItemProps>`
 
   &:hover {
     background: ${(p) =>
-      p.theme.isDarkMode
-        ? 'rgba(255, 255, 255, 0.05)'
-        : 'rgba(0, 0, 0, 0.03)'};
+      p.theme.isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.03)"};
     color: ${(p) => p.theme.colors.brand.primary};
     transform: translateX(4px);
   }
@@ -184,15 +185,19 @@ export const NestedSubMenu = styled.div<NestedSubMenuProps>`
   padding: 8px;
   margin-left: 8px;
   opacity: ${(p) => (p.isActive ? 1 : 0)};
-  visibility: ${(p) => (p.isActive ? 'visible' : 'hidden')};
-  transform: translateX(${(p) => (p.isActive ? '0' : '-10px')});
+  visibility: ${(p) => (p.isActive ? "visible" : "hidden")};
+  transform: translateX(${(p) => (p.isActive ? "0" : "-10px")});
   transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
   z-index: ${(p) => 1001 + p.level};
 `;
 
 export const HighlightSection = styled.div`
   padding: 20px;
-  background: linear-gradient(135deg, ${(p) => p.theme.colors.brand.primary}15, ${(p) => p.theme.colors.brand.secondary}15);
+  background: linear-gradient(
+    135deg,
+    ${(p) => p.theme.colors.brand.primary}15,
+    ${(p) => p.theme.colors.brand.secondary}15
+  );
   border-radius: 8px;
   border: 1px solid ${(p) => p.theme.colors.brand.primary}40;
 

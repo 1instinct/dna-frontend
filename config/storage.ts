@@ -53,21 +53,30 @@ const storage = {
   setToken: (token: IOAuthToken) => {
     window.localStorage.setItem("token", JSON.stringify(token));
     // Also set cookie for middleware access - using "auth_token" to avoid conflicts
-    const isSecure = window.location.protocol === 'https:';
+    const isSecure = window.location.protocol === "https:";
     const tokenStr = JSON.stringify(token);
-    const cookieString = `auth_token=${encodeURIComponent(tokenStr)}; path=/; max-age=${token.expires_in}; SameSite=Lax${isSecure ? '; Secure' : ''}`;
-    
-    constants.IS_DEBUG && console.log('[Storage] Setting cookie:', {
-      isSecure,
-      expiresIn: token.expires_in,
-      cookieLength: cookieString.length,
-      cookiePreview: cookieString.substring(0, 100)
-    });
-    
+    const cookieString = `auth_token=${encodeURIComponent(
+      tokenStr
+    )}; path=/; max-age=${token.expires_in}; SameSite=Lax${
+      isSecure ? "; Secure" : ""
+    }`;
+
+    constants.IS_DEBUG &&
+      console.log("[Storage] Setting cookie:", {
+        isSecure,
+        expiresIn: token.expires_in,
+        cookieLength: cookieString.length,
+        cookiePreview: cookieString.substring(0, 100)
+      });
+
     document.cookie = cookieString;
-    
+
     // Verify cookie was set
-    constants.IS_DEBUG && console.log('[Storage] Cookie after set:', document.cookie.includes('auth_token') ? 'SUCCESS' : 'FAILED');
+    constants.IS_DEBUG &&
+      console.log(
+        "[Storage] Cookie after set:",
+        document.cookie.includes("auth_token") ? "SUCCESS" : "FAILED"
+      );
   },
   getGuestOrderToken: async (): Promise<string | undefined> => {
     const token = window.localStorage.getItem("guestOrderToken");
@@ -92,7 +101,8 @@ const storage = {
     window.localStorage.removeItem("orderToken");
     window.localStorage.removeItem("guestOrderToken");
     // Also clear the cookie - using "auth_token" to avoid conflicts
-    document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+    document.cookie =
+      "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
   },
   clearGuestToken: () => {
     // Only clear guest-related tokens, preserve auth token

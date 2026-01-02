@@ -12,7 +12,7 @@
 1. Keep `index.ts` files dumb, only exporting from other files without adding logic.
 1. Keep `pages/` files focused on routing and high-level composition, avoiding complex logic.
 1. Place the majority of markup in capitalized component files and folders within `components/`.
-1. Every new 
+1. Every new
 
 ## Project Overview
 
@@ -32,21 +32,25 @@ This is a **production Next.js 13 e-commerce application** using the **Pages Rou
 ## Tech Stack
 
 ### Core Framework
+
 - **Next.js 13.1.1** with Pages Router (file-based routing in `/pages`)
 - **React 18.2.0** with TypeScript strict mode
 - **TypeScript 4.9.4** with strict type checking
 
 ### Styling
+
 - **Emotion 11.13.3** for CSS-in-JS (`@emotion/styled`, `@emotion/react`)
 - **Material-UI v4.12.3** for UI components
 - Always use `shouldForwardProp` with `isPropValid` to filter custom props
 
 ### State Management
+
 - **React Query 3.6.0** for server state, data fetching, and caching
 - **Local Storage** for token management via `config/storage.ts`
 - All query keys centralized in `hooks/queryKeys.ts`
 
 ### Key Libraries
+
 - `react-burger-menu` - Mobile navigation
 - `pure-react-carousel` - Image carousels
 - `formik` + `yup` - Form handling and validation
@@ -97,9 +101,12 @@ import { useTheme } from "@emotion/react";
 import { ComponentNameProps } from "./types";
 import { Container, Title } from "./ComponentName.styles";
 
-export const ComponentName: React.FC<ComponentNameProps> = ({ prop1, prop2 }) => {
+export const ComponentName: React.FC<ComponentNameProps> = ({
+  prop1,
+  prop2
+}) => {
   const theme = useTheme();
-  
+
   return (
     <Container>
       <Title>{prop1}</Title>
@@ -120,7 +127,8 @@ export const Container = styled.div`
 export const Title = styled("h1", {
   shouldForwardProp: (prop) => isPropValid(prop) && prop !== "customProp"
 })<{ customProp?: boolean }>`
-  color: ${(p) => p.customProp ? p.theme.colors.white.primary : p.theme.colors.black.primary};
+  color: ${(p) =>
+    p.customProp ? p.theme.colors.white.primary : p.theme.colors.black.primary};
 `;
 
 // types/index.d.ts
@@ -144,12 +152,12 @@ import { QueryKeys } from "@hooks/queryKeys";
 export const fetchResource = async (id: string) => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
-  
+
   const response = await spreeClient.resource.show(
     { bearerToken: token?.access_token },
     id
   );
-  
+
   if (response.isSuccess()) {
     return response.success();
   } else {
@@ -168,7 +176,7 @@ export const useResource = (id: string) => {
 // Mutation hook with cache invalidation
 export const useUpdateResource = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation(updateResource, {
     onSuccess: () => {
       queryClient.invalidateQueries(QueryKeys.RESOURCE);
@@ -184,13 +192,13 @@ export const useUpdateResource = () => {
 const theme = useTheme();
 
 // Common theme values:
-theme.colors.brand.primary
-theme.colors.white.primary
-theme.colors.black.primary
-theme.isDarkMode
-theme.breakpoints.values.xs  // 375px
-theme.typography.titleLG.fontFamily
-theme.typography.bodyMD.fontSize
+theme.colors.brand.primary;
+theme.colors.white.primary;
+theme.colors.black.primary;
+theme.isDarkMode;
+theme.breakpoints.values.xs; // 375px
+theme.typography.titleLG.fontFamily;
+theme.typography.bodyMD.fontSize;
 ```
 
 ### Responsive Design
@@ -205,7 +213,7 @@ const isDesktop = useMediaQuery({ minWidth: 1025 });
 // Or use CSS media queries in styled components:
 const Container = styled.div`
   padding: 20px;
-  
+
   @media (max-width: ${(p) => p.theme.breakpoints.values.xs}px) {
     padding: 10px;
   }
@@ -240,6 +248,7 @@ const orderToken = await storage.getOrderToken();
 ### Environment Variables
 
 Access via `process.env.NEXT_PUBLIC_*`:
+
 - `NEXT_PUBLIC_SPREE_API_URL` - Backend API URL
 - `NEXT_PUBLIC_SPREE_ACCESS_TOKEN` - API token
 - `NEXT_PUBLIC_DARK_MODE` - Dark mode toggle
@@ -284,7 +293,7 @@ const validationSchema = Yup.object({
       {errors.email && touched.email && <div>{errors.email}</div>}
     </Form>
   )}
-</Formik>
+</Formik>;
 ```
 
 ### Image Handling
@@ -293,8 +302,8 @@ const validationSchema = Yup.object({
 import Image from "next/image";
 
 // For static images:
-<Image 
-  src="/images/logo.png" 
+<Image
+  src="/images/logo.png"
   alt="Logo"
   width={141}
   height={35}
@@ -347,6 +356,7 @@ yarn pre-commit         # Run all checks
 ## When Suggesting Code
 
 ✅ **Do:**
+
 - Use existing patterns from the codebase
 - Filter custom props with `shouldForwardProp`
 - Use React Query for data fetching
@@ -357,6 +367,7 @@ yarn pre-commit         # Run all checks
 - Handle loading and error states
 
 ❌ **Don't:**
+
 - Suggest upgrading locked dependencies
 - Use App Router patterns (this uses Pages Router)
 - Mix Material-UI v5 with v4
@@ -364,4 +375,4 @@ yarn pre-commit         # Run all checks
 - Use inline styles when Emotion is available
 - Hardcode API URLs (use env vars)
 - Skip TypeScript types
-- Ignore existing component patterns 
+- Ignore existing component patterns

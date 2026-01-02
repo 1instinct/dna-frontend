@@ -60,42 +60,52 @@ export const Login = () => {
           try {
             setSubmitting(true);
             setLoginError(null);
-            
+
             const result = await login(values);
-            
+
             if (result) {
               // Redirect to the original URL or home on successful login
               constants.IS_DEBUG && console.log("LOGIN SUCCESS: ", result);
               constants.IS_DEBUG && console.log("Redirect URL: ", redirectUrl);
-              constants.IS_DEBUG && console.log("Cookie after login: ", document.cookie);
-              
+              constants.IS_DEBUG &&
+                console.log("Cookie after login: ", document.cookie);
+
               // Small delay to ensure cookie is fully written
-              await new Promise(resolve => setTimeout(resolve, 100));
-              
+              await new Promise((resolve) => setTimeout(resolve, 100));
+
               // Use window.location for full page reload to ensure middleware picks up the cookie
               router.push(redirectUrl);
             } else {
               // This shouldn't happen with the updated auth.ts, but just in case
-              setLoginError("Login failed. Please check your credentials and try again.");
+              setLoginError(
+                "Login failed. Please check your credentials and try again."
+              );
               setSubmitting(false);
             }
           } catch (e: any) {
             constants.IS_DEBUG && console.error("LOGIN FAIL: ", e);
-            const errorMessage = e?.message || "Login failed. Please check your credentials and try again.";
+            const errorMessage =
+              e?.message ||
+              "Login failed. Please check your credentials and try again.";
             setLoginError(errorMessage);
-            
+
             // Also set field errors if it's a credentials issue
-            if (errorMessage.toLowerCase().includes("email") || errorMessage.toLowerCase().includes("password")) {
+            if (
+              errorMessage.toLowerCase().includes("email") ||
+              errorMessage.toLowerCase().includes("password")
+            ) {
               setFieldError("password", "Invalid email or password");
             }
-            
+
             setSubmitting(false);
           }
         }}
       >
         {() => (
           <FormWrapper>
-            {loginError && <ErrorMessageDisplay>{loginError}</ErrorMessageDisplay>}
+            {loginError && (
+              <ErrorMessageDisplay>{loginError}</ErrorMessageDisplay>
+            )}
             <InputWrapper>
               <Field
                 type="email"

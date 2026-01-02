@@ -60,9 +60,10 @@ export const MainMenu = (props: MainMenuProps) => {
   if (menuItemsIsLoading || menuLocationIsLoading || !menuItemsData)
     return null;
 
-  const menuItems = menuItemsData?.response_data?.menu_location_listing?.length > 0
-    ? menuItemsData.response_data.menu_location_listing[0].menu_item_listing
-    : [];
+  const menuItems =
+    menuItemsData?.response_data?.menu_location_listing?.length > 0
+      ? menuItemsData.response_data.menu_location_listing[0].menu_item_listing
+      : [];
 
   return (
     <>
@@ -76,10 +77,7 @@ export const MainMenu = (props: MainMenuProps) => {
       </HiddenOnDesktop>
       <HiddenOnMobile>
         {menuItemsIsSuccess ? (
-          <MegaMenu
-            menuItems={menuItems}
-            loading={menuItemsIsLoading}
-          />
+          <MegaMenu menuItems={menuItems} loading={menuItemsIsLoading} />
         ) : null}
       </HiddenOnMobile>
     </>
