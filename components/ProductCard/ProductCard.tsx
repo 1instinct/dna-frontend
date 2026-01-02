@@ -5,6 +5,8 @@ import { QueryKeys } from "@hooks/queryKeys";
 import { useMutation } from "react-query";
 import { AddItem } from "@spree/storefront-api-v2-sdk/types/interfaces/endpoints/CartClass";
 import { addItemToCart } from "@hooks/useCart";
+import { useToggleFavorite, useCheckFavorite } from "@hooks/useFavorites";
+import { useAuth } from "@config/auth";
 
 import {
   ProductCardWrapper,
@@ -19,16 +21,24 @@ import {
   Price,
   AddToCartButton,
   ThreeDot,
-  Dot
+  Dot,
+  FavoriteButton
   // Dot1,
   // Dot2,
   // Dot3
 } from "./ProductCard.styles";
 import constants from "@utilities/constants";
+import { IProduct } from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
+import { encode } from "punycode";
 
 export const ProductCard = ({ imgSrc, item, opts }: any) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const variantId = item.relationships.default_variant.data.id;
+
+  const { data: favoriteCheck } = useCheckFavorite(variantId, !!user);
+  const toggleFavorite = useToggleFavorite();
 
   const addToCart = useMutation(addItemToCart, {
     onSuccess: () => {
@@ -45,6 +55,16 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
     addToCart.mutate(item);
   };
 
+  const handleToggleFavorite = (e: React.MouseEvent, product: any) => {
+    e.stopPropagation();
+    if (!user) {
+      const redirectUrl = encodeURIComponent(`/${product.attributes.slug}`);
+      router.push(`/login?redirect=${redirectUrl}`);
+      return;
+    }
+    toggleFavorite.mutate(variantId);
+  };
+
   // console.log("ProductCard opts:", opts);
   // console.log("ProductCard item:", item.attributes.name);
 
@@ -57,6 +77,12 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
             src={imgSrc}
             onClick={(e) => router.push(`${item.attributes.slug}`)}
           />
+          <FavoriteButton
+            onClick={(e) => handleToggleFavorite(e, item)}
+            isFavorited={favoriteCheck?.is_favorited}
+          >
+            {favoriteCheck?.is_favorited ? "❤️" : "🤍"}
+          </FavoriteButton>
         </ProductImgWrapper>
         <ProductFooter>
           <ProductFooterLeft>

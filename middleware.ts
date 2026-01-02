@@ -38,6 +38,15 @@ export function middleware(request: NextRequest) {
   if (tokenCookie) {
     try {
       const tokenData = JSON.parse(decodeURIComponent(tokenCookie));
+      console.log("[Middleware] Parsed token data:", {
+        hasAccessToken: !!tokenData.access_token,
+        hasCreatedAt: !!tokenData.created_at,
+        hasExpiresIn: !!tokenData.expires_in,
+        createdAt: tokenData.created_at,
+        expiresIn: tokenData.expires_in,
+        now: Math.floor(Date.now() / 1000)
+      });
+
       // Check if token has access_token and hasn't expired
       if (
         tokenData.access_token &&
@@ -47,6 +56,13 @@ export function middleware(request: NextRequest) {
         const expiresAt = tokenData.created_at + tokenData.expires_in;
         const now = Math.floor(Date.now() / 1000);
         isAuthenticated = now < expiresAt;
+
+        console.log("[Middleware] Token validation:", {
+          expiresAt,
+          now,
+          isExpired: now >= expiresAt,
+          isAuthenticated
+        });
       } else {
         parseError = "Missing required token fields";
       }
@@ -54,6 +70,7 @@ export function middleware(request: NextRequest) {
       // Invalid token format, treat as not authenticated
       parseError = e instanceof Error ? e.message : "Parse error";
       isAuthenticated = false;
+      console.error("[Middleware] Token parse error:", parseError);
     }
   }
 

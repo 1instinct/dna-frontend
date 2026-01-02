@@ -16,6 +16,7 @@ export const ProductImgWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 
   @media (max-width: ${(p) => p.theme.breakpoints.values.sm}) {
     flex-direction: column;
@@ -97,6 +98,39 @@ export const Dot = styled.div<DotProps>`
         : p.theme.colors.black.primary};
   margin-right: ${pxPC(8)};
   background-color: ${(p) => p.color};
+`;
+
+type FavoriteButtonProps = {
+  isFavorited?: boolean;
+};
+
+export const FavoriteButton = styled.button<FavoriteButtonProps>`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: ${(p) =>
+    p.theme.isDarkMode ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.9)"};
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  transition: transform 0.2s, background 0.2s;
+  z-index: 10;
+
+  &:hover {
+    transform: scale(1.1);
+    background: ${(p) =>
+      p.theme.isDarkMode ? "rgba(0, 0, 0, 0.8)" : "rgba(255, 255, 255, 1)"};
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
 // export const Dot1 = styled(Dot)`

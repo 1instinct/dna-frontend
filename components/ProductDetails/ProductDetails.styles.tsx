@@ -200,3 +200,51 @@ export const PropertyName = styled.span`
       ? p.theme.colors.gray.primary
       : p.theme.colors.black.primary};
 `;
+
+type FavoriteButtonProps = {
+  isFavorited?: boolean;
+};
+
+export const FavoriteButton = styled.button<FavoriteButtonProps>`
+  background: ${(p) =>
+    p.isFavorited
+      ? p.theme.colors.red.primary
+      : p.theme.isDarkMode
+      ? p.theme.colors.gray.dark
+      : p.theme.colors.gray.light};
+  color: ${(p) =>
+    p.isFavorited
+      ? p.theme.colors.white.primary
+      : p.theme.isDarkMode
+      ? p.theme.colors.white.primary
+      : p.theme.colors.black.primary};
+  border: 1px solid
+    ${(p) =>
+      p.isFavorited
+        ? p.theme.colors.red.primary
+        : p.theme.isDarkMode
+        ? p.theme.colors.gray.medium
+        : p.theme.colors.gray.dark};
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: ${(p) => p.theme.typography.bodyMD.fontFamily};
+  font-size: 14px;
+  margin: 15px 0;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &:hover {
+    background: ${(p) =>
+      p.isFavorited ? p.theme.colors.red.primary : p.theme.colors.brand.primary};
+    color: ${(p) => p.theme.colors.white.primary};
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;

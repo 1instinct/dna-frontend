@@ -12,6 +12,8 @@ import {
   useStreams,
   useVariants
 } from "../../hooks";
+import { useToggleFavorite, useCheckFavorite } from "../../hooks/useFavorites";
+import { useAuth } from "../../config/auth";
 import { Layout, LoadingWrapper, Loading } from "../components";
 import { useProduct, fetchProduct } from "../../hooks/useProduct";
 import { useMutation, useQueryClient } from "react-query";
@@ -54,7 +56,8 @@ import {
   ColorsRow,
   ColorsCell,
   BuyButton,
-  PropertyName
+  PropertyName,
+  FavoriteButton
 } from "./ProductDetails.styles";
 import { boolean } from "yup";
 import { size } from "polished";
@@ -93,6 +96,7 @@ export const RetailProductDetails = ({
 }: RetailProductDetailsProps) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });
+  const { user } = useAuth();
   const { asPath: productSlug } = router;
   const {
     data: thisProduct,
@@ -101,6 +105,13 @@ export const RetailProductDetails = ({
     isError,
     error: productError
   } = useProduct(`${productSlug.toLowerCase().replace("/", "")}`);
+
+  const defaultVariantData = thisProduct?.data?.relationships?.default_variant?.data;
+  const defaultVariantId = Array.isArray(defaultVariantData)
+    ? defaultVariantData[0]?.id || ""
+    : defaultVariantData?.id || "";
+  const { data: favoriteCheck } = useCheckFavorite(defaultVariantId, !!user);
+  const toggleFavorite = useToggleFavorite();
   const productImgs =
     thisProduct &&
     thisProduct?.included?.filter((e: any) => e["type"] === "image");
@@ -432,6 +443,17 @@ export const RetailProductDetails = ({
     addToCart.mutate(i);
   };
 
+  const handleToggleFavorite = () => {
+    if (!user) {
+      const redirectUrl = encodeURIComponent(router.asPath);
+      router.push(`/login?redirect=${redirectUrl}`);
+      return;
+    }
+    if (defaultVariantId) {
+      toggleFavorite.mutate(defaultVariantId);
+    }
+  };
+
   useEffect(() => {
     if (isSuccess) {
       // // On page load, set focus on the product contaniner, because otherwise the arrow keys (left/right) won't work
@@ -516,6 +538,14 @@ export const RetailProductDetails = ({
           <ProductInfoBox>
             <ProductDescription>
               <h2>{thisProduct?.data?.attributes?.name}</h2>
+              <FavoriteButton
+                onClick={handleToggleFavorite}
+                isFavorited={favoriteCheck?.is_favorited}
+              >
+                {favoriteCheck?.is_favorited
+                  ? "❤️ Remove from Favorites"
+                  : "🤍 Add to Favorites"}
+              </FavoriteButton>
               {renderVariantSwatches()}
               <p>{thisProduct?.data?.attributes?.description}</p>
               <hr />

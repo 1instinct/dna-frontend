@@ -200,6 +200,20 @@ export const Account = () => {
                     </FormSection>
 
                     <FormSection>
+                      <SectionTitle>Favorites</SectionTitle>
+                      <FormLabel>
+                        View and manage your saved favorite products.
+                      </FormLabel>
+                      <ButtonWrapper>
+                        <Button
+                          onClick={() => router.push("/account/favorites")}
+                        >
+                          View Favorites
+                        </Button>
+                      </ButtonWrapper>
+                    </FormSection>
+
+                    <FormSection>
                       <SectionTitle>Account Details</SectionTitle>
                       {updateError && (
                         <ErrorMessageDisplay>{updateError}</ErrorMessageDisplay>

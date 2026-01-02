@@ -7,6 +7,7 @@ import Sticky from "react-sticky-el";
 import { HeaderProps } from "./types";
 import { useAuth } from "../../config/auth";
 import { useCart } from "../../hooks/useCart";
+import { useFavorites } from "../../hooks/useFavorites";
 import SearchBar from "../SearchBar";
 import { CartSidebar } from "../CartSidebar/CartSidebar";
 import { SocialLinks } from "..";
@@ -58,6 +59,8 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
     isLoading: cartIsLoading,
     isError: cartHasError
   } = useCart();
+
+  const { data: favoritesData } = useFavorites(1);
 
   const handleAccount = (event: any) => {
     setAccountElem(event.currentTarget);
@@ -157,20 +160,25 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
                   <div onClick={logout}>Logout</div>
                 </AccountOption>
               </AccountMenu>
-              {/* <UserIconMo src={"/user.png"} /> */}
-              <Badge badgeContent={4} color="secondary" overlap="rectangular">
-                <FavoriteIcon />
-              </Badge>
+              <LinkDiv
+                href="/account/favorites"
+                isActive={pathname !== "/account/favorites"}
+              >
+                <Badge
+                  badgeContent={favoritesData?.meta?.total_count || 0}
+                  color="secondary"
+                  overlap="rectangular"
+                >
+                  <FavoriteIcon />
+                </Badge>
+              </LinkDiv>
             </HeaderAccount>
           ) : (
             <HeaderOptions>
               <LinkDiv href="/login" isActive={pathname !== "/login"}>
                 LOGIN
               </LinkDiv>
-              <LinkDiv
-                href="/signup"
-                isActive={pathname !== "/authenticate/signup"}
-              >
+              <LinkDiv href="/signup" isActive={pathname !== "/signup"}>
                 SIGN UP
               </LinkDiv>
             </HeaderOptions>
