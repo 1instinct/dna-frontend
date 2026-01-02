@@ -481,7 +481,6 @@ const CheckoutForm = () => {
           </div>
         )}
 
-        
         <CheckoutGrid>
           <StyledCheckoutForm as="form" onSubmit={handleSubmit}>
             {/* Contact Information */}

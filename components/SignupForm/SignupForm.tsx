@@ -12,7 +12,11 @@ import { useAuth } from "@config/auth";
 import { signupForm } from "@components/AuthForm/constants";
 import TipBot from "@components/TipBot";
 import Static from "@utilities/staticData";
-import { FormikInput, FormikPassword, FormikCheckbox } from "@components/FormikWrappers";
+import {
+  FormikInput,
+  FormikPassword,
+  FormikCheckbox
+} from "@components/FormikWrappers";
 import {
   Title,
   Subtitle,

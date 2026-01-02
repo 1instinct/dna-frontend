@@ -81,7 +81,9 @@ const ButtonWrapper = styled.div`
 `;
 
 const validationSchema = Yup.object({
-  email: Yup.string().email("Invalid email address").required("Email is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
   password: Yup.string().min(8, "Password must be at least 8 characters"),
   password_confirmation: Yup.string().oneOf(
     [Yup.ref("password")],
@@ -142,12 +144,13 @@ export const Account = () => {
                   const updateData: any = { email: values.email };
                   if (values.password) {
                     updateData.password = values.password;
-                    updateData.password_confirmation = values.password_confirmation;
+                    updateData.password_confirmation =
+                      values.password_confirmation;
                   }
 
                   await updateAccount.mutateAsync(updateData);
                   setUpdateSuccess("Account updated successfully!");
-                  
+
                   // Reset password fields
                   resetForm({
                     values: {
@@ -188,7 +191,9 @@ export const Account = () => {
                         here.
                       </FormLabel>
                       <ButtonWrapper>
-                        <Button onClick={() => router.push("/account/addresses")}>
+                        <Button
+                          onClick={() => router.push("/account/addresses")}
+                        >
                           Manage Addresses
                         </Button>
                       </ButtonWrapper>
@@ -233,7 +238,10 @@ export const Account = () => {
                         />
                       </FormItem>
                       <ButtonWrapper>
-                        <Button onClick={handleSubmit as any} disabled={isSubmitting}>
+                        <Button
+                          onClick={handleSubmit as any}
+                          disabled={isSubmitting}
+                        >
                           {isSubmitting ? "Updating..." : "Update Account"}
                         </Button>
                       </ButtonWrapper>
@@ -245,11 +253,14 @@ export const Account = () => {
                       <SectionTitle>Favorites</SectionTitle>
                       <FormLabel>
                         Want it? Manifest it. This is a place for you to explore
-                        your personal fashion palette. And who knows? Maybe pieces
-                        of this style board will even end up in your closet.
+                        your personal fashion palette. And who knows? Maybe
+                        pieces of this style board will even end up in your
+                        closet.
                       </FormLabel>
                       <ButtonWrapper>
-                        <Button onClick={() => router.push("/account/favorites")}>
+                        <Button
+                          onClick={() => router.push("/account/favorites")}
+                        >
                           View Favorites
                         </Button>
                       </ButtonWrapper>

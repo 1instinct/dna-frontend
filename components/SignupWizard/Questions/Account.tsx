@@ -8,7 +8,12 @@ import { Modal } from "@material-ui/core";
 // Local
 import TipBot from "../../TipBot";
 import Static from "../../../utilities/staticData";
-import { FormikInput, FormikPhone, FormikPassword, FormikCheckbox } from "../../FormikWrappers";
+import {
+  FormikInput,
+  FormikPhone,
+  FormikPassword,
+  FormikCheckbox
+} from "../../FormikWrappers";
 import {
   Title,
   Subtitle,

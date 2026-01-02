@@ -158,9 +158,11 @@ const authConfig = {
 
       if (guestOrderToken) {
         try {
-          constants.IS_DEBUG && console.log("Merging guest cart into user cart...");
+          constants.IS_DEBUG &&
+            console.log("Merging guest cart into user cart...");
           await mergeCarts(guestOrderToken); // Merge guest cart into the user's cart
-          constants.IS_DEBUG && console.log("Cart merge completed successfully");
+          constants.IS_DEBUG &&
+            console.log("Cart merge completed successfully");
         } catch (mergeError) {
           console.error("Cart merge failed, but login succeeded:", mergeError);
           // Don't throw - login was successful even if cart merge failed
@@ -195,26 +197,28 @@ const authConfig = {
   },
   logoutFn: async () => {
     const storage = (await import("./storage")).default;
-    
+
     // Try to convert authenticated cart to guest cart before logging out
     try {
       const token = await storage.getToken();
-      
+
       if (token?.access_token) {
-        constants.IS_DEBUG && console.log("Converting user cart to guest cart...");
-        
+        constants.IS_DEBUG &&
+          console.log("Converting user cart to guest cart...");
+
         // Get the current cart with bearer token
         const cartResponse = await spreeClient.cart.show(
           { bearerToken: token.access_token },
           { include: "line_items,variants" }
         );
-        
+
         if (cartResponse.isSuccess()) {
           const cart = cartResponse.success();
           const orderToken = cart.data.attributes.token;
-          
+
           if (orderToken) {
-            constants.IS_DEBUG && console.log("Saving cart token before logout:", orderToken);
+            constants.IS_DEBUG &&
+              console.log("Saving cart token before logout:", orderToken);
             // Save the order token as a guest token BEFORE clearing anything
             storage.setGuestOrderToken(orderToken);
           }
@@ -224,11 +228,12 @@ const authConfig = {
       // If cart conversion fails, continue with logout anyway
       console.warn("Failed to convert cart to guest cart:", error);
     }
-    
+
     // Clear only auth token, not guest token
     window.localStorage.removeItem("token");
-    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
-    
+    document.cookie =
+      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+
     constants.IS_DEBUG && console.log("Auth cleared, guest token preserved");
 
     // Protected routes that require authentication

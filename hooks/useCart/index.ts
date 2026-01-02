@@ -110,7 +110,7 @@ export const addItemToCart = async (item: AddItem) => {
   // If user is authenticated, use bearer token
   if (token?.access_token) {
     constants.IS_DEBUG && console.log("Adding item to authenticated user cart");
-    
+
     const response = await spreeClient.cart.addItem(
       { bearerToken: token.access_token },
       {
