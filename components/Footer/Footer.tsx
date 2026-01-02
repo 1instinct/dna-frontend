@@ -9,12 +9,15 @@ import {
   useMenuItems
 } from "../../hooks";
 import { SocialLinks } from "..";
+import Image from "next/image";
+import { Logo } from "@components/shared/Logo";
 import hardcodedColumns from "./footer.json";
 
 import {
   Container,
   Grid,
   LogoDiv,
+  LinkDiv,
   Column,
   ColumnTitle,
   ColumnSubTitle,
@@ -71,23 +74,26 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
   const apiColumns = useMemo(() => {
     if (!menuItemsIsSuccess || !menuItemsData?.response_data) return null;
 
-    const menuItems = menuItemsData?.response_data?.menu_location_listing?.length > 0
-      ? menuItemsData.response_data.menu_location_listing[0].menu_item_listing
-      : [];
+    const menuItems =
+      menuItemsData?.response_data?.menu_location_listing?.length > 0
+        ? menuItemsData.response_data.menu_location_listing[0].menu_item_listing
+        : [];
 
     return menuItems.map((menuItem: any) => ({
       title: menuItem.name,
-      links: menuItem.childrens?.map((child: any) => ({
-        text: child.name,
-        url: child.link || ""
-      })) || []
+      links:
+        menuItem.childrens?.map((child: any) => ({
+          text: child.name,
+          url: child.link || ""
+        })) || []
     }));
   }, [menuItemsIsSuccess, menuItemsData]);
 
   // Use API columns if available, otherwise use passed footerData columns or hardcoded fallback
   const columns = apiColumns || footerData.columns || hardcodedColumns;
-
+  const logoPath =process.env.NEXT_PUBLIC_LOGO_PATH || "images/open-graph-instinct-dna.jpg";
   const Logo = footerData.logo as ReactNode;
+  const siteTitle = process.env.NEXT_PUBLIC_SHORT_TITLE || "DNA";
   const gridClass = classes?.grid || "";
   const columnClass = classes?.columnClassWrapper || "";
   const columnTitleClass = classes?.columnTitle || "";
@@ -96,35 +102,55 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
   const descClass = classes?.description || "";
   const iconWrapperClass = classes?.iconWrapperClass || "";
   const mobileIconLinks = footerData.mobileIconLinks;
+
   return (
     <Container className={classnames(classes?.root)}>
-      {Logo && <LogoDiv>{Logo ? Logo : null}</LogoDiv>}
+      <LogoDiv>
+        <LinkDiv isActive href="/">
+          {logoPath ? (
+            <Image
+              src={
+                logoPath.startsWith("/") || logoPath.startsWith("http")
+                  ? logoPath
+                  : `/${logoPath}`
+              }
+              alt={siteTitle}
+              width={0}
+              height={0}
+              sizes="(max-width: 768px) 100px, 141px"
+              style={{ width: "auto", height: "65px" }}
+              priority
+            />
+          ) : (
+            Logo
+          )}
+        </LinkDiv>
+      </LogoDiv>
       <Grid className={gridClass}>
         {columns.map((item: Column, index: number) => (
           <Column className={columnClass} key={index}>
             {item.title && (
               <ColumnTitle className={columnTitleClass}>
-          {item.title}
+                {item.title}
               </ColumnTitle>
             )}
             {item.subTitle && (
               <ColumnSubTitle className={subTitleClass}>
-          {item.subTitle}
+                {item.subTitle}
               </ColumnSubTitle>
             )}
-            {item.links && item.links.map((v: Link, i: number) => v.url !== "" ? (
-              <LinkItem
-                className={linkItemClass}
-                href={v.url}
-                key={i}
-              >
-                {v.text}
-              </LinkItem>
-            ) : (
-              <Description className={descClass} key={i}>
-                {v.text}
-              </Description>
-            ))}
+            {item.links &&
+              item.links.map((v: Link, i: number) =>
+                v.url !== "" ? (
+                  <LinkItem className={linkItemClass} href={v.url} key={i}>
+                    {v.text}
+                  </LinkItem>
+                ) : (
+                  <Description className={descClass} key={i}>
+                    {v.text}
+                  </Description>
+                )
+              )}
           </Column>
         ))}
       </Grid>

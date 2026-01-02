@@ -35,10 +35,14 @@ interface LogoProps {
   svgProps?: React.SVGProps<SVGSVGElement>;
 }
 
-export const Logo = ({url, svgProps}: LogoProps) => {
+export const Logo = ({ url, svgProps }: LogoProps) => {
   const theme = useTheme();
   return (
-    <SvgLogo viewBox="0 0 141 35" xmlns="http://www.w3.org/2000/svg" {...svgProps}>
+    <SvgLogo
+      viewBox="0 0 141 35"
+      xmlns="http://www.w3.org/2000/svg"
+      {...svgProps}
+    >
       <defs>
         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />

@@ -87,12 +87,16 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
           <LinkDiv isActive href="/">
             {logoPath ? (
               <Image
-                src={logoPath.startsWith('/') || logoPath.startsWith('http') ? logoPath : `/${logoPath}`}
+                src={
+                  logoPath.startsWith("/") || logoPath.startsWith("http")
+                    ? logoPath
+                    : `/${logoPath}`
+                }
                 alt={siteTitle}
                 width={0}
                 height={0}
                 sizes="(max-width: 768px) 100px, 141px"
-                style={{ width: 'auto', height: '65px' }}
+                style={{ width: "auto", height: "65px" }}
                 priority
               />
             ) : (

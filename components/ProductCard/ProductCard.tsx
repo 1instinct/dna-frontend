@@ -45,8 +45,8 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
     addToCart.mutate(item);
   };
 
-  console.log("ProductCard opts:", opts);
-  console.log("ProductCard item:", item.attributes.name);
+  // console.log("ProductCard opts:", opts);
+  // console.log("ProductCard item:", item.attributes.name);
 
   // constants.IS_DEBUG && console.log("Product Card: ", item, "Opts: ", opts);
   return (

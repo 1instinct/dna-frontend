@@ -112,9 +112,9 @@ export const Home = (props: any) => {
       <Hero />
       <Content>
         {/* {memberList} */}
-        {streamsData && (
+        {streamsData && streamsData?.response_data && streamsData.response_data.length > 0 && (
           <StreamList
-            data={streamsData?.response_data}
+            data={streamsData.response_data}
             title={"Live-Shopping"}
           />
         )}

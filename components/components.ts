@@ -1,6 +1,7 @@
 export * from "./404";
 export * from "./Alerts";
 export * from "./AuthForm";
+export * from "./Browse";
 export * from "./Cart";
 export * from "./Checkout";
 export * from "./ComingSoon";

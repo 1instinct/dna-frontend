@@ -94,23 +94,30 @@ async function mergeCarts(guestOrderToken: string) {
       console.log(
         `Adding item to user cart: ${item.id} with quantity: ${quantity}`
       );
-    const addItemResponse = await spreeClient.cart.addItem(
-      { bearerToken: userToken?.access_token },
-      {
-        variant_id: item.id,
-        quantity: quantity
+    try {
+      const addItemResponse = await spreeClient.cart.addItem(
+        { bearerToken: userToken?.access_token },
+        {
+          variant_id: item.id,
+          quantity: quantity
+        }
+      );
+      if (!addItemResponse.isSuccess()) {
+        const error = addItemResponse.fail();
+        console.warn(`Failed to add item ${item.id} to cart (may already exist):`, error.message || error);
+        // Continue with other items instead of failing completely
+      } else {
+        constants.IS_DEBUG &&
+          console.log("Item added successfully:", addItemResponse.success());
       }
-    );
-    if (!addItemResponse.isSuccess()) {
-      console.error("Failed to add item to cart:", addItemResponse.fail());
-    } else {
-      constants.IS_DEBUG &&
-        console.log("Item added successfully:", addItemResponse.success());
+    } catch (error) {
+      console.warn(`Exception adding item ${item.id} to cart:`, error);
+      // Continue with other items
     }
   }
 
   constants.IS_DEBUG && console.log("Clearing guest order token...");
-  storage.clearToken();
+  storage.clearGuestToken();
   constants.IS_DEBUG && console.log("Guest order token cleared.");
 }
 
@@ -147,15 +154,22 @@ const authConfig = {
       const user = await authConfig.loadUser();
 
       if (guestOrderToken) {
-        await mergeCarts(guestOrderToken); // Merge guest cart into the user's cart
-        // Clear the guest order token after merging
-        storage.clearToken();
+        try {
+          await mergeCarts(guestOrderToken); // Merge guest cart into the user's cart
+          // Guest tokens already cleared in mergeCarts
+        } catch (mergeError) {
+          console.error("Cart merge failed, but login succeeded:", mergeError);
+          // Don't throw - login was successful even if cart merge failed
+          storage.clearGuestToken(); // Clear guest tokens only
+        }
       }
 
       return user;
     } else {
-      constants.IS_DEBUG && console.warn(response.fail());
-      return null;
+      const error = response.fail();
+      constants.IS_DEBUG && console.warn(error);
+      // Throw error so it can be caught in the Login component
+      throw new Error(error.message || "Invalid email or password. Please try again.");
     }
   },
   registerFn: async (data: unknown) => {
