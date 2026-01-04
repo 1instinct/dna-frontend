@@ -78,8 +78,7 @@ export const Login = () => {
               // Small delay to ensure cookie is fully written and cart refetched
               await new Promise((resolve) => setTimeout(resolve, 200));
 
-              // Use router.push to navigat
-              // Use window.location for full page reload to ensure middleware picks up the cookie
+              // Use client-side navigation after login so the user is redirected without a full page reload
               router.push(redirectUrl);
             } else {
               // This shouldn't happen with the updated auth.ts, but just in case
