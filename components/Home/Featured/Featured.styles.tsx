@@ -44,7 +44,6 @@ export const FeaturedButton = styled(Button)`
   width: 90%;
   max-width: 400px;
   text-align: center;
-  z-index: 10;
 
   @media (min-width: ${(p) => p.theme.breakpoints.values.sm}px) {
     width: 60%;

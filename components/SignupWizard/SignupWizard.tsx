@@ -237,7 +237,7 @@ export const SignupWizard = () => {
     <MainWrapper>
       <ContentWrapper>
         <LeftHalf show={isLargeDevice ? "flex" : "flex"}>
-          <ThreeViewer />
+          {/* <ThreeViewer /> */}
           <Title>
             Enjoy The Journey{" "}
             <span role="img" aria-label="sunglasses">

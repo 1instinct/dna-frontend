@@ -51,6 +51,11 @@ export const theme = {
       medium: lighten(0.66, "#A5D8BC"),
       light: lighten(0.33, "#A5D8BC")
     },
+    green: {
+      primary: "#006400",
+      medium: lighten(0.66, "#006400"),
+      light: lighten(0.33, "#006400")
+    },
     red: {
       primary: "#D04040",
       medium: lighten(0.66, "#D04040"),
@@ -134,6 +139,13 @@ export const theme = {
       fontWeight: "normal",
       fontSize: "10px",
       lineHeight: "0.9rem",
+      color: "#000"
+    },
+    bodyLG: {
+      fontFamily: "Anybody ExtraLight",
+      fontWeight: "normal",
+      fontSize: "20px",
+      lineHeight: "22px",
       color: "#000"
     },
     bodyMD: {

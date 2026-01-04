@@ -1,4 +1,6 @@
 import styled from "@emotion/styled";
+import Link from "next/link";
+import isPropValid from "@emotion/is-prop-valid";
 export const Container = styled.div`
   background: ${(p) =>
     p.theme.isDarkMode
@@ -18,6 +20,30 @@ export const LogoDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+export interface LinkDivProps {
+  isActive: boolean;
+  props?: any;
+}
+export const LinkDiv = styled(Link, {
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== "isActive"
+})<LinkDivProps>`
+  font-size: 14px;
+  text-decoration: none;
+  ${(p) =>
+    p.isActive
+      ? "color: " +
+        (p.theme.isDarkMode
+          ? p.theme.colors.white.dark
+          : p.theme.colors.black.medium)
+      : `
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+  `}
+  &:hover {
+    color: ${(p) => p.theme.colors.brand.primary};
+  }
 `;
 export const Grid = styled.div`
   display: grid;

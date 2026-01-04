@@ -168,6 +168,16 @@ export const MobileMenu = ({
         <hr />
         Login
       </MenuItem>
+      <MenuItem
+        paddingLeft={"10px"}
+        onClick={() => {
+          toggleMenu();
+          router.push("/signup");
+        }}
+        button
+      >
+        Sign Up
+      </MenuItem>
       <SocialLinks />
       <MenuFooter>
         <div>

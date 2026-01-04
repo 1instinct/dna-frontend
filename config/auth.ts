@@ -94,23 +94,33 @@ async function mergeCarts(guestOrderToken: string) {
       console.log(
         `Adding item to user cart: ${item.id} with quantity: ${quantity}`
       );
-    const addItemResponse = await spreeClient.cart.addItem(
-      { bearerToken: userToken?.access_token },
-      {
-        variant_id: item.id,
-        quantity: quantity
+    try {
+      const addItemResponse = await spreeClient.cart.addItem(
+        { bearerToken: userToken?.access_token },
+        {
+          variant_id: item.id,
+          quantity: quantity
+        }
+      );
+      if (!addItemResponse.isSuccess()) {
+        const error = addItemResponse.fail();
+        console.warn(
+          `Failed to add item ${item.id} to cart (may already exist):`,
+          error.message || error
+        );
+        // Continue with other items instead of failing completely
+      } else {
+        constants.IS_DEBUG &&
+          console.log("Item added successfully:", addItemResponse.success());
       }
-    );
-    if (!addItemResponse.isSuccess()) {
-      console.error("Failed to add item to cart:", addItemResponse.fail());
-    } else {
-      constants.IS_DEBUG &&
-        console.log("Item added successfully:", addItemResponse.success());
+    } catch (error) {
+      console.warn(`Exception adding item ${item.id} to cart:`, error);
+      // Continue with other items
     }
   }
 
   constants.IS_DEBUG && console.log("Clearing guest order token...");
-  storage.clearToken();
+  storage.clearGuestToken();
   constants.IS_DEBUG && console.log("Guest order token cleared.");
 }
 
@@ -147,15 +157,27 @@ const authConfig = {
       const user = await authConfig.loadUser();
 
       if (guestOrderToken) {
-        await mergeCarts(guestOrderToken); // Merge guest cart into the user's cart
-        // Clear the guest order token after merging
-        storage.clearToken();
+        try {
+          constants.IS_DEBUG &&
+            console.log("Merging guest cart into user cart...");
+          await mergeCarts(guestOrderToken); // Merge guest cart into the user's cart
+          constants.IS_DEBUG &&
+            console.log("Cart merge completed successfully");
+        } catch (mergeError) {
+          console.error("Cart merge failed, but login succeeded:", mergeError);
+          // Don't throw - login was successful even if cart merge failed
+          storage.clearGuestToken(); // Clear guest tokens only
+        }
       }
 
       return user;
     } else {
-      constants.IS_DEBUG && console.warn(response.fail());
-      return null;
+      const error = response.fail();
+      constants.IS_DEBUG && console.warn(error);
+      // Throw error so it can be caught in the Login component
+      throw new Error(
+        error.message || "Invalid email or password. Please try again."
+      );
     }
   },
   registerFn: async (data: unknown) => {
@@ -175,7 +197,65 @@ const authConfig = {
   },
   logoutFn: async () => {
     const storage = (await import("./storage")).default;
-    storage.clearToken();
+
+    // Try to convert authenticated cart to guest cart before logging out
+    try {
+      const token = await storage.getToken();
+
+      if (token?.access_token) {
+        constants.IS_DEBUG &&
+          console.log("Converting user cart to guest cart...");
+
+        // Get the current cart with bearer token
+        const cartResponse = await spreeClient.cart.show(
+          { bearerToken: token.access_token },
+          { include: "line_items,variants" }
+        );
+
+        if (cartResponse.isSuccess()) {
+          const cart = cartResponse.success();
+          const orderToken = cart.data.attributes.token;
+
+          if (orderToken) {
+            constants.IS_DEBUG &&
+              console.log("Saving cart token before logout:", orderToken);
+            // Save the order token as a guest token BEFORE clearing anything
+            storage.setGuestOrderToken(orderToken);
+          }
+        }
+      }
+    } catch (error) {
+      // If cart conversion fails, continue with logout anyway
+      console.warn("Failed to convert cart to guest cart:", error);
+    }
+
+    // Clear only auth token, not guest token
+    window.localStorage.removeItem("token");
+    document.cookie =
+      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+
+    constants.IS_DEBUG && console.log("Auth cleared, guest token preserved");
+
+    // Protected routes that require authentication
+    const protectedRoutes = [
+      "/account",
+      "/thank-you",
+      "/update-email",
+      "/update-password"
+    ];
+
+    // Check if current page is a protected route
+    if (typeof window !== "undefined") {
+      const currentPath = window.location.pathname;
+      const isProtectedRoute = protectedRoutes.some((route) =>
+        currentPath.startsWith(route)
+      );
+
+      // If on a protected route, redirect to home
+      if (isProtectedRoute) {
+        window.location.href = "/";
+      }
+    }
   }
 };
 

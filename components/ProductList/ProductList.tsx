@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 // import { useProducts } from "../../hooks/useProducts";
 import { ProductListProps } from "./types";
 import styled from "@emotion/styled";
+import { ProductCard } from "@components/ProductCard/ProductCard";
 
 import {
   ProductsRow,
@@ -49,25 +50,45 @@ export const ProductList: React.FC<ProductListProps> = (props: any) => {
           const imgSrc = productImg
             ? `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`
             : defaultImg;
+
+          // Get option values (colors) for this product's actual variants
+          const variantIds =
+            product.relationships?.variants?.data?.map((v: any) => v.id) || [];
+
+          // Find variant objects in included array
+          const productVariants = products?.included?.filter(
+            (item: any) =>
+              item.type === "variant" && variantIds.includes(item.id)
+          );
+
+          // Get all option_value IDs from these variants
+          const variantOptionValueIds =
+            productVariants?.flatMap(
+              (variant: any) =>
+                variant.relationships?.option_values?.data?.map(
+                  (ov: any) => ov.id
+                ) || []
+            ) || [];
+
+          // Find the actual option_value objects that are colors
+          const allOptions = products?.included?.filter(
+            (e: any) => e.type === "option_value"
+          );
+
+          const foundOptions =
+            allOptions?.filter(
+              (opt: any) =>
+                variantOptionValueIds.includes(opt.id) &&
+                opt.attributes.presentation.includes("#")
+            ) || [];
+
           return (
-            <div
+            <ProductCard
               key={product.id}
-              onClick={() => router.push(`/${product.attributes.slug}`)}
-              // href={{
-              //   pathname: `[slug]`,
-              //   query: {
-              //     slug: product.attributes.slug
-              //   }
-              // }}
-            >
-              <ProductContainer>
-                <MyImg src={imgSrc} />
-                <MyH1>{product.attributes.name}</MyH1>
-                <MyDiv>
-                  <h3>${product.attributes.price}</h3>
-                </MyDiv>
-              </ProductContainer>
-            </div>
+              item={product}
+              imgSrc={imgSrc}
+              opts={foundOptions}
+            />
           );
         })}
       </ProductsRow>

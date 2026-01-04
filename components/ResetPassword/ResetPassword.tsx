@@ -1,15 +1,18 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import styled from "@emotion/styled";
 import { FormikInput } from "../FormikWrappers";
+import { Button } from "@components/shared";
 
 import { resetPasswordForm } from "../AuthForm/constants";
 import {
   ResetPasswordWrapper,
   FormWrapper,
-  InputWrapper
+  InputWrapper,
+  Title,
+  Subtext
 } from "./ResetPassword.styles";
 
 const FieldContainer = styled.div`
@@ -21,9 +24,18 @@ const FieldContainer = styled.div`
 `;
 
 export const ResetPassword = () => {
+  const SubmitButton = () => {
+    const { submitForm, isSubmitting } = useFormikContext();
+    return (
+      <Button onClick={submitForm} disabled={isSubmitting}>
+        Reset Password
+      </Button>
+    );
+  };
+
   return (
     <ResetPasswordWrapper>
-      <h1>{resetPasswordForm.title}</h1>
+      <Title>{resetPasswordForm.title}</Title>
       <Formik
         initialValues={resetPasswordForm.fields}
         validationSchema={resetPasswordForm.validate}
@@ -38,7 +50,7 @@ export const ResetPassword = () => {
             });
         }}
       >
-        {({ isSubmitting }) => (
+        {() => (
           <FormWrapper>
             <InputWrapper>
               <Field
@@ -46,16 +58,15 @@ export const ResetPassword = () => {
                 name="username"
                 component={FormikInput}
                 label="Email"
+                placeholder="Email"
               />
             </InputWrapper>
-            <button type="submit" disabled={isSubmitting}>
-              Submit
-            </button>
-            <p>
+            <SubmitButton />
+            <Subtext>
               <Link href="/login">Login</Link>
               &nbsp;&nbsp;|&nbsp;&nbsp;
-              <Link href="/authenticate/signup">Register</Link>
-            </p>
+              <Link href="/signup">Sign Up</Link>
+            </Subtext>
           </FormWrapper>
         )}
       </Formik>
