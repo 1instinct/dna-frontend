@@ -52,9 +52,9 @@ export const theme = {
       light: lighten(0.33, "#A5D8BC")
     },
     green: {
-      primary: "#00ff00",
-      medium: lighten(0.66, "#00ff00"),
-      light: lighten(0.33, "#00ff00")
+      primary: "#006400",
+      medium: lighten(0.66, "#006400"),
+      light: lighten(0.33, "#006400")
     },
     red: {
       primary: "#D04040",

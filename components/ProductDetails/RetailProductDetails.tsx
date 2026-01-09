@@ -142,8 +142,6 @@ export const RetailProductDetails = ({
         opt.attributes.presentation.includes("#")
     ) || [];
 
-  console.log("RetailProductDetails - productColors:", productColors);
-
   const productSizes =
     productOptions &&
     productOptions?.filter((e: any) =>

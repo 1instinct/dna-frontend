@@ -222,7 +222,6 @@ const Favorites = () => {
           <>
             <FavoritesGrid>
               {favorites.map((favorite: any) => {
-                console.log("Favorite object:", favorite);
                 const variant =
                   favorite?.attributes?.variant || favorite?.variant;
                 const product =

@@ -391,7 +391,7 @@ const CheckoutForm = () => {
           throw new Error(error.message);
         }
 
-        console.log("Stripe token created:", token);
+        console.log("Stripe token created with id:", token?.id);
 
         // Add payment with Stripe token as source
         await updateCheckoutMutation.mutateAsync({

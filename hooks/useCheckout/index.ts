@@ -112,7 +112,7 @@ export const completeCheckout = async () => {
       console.log("Checkout completed:", response.success());
     // Clear the cart token after successful purchase
     const storage = (await import("../../config/storage")).default;
-    storage.clearToken();
+    storage.clearGuestToken();
     return response.success();
   } else {
     constants.IS_DEBUG &&
