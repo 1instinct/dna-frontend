@@ -188,11 +188,8 @@ export const ThankYou = () => {
             contact our customer support team.
           </InfoText>
           <InfoText>
-            Email: support@
-            {process.env.NEXT_PUBLIC_SITE_URL?.replace("https://", "").replace(
-              "http://",
-              ""
-            ) || "example.com"}
+            Email:{" "}
+            {process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@example.com"}
           </InfoText>
           <InfoText>
             Phone: {process.env.NEXT_PUBLIC_COMPANY_PHONE || "1-800-000-0000"}
