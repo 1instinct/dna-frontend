@@ -264,23 +264,6 @@ export const Account = () => {
 
                   <RightCol>
                     <FormSection>
-                      <SectionTitle>Favorites</SectionTitle>
-                      <FormLabel>
-                        Want it? Manifest it. This is a place for you to explore
-                        your personal fashion palette. And who knows? Maybe
-                        pieces of this style board will even end up in your
-                        closet.
-                      </FormLabel>
-                      <ButtonWrapper>
-                        <Button
-                          onClick={() => router.push("/account/favorites")}
-                        >
-                          View Favorites
-                        </Button>
-                      </ButtonWrapper>
-                    </FormSection>
-
-                    <FormSection>
                       <SectionTitle>Payment Methods</SectionTitle>
                       <FormLabel>
                         Get it. Add or edit payment methods here.
