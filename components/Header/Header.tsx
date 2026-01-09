@@ -136,6 +136,16 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
                     <div>My Account</div>
                   </AccountOption>
                 </LinkDiv>
+
+                <LinkDiv
+                  href="/account/favorites"
+                  isActive={pathname !== "/account/favorites"}
+                >
+                  <AccountOption>
+                    <div>My Favorites</div>
+                  </AccountOption>
+                </LinkDiv>
+
                 <LinkDiv
                   href="/account/orders"
                   isActive={pathname !== "/account/orders"}

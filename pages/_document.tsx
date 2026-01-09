@@ -211,6 +211,18 @@ class MyDocument extends Document {
           </noscript>
         </Head>
         <body>
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+              #__next {
+                min-height: 100vh;
+              }
+              #__next > div {
+                min-height: 100vh;
+              }
+            `
+            }}
+          />
           <Main />
           <NextScript />
         </body>

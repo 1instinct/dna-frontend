@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { IStream } from "../../typings/stream";
 import { QueryKeys } from "../queryKeys";
 
-const fetchStream = async (id: string, page: number = 1) => {
+const fetchStream = async (id: string) => {
   const storage = (await import("../../config/storage")).default;
   const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL;
   const token = process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN;
@@ -14,19 +14,20 @@ const fetchStream = async (id: string, page: number = 1) => {
     headers: requestHeaders
   })
     .then((response) => {
-      if (!response.ok) throw new Error("Streams request failed");
+      if (!response.ok) throw new Error("Stream request failed");
       else return response.json();
     })
-    .then((data) => console.log(data))
     .catch((err) => {
       console.log(err);
-      throw new Error("Streams request failed");
+      throw new Error("Stream request failed");
     });
-  console.log(response);
   return response;
 };
-const useStream = (id: string, page: number) => {
-  return useQuery<any>([QueryKeys.STREAMS, page], () => fetchStream(id, page));
+
+const useStream = (id: string) => {
+  return useQuery<any>([QueryKeys.STREAM, id], () => fetchStream(id), {
+    enabled: !!id
+  });
 };
 
 export { useStream, fetchStream };

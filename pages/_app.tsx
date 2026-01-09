@@ -91,10 +91,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             {renderContent(theme)}
           </ThemeProvider>
         </Hydrate>
-
-        <ReactQueryDevtools initialIsOpen={false} />
       </AuthProvider>
-      <ReactQueryDevtools />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }

@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import { useMutation, useQueryClient } from "react-query";
 import {
   useCart,
-  removeItemFromCart,
-  updateItemQuantity
+  updateItemQuantity,
+  removeItemFromCart
 } from "../../hooks/useCart";
 import { useProducts } from "../../hooks";
 import { Layout, Loading } from "../components";
@@ -49,6 +49,18 @@ export const Cart = () => {
       setQuantities(initialQuantities);
     }
   }, [cartData?.included]);
+
+  const removeFromCartMutation = useMutation(
+    (itemId: string) => removeItemFromCart(itemId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(QueryKeys.CART);
+      },
+      onError: (error: any) => {
+        console.error("Failed to remove item:", error);
+      }
+    }
+  );
 
   const updateQuantityMutation = useMutation(
     ({ itemId, quantity }: { itemId: string; quantity: number }) =>
@@ -96,9 +108,19 @@ export const Cart = () => {
     return null;
   };
 
-  const handleRemoveItem = async (itemId: string) => {
+  const handleRemoveItem = (itemId: string) => {
     console.log("Removing item:", itemId);
-    updateQuantityMutation.mutate({ itemId, quantity: 0 });
+    removeFromCartMutation.mutate(itemId);
+  };
+
+  const handleEmptyCart = () => {
+    if (window.confirm("Are you sure you want to empty your cart?")) {
+      const lineItems =
+        cartData?.included?.filter((item) => item.type === "line_item") || [];
+      lineItems.forEach((item: any) => {
+        removeFromCartMutation.mutate(item.id);
+      });
+    }
   };
 
   const handleUpdateItemQuantity = (itemId: string, newQuantity: number) => {
@@ -142,6 +164,13 @@ export const Cart = () => {
                 >
                   +
                 </QuantityAdjuster>
+                <QuantityAdjuster
+                  onClick={() => handleRemoveItem(lineItemId)}
+                  style={{ marginLeft: "8px", color: "red" }}
+                  title="Remove item"
+                >
+                  ×
+                </QuantityAdjuster>
               </QuantityAdjusterWrapper>
             </CartItem>
           );
@@ -164,8 +193,24 @@ export const Cart = () => {
     return (
       <CartWrapper>
         <CartTitle>Cart</CartTitle>
-        <div>
-          {item_count} {item_count > 1 ? "items" : "item"} in your cart
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "16px"
+          }}
+        >
+          <div>
+            {item_count} {item_count > 1 ? "items" : "item"} in your cart
+          </div>
+          {item_count > 0 && (
+            <div>
+              <Button variant="outline" onClick={handleEmptyCart}>
+                Empty Cart
+              </Button>
+            </div>
+          )}
         </div>
         <div>{renderCartItems()}</div>
         <TotalLine>Subtotal: {display_item_total}</TotalLine>

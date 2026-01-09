@@ -30,6 +30,6 @@ export * from "./SignupWizard";
 export * from "./SocialLinks";
 export * from "./StreamCard";
 export * from "./StreamList";
-export * from "./StreamViewer";
+export { StreamViewer } from "./StreamViewer";
 export * from "./TipBot";
 export * from "./VideoJS";
