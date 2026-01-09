@@ -1,64 +1,91 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useTheme } from "@emotion/react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import { EffectComposer, Bloom, Noise } from "@react-three/postprocessing";
-import { SpiderGraph } from "./SpiderGraph";
-import { FogEffect } from "./FogEffect";
-
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Color } from "three";
+import type { Mesh } from "three";
+
+// Simple rotating DNA helix
+const DNAHelix = () => {
+  const theme = useTheme();
+  const group = useRef<any>();
+
+  useFrame((state) => {
+    if (group.current) {
+      group.current.rotation.y += 0.002;
+    }
+  });
+
+  const helixColor = theme.isDarkMode ? "#ff1493" : "#4169e1";
+
+  return (
+    <group ref={group}>
+      {[...Array(12)].map((_, i) => {
+        const t = (i / 12) * Math.PI * 4;
+        const radius = 0.8;
+        const height = i * 0.3 - 1.8;
+
+        return (
+          <group key={i}>
+            {/* First strand */}
+            <mesh
+              position={[Math.cos(t) * radius, height, Math.sin(t) * radius]}
+            >
+              <sphereGeometry args={[0.08, 8, 8]} />
+              <meshStandardMaterial
+                color={helixColor}
+                emissive={helixColor}
+                emissiveIntensity={0.5}
+              />
+            </mesh>
+
+            {/* Second strand (opposite) */}
+            <mesh
+              position={[-Math.cos(t) * radius, height, -Math.sin(t) * radius]}
+            >
+              <sphereGeometry args={[0.08, 8, 8]} />
+              <meshStandardMaterial
+                color={helixColor}
+                emissive={helixColor}
+                emissiveIntensity={0.5}
+              />
+            </mesh>
+
+            {/* Connecting rung (every other one) */}
+            {i % 2 === 0 && (
+              <mesh position={[0, height, 0]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.03, 0.03, radius * 2, 6]} />
+                <meshStandardMaterial
+                  color={helixColor}
+                  opacity={0.6}
+                  transparent
+                />
+              </mesh>
+            )}
+          </group>
+        );
+      })}
+    </group>
+  );
+};
 
 export const ThreeViewer = () => {
   const theme = useTheme();
-  const data = {
-    axes: [
-      { name: "axis1", value: 0.8 },
-      { name: "axis2", value: 0.6 },
-      { name: "axis3", value: 0.9 },
-      { name: "axis4", value: 0.4 },
-      { name: "axis5", value: 0.7 },
-      { name: "axis6", value: 0.5 },
-      { name: "axis7", value: 0.8 },
-      { name: "axis8", value: 0.6 },
-      { name: "axis9", value: 0.9 },
-      { name: "axis10", value: 0.4 },
-      { name: "axis11", value: 0.7 },
-      { name: "axis12", value: 0.5 }
-    ]
-  };
 
   return (
     <Canvas
-      camera={{ position: [0, 0, 4] }}
-      scene={theme.isDarkMode ? { background: new Color(0x000000) } : {}}
+      camera={{ position: [0, 0, 3.5], fov: 50 }}
+      dpr={[1, 1.5]}
+      performance={{ min: 0.5 }}
     >
-      <fog attach="fog" args={["pink", 10, 100]} />
-      {/* <ambientLight /> */}
-      <spotLight position={[0, 0, 5]} angle={0.3} penumbra={1} />
-      <directionalLight position={[5, 5, 5]} intensity={2} color="pink" />
-
-      <SpiderGraph data={data} />
-      <FogEffect />
-
-      <EffectComposer>
-        <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} />
-        <Noise opacity={0.3} />
-      </EffectComposer>
-
-      <OrbitControls
-        // limit pan to x and y axis
-        enablePan={false}
-        // maxPolarAngle={Math.PI / 4}
-        // minPolarAngle={Math.PI / 4}
-        // enableZoom={false}
-        // limit zoom out
-        maxDistance={4}
-        // prevent zooming into the object
-        minDistance={1.5}
-        enableDamping
-        dampingFactor={0.2}
-        target={[0, 0, 0]}
+      <color
+        attach="background"
+        args={[theme.isDarkMode ? "#000000" : "#ffffff"]}
       />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} intensity={0.8} />
+      <pointLight position={[-10, -10, -10]} intensity={0.3} />
+
+      <DNAHelix />
     </Canvas>
   );
 };

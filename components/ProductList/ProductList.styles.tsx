@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 export const ProductsRow = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
 `;
 export const ProductContainer = styled.div`
   display: flex;

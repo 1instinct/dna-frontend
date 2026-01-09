@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { IProducts } from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
 import { Button } from "../shared";
 import { useRouter } from "next/router";
+import { useMutation, useQueryClient } from "react-query";
 import {
   useCart,
-  removeItemFromCart,
-  updateItemQuantity
+  updateItemQuantity,
+  removeItemFromCart
 } from "../../hooks/useCart";
 import { useProducts } from "../../hooks";
-import { Layout } from "../components";
+import { Layout, Loading } from "../components";
+import { QueryKeys } from "../../hooks/queryKeys";
+import { useAuth } from "../../config/auth";
 
 import {
   CartWrapper,
@@ -25,9 +28,59 @@ import {
 
 export const Cart = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const { user } = useAuth();
+
   const { data: cartData, isLoading, isError, error } = useCart();
 
   const { data: productsData } = useProducts(1);
+
+  // Initialize quantities from line_items when cart loads
+  useEffect(() => {
+    if (Array.isArray(cartData?.included)) {
+      const lineItems = cartData?.included.filter(
+        (item) => item.type === "line_item"
+      );
+      const initialQuantities: Record<string, number> = {};
+      lineItems?.forEach((item: any) => {
+        initialQuantities[item.id] = item.attributes.quantity || 1;
+      });
+      setQuantities(initialQuantities);
+    }
+  }, [cartData?.included]);
+
+  const removeFromCartMutation = useMutation(
+    (itemId: string) => removeItemFromCart(itemId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(QueryKeys.CART);
+      },
+      onError: (error: any) => {
+        console.error("Failed to remove item:", error);
+      }
+    }
+  );
+
+  const updateQuantityMutation = useMutation(
+    ({ itemId, quantity }: { itemId: string; quantity: number }) =>
+      updateItemQuantity(itemId, quantity),
+    {
+      onMutate: async ({ itemId, quantity }) => {
+        // Optimistically update local state
+        setQuantities((prev) => ({ ...prev, [itemId]: quantity }));
+      },
+      onSuccess: () => {
+        console.log("Quantity updated successfully");
+        queryClient.invalidateQueries(QueryKeys.CART);
+      },
+      onError: (error: any, { itemId }) => {
+        console.error("Failed to update quantity:", error);
+        // Revert on error - refetch to get correct state
+        queryClient.invalidateQueries(QueryKeys.CART);
+      }
+    }
+  );
 
   const foundProduct = (productId: string, productsData: IProducts) => {
     // Check if productsData and productsData.data exist and are iterable
@@ -55,38 +108,25 @@ export const Cart = () => {
     return null;
   };
 
-  const handleRemoveItem = async (itemId: string) => {
-    try {
-      await removeItemFromCart(itemId);
-      console.log("Item removed");
-    } catch (error) {
-      console.error("Failed to remove item:", error);
+  const handleRemoveItem = (itemId: string) => {
+    console.log("Removing item:", itemId);
+    removeFromCartMutation.mutate(itemId);
+  };
+
+  const handleEmptyCart = () => {
+    if (window.confirm("Are you sure you want to empty your cart?")) {
+      const lineItems =
+        cartData?.included?.filter((item) => item.type === "line_item") || [];
+      lineItems.forEach((item: any) => {
+        removeFromCartMutation.mutate(item.id);
+      });
     }
   };
 
-  const handleUpdateItem = async (itemId: string, quantity: number) => {
-    try {
-      await updateItemQuantity(itemId, quantity);
-      console.log("Item quantity updated");
-    } catch (error) {
-      console.error("Failed to update item quantity:", error);
-    }
-  };
-
-  const handleUpdateItemQuantity = async (
-    itemId: string,
-    newQuantity: number
-  ) => {
-    if (newQuantity < 1) {
-      await handleRemoveItem(itemId); // Remove item if quantity is zero
-    } else {
-      try {
-        await updateItemQuantity(itemId, newQuantity);
-        console.log(`Item quantity updated to ${newQuantity}`);
-      } catch (error) {
-        console.error("Failed to update item quantity:", error);
-      }
-    }
+  const handleUpdateItemQuantity = (itemId: string, newQuantity: number) => {
+    console.log("Updating item:", itemId, "to quantity:", newQuantity);
+    const quantity = Math.max(0, newQuantity);
+    updateQuantityMutation.mutate({ itemId, quantity });
   };
 
   const renderCartItems = () => {
@@ -100,7 +140,8 @@ export const Cart = () => {
           );
 
           const lineItemId = lineItem.id;
-          const quantity = lineItem.attributes.quantity;
+          const quantity =
+            quantities[lineItemId] || lineItem.attributes.quantity;
 
           return (
             <CartItem key={`cart-item-${lineItemId}`}>
@@ -123,6 +164,13 @@ export const Cart = () => {
                 >
                   +
                 </QuantityAdjuster>
+                <QuantityAdjuster
+                  onClick={() => handleRemoveItem(lineItemId)}
+                  style={{ marginLeft: "8px", color: "red" }}
+                  title="Remove item"
+                >
+                  ×
+                </QuantityAdjuster>
               </QuantityAdjusterWrapper>
             </CartItem>
           );
@@ -131,7 +179,7 @@ export const Cart = () => {
     return null;
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Loading />;
   if (isError) return <p>Error: {error.message}</p>;
 
   const {
@@ -145,14 +193,44 @@ export const Cart = () => {
     return (
       <CartWrapper>
         <CartTitle>Cart</CartTitle>
-        <div>
-          {item_count} {item_count > 1 ? "items" : "item"} in your cart
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "16px"
+          }}
+        >
+          <div>
+            {item_count} {item_count > 1 ? "items" : "item"} in your cart
+          </div>
+          {item_count > 0 && (
+            <div>
+              <Button variant="outline" onClick={handleEmptyCart}>
+                Empty Cart
+              </Button>
+            </div>
+          )}
         </div>
         <div>{renderCartItems()}</div>
         <TotalLine>Subtotal: {display_item_total}</TotalLine>
         <TotalLine>Tax: {included_tax_total}</TotalLine>
         <TotalLine>Total: {display_total}</TotalLine>
-        <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+        {user ? (
+          <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+        ) : (
+          <>
+            <Button onClick={() => router.push("/checkout")}>
+              Checkout as Guest
+            </Button>
+            <Button variant="outline" onClick={() => router.push("/login")}>
+              Login
+            </Button>
+            <Button variant="outline" onClick={() => router.push("/signup")}>
+              Signup
+            </Button>
+          </>
+        )}
       </CartWrapper>
     );
   }

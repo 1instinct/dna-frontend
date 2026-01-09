@@ -1,7 +1,5 @@
-// Vendor
 import React, { useState, useCallback } from "react";
 import { Field, useFormikContext } from "formik";
-import { InputAdornment } from "@material-ui/core";
 
 // Local
 import TipBot from "../../TipBot";
@@ -26,11 +24,6 @@ export const YearlyIncome = () => {
             name="yearlyIncome"
             id="yearlyIncome"
             component={FormikIncome}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">$</InputAdornment>
-              )
-            }}
             label="Yearly Income"
           />
         </InputWrapper>

@@ -2,7 +2,7 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-const StyledLogo = styled.svg`
+const SvgLogo = styled.svg`
   width: 141px;
   height: 35px;
 
@@ -30,10 +30,19 @@ const StyledLogo = styled.svg`
   }
 `;
 
-export const Logo = () => {
+interface LogoProps {
+  url?: string;
+  svgProps?: React.SVGProps<SVGSVGElement>;
+}
+
+export const Logo = ({ url, svgProps }: LogoProps) => {
   const theme = useTheme();
   return (
-    <StyledLogo viewBox="0 0 141 32" xmlns="http://www.w3.org/2000/svg">
+    <SvgLogo
+      viewBox="0 0 141 35"
+      xmlns="http://www.w3.org/2000/svg"
+      {...svgProps}
+    >
       <defs>
         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
@@ -74,6 +83,6 @@ export const Logo = () => {
             : theme.colors.black.primary
         }
       />
-    </StyledLogo>
+    </SvgLogo>
   );
 };

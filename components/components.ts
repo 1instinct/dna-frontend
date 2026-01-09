@@ -1,6 +1,9 @@
 export * from "./404";
+export * from "./Account";
 export * from "./Alerts";
 export * from "./AuthForm";
+export * from "./Browse";
+export * from "./shared/Button";
 export * from "./Cart";
 export * from "./Checkout";
 export * from "./ComingSoon";
@@ -27,6 +30,6 @@ export * from "./SignupWizard";
 export * from "./SocialLinks";
 export * from "./StreamCard";
 export * from "./StreamList";
-export * from "./StreamViewer";
+export { StreamViewer } from "./StreamViewer";
 export * from "./TipBot";
 export * from "./VideoJS";

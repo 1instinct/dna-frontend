@@ -4,9 +4,14 @@ import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { Loading, LoadingWrapper } from "..";
-import { useCart, updateItemQuantity } from "../../hooks/useCart";
+import {
+  useCart,
+  updateItemQuantity,
+  removeItemFromCart
+} from "../../hooks/useCart";
 import { useProducts } from "../../hooks";
 import { QueryKeys } from "../../hooks/queryKeys";
+import { useAuth } from "../../config/auth";
 import cartStyles from "./cartStyles";
 
 import {
@@ -37,6 +42,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const { user } = useAuth();
 
   const {
     data: cartData,
@@ -52,8 +58,8 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
       cartData?.data?.attributes?.item_count &&
       cartData?.data?.relationships?.line_items?.data
     ) {
-      const lineItems = cartData.data.relationships.line_items.data;
-      const itemCount = cartData.data.attributes.item_count;
+      const lineItems = cartData?.data.relationships.line_items.data;
+      const itemCount = cartData?.data.attributes.item_count;
       const lineItemsArray = Array.isArray(lineItems) ? lineItems : [lineItems];
       const avgQty = Math.ceil(itemCount / lineItemsArray.length);
 
@@ -72,6 +78,18 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
     cartData?.data?.attributes?.item_count,
     cartData?.data?.relationships?.line_items?.data
   ]);
+
+  const removeFromCartMutation = useMutation(
+    (itemId: string) => removeItemFromCart(itemId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(QueryKeys.CART);
+      },
+      onError: (error: any) => {
+        console.error("Failed to remove item:", error);
+      }
+    }
+  );
 
   const updateQuantityMutation = useMutation(
     ({ itemId, quantity }: { itemId: string; quantity: number }) =>
@@ -125,9 +143,26 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
 
   const handleUpdateItemQuantity = (itemId: string, newQuantity: number) => {
     console.log("Updating item:", itemId, "to quantity:", newQuantity);
-    // Use setQuantity with 0 instead of removeItem to avoid CORS issues
     const quantity = Math.max(0, newQuantity);
     updateQuantityMutation.mutate({ itemId, quantity });
+  };
+
+  const handleRemoveItem = (itemId: string) => {
+    console.log("Removing item:", itemId);
+    removeFromCartMutation.mutate(itemId);
+  };
+
+  const handleEmptyCart = () => {
+    if (window.confirm("Are you sure you want to empty your cart?")) {
+      const lineItemRefs =
+        cartData?.data?.relationships?.line_items?.data || [];
+      const lineItemsArray = Array.isArray(lineItemRefs)
+        ? lineItemRefs
+        : [lineItemRefs];
+      lineItemsArray.forEach((item: any) => {
+        removeFromCartMutation.mutate(item.id);
+      });
+    }
   };
 
   const renderCartItems = () => {
@@ -187,6 +222,13 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
               >
                 +
               </QuantityAdjuster>
+              <QuantityAdjuster
+                onClick={() => handleRemoveItem(lineItemRef.id)}
+                style={{ marginLeft: "8px", color: "red" }}
+                title="Remove item"
+              >
+                ×
+              </QuantityAdjuster>
             </QuantityAdjusterWrapper>
           </CartItem>
         );
@@ -198,9 +240,6 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   if (cartIsLoading) {
     return (
       <CartWrapper>
-        {/* <CartButton onClick={toggle}>
-          
-        </CartButton> */}
         <Menu
           right
           customBurgerIcon={<i className="btb bt-lg bt-shopping-cart" />}
@@ -279,8 +318,33 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
           width={360}
         >
           <CartTitle>Cart</CartTitle>
-          <div>
-            {item_count} {item_count > 1 ? "items" : "item"} in your cart
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "8px"
+            }}
+          >
+            <div>
+              {item_count} {item_count > 1 ? "items" : "item"} in your cart
+            </div>
+            {item_count > 0 && (
+              <button
+                onClick={handleEmptyCart}
+                style={{
+                  padding: "4px 12px",
+                  fontSize: "12px",
+                  background: "transparent",
+                  border: "1px solid currentColor",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  color: "red"
+                }}
+              >
+                Empty Cart
+              </button>
+            )}
           </div>
           <div>{renderCartItems()}</div>
           <TotalLine>Subtotal: {display_item_total}</TotalLine>
@@ -290,7 +354,24 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
             <Button variant="outline" onClick={() => router.push("/cart")}>
               View Cart
             </Button>
-            <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+            {user ? (
+              <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+            ) : (
+              <>
+                <Button onClick={() => router.push("/checkout")}>
+                  Checkout as Guest
+                </Button>
+                <Button variant="outline" onClick={() => router.push("/login")}>
+                  Login
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => router.push("/signup")}
+                >
+                  Signup
+                </Button>
+              </>
+            )}
           </Actions>
         </Menu>
         <style jsx>{`

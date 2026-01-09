@@ -12,7 +12,11 @@ import { useAuth } from "@config/auth";
 import { signupForm } from "@components/AuthForm/constants";
 import TipBot from "@components/TipBot";
 import Static from "@utilities/staticData";
-import { FormikInput, FormikCheckbox } from "@components/FormikWrappers";
+import {
+  FormikInput,
+  FormikPassword,
+  FormikCheckbox
+} from "@components/FormikWrappers";
 import {
   Title,
   Subtitle,
@@ -137,11 +141,8 @@ export const SignupForm = () => {
                   <Field
                     name="password"
                     id="password"
-                    variant="password"
-                    component={FormikInput}
+                    component={FormikPassword}
                     label="Password"
-                    ref={passwordRef}
-                    type="password"
                   />
                 </InputWrapper>
 
@@ -149,11 +150,8 @@ export const SignupForm = () => {
                   <Field
                     name="passwordConfirm"
                     id="passwordConfirm"
-                    variant="password"
-                    component={FormikInput}
+                    component={FormikPassword}
                     label="Re-type Password"
-                    ref={passwordRef}
-                    type="password"
                   />
                 </InputWrapper>
 

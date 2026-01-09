@@ -56,6 +56,11 @@ declare module "@emotion/react" {
         medium: string;
         light: string;
       };
+      green: {
+        primary: string;
+        medium: string;
+        light: string;
+      };
       red: {
         primary: string;
         medium: string;
@@ -138,6 +143,13 @@ declare module "@emotion/react" {
         color: string;
       };
       titleSM: {
+        fontFamily: string;
+        fontWeight: string;
+        fontSize: string;
+        lineHeight: string;
+        color: string;
+      };
+      bodyLG: {
         fontFamily: string;
         fontWeight: string;
         fontSize: string;

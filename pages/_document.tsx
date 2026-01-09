@@ -198,7 +198,7 @@ class MyDocument extends Document {
             }}
           />
           <script
-            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_PLACES_API_KEY}&libraries=places`}
+            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}
           />
           <script dangerouslySetInnerHTML={{ __html: FacebookPixelObject }} />
           <noscript>
@@ -211,6 +211,18 @@ class MyDocument extends Document {
           </noscript>
         </Head>
         <body>
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+              #__next {
+                min-height: 100vh;
+              }
+              #__next > div {
+                min-height: 100vh;
+              }
+            `
+            }}
+          />
           <Main />
           <NextScript />
         </body>
