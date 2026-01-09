@@ -204,10 +204,8 @@ const CheckoutForm = () => {
         zipcode: formData.zipcode
       });
       setEstimatedShipping(data);
-      // Auto-select first shipping rate
-      if (data?.data?.[0]) {
-        setSelectedShippingRate(data.data[0]);
-      }
+      // Clear any previously selected shipping rate; require explicit user selection
+      setSelectedShippingRate(null);
       setError("");
     } catch (err: any) {
       setError(err.message || "Failed to calculate shipping");
