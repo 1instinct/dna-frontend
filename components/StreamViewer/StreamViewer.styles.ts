@@ -43,7 +43,7 @@ export const StreamHeaderFade = styled.div`
 export const CloseButton = styled.button`
   position: absolute;
   top: 20px;
-  right: 20px;
+  right: 60px;
   z-index: 100;
   width: 48px;
   height: 48px;
@@ -174,14 +174,20 @@ export const ProductSidebar = styled.div`
   border-radius: 12px;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 60px;
+  margin-bottom: 40px;
+  margin-right: 10px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  max-height: calc(100vh - 100px);
 
   @media (max-width: 1024px) {
     grid-column: 1;
     grid-row: 3;
+    margin-top: 0;
+    margin-bottom: 12px;
     max-height: 300px;
   }
 `;
