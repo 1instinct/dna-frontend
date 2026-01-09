@@ -188,8 +188,7 @@ export const ThankYou = () => {
             contact our customer support team.
           </InfoText>
           <InfoText>
-            Email:{" "}
-            {process.env.NEXT_PUBLIC_EMAIL || "hello@instinct.is"}
+            Email: {process.env.NEXT_PUBLIC_EMAIL || "hello@instinct.is"}
           </InfoText>
           <InfoText>
             Phone: {process.env.NEXT_PUBLIC_COMPANY_PHONE || "1-800-000-0000"}
