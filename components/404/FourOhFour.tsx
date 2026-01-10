@@ -21,12 +21,12 @@ export const FourOhFour = () => {
   return (
     <Layout>
       <NotFoundContainer>
-        {/* <Lottie
+        <Lottie
           options={animationOptions}
           width={300}
           height={300}
           style={{ pointerEvents: "none" }}
-        /> */}
+        />
         <NotFoundTitle>404</NotFoundTitle>
         <NotFoundSubtitle>Whoops, keep looking...</NotFoundSubtitle>
       </NotFoundContainer>
