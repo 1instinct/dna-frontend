@@ -37,7 +37,7 @@ const Products: React.FC<ProductsProps> = (props) => {
       }
       acc[optionTypeId].push(curr.attributes);
       return acc;
-    }, {});
+    }, {}) || {};
 
   return (
     <SwiperWrap>

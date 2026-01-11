@@ -52,7 +52,7 @@ export const StreamCard = ({ isPast, item }: any) => {
           <InfluencerName as={"span"}>Jane Doe</InfluencerName>
         </InfluencerBox>
         <StreamCardTitle>{item.title}</StreamCardTitle>
-        <StreamCardDesc>{item.description}</StreamCardDesc>
+        {/* <StreamCardDesc>{item.description}</StreamCardDesc> */}
       </>
     </StreamCardWrapper>
   );

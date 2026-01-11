@@ -8,10 +8,10 @@ import {
   fetchProducts,
   useProducts,
   useStreams
-} from "../../hooks";
+} from "../../hooks/index";
 import Hero from "./Hero";
 import Banner from "./Banner";
-import { Content } from "./Home.styles";
+import { Content } from "./StaticHome.styles";
 import Featured from "./Featured";
 import MemberList from "./MemberList";
 import { StreamList } from "../StreamList";
@@ -19,11 +19,11 @@ import { useMediaQuery } from "react-responsive";
 import MobileLatest from "./MobileLatest";
 import { Loading } from "../Loading";
 import homeData from "./home.json";
-import { VideoJS } from "..";
-import constants from "../../utilities/constants";
+import { VideoJS } from "../components";
+import constants from "../../utilities/constants.js";
 import Products from "./Products";
 
-export const Home = (props: any) => {
+export const StaticHome = (props: any) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
   const playerRef = useRef(null);

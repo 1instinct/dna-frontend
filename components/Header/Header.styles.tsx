@@ -178,7 +178,7 @@ export const AccountMenu = styled(Popover)`
     padding: 20px;
     top: 45px !important;
     left: auto !important;
-    right: 105px;
+    right: 140px;
     background-color: ${(p) =>
       p.theme.isDarkMode
         ? p.theme.colors.gray.dark

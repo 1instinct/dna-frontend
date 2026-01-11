@@ -11,7 +11,7 @@ export const TopLevelNav = styled.nav`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px;
+  gap: 0px 40px;
   padding: 15px 0;
   position: relative;
   flex-wrap: wrap;
