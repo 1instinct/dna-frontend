@@ -28,16 +28,17 @@ const Products: React.FC<ProductsProps> = (props) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
   // constants.IS_DEBUG && console.log("products: ", products);
 
-  const optionValuesLookup = products?.included
-    ?.filter((item) => item.type === "option_value")
-    .reduce((acc: any, curr) => {
-      const optionTypeId = curr.relationships.option_type.data.id;
-      if (!acc[optionTypeId]) {
-        acc[optionTypeId] = [];
-      }
-      acc[optionTypeId].push(curr.attributes);
-      return acc;
-    }, {}) || {};
+  const optionValuesLookup =
+    products?.included
+      ?.filter((item) => item.type === "option_value")
+      .reduce((acc: any, curr) => {
+        const optionTypeId = curr.relationships.option_type.data.id;
+        if (!acc[optionTypeId]) {
+          acc[optionTypeId] = [];
+        }
+        acc[optionTypeId].push(curr.attributes);
+        return acc;
+      }, {}) || {};
 
   return (
     <SwiperWrap>
