@@ -106,7 +106,7 @@ export const fetchProductFeed = async (params: ProductFeedParams) => {
   // if (params.include) {
   //   queryParams.include = params.include;
   // }
-  // queryParams.include = "images,variants,option_types,variants.option_values";
+  queryParams.include = "images,variants,option_types,variants.option_values";
 
   constants.IS_DEBUG &&
     console.log("Fetching product feed with params:", queryParams);

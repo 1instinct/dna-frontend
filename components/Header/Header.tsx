@@ -8,6 +8,7 @@ import { HeaderProps } from "./types";
 import { useAuth } from "../../config/auth";
 import { useCart } from "../../hooks/useCart";
 import { useFavorites } from "../../hooks/useFavorites";
+import { useStore } from "../../hooks/useStore";
 import SearchBar from "../SearchBar";
 import { CartSidebar } from "../CartSidebar/CartSidebar";
 import { SocialLinks } from "..";
@@ -54,6 +55,12 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
   const logoPath =
     process.env.NEXT_PUBLIC_LOGO_PATH || "images/open-graph-instinct-dna.jpg";
 
+  // Get store logo from API if available
+  const { data: storeData } = useStore();
+  // Assume logo URL is in storeData.attributes.logo_url (customize if needed)
+  const storeLogoUrl = storeData?.attributes?.logo_url;
+  const displayLogo = storeLogoUrl || logoPath;
+
   const {
     data: cartData,
     isLoading: cartIsLoading,
@@ -88,12 +95,12 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
         )}
         <LogoDiv>
           <LinkDiv isActive href="/">
-            {logoPath ? (
+            {displayLogo ? (
               <Image
                 src={
-                  logoPath.startsWith("/") || logoPath.startsWith("http")
-                    ? logoPath
-                    : `/${logoPath}`
+                  displayLogo.startsWith("/") || displayLogo.startsWith("http")
+                    ? displayLogo
+                    : `/${displayLogo}`
                 }
                 alt={siteTitle}
                 width={0}

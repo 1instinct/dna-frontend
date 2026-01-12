@@ -431,7 +431,10 @@ export const WholesaleProductDetails = ({
       thisProduct &&
       thisProduct?.included?.filter((e: any) => e["type"] === "image");
     const primaryImg =
-      productImgs && productImgs[0]?.attributes?.styles[9]?.url;
+      productImgs &&
+      productImgs[0]?.attributes?.styles.filter(
+        (e: any) => e["width"] == "600"
+      )[0].url;
     const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${primaryImg}`;
     if (productImgs && productImgs.length < 1) {
       return <Loading />;
@@ -447,7 +450,9 @@ export const WholesaleProductDetails = ({
       productImgs &&
       productImgs.map((image, index) => {
         // const img600 = image.attributes.styles.filter((e: any) => e['width'] == '600').url;
-        const imgUrl = image.attributes.styles[9].url;
+        const imgUrl = image.attributes.styles.filter(
+          (e: any) => e["width"] == "600"
+        )[0].url;
         const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`;
         // console.log(imgSrc);
         return (

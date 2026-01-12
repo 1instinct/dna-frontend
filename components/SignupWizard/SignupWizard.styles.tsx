@@ -1,5 +1,6 @@
 import { Button } from "@components/shared/Button";
 import styled from "@emotion/styled";
+import { ButtonProps } from "@material-ui/core/Button";
 
 interface GenericThemeType {
   theme?: any;
@@ -179,20 +180,31 @@ export const WizardForm = styled.div<WizardFormType>`
     margin-top: ${(props) => (props.canGoBack ? "120px" : "225px")};
   }
 
+  /* iPhone SE 2nd Gen, 8, 7, 6S, 6 --------------- */
+  @media only screen and (min-device-width: 320px) and (max-device-width: 375px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
+    margin-top: ${(props) => (props.canGoBack ? "120px" : "225px")};
+    padding-top: 20px;
+  }
+
+  @media (min-width: 320px) and (max-width: 375px) {
+    margin-top: ${(props) => (props.canGoBack ? "120px" : "225px")};
+    padding-top: 20px;
+  }
+
   /* iPad Mini 4 --------------- */
   @media only screen and (min-device-width: ${(props) =>
       props.theme.breakpoints.values.sm}px) and (max-device-width: ${(props) =>
       props.theme.breakpoints.values
         .md}px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 1) {
     margin-top: ${(props) => (props.canGoBack ? "120px" : "165px")};
-    padding-top: 0;
+    padding-top: 20px;
   }
 
   @media (min-width: ${(props) =>
       props.theme.breakpoints.values.sm}px) and (max-width: ${(props) =>
       props.theme.breakpoints.values.md}px) {
     margin-top: ${(props) => (props.canGoBack ? "120px" : "165px")};
-    padding-top: 0;
+    padding-top: 20px;
   }
 
   @media (min-width: ${(props) => props.theme.breakpoints.values.md}px) {
@@ -229,9 +241,26 @@ export const PreviousButton = styled(Button)`
   }
 `;
 
-export const NextButton = styled(Button)`
+export const NextButton = styled(Button)<{
+  type?: "button" | "submit" | "reset";
+  variant?: ButtonProps["variant"];
+  width?: string;
+}>`
   flex-basis: 70%; /* Adjust the proportion of the width */
   flex-grow: 1; /* Allow the button to grow to fill available space */
+  background-color: ${(p) => p.theme.colors.brand.primary};
+  color: ${(p) => p.theme.colors.white.primary};
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 4px;
+
+  &:disabled {
+    background-color: ${(p) => p.theme.colors.gray.light};
+    color: ${(p) => p.theme.colors.gray.dark};
+    cursor: not-allowed;
+  }
 
   @media (max-width: ${(p) => p.theme.breakpoints.values.sm}px) {
     flex-basis: 55%; /* Adjust width for smaller screens */

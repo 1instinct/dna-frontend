@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useMediaQuery } from "react-responsive";
@@ -133,12 +134,10 @@ const FormWrapper: React.FC<any> = ({
             {/* <NextButton type={isLastStep ? "submit" : "button"} onClick={() => { */}
             {isLastStep ? (
               <NextButton
-                variant="solid"
-                // type={isLastStep ? "submit" : "button"}
+                type="submit" // Added to trigger Formik's onSubmit
                 onClick={() => {
-                  console.log("next: ", values, wizard, isLastStep);
-                  // console.log("next: ", wizard, isLastStep);
-                  wizard.next();
+                  constants.IS_DEBUG &&
+                    console.log("Submitting form: ", values);
                 }}
                 disabled={isLastStep && !termsAccepted}
               >
@@ -146,12 +145,9 @@ const FormWrapper: React.FC<any> = ({
               </NextButton>
             ) : (
               <NextButton
-                variant="solid"
-                // type={isLastStep ? "submit" : "button"}
                 onClick={() => {
                   constants.IS_DEBUG &&
                     console.log("next: ", values, wizard, isLastStep);
-                  // console.log("next: ", wizard, isLastStep);
                   wizard.next();
                 }}
                 disabled={
@@ -190,6 +186,7 @@ const FormWrapper: React.FC<any> = ({
 };
 
 export const SignupWizard = () => {
+  const router = useRouter();
   const isLargeDevice = useMediaQuery({
     // query: `(min-device-width: ${props => props.theme.breakpoints.values.}px)`
     query: `(min-device-width: 768px)`
@@ -197,41 +194,31 @@ export const SignupWizard = () => {
 
   const { register } = useAuth();
 
-  const handleSubmit = useCallback((values: any) => {
-    new Promise((resolve, reject) => {
-      register({ user: values })
-        .then((res) => {
-          console.log("yup: ", res);
-          // setSubmitting(false);
-          // router.push("/");
-        })
-        .catch((err) => {
-          console.log("nope: ", err);
-          // setSubmitting(false);
-        });
-
-      console.log("new Promise");
-      return Promise.resolve({
-        code: 200,
-        status: 200,
-        message: "Congrats!",
-        subtitle: `Your new User ID is: ###`
-      });
-    })
-      .then((res) => {
-        console.log("handleSubmit res: ", res);
-      })
-      .catch((err) => {
-        console.log("handleSubmit error: ", err);
-        // toggleErrorModal();
-        // setErrorMessage(err);
-        Alert.fire({ icon: "error", title: "Uh oh!", text: err });
-        // return Promise.resolve({
-        //   message: 'Uh oh.',
-        //   subtitle: err
-        // })
-      });
-  }, []);
+  const handleSubmit = useCallback(
+    async (values: any) => {
+      try {
+        const res = await register({ user: values });
+        console.log("Registration successful: ", res);
+        // Redirect after success (change path as needed)
+        router.push("/account");
+        return {
+          code: 200,
+          status: 200,
+          message: "Congrats!",
+          subtitle: `Your account has been created successfully!`
+        };
+      } catch (err) {
+        console.log("Registration error: ", err);
+        const errorMessage =
+          err && typeof err === "object" && "message" in err
+            ? (err as { message?: string }).message
+            : String(err);
+        Alert.fire({ icon: "error", title: "Uh oh!", text: errorMessage });
+        throw err;
+      }
+    },
+    [register, router]
+  );
 
   return (
     <MainWrapper>
@@ -250,7 +237,9 @@ export const SignupWizard = () => {
             <FormikWizard
               steps={Questions}
               // onSubmit={(values: any, { formikProps: { isSubmitting } }: any) => handleSubmit(values, isSubmitting)}
-              onSubmit={(values) => handleSubmit(values)}
+              onSubmit={(values) => {
+                handleSubmit(values);
+              }}
               render={FormWrapper}
             />
           </SlideInLeft>

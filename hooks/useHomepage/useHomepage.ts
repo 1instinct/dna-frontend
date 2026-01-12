@@ -51,15 +51,33 @@ export const fetchHomepage = async (): Promise<HomepageData> => {
 
   const data: HomepageResponse = await response.json();
 
-  // Parse settings if they're JSON strings
+  // Robustly parse settings if they're JSON or Ruby-hash-style strings
+  function parseSettings(settings: any): any {
+    if (typeof settings === "string") {
+      try {
+        // Try JSON.parse first
+        return JSON.parse(settings);
+      } catch {
+        try {
+          // Try to convert Ruby hash rocket to JSON colon, add quotes, and parse
+          let json = settings
+            .replace(/"=>/g, '":')
+            .replace(/([,{])\s*"([a-zA-Z0-9_]+)":/g, '$1"$2":') // ensure keys are quoted
+            .replace(/:([\s\d\w\[\{\"])/g, ": $1");
+          return JSON.parse(json);
+        } catch {
+          return {};
+        }
+      }
+    }
+    return settings || {};
+  }
+
   if (data.response_data?.homepage_sections) {
     data.response_data.homepage_sections =
       data.response_data.homepage_sections.map((section) => ({
         ...section,
-        settings:
-          typeof section.settings === "string"
-            ? JSON.parse(section.settings || "{}")
-            : section.settings || {}
+        settings: parseSettings(section.settings)
       }));
   }
 

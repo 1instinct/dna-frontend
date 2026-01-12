@@ -8,9 +8,30 @@ import { StreamList } from "../StreamList";
 import { VideoJS } from "..";
 import Featured from "./Featured";
 import Banner from "./Banner";
+import { Features } from "./Features";
+import { Testimonials } from "./Testimonials";
+import { Newsletter } from "./Newsletter";
+import { CallToAction } from "./CallToAction";
 import { useProducts } from "@hooks/useProducts";
 import { useStreams } from "@hooks/useStreams";
 import { useProductFeed, FeedType } from "@hooks/useProductFeed";
+
+// Utility to parse settings (handles Ruby hash string or object)
+function parseSettings(settings: any): any {
+  if (typeof settings === "string") {
+    try {
+      // Convert Ruby hash rocket to JSON colon, add quotes, and parse
+      let json = settings
+        .replace(/"=>/g, '":')
+        .replace(/([,{])\s*"([a-zA-Z0-9_]+)":/g, '$1"$2":') // ensure keys are quoted
+        .replace(/:([\s\d\w\[\{\"])/g, ": $1");
+      return JSON.parse(json);
+    } catch {
+      return {};
+    }
+  }
+  return settings || {};
+}
 
 // Section renderers for each type
 const SectionRenderers: Record<
@@ -34,7 +55,9 @@ const SectionRenderers: Record<
   products: ({ section }) => {
     // Parse nested settings if needed (API returns settings within settings)
     const sectionSettings =
-      section.settings?.settings || section.settings || {};
+      parseSettings(section.settings?.settings) ||
+      parseSettings(section.settings) ||
+      {};
 
     // Get feed type from section settings, default to "latest"
     const feedType = (sectionSettings.feedType as FeedType) || "latest";
@@ -48,10 +71,6 @@ const SectionRenderers: Record<
       customParams
     );
 
-    console.log("Product feed data:", feedData);
-    console.log("Has data array?", feedData?.data);
-    console.log("Data length:", feedData?.data?.length);
-
     if (isLoading) return <Loading />;
     if (!feedData || !feedData.data || feedData.data.length === 0) return null;
 
@@ -64,7 +83,7 @@ const SectionRenderers: Record<
   },
 
   content: ({ section }) => (
-    <div style={{ padding: "40px 0" }}>
+    <div style={{ padding: "20px 40px" }}>
       {section.title && <h2>{section.title}</h2>}
       <div dangerouslySetInnerHTML={{ __html: section.content }} />
     </div>
@@ -91,17 +110,18 @@ const SectionRenderers: Record<
   },
 
   custom: ({ section }) => {
+    const settings = parseSettings(section.settings);
     // For custom sections, render based on settings or content
-    if (section.settings?.componentType === "featured") {
+    if (settings.componentType === "featured") {
       return (
         <Featured
-          data={section.settings?.data || []}
+          data={settings.data || []}
           title={section.title || "Featured"}
         />
       );
     }
-    if (section.settings?.componentType === "banner") {
-      return <Banner data={section.settings?.data || {}} />;
+    if (settings.componentType === "banner") {
+      return <Banner data={settings.data || {}} />;
     }
     // Default custom rendering
     return (
@@ -109,6 +129,59 @@ const SectionRenderers: Record<
         {section.title && <h2>{section.title}</h2>}
         <div dangerouslySetInnerHTML={{ __html: section.content }} />
       </div>
+    );
+  },
+
+  features: ({ section }) => {
+    const settings = parseSettings(section.settings);
+    const features = settings.features || [];
+    return (
+      <Features
+        features={features}
+        title={section.title}
+        content={section.content}
+      />
+    );
+  },
+
+  testimonials: ({ section }) => {
+    const settings = parseSettings(section.settings);
+    const testimonials = settings.testimonials || [];
+    const displayStyle = settings.display_style || "carousel";
+    return (
+      <Testimonials
+        testimonials={testimonials}
+        title={section.title}
+        content={section.content}
+        displayStyle={displayStyle}
+      />
+    );
+  },
+
+  newsletter: ({ section }) => {
+    const settings = parseSettings(section.settings);
+    return (
+      <Newsletter
+        title={section.title}
+        content={section.content}
+        backgroundColor={settings.background_color}
+        privacyText={settings.privacy_text}
+        showSocialLinks={settings.show_social_links}
+      />
+    );
+  },
+
+  call_to_action: ({ section }) => {
+    const settings = parseSettings(section.settings);
+    return (
+      <CallToAction
+        title={section.title}
+        content={section.content}
+        backgroundColor={settings.background_color}
+        textColor={settings.text_color}
+        buttonText={settings.button_text}
+        buttonLink={settings.button_link}
+      />
     );
   }
 };

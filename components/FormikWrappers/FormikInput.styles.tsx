@@ -58,11 +58,10 @@ export const SuggestionWrapper = styled.div`
   align-items: flex-start;
   justify-content: center;
   flex-flow: column nowrap;
-  min-width: 250px;
-  width: 100%;
-  max-width: 500px;
+  /* width: calc(100% - 4px); */
   max-height: 200px;
-  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
   z-index: 1;
   display: flex;
   box-shadow: 1px 3px 30px rgba(0, 0, 0, 0.23);
