@@ -26,7 +26,9 @@ const fetchMenuItems = async (id: number = 1) => {
   return response;
 };
 const useMenuItems = (id: number) => {
-  return useQuery<any>([QueryKeys.MENU_ITEMS, id], () => fetchMenuItems(id));
+  return useQuery<any>([QueryKeys.MENU_ITEMS, id], () => fetchMenuItems(id), {
+    retry: false
+  });
 };
 
 export { useMenuItems, fetchMenuItems };

@@ -29,11 +29,34 @@ const ghlForm = process.env.NEXT_PUBLIC_GOHIGHLEVEL_FORM_ID || "";
 
 const mailerService = process.env.NEXT_PUBLIC_MAILER;
 
+function buildUtmTags(utmParams: any): string[] {
+  if (!utmParams) return [];
+  const entries = [
+    ["utm_medium", utmParams.utm_medium],
+    ["utm_source", utmParams.utm_source],
+    ["utm_campaign", utmParams.utm_campaign],
+    ["utm_content", utmParams.utm_content],
+    ["utm_term", utmParams.utm_term],
+    ["ad_id", utmParams.ad_id],
+    ["adset_id", utmParams.adset_id],
+    ["campaign_id", utmParams.campaign_id],
+    ["ad_name", utmParams.ad_name],
+    ["adset_name", utmParams.adset_name],
+    ["campaign_name", utmParams.campaign_name],
+    ["placement", utmParams.placement],
+    ["site_source_name", utmParams.site_source_name]
+  ];
+  return entries
+    .filter(([, value]) => value)
+    .map(([key, value]) => `${key}:${value}`);
+}
+
 async function handleGoHighLevel({
   email,
   firstName,
   lastName,
   phone,
+  utmParams,
   res
 }: any) {
   isDebug && console.log("Handling GoHighLevel contact: ", email);
@@ -71,7 +94,8 @@ async function handleGoHighLevel({
           lastName,
           phone,
           email,
-          source: "newsletter-signup"
+          source: utmParams?.utm_source || "newsletter-signup",
+          tags: buildUtmTags(utmParams)
         })
       });
 
@@ -91,7 +115,33 @@ async function handleGoHighLevel({
       formData.append("email", email);
       formData.append("formId", ghlForm);
       formData.append("location_id", ghlLocation);
-      formData.append("eventData[source]", "direct");
+      formData.append(
+        "eventData[source]",
+        utmParams?.utm_source || "direct"
+      );
+      if (utmParams?.utm_medium)
+        formData.append("eventData[medium]", utmParams.utm_medium);
+      if (utmParams?.utm_campaign)
+        formData.append("eventData[campaign]", utmParams.utm_campaign);
+      if (utmParams?.utm_content)
+        formData.append("eventData[content]", utmParams.utm_content);
+      if (utmParams?.utm_term)
+        formData.append("eventData[term]", utmParams.utm_term);
+      if (utmParams?.ad_id)
+        formData.append("eventData[adSource]", utmParams.ad_id);
+      if (utmParams?.ad_name) formData.append("ad_name", utmParams.ad_name);
+      if (utmParams?.adset_name)
+        formData.append("adset_name", utmParams.adset_name);
+      if (utmParams?.adset_id)
+        formData.append("adset_id", utmParams.adset_id);
+      if (utmParams?.campaign_id)
+        formData.append("campaign_id", utmParams.campaign_id);
+      if (utmParams?.campaign_name)
+        formData.append("campaign_name", utmParams.campaign_name);
+      if (utmParams?.placement)
+        formData.append("placement", utmParams.placement);
+      if (utmParams?.site_source_name)
+        formData.append("site_source_name", utmParams.site_source_name);
 
       const createResponse = await fetch(
         "https://services.leadconnectorhq.com/forms/submit",
@@ -116,7 +166,8 @@ async function handleGoHighLevel({
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { email, firstName, lastName, phone, newContact } = req.body;
+  const { email, firstName, lastName, phone, newContact, utmParams } =
+    req.body;
 
   if (!email) {
     return res.status(400).json({ error: "Email is required" });
@@ -164,7 +215,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (mailerService === "gohighlevel") {
-    return handleGoHighLevel({ email, firstName, lastName, phone, res });
+    return handleGoHighLevel({ email, firstName, lastName, phone, utmParams, res });
   }
 
   return res.status(500).json({ error: "Invalid mailer service" });
