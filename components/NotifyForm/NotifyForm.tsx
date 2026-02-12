@@ -12,6 +12,7 @@ import {
   Button,
   MailTo
 } from "./NotifyForm.styles";
+import { getStoredUtmParams } from "../../hooks/useUtmParams";
 
 const notifyQuestions = [
   {
@@ -120,7 +121,8 @@ export const NotifyForm = () => {
         firstName: firstName,
         lastName: lastName,
         phone: phone,
-        newContact: false
+        newContact: false,
+        utmParams: getStoredUtmParams()
       }),
       headers: {
         "Content-Type": "application/json"

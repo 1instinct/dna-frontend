@@ -7,6 +7,7 @@ import { MainMenu, Header, ComingSoon } from "../components";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import * as tracking from "../config/tracking";
+import { captureUtmParams } from "../hooks/useUtmParams";
 
 // Styles
 import { ThemeProvider } from "@emotion/react";
@@ -35,6 +36,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     if (jssStyles) {
       jssStyles.parentElement?.removeChild(jssStyles);
     }
+    captureUtmParams();
   }, []);
 
   useEffect(() => {

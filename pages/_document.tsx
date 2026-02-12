@@ -201,6 +201,10 @@ class MyDocument extends Document {
             src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}
           />
           <script dangerouslySetInnerHTML={{ __html: FacebookPixelObject }} />
+          <script
+            src="https://crm-api.instinct.is/js/external-tracking.js"
+            data-tracking-id={process.env.NEXT_PUBLIC_GHL_TRACKING_ID}
+          />
           <noscript>
             <img
               height="1"
