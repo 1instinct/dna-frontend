@@ -17,9 +17,7 @@ spec:
     spec:
       containers:
         - name: dna-frontend
-          # image: dna-frontend:0.1
-          image: localhost:32000/dna-frontend:registry
-          # imagePullPolicy: Never
+          image: localhost:32000/dna-frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

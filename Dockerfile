@@ -3,13 +3,13 @@ FROM node:18-bullseye
 # FROM node:alpine
 # FROM node:21-alpine3.18
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     python3 \
     make \
     g++ \
-    libc6-compat \
-    vips-dev
+    libvips-dev \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
