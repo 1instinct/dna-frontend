@@ -95,28 +95,137 @@ Done!
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-## Deploy to Microk8s (Kubernetes)
+## Deploy to Pi Cluster (MicroK8s)
 
-- `ssh clusterIP`
-- `cd ./dna-frontend`
-- `cp ./secret.example.yml ./secret.yml`
+All deployment is run **from your Mac** via the Makefile in the parent `dna-infra` repo. You do not need to SSH into the Pis manually.
 
-Convert .env values to base64:
+### Quick Reference
 
-```shell
-echo -n 'The seed of a powerful beginning' | base64 && \
-echo -n 'hello@instinct.is' | base64 && \
-...
+```bash
+cd ~/Internal/DNA/code   # dna-infra root
+
+# Full build + deploy
+make build-frontend      # rsync to Pi, docker build, push to registry
+make deploy-frontend     # Apply K8s manifests, rolling restart
+
+# Just redeploy (no code changes, e.g. env var update)
+make deploy-frontend
 ```
 
-- It can be tricky, helps to use multiple cursors but:
-- paste base64 values into `secret.yml`
-- `microk8s kubectl apply -f secret.yml`
-- `docker build . -t localhost:32000/dna-frontend:registry`
-- `docker images` (copy ID of newly built image)
-- `docker tag <image_id> localhost:32000/dna-frontend:registry`
-- `docker push localhost:32000/dna-frontend:registry`
-- `microk8s kubectl rollout restart deployment/dna-frontend`
+### Update Environment Variables
+
+The source of truth for env vars is **`.env.development`** (gitignored). The K8s cluster reads from `secrets.yml` (base64-encoded version of the same values).
+
+**Recommended workflow — use the sync script:**
+
+```bash
+cd ~/Internal/DNA/code
+
+# 1. Edit .env.development with your changes
+#    (this is the source of truth)
+
+# 2. Regenerate secrets.yml from .env.development
+./maintenance/sync-frontend-secrets.sh
+
+# 3. Deploy
+make deploy-frontend
+```
+
+Or do both in one step:
+
+```bash
+./maintenance/sync-frontend-secrets.sh --deploy
+```
+
+The sync script handles base64 encoding and key name mapping automatically (e.g. `_SLUG` keys in `.env.development` become `_URL` keys in secrets with full URLs prepended).
+
+**Manual single-value update** (if you just need to change one key):
+
+```bash
+# Encode the new value
+echo -n 'your-new-value' | base64
+
+# Edit secrets.yml, paste the base64 string
+# Then deploy:
+make deploy-frontend
+```
+
+**How it works:** `make deploy-frontend` runs `kubectl apply` on secrets + manifests and does a rolling restart, so the pod picks up the new env vars immediately.
+
+### Key Name Mapping
+
+Some keys differ between `.env.development` and `secrets.yml`:
+
+| .env.development | secrets.yml (K8s) |
+|---|---|
+| `NEXT_PUBLIC_COMING_SOON_TEXT` | `NEXT_PUBLIC_COMING_SOON_COPY` |
+| `NEXT_PUBLIC_FACEBOOK_SLUG` | `NEXT_PUBLIC_FACEBOOK_URL` (full URL) |
+| `NEXT_PUBLIC_INSTAGRAM_SLUG` | `NEXT_PUBLIC_INSTAGRAM_URL` (full URL) |
+| `NEXT_PUBLIC_TWITTER_SLUG` | `NEXT_PUBLIC_TWITTER_URL` (full URL) |
+
+The sync script handles these mappings. If editing `secrets.yml` manually, use the K8s column names.
+
+### First-Time Secret Setup
+
+```bash
+# Option A: Generate from .env.development (recommended)
+./maintenance/sync-frontend-secrets.sh
+
+# Option B: Copy template and fill in manually
+cp secret.example.yml secrets.yml
+# Encode each value: echo -n 'value' | base64
+```
+
+See `secret.example.yml` for the full list of required `NEXT_PUBLIC_*` variables.
+
+### Build + Deploy Flow
+
+```
+Your Mac                          smokey01 (Pi)
+────────                          ─────────────
+make build-frontend
+  1. rsync source ──────────────► ~/build/dna-frontend/
+  2.                               docker build → localhost:32000/dna-frontend:latest
+  3.                               docker push → internal registry
+
+make deploy-frontend
+  4. kubectl apply secrets ─────► K8s Secret updated
+  5. kubectl apply manifests ───► Deployment/Service/Ingress updated
+  6. kubectl rollout restart ───► New pod pulls latest image + env vars
+```
+
+### Verify Deployment
+
+```bash
+make status              # Check pod is Running
+make logs-frontend       # Tail logs for errors
+
+# Or directly:
+ssh smokey01 sudo microk8s kubectl get pods -n default -l app=dna-frontend
+ssh smokey01 sudo microk8s kubectl logs -l app=dna-frontend -n default --tail=50
+```
+
+### Rollback
+
+If the new deployment is broken, restart with the previous image:
+
+```bash
+ssh smokey01 sudo microk8s kubectl rollout undo deployment/dna-frontend -n default
+```
+
+### K8s Manifest Files
+
+| File | Purpose |
+|------|---------|
+| `k8-deployment.yml` | Pod spec, image, env vars, resource limits |
+| `k8-service.yml` | ClusterIP service (port 8080 → 3000) |
+| `k8-ingress.yml` | NGINX ingress for `dna-frontend.instinct.is` with TLS |
+| `secrets.yml` | All `NEXT_PUBLIC_*` env vars (base64-encoded) |
+| `secret.example.yml` | Template with placeholder values |
+
+### Production URL
+
+`https://dna-frontend.instinct.is`
 
 # TODO:
 
