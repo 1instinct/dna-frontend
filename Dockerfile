@@ -20,9 +20,9 @@ COPY package.json yarn.lock contrib/spree-storefront-api-v2-sdk-4.5.1003.tgz ./
 RUN sed -i 's,file:spree-storefront-api-v2-sdk-4.5.1003.tgz,file:/app/spree-storefront-api-v2-sdk-4.5.1003.tgz,' package.json
 # RUN yarn add file:spree-storefront-api-v2-sdk-4.5.1003.tgz
 
-RUN npm install /app/spree-storefront-api-v2-sdk-4.5.1003.tgz
+RUN npm install --legacy-peer-deps /app/spree-storefront-api-v2-sdk-4.5.1003.tgz
 
-RUN npm install sharp@0.26.3
+RUN npm install --legacy-peer-deps sharp@0.26.3
 
 # RUN yarn install
 RUN yarn install --network-concurrency 1 --network-timeout 1000000
