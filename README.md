@@ -156,12 +156,12 @@ make deploy-frontend
 
 Some keys differ between `.env.development` and `secrets.yml`:
 
-| .env.development | secrets.yml (K8s) |
-|---|---|
-| `NEXT_PUBLIC_COMING_SOON_TEXT` | `NEXT_PUBLIC_COMING_SOON_COPY` |
-| `NEXT_PUBLIC_FACEBOOK_SLUG` | `NEXT_PUBLIC_FACEBOOK_URL` (full URL) |
-| `NEXT_PUBLIC_INSTAGRAM_SLUG` | `NEXT_PUBLIC_INSTAGRAM_URL` (full URL) |
-| `NEXT_PUBLIC_TWITTER_SLUG` | `NEXT_PUBLIC_TWITTER_URL` (full URL) |
+| .env.development               | secrets.yml (K8s)                      |
+| ------------------------------ | -------------------------------------- |
+| `NEXT_PUBLIC_COMING_SOON_TEXT` | `NEXT_PUBLIC_COMING_SOON_COPY`         |
+| `NEXT_PUBLIC_FACEBOOK_SLUG`    | `NEXT_PUBLIC_FACEBOOK_URL` (full URL)  |
+| `NEXT_PUBLIC_INSTAGRAM_SLUG`   | `NEXT_PUBLIC_INSTAGRAM_URL` (full URL) |
+| `NEXT_PUBLIC_TWITTER_SLUG`     | `NEXT_PUBLIC_TWITTER_URL` (full URL)   |
 
 The sync script handles these mappings. If editing `secrets.yml` manually, use the K8s column names.
 
@@ -215,13 +215,13 @@ ssh smokey01 sudo microk8s kubectl rollout undo deployment/dna-frontend -n defau
 
 ### K8s Manifest Files
 
-| File | Purpose |
-|------|---------|
-| `k8-deployment.yml` | Pod spec, image, env vars, resource limits |
-| `k8-service.yml` | ClusterIP service (port 8080 → 3000) |
-| `k8-ingress.yml` | NGINX ingress for `dna-frontend.instinct.is` with TLS |
-| `secrets.yml` | All `NEXT_PUBLIC_*` env vars (base64-encoded) |
-| `secret.example.yml` | Template with placeholder values |
+| File                 | Purpose                                               |
+| -------------------- | ----------------------------------------------------- |
+| `k8-deployment.yml`  | Pod spec, image, env vars, resource limits            |
+| `k8-service.yml`     | ClusterIP service (port 8080 → 3000)                  |
+| `k8-ingress.yml`     | NGINX ingress for `dna-frontend.instinct.is` with TLS |
+| `secrets.yml`        | All `NEXT_PUBLIC_*` env vars (base64-encoded)         |
+| `secret.example.yml` | Template with placeholder values                      |
 
 ### Production URL
 
