@@ -150,7 +150,16 @@ echo -n 'your-new-value' | base64
 make deploy-frontend
 ```
 
-**How it works:** `make deploy-frontend` runs `kubectl apply` on secrets + manifests and does a rolling restart, so the pod picks up the new env vars immediately.
+**Important:** `NEXT_PUBLIC_*` vars are inlined at **build time** by Next.js. If you change any `NEXT_PUBLIC_*` value, you must rebuild the Docker image — `make deploy-frontend` alone is not enough:
+
+```bash
+make build-frontend    # Rebuilds image with new NEXT_PUBLIC_* values baked in
+make deploy-frontend   # Deploys the new image
+# Prune Docker after (smokey01 has limited disk):
+ssh smokey01 "sudo docker system prune -af"
+```
+
+For non-`NEXT_PUBLIC_*` env vars (server-side only), `make deploy-frontend` is sufficient since those are injected at runtime via the K8s Secret.
 
 ### Key Name Mapping
 

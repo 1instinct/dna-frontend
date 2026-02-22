@@ -29,6 +29,10 @@ RUN yarn install --network-concurrency 1 --network-timeout 1000000
 
 COPY . .
 
+# Next.js production build reads .env.production, not .env.development.
+# NEXT_PUBLIC_* vars are inlined at build time — they must be present here.
+RUN cp .env.development .env.production 2>/dev/null || true
+
 RUN yarn build
 
 ENV PORT 3000
