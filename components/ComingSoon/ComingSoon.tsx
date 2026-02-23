@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  NotifyForm,
-  ProductTeaser,
-  SocialLinks,
-  LegalLinks
-} from "../components";
+import { NotifyForm } from "../NotifyForm";
+import { ProductTeaser } from "../ProductTeaser";
+import { SocialLinks } from "../SocialLinks";
+import { LegalLinks } from "../LegalLinks";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { useMutation, useQueryClient } from "react-query";

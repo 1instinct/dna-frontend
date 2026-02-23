@@ -2,7 +2,9 @@ import { useRef, useEffect } from "react";
 import { useQuery } from "react-query";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
-import { Layout, InfoBox, ProductList } from "../components";
+import { Layout } from "../Layout";
+import { InfoBox } from "../InfoBox";
+import { ProductList } from "../ProductList";
 import {
   fetchStreams,
   fetchProducts,
@@ -19,7 +21,7 @@ import { useMediaQuery } from "react-responsive";
 import MobileLatest from "./MobileLatest";
 import { Loading } from "../Loading";
 import homeData from "./home.json";
-import { VideoJS } from "..";
+import { VideoJS } from "../VideoJS";
 import constants from "../../utilities/constants";
 import Products from "./Products";
 

@@ -10,7 +10,7 @@ import { useCart } from "../../hooks/useCart";
 import { useFavorites } from "../../hooks/useFavorites";
 import SearchBar from "../SearchBar";
 import { CartSidebar } from "../CartSidebar/CartSidebar";
-import { SocialLinks } from "..";
+import { SocialLinks } from "../SocialLinks";
 
 import {
   TopHeader,

@@ -33,7 +33,7 @@ import {
   CongratsWrapper
 } from "./SignupWizard.styles";
 import constants from "@utilities/constants";
-import { Loading } from "..";
+import { Loading } from "../Loading";
 
 const ThreeViewer = dynamic(
   () => import("@components/shared/ThreeViewer").then((mod) => mod.ThreeViewer),

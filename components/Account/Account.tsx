@@ -3,7 +3,9 @@ import { useRouter } from "next/router";
 import { Formik, Field } from "formik";
 import * as Yup from "yup";
 import styled from "@emotion/styled";
-import { Layout, Loading, Button } from "../../components";
+import { Layout } from "../Layout";
+import { Loading } from "../Loading";
+import { Button } from "../shared/Button";
 import { FormikInput, FormikPassword } from "@components/FormikWrappers";
 import { useAccountInfo, useUpdateAccount } from "@hooks/useAccounts";
 

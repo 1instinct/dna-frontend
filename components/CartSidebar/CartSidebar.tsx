@@ -3,7 +3,7 @@ const Menu = BurgerMenu.slide as unknown as React.ComponentType<any>;
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "react-query";
-import { Loading, LoadingWrapper } from "..";
+import { Loading, LoadingWrapper } from "../Loading";
 import {
   useCart,
   updateItemQuantity,

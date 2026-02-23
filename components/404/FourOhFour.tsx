@@ -1,6 +1,6 @@
 "use client";
 import Lottie from "react-lottie";
-import { Layout } from "../components";
+import { Layout } from "../Layout";
 import girlAnimation from "../../data/girl.json";
 import {
   NotFoundContainer,

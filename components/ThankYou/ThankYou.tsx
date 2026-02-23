@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { Layout } from "../components";
+import { Layout } from "../Layout";
 import { useOrder } from "../../hooks";
 import { useAuth } from "../../config/auth";
 import styled from "@emotion/styled";

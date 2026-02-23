@@ -14,7 +14,8 @@ import {
 } from "../../hooks";
 import { useToggleFavorite, useCheckFavorite } from "../../hooks/useFavorites";
 import { useAuth } from "../../config/auth";
-import { Layout, LoadingWrapper, Loading } from "../components";
+import { Layout } from "../Layout";
+import { Loading, LoadingWrapper } from "../Loading";
 import { useProduct, fetchProduct } from "../../hooks/useProduct";
 import { useMutation, useQueryClient } from "react-query";
 import { addItemToCart } from "../../hooks/useCart";

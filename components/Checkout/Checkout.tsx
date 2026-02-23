@@ -8,7 +8,8 @@ import {
   useStripe,
   useElements
 } from "@stripe/react-stripe-js";
-import { Layout, Loading } from "../components";
+import { Layout } from "../Layout";
+import { Loading } from "../Loading";
 import { useCart } from "../../hooks/useCart";
 import { useProducts } from "../../hooks";
 import { useAuth } from "../../config/auth";
@@ -55,9 +56,9 @@ import {
   CheckboxLabel
 } from "./Checkout.styles";
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-);
+const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+  : null;
 
 const CheckoutForm = () => {
   const stripe = useStripe();

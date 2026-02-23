@@ -6,7 +6,7 @@ const Menu = BurgerMenu.slide as unknown as React.ComponentType<any>;
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import Collapse from "@material-ui/core/Collapse";
-import { SocialLinks } from "../";
+import { SocialLinks } from "../SocialLinks";
 import { menuStyles, darkMenuStyles } from "./menuStyles";
 import { useTheme } from "@emotion/react";
 import { useRouter } from "next/router";

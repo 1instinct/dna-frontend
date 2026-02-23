@@ -5,7 +5,7 @@ import {
   useProducts,
   useStreams
 } from "../../../hooks";
-import { ProductCard } from "../..";
+import { ProductCard } from "../../ProductCard";
 import { Container, Grid, LatestTitle } from "./MobileLatest.styles";
 export interface MobileLatestProps {
   products: any;

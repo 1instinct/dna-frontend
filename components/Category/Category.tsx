@@ -8,7 +8,7 @@ import {
   useProducts,
   useStreams
 } from "../../hooks";
-import { Layout } from "../components";
+import { Layout } from "../Layout";
 import { useProduct, fetchProduct } from "../../hooks/useProduct";
 import { useMutation, useQueryClient } from "react-query";
 import { addItemToCart } from "../../hooks/useCart";

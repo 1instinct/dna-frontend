@@ -79,15 +79,27 @@ const FavoritePrice = styled.div`
   color: ${(p) => p.theme.colors.brand.primary};
 `;
 
-const RemoveButton = styled(Button)`
+const RemoveButton = styled.button`
   width: 100%;
-  background: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.red.primary
-      : p.theme.colors.red.primary};
+  height: 48px;
+  background: ${(p) => p.theme.colors.red.primary};
+  color: ${(p) => p.theme.colors.white.primary};
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
+  font-size: ${(p) => p.theme.typography.titleSM.fontSize};
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: opacity 0.2s;
 
   &:hover {
-    background: ${(p) => p.theme.colors.red.primary};
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;
 

@@ -9,7 +9,8 @@ import {
   removeItemFromCart
 } from "../../hooks/useCart";
 import { useProducts } from "../../hooks";
-import { Layout, Loading } from "../components";
+import { Layout } from "../Layout";
+import { Loading } from "../Loading";
 import { QueryKeys } from "../../hooks/queryKeys";
 import { useAuth } from "../../config/auth";
 

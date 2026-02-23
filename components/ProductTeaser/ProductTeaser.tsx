@@ -1,6 +1,6 @@
 import React from "react";
 import { ProductTeaserProps } from "./types";
-import { Loading } from "..";
+import { Loading } from "../Loading";
 
 import {
   ProductsRow,

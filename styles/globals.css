@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 72% 73%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 18 49% 82%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 0 0% 93%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 58% 53%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 77%;
+    --input: 0 0% 77%;
+    --ring: 0 72% 73%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 72% 73%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 58% 53%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 72% 73%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    text-rendering: auto;
+    -moz-osx-font-smoothing: grayscale;
+    font-smooth: 2em;
+  }
+
+  html {
+    width: 100%;
+    height: 100%;
+  }
+
+  #__next {
+    margin: 0;
+    padding: 0;
+  }
+
+  ::selection {
+    color: white;
+    background: #EB8B8B;
+  }
+
+  ::-moz-selection {
+    color: white;
+    background: #EB8B8B;
+  }
+
+  a {
+    cursor: pointer;
+    color: #EB8B8B;
+  }
+
+  p {
+    margin: 10px 0px 20px;
+  }
+
+  article {
+    margin: 0 auto;
+    max-width: 650px;
+  }
+
+  svg {
+    margin: 0;
+  }
+}

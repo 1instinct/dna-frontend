@@ -8,7 +8,7 @@ import {
   useMenuLocation,
   useMenuItems
 } from "../../hooks";
-import { SocialLinks } from "..";
+import { SocialLinks } from "../SocialLinks";
 import Image from "next/image";
 import { Logo } from "@components/shared/Logo";
 import hardcodedColumns from "./footer.json";

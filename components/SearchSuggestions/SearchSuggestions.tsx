@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { LoadingIcon } from "..";
+import { LoadingIcon } from "../Loading";
 import { useProducts } from "../../hooks/useProducts";
 import { StyledSearchSuggestions } from "./SearchSuggestions.styles";
 import Suggestion from "./Suggestion";

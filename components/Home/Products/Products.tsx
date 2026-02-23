@@ -1,7 +1,7 @@
 import React from "react";
 import Rating from "@material-ui/lab/Rating";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { ProductCard } from "../..";
+import { ProductCard } from "../../ProductCard";
 import { SwiperWrap, Title } from "./Products.styles";
 import SwiperCore, { Navigation, Thumbs } from "swiper/core";
 import { useMediaQuery } from "react-responsive";
