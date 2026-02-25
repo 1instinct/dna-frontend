@@ -5,8 +5,7 @@ import { generatePoints } from "./utils";
 import { Tube } from "./Tube";
 import * as THREE from "three";
 
-const isDarkMode =
-  (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
+const isDarkMode = (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
 
 interface SpiderGraphProps {
   data: {

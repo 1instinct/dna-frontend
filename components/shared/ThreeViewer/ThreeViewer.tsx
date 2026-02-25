@@ -3,8 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Color } from "three";
 import type { Mesh } from "three";
 
-const isDarkMode =
-  (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
+const isDarkMode = (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
 
 // Simple rotating DNA helix
 const DNAHelix = () => {
@@ -76,10 +75,7 @@ export const ThreeViewer = () => {
       dpr={[1, 1.5]}
       performance={{ min: 0.5 }}
     >
-      <color
-        attach="background"
-        args={[isDarkMode ? "#000000" : "#ffffff"]}
-      />
+      <color attach="background" args={[isDarkMode ? "#000000" : "#ffffff"]} />
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} intensity={0.8} />
       <pointLight position={[-10, -10, -10]} intensity={0.3} />

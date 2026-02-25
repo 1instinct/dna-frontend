@@ -3,7 +3,9 @@ import { useRouter } from "next/router";
 import { ShimmerButton } from "@components/ui";
 
 export type bannerData = { img: string };
-export interface BannerProps { data: bannerData }
+export interface BannerProps {
+  data: bannerData;
+}
 
 const Banner: React.FC<BannerProps> = ({ data }) => {
   const router = useRouter();

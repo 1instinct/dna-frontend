@@ -16,7 +16,11 @@ const About = () => {
           POL focuses on coming together at the crossroads of fashion and
           business and creating styles inspired by the world around us.
         </div>
-        <img src="/Arrow.png" alt="" className="my-[3.125vw] h-auto w-[4.31vw]" />
+        <img
+          src="/Arrow.png"
+          alt=""
+          className="my-[3.125vw] h-auto w-[4.31vw]"
+        />
         <div className="text-center font-title text-[33px] uppercase leading-[41px] text-foreground">
           Our Mission
         </div>
@@ -25,7 +29,11 @@ const About = () => {
           POL focuses on coming together at the crossroads of fashion and
           business and creating styles inspired by the world around us.
         </div>
-        <img src="/Arrow.png" alt="" className="my-[3.125vw] h-auto w-[4.31vw]" />
+        <img
+          src="/Arrow.png"
+          alt=""
+          className="my-[3.125vw] h-auto w-[4.31vw]"
+        />
         <div className="text-center font-title text-[33px] uppercase leading-[41px] text-foreground">
           Our Values
         </div>
@@ -37,7 +45,11 @@ const About = () => {
           <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
           <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
         </div>
-        <img src="/Arrow.png" alt="" className="my-[3.125vw] h-auto w-[4.31vw]" />
+        <img
+          src="/Arrow.png"
+          alt=""
+          className="my-[3.125vw] h-auto w-[4.31vw]"
+        />
         <div className="text-center font-title text-[33px] uppercase leading-[41px] text-foreground">
           Our Team
         </div>

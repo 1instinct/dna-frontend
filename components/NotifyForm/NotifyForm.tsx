@@ -150,9 +150,7 @@ export const NotifyForm = () => {
       <div>
         <form
           onSubmit={(e: any) =>
-            currentQuestion > 0
-              ? handleSubmit(e, false)
-              : handleSubmit(e, true)
+            currentQuestion > 0 ? handleSubmit(e, false) : handleSubmit(e, true)
           }
         >
           {currentQuestion < notifyQuestions.length
@@ -185,10 +183,9 @@ export const NotifyForm = () => {
               : message}
           </p>
         )}
-        {status === "success" &&
-          currentQuestion >= notifyQuestions.length && (
-            <p className="mt-3 font-body text-sm text-green-600">{message}</p>
-          )}
+        {status === "success" && currentQuestion >= notifyQuestions.length && (
+          <p className="mt-3 font-body text-sm text-green-600">{message}</p>
+        )}
       </div>
       <a
         id="mailto"

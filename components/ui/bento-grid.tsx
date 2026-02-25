@@ -1,22 +1,22 @@
-import { ComponentPropsWithoutRef, ReactNode } from "react"
-import { ArrowRight as ArrowRightIcon } from "lucide-react"
+import { ComponentPropsWithoutRef, ReactNode } from "react";
+import { ArrowRight as ArrowRightIcon } from "lucide-react";
 
-import { cn } from "@lib/utils"
-import { Button } from "@components/ui/button"
+import { cn } from "@lib/utils";
+import { Button } from "@components/ui/button";
 
 interface BentoGridProps extends ComponentPropsWithoutRef<"div"> {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }
 
 interface BentoCardProps extends ComponentPropsWithoutRef<"div"> {
-  name: string
-  className: string
-  background: ReactNode
-  Icon: React.ElementType
-  description: string
-  href: string
-  cta: string
+  name: string;
+  className: string;
+  background: ReactNode;
+  Icon: React.ElementType;
+  description: string;
+  href: string;
+  cta: string;
 }
 
 const BentoGrid = ({ children, className, ...props }: BentoGridProps) => {
@@ -30,8 +30,8 @@ const BentoGrid = ({ children, className, ...props }: BentoGridProps) => {
     >
       {children}
     </div>
-  )
-}
+  );
+};
 
 const BentoCard = ({
   name,
@@ -104,6 +104,6 @@ const BentoCard = ({
 
     <div className="pointer-events-none absolute inset-0 transform-gpu transition-all duration-300 group-hover:bg-black/[.03] group-hover:dark:bg-neutral-800/10" />
   </div>
-)
+);
 
-export { BentoCard, BentoGrid }
+export { BentoCard, BentoGrid };

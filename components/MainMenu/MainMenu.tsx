@@ -12,16 +12,10 @@ import { MegaMenu } from "./MegaMenu";
 import { MobileMenu } from "./MobileMenu";
 
 export const MainMenu = (props: MainMenuProps) => {
-  const {
-    showMenuHeader,
-    onMenuItemClick,
-    ...others
-  } = props;
+  const { showMenuHeader, onMenuItemClick, ...others } = props;
 
-  const {
-    data: menuLocationData,
-    isLoading: menuLocationIsLoading
-  } = useMenuLocation(1);
+  const { data: menuLocationData, isLoading: menuLocationIsLoading } =
+    useMenuLocation(1);
 
   const {
     data: menuItemsData,

@@ -37,7 +37,12 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
   }
 
   return (
-    <div className={cn("relative hidden items-center gap-1 md:flex", pcWrapClassName)}>
+    <div
+      className={cn(
+        "relative hidden items-center gap-1 md:flex",
+        pcWrapClassName
+      )}
+    >
       {/* Menu Items */}
       {menuItems?.map((item: any, index: number) => (
         <button

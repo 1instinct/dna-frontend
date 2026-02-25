@@ -95,7 +95,9 @@ export const ViewerList: React.FC<ViewerListProps> = ({
                   <div
                     className="flex h-full w-full items-center justify-center text-xs font-bold text-white"
                     style={{
-                      background: `hsl(${viewer.id.charCodeAt(0) * 10}, 70%, 60%)`
+                      background: `hsl(${
+                        viewer.id.charCodeAt(0) * 10
+                      }, 70%, 60%)`
                     }}
                   >
                     {viewer.name.charAt(0).toUpperCase()}

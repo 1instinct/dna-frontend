@@ -137,7 +137,13 @@ export const SignupForm = () => {
                           />
                         )}
                       </Field>
-                      <span className={`font-body text-sm ${privacyTerms ? "text-foreground" : "text-muted-foreground"}`}>
+                      <span
+                        className={`font-body text-sm ${
+                          privacyTerms
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
                         I have received and read the{" "}
                         <button
                           type="button"
@@ -160,7 +166,13 @@ export const SignupForm = () => {
                           />
                         )}
                       </Field>
-                      <span className={`font-body text-sm ${reportingTerms ? "text-foreground" : "text-muted-foreground"}`}>
+                      <span
+                        className={`font-body text-sm ${
+                          reportingTerms
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
                         By clicking &quot;Signup&quot; I agree to the{" "}
                         <button
                           type="button"

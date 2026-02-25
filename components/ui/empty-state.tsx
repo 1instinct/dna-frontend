@@ -45,9 +45,7 @@ export const EmptyState = ({
         <div className="mb-4 text-muted-foreground">{icon}</div>
       )}
       <h3 className="heading-md mb-2">{title}</h3>
-      {description && (
-        <p className="body-sm mx-auto max-w-sm">{description}</p>
-      )}
+      {description && <p className="body-sm mx-auto max-w-sm">{description}</p>}
       {ctaLabel && (ctaHref || onCtaClick) && (
         <Button
           variant="default"

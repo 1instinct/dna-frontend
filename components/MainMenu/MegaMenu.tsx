@@ -61,12 +61,12 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ menuItems, loading }) => {
               "hover:translate-x-1 hover:bg-accent hover:text-brand",
               level > 0 && "text-[13px]"
             )}
-            style={{ paddingLeft: level > 0 ? `${12 + level * 16}px` : undefined }}
+            style={{
+              paddingLeft: level > 0 ? `${12 + level * 16}px` : undefined
+            }}
           >
             {item.name}
-            {hasChildren && (
-              <ChevronRight className="h-4 w-4 opacity-50" />
-            )}
+            {hasChildren && <ChevronRight className="h-4 w-4 opacity-50" />}
           </div>
           {hasChildren && (
             <div
@@ -151,7 +151,10 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ menuItems, loading }) => {
             <div
               className="mx-auto grid max-w-[1400px] gap-10 px-10 py-10 md:px-14 lg:px-16"
               style={{
-                gridTemplateColumns: `repeat(${Math.min(columns.length + 1, 5)}, 1fr)`
+                gridTemplateColumns: `repeat(${Math.min(
+                  columns.length + 1,
+                  5
+                )}, 1fr)`
               }}
             >
               {columns.map((columnItems, colIdx) => (

@@ -296,7 +296,9 @@ export const WholesaleProductDetails = ({
                           <div className="aspect-square overflow-hidden rounded-xl bg-muted">
                             <img
                               src={imgSrc}
-                              alt={`${thisProduct?.data?.attributes?.name} - Image ${index + 1}`}
+                              alt={`${
+                                thisProduct?.data?.attributes?.name
+                              } - Image ${index + 1}`}
                               className="h-full w-full object-cover"
                             />
                           </div>
@@ -337,7 +339,9 @@ export const WholesaleProductDetails = ({
                       : "border-border bg-transparent text-foreground hover:border-brand hover:text-brand"
                   )}
                 >
-                  <Heart className={cn("h-4 w-4", isFavorited && "fill-current")} />
+                  <Heart
+                    className={cn("h-4 w-4", isFavorited && "fill-current")}
+                  />
                   {isFavorited ? "Remove from Favorites" : "Add to Favorites"}
                 </button>
 
@@ -348,7 +352,9 @@ export const WholesaleProductDetails = ({
                       <div
                         key={`variant-${index}`}
                         className="h-[30px] w-[30px] border border-border"
-                        style={{ backgroundColor: option.attributes.presentation }}
+                        style={{
+                          backgroundColor: option.attributes.presentation
+                        }}
                       />
                     ))}
                   </div>
@@ -360,7 +366,9 @@ export const WholesaleProductDetails = ({
 
                 <hr className="my-6 border-border/30" />
 
-                <p className="font-body text-sm text-muted-foreground">Price Per Pack</p>
+                <p className="font-body text-sm text-muted-foreground">
+                  Price Per Pack
+                </p>
                 <div className="font-title text-3xl font-bold">
                   ${thisProduct?.data?.attributes?.price}
                 </div>
@@ -368,11 +376,18 @@ export const WholesaleProductDetails = ({
                 {/* Sizes Per Pack */}
                 {productSizes && productSizes.length > 0 && (
                   <>
-                    <p className="mt-4 text-left font-body text-sm text-muted-foreground">Sizes Per Pack</p>
+                    <p className="mt-4 text-left font-body text-sm text-muted-foreground">
+                      Sizes Per Pack
+                    </p>
                     <div className="grid grid-cols-5">
                       {productSizes.map((i: any, index: number) => (
-                        <div key={`size-${index}`} className="grid grid-cols-2 items-center border border-border">
-                          <div className="border-r border-border p-1 text-center text-sm">2</div>
+                        <div
+                          key={`size-${index}`}
+                          className="grid grid-cols-2 items-center border border-border"
+                        >
+                          <div className="border-r border-border p-1 text-center text-sm">
+                            2
+                          </div>
                           <div className="bg-muted p-1 text-center text-sm uppercase">
                             {i.attributes.presentation}
                           </div>
@@ -387,10 +402,18 @@ export const WholesaleProductDetails = ({
                   <div className="my-8">
                     {/* Table Head */}
                     <div className="grid grid-cols-[30%_25%_20%_20%] rounded-t-lg bg-brand text-sm font-semibold text-white">
-                      <div className="flex items-center justify-center p-2">Colors</div>
-                      <div className="flex items-center justify-center p-2">Pack Qty</div>
-                      <div className="flex items-center justify-center p-2">Pieces Qty</div>
-                      <div className="flex items-center justify-center p-2">Pack Price</div>
+                      <div className="flex items-center justify-center p-2">
+                        Colors
+                      </div>
+                      <div className="flex items-center justify-center p-2">
+                        Pack Qty
+                      </div>
+                      <div className="flex items-center justify-center p-2">
+                        Pieces Qty
+                      </div>
+                      <div className="flex items-center justify-center p-2">
+                        Pack Price
+                      </div>
                     </div>
                     {/* Table Body */}
                     <div className="border-x border-b border-border">
@@ -407,7 +430,9 @@ export const WholesaleProductDetails = ({
                             <div className="flex items-center justify-center p-1">
                               <div
                                 className="h-[30px] w-[30px] border border-border"
-                                style={{ backgroundColor: item.attributes.presentation }}
+                                style={{
+                                  backgroundColor: item.attributes.presentation
+                                }}
                               />
                             </div>
                             <div className="flex items-center justify-center p-1">
@@ -421,13 +446,17 @@ export const WholesaleProductDetails = ({
                                 type="number"
                                 min="0"
                                 max="999"
-                                onChange={(e) => setChosenVariantQty(Number(e.target.value))}
+                                onChange={(e) =>
+                                  setChosenVariantQty(Number(e.target.value))
+                                }
                                 className="w-16 border border-border bg-transparent p-1 text-center text-sm text-foreground focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                               />
                             </div>
                             <div className="flex items-center justify-center p-1">
                               <button
-                                onClick={() => setChosenVariantQty(chosenVariantQty + 1)}
+                                onClick={() =>
+                                  setChosenVariantQty(chosenVariantQty + 1)
+                                }
                                 className="rounded border border-border px-2 py-1 text-sm hover:bg-muted"
                               >
                                 +
@@ -457,10 +486,15 @@ export const WholesaleProductDetails = ({
                 {/* Product Properties */}
                 {productProperties && productProperties.length > 0 && (
                   <div className="mt-8 text-left">
-                    <h3 className="mb-3 font-title text-base font-semibold">Product Info</h3>
+                    <h3 className="mb-3 font-title text-base font-semibold">
+                      Product Info
+                    </h3>
                     <div className="space-y-1.5">
                       {productProperties.map((property: any, index: number) => (
-                        <div key={`property-${index}`} className="font-body text-sm text-muted-foreground">
+                        <div
+                          key={`property-${index}`}
+                          className="font-body text-sm text-muted-foreground"
+                        >
                           <span className="font-medium text-foreground">
                             {property.attributes.name}
                           </span>

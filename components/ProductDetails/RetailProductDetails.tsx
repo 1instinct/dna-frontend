@@ -289,7 +289,9 @@ export const RetailProductDetails = ({
                           <div className="aspect-square overflow-hidden rounded-xl bg-muted">
                             <img
                               src={imgSrc}
-                              alt={`${thisProduct?.data?.attributes?.name} - Image ${index + 1}`}
+                              alt={`${
+                                thisProduct?.data?.attributes?.name
+                              } - Image ${index + 1}`}
                               className="h-full w-full object-cover"
                             />
                           </div>
@@ -330,7 +332,9 @@ export const RetailProductDetails = ({
                       : "border-border bg-transparent text-foreground hover:border-brand hover:text-brand"
                   )}
                 >
-                  <Heart className={cn("h-4 w-4", isFavorited && "fill-current")} />
+                  <Heart
+                    className={cn("h-4 w-4", isFavorited && "fill-current")}
+                  />
                   {isFavorited ? "Remove from Favorites" : "Add to Favorites"}
                 </button>
 
@@ -347,7 +351,9 @@ export const RetailProductDetails = ({
                             ? "border-brand scale-110"
                             : "border-border hover:border-foreground"
                         )}
-                        style={{ backgroundColor: option.attributes.presentation }}
+                        style={{
+                          backgroundColor: option.attributes.presentation
+                        }}
                         aria-label={option.attributes.name}
                       />
                     ))}
@@ -388,7 +394,9 @@ export const RetailProductDetails = ({
                     {productSizes.map((size: any, index: number) => (
                       <button
                         key={`size-${index}`}
-                        onClick={() => setSelectedSize(size.attributes.presentation)}
+                        onClick={() =>
+                          setSelectedSize(size.attributes.presentation)
+                        }
                         className={cn(
                           "rounded-lg border px-5 py-2.5 font-title text-sm transition-all",
                           selectedSize === size.attributes.presentation
@@ -418,7 +426,10 @@ export const RetailProductDetails = ({
                     </h3>
                     <div className="space-y-1.5">
                       {productProperties.map((property: any, index: number) => (
-                        <div key={`property-${index}`} className="font-body text-sm text-muted-foreground">
+                        <div
+                          key={`property-${index}`}
+                          className="font-body text-sm text-muted-foreground"
+                        >
                           <span className="font-medium text-foreground">
                             {property.attributes.name}
                           </span>

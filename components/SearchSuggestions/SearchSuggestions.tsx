@@ -40,7 +40,12 @@ const SearchSuggestions = ({
   if (isLoading) {
     setIsSearchLoading(true);
     return (
-      <div className={wrapperClass} role="listbox" aria-labelledby={labelId} id={id}>
+      <div
+        className={wrapperClass}
+        role="listbox"
+        aria-labelledby={labelId}
+        id={id}
+      >
         <div className="flex items-center justify-center py-4">
           <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground border-t-brand" />
         </div>
@@ -50,7 +55,12 @@ const SearchSuggestions = ({
 
   if (error) {
     return (
-      <div className={wrapperClass} role="listbox" aria-labelledby={labelId} id={id}>
+      <div
+        className={wrapperClass}
+        role="listbox"
+        aria-labelledby={labelId}
+        id={id}
+      >
         <p className="px-4 py-3 text-sm text-destructive">Error {status}</p>
       </div>
     );
@@ -59,7 +69,12 @@ const SearchSuggestions = ({
   if (!data || data.data.length === 0) return null;
 
   return (
-    <div className={wrapperClass} role="listbox" aria-labelledby={labelId} id={id}>
+    <div
+      className={wrapperClass}
+      role="listbox"
+      aria-labelledby={labelId}
+      id={id}
+    >
       {isVisible &&
         data?.data?.map((item: any, index: any) => {
           return (

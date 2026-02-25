@@ -1,23 +1,23 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@lib/utils"
+import { cn } from "@lib/utils";
 
 interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Width of the border in pixels
    * @default 1
    */
-  borderWidth?: number
+  borderWidth?: number;
   /**
    * Duration of the animation in seconds
    * @default 14
    */
-  duration?: number
+  duration?: number;
   /**
    * Color of the border, can be a single color or an array of colors
    * @default "#000000"
    */
-  shineColor?: string | string[]
+  shineColor?: string | string[];
 }
 
 /**
@@ -48,7 +48,7 @@ export function ShineBorder({
           WebkitMaskComposite: "xor",
           maskComposite: "exclude",
           padding: "var(--border-width)",
-          ...style,
+          ...style
         } as React.CSSProperties
       }
       className={cn(
@@ -57,5 +57,5 @@ export function ShineBorder({
       )}
       {...props}
     />
-  )
+  );
 }

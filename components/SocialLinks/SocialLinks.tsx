@@ -5,17 +5,23 @@ export const SocialLinks = ({ darkMode }: any) => {
   const socialLinks = [
     {
       icon: Instagram,
-      href: `http://www.instagram.com/${process.env.NEXT_PUBLIC_INSTAGRAM_SLUG || ""}`,
+      href: `http://www.instagram.com/${
+        process.env.NEXT_PUBLIC_INSTAGRAM_SLUG || ""
+      }`,
       label: "Instagram"
     },
     {
       icon: Facebook,
-      href: `http://www.facebook.com/${process.env.NEXT_PUBLIC_FACEBOOK_SLUG || ""}`,
+      href: `http://www.facebook.com/${
+        process.env.NEXT_PUBLIC_FACEBOOK_SLUG || ""
+      }`,
       label: "Facebook"
     },
     {
       icon: Twitter,
-      href: `http://www.twitter.com/${process.env.NEXT_PUBLIC_TWITTER_SLUG || ""}`,
+      href: `http://www.twitter.com/${
+        process.env.NEXT_PUBLIC_TWITTER_SLUG || ""
+      }`,
       label: "Twitter"
     }
   ];

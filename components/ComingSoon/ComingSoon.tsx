@@ -8,7 +8,12 @@ import { dehydrate } from "react-query/hydration";
 import { useMutation, useQueryClient } from "react-query";
 import { fetchProducts, useProducts } from "../../hooks";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { CarouselProvider, Slider, Slide, ImageWithZoom } from "pure-react-carousel";
+import {
+  CarouselProvider,
+  Slider,
+  Slide,
+  ImageWithZoom
+} from "pure-react-carousel";
 import "pure-react-carousel/dist/react-carousel.es.css";
 import { ButtonBack, ButtonNext } from "pure-react-carousel";
 

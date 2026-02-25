@@ -7,7 +7,8 @@ export interface HeroProps {}
 const Hero: React.FC<HeroProps> = () => {
   const router = useRouter();
   return (
-    <div className="relative flex h-[50vw] min-h-[400px] max-h-[719px] flex-col justify-end bg-cover bg-center sm:h-[50vw]"
+    <div
+      className="relative flex h-[50vw] min-h-[400px] max-h-[719px] flex-col justify-end bg-cover bg-center sm:h-[50vw]"
       style={{ backgroundImage: "url(/pol-hero.jpg)" }}
     >
       <Particles

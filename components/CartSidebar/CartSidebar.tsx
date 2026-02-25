@@ -171,7 +171,9 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
             </span>
             <div className="flex items-center gap-1">
               <button
-                onClick={() => handleUpdateItemQuantity(lineItemRef.id, quantity - 1)}
+                onClick={() =>
+                  handleUpdateItemQuantity(lineItemRef.id, quantity - 1)
+                }
                 className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
               >
                 <Minus className="h-3 w-3" />
@@ -188,7 +190,9 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                 className="w-10 border-none bg-transparent text-center font-body text-sm text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               />
               <button
-                onClick={() => handleUpdateItemQuantity(lineItemRef.id, quantity + 1)}
+                onClick={() =>
+                  handleUpdateItemQuantity(lineItemRef.id, quantity + 1)
+                }
                 className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
               >
                 <Plus className="h-3 w-3" />
@@ -245,7 +249,8 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                 {/* Item count & empty cart */}
                 <div className="mb-3 flex items-center justify-between">
                   <span className="font-body text-sm text-muted-foreground">
-                    {item_count} {item_count > 1 ? "items" : "item"} in your cart
+                    {item_count} {item_count > 1 ? "items" : "item"} in your
+                    cart
                   </span>
                   {item_count > 0 && (
                     <button
@@ -265,11 +270,15 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                 <div className="mt-4 space-y-2 border-t border-border/30 pt-4">
                   <div className="flex justify-between font-body text-sm">
                     <span className="text-muted-foreground">Subtotal:</span>
-                    <span className="font-semibold text-foreground">{display_item_total}</span>
+                    <span className="font-semibold text-foreground">
+                      {display_item_total}
+                    </span>
                   </div>
                   <div className="flex justify-between font-body text-sm">
                     <span className="text-muted-foreground">Tax:</span>
-                    <span className="text-foreground">{included_tax_total}</span>
+                    <span className="text-foreground">
+                      {included_tax_total}
+                    </span>
                   </div>
                   <div className="flex justify-between font-title text-base font-bold">
                     <span>Total:</span>
@@ -282,14 +291,20 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                   <Button
                     variant="outline"
                     className="w-full"
-                    onClick={() => { toggle(); router.push("/cart"); }}
+                    onClick={() => {
+                      toggle();
+                      router.push("/cart");
+                    }}
                   >
                     View Cart
                   </Button>
                   {user ? (
                     <Button
                       className="w-full"
-                      onClick={() => { toggle(); router.push("/checkout"); }}
+                      onClick={() => {
+                        toggle();
+                        router.push("/checkout");
+                      }}
                     >
                       Checkout
                     </Button>
@@ -297,21 +312,30 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                     <>
                       <Button
                         className="w-full"
-                        onClick={() => { toggle(); router.push("/checkout"); }}
+                        onClick={() => {
+                          toggle();
+                          router.push("/checkout");
+                        }}
                       >
                         Checkout as Guest
                       </Button>
                       <Button
                         variant="outline"
                         className="w-full"
-                        onClick={() => { toggle(); router.push("/login"); }}
+                        onClick={() => {
+                          toggle();
+                          router.push("/login");
+                        }}
                       >
                         Login
                       </Button>
                       <Button
                         variant="outline"
                         className="w-full"
-                        onClick={() => { toggle(); router.push("/signup"); }}
+                        onClick={() => {
+                          toggle();
+                          router.push("/signup");
+                        }}
                       >
                         Sign Up
                       </Button>

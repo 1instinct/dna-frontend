@@ -232,13 +232,17 @@ const config: Config = {
         shimmer: "shimmer 3s linear infinite",
         "live-pulse": "live-pulse 2s ease-in-out infinite",
         "slide-in-right": "slide-in-right 0.5s ease-expo-out",
-        "slide-in-left": "slide-in-left 0.33s cubic-bezier(0.215, 0.61, 0.355, 1)",
-        "slide-out-left": "slide-out-left 0.33s cubic-bezier(0.215, 0.61, 0.355, 1)",
+        "slide-in-left":
+          "slide-in-left 0.33s cubic-bezier(0.215, 0.61, 0.355, 1)",
+        "slide-out-left":
+          "slide-out-left 0.33s cubic-bezier(0.215, 0.61, 0.355, 1)",
         "fade-in-out": "fade-in-out 0.33s linear infinite",
         // Magic UI animations
         marquee: "marquee var(--duration, 40s) infinite linear",
-        "marquee-vertical": "marquee-vertical var(--duration, 40s) linear infinite",
-        "shimmer-slide": "shimmer-slide var(--speed, 3s) ease-in-out infinite alternate",
+        "marquee-vertical":
+          "marquee-vertical var(--duration, 40s) linear infinite",
+        "shimmer-slide":
+          "shimmer-slide var(--speed, 3s) ease-in-out infinite alternate",
         "spin-around": "spin-around calc(var(--speed, 3s) * 2) infinite linear",
         shine: "shine var(--duration, 14s) infinite linear",
         gradient: "gradient 8s linear infinite"

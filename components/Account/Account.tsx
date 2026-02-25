@@ -2,7 +2,15 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Formik, Field } from "formik";
 import * as Yup from "yup";
-import { Package, MapPin, Heart, CreditCard, User, Mail, Lock } from "lucide-react";
+import {
+  Package,
+  MapPin,
+  Heart,
+  CreditCard,
+  User,
+  Mail,
+  Lock
+} from "lucide-react";
 import { cn } from "@lib/utils";
 import { Button } from "@components/ui";
 import { Layout } from "../Layout";

@@ -29,7 +29,10 @@ const Products: React.FC<ProductsProps> = ({ products, title }) => {
     <div className="my-8 overflow-hidden">
       <div className="mb-6 flex items-baseline justify-between">
         <h2 className="heading-lg">{title}</h2>
-        <Link href="/browse" className="text-sm text-brand hover:underline transition-colors">
+        <Link
+          href="/browse"
+          className="text-sm text-brand hover:underline transition-colors"
+        >
           View All
         </Link>
       </div>
@@ -41,9 +44,11 @@ const Products: React.FC<ProductsProps> = ({ products, title }) => {
         watchSlidesProgress={true}
       >
         {products?.data?.map((item: any, index: any) => {
-          const defaultImg = "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
+          const defaultImg =
+            "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
           const productImg = item.relationships?.images?.data[0]?.id;
-          const allImages = products?.included?.filter((e: any) => e.type === "image") || [];
+          const allImages =
+            products?.included?.filter((e: any) => e.type === "image") || [];
           const foundImg = allImages.filter((e: any) => e.id === productImg);
           const imgUrl = foundImg[0]?.attributes?.styles[4]?.url;
           const imgSrc = productImg

@@ -43,7 +43,11 @@ export const MobileMenu = ({
     });
   }, []);
 
-  const handleItemClick = (item: any, hasChildren: boolean, pathSlug: string) => {
+  const handleItemClick = (
+    item: any,
+    hasChildren: boolean,
+    pathSlug: string
+  ) => {
     if (hasChildren) {
       toggleExpanded(pathSlug);
     } else {
@@ -143,9 +147,19 @@ export const MobileMenu = ({
 
             <div className="mt-8 font-title text-xs text-gray-light">
               <div>
-                <a href="/privacy" className="text-gray-medium hover:text-brand transition-colors">Privacy Policy</a>
+                <a
+                  href="/privacy"
+                  className="text-gray-medium hover:text-brand transition-colors"
+                >
+                  Privacy Policy
+                </a>
                 {" - "}
-                <a href="/terms" className="text-gray-medium hover:text-brand transition-colors">Terms &amp; Conditions</a>
+                <a
+                  href="/terms"
+                  className="text-gray-medium hover:text-brand transition-colors"
+                >
+                  Terms &amp; Conditions
+                </a>
                 {" - "}
                 <span>RETURN POLICY</span>
               </div>

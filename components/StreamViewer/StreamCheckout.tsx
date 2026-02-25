@@ -794,9 +794,7 @@ const PaymentStep: React.FC<{
         </div>
       </div>
 
-      {error && (
-        <div className="mt-1 text-xs text-destructive">{error}</div>
-      )}
+      {error && <div className="mt-1 text-xs text-destructive">{error}</div>}
 
       <div className="mt-5 flex gap-3">
         <button

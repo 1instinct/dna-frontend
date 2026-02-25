@@ -5,7 +5,9 @@ import { Avatar, AvatarImage, AvatarFallback } from "@components/ui";
 import { useMediaQuery } from "react-responsive";
 
 export type member = { name: string; avatar: string };
-export interface MemberListProps { data: member[] }
+export interface MemberListProps {
+  data: member[];
+}
 
 SwiperCore.use([Navigation]);
 
@@ -14,11 +16,7 @@ const MemberList: React.FC<MemberListProps> = ({ data }) => {
 
   return (
     <div className="my-8 h-36">
-      <Swiper
-        loop={true}
-        spaceBetween={1}
-        slidesPerView={isMobile ? 3 : 7}
-      >
+      <Swiper loop={true} spaceBetween={1} slidesPerView={isMobile ? 3 : 7}>
         {data.map((item, index) => (
           <SwiperSlide key={index}>
             <div className="flex flex-col items-center">

@@ -14,9 +14,11 @@ const MobileLatest: React.FC<MobileLatestProps> = ({ title, products }) => {
       )}
       <div className="product-grid-dense">
         {products?.data?.map((item: any, index: number) => {
-          const defaultImg = "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
+          const defaultImg =
+            "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
           const productImg = item.relationships?.images?.data[0]?.id;
-          const allImages = products?.included?.filter((e: any) => e.type === "image") || [];
+          const allImages =
+            products?.included?.filter((e: any) => e.type === "image") || [];
           const foundImg = allImages.filter((e: any) => e.id === productImg);
           const imgUrl = foundImg[0]?.attributes?.styles[4]?.url;
           const imgSrc = productImg
@@ -25,7 +27,9 @@ const MobileLatest: React.FC<MobileLatestProps> = ({ title, products }) => {
 
           const optionTypes = item.relationships?.option_types?.data || [];
           const productOptionIds = optionTypes.map((i: any) => i.id);
-          const allOptions = products?.included?.filter((e: any) => e.type === "option_value") || [];
+          const allOptions =
+            products?.included?.filter((e: any) => e.type === "option_value") ||
+            [];
           const productVariantColors = allOptions.filter((e: any) =>
             e.attributes.presentation.includes("#")
           );
@@ -34,7 +38,12 @@ const MobileLatest: React.FC<MobileLatestProps> = ({ title, products }) => {
           );
 
           return (
-            <ProductCard key={item.id || `product-${index}`} item={item} imgSrc={imgSrc} opts={foundOptions} />
+            <ProductCard
+              key={item.id || `product-${index}`}
+              item={item}
+              imgSrc={imgSrc}
+              opts={foundOptions}
+            />
           );
         })}
       </div>

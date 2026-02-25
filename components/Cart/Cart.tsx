@@ -125,7 +125,9 @@ export const Cart = () => {
               </span>
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={() => handleUpdateItemQuantity(lineItemId, quantity - 1)}
+                  onClick={() =>
+                    handleUpdateItemQuantity(lineItemId, quantity - 1)
+                  }
                   className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
                 >
                   <Minus className="h-3.5 w-3.5" />
@@ -134,7 +136,9 @@ export const Cart = () => {
                   {quantity}
                 </span>
                 <button
-                  onClick={() => handleUpdateItemQuantity(lineItemId, quantity + 1)}
+                  onClick={() =>
+                    handleUpdateItemQuantity(lineItemId, quantity + 1)
+                  }
                   className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
                 >
                   <Plus className="h-3.5 w-3.5" />
@@ -155,7 +159,12 @@ export const Cart = () => {
   };
 
   if (isLoading) return <Loading />;
-  if (isError) return <p className="p-8 text-center text-destructive">Error: {(error as any).message}</p>;
+  if (isError)
+    return (
+      <p className="p-8 text-center text-destructive">
+        Error: {(error as any).message}
+      </p>
+    );
 
   const {
     item_count = 0,
@@ -187,7 +196,9 @@ export const Cart = () => {
         <div className="mt-6 space-y-2 border-t border-border/30 pt-6">
           <div className="flex justify-between font-body text-sm">
             <span className="text-muted-foreground">Subtotal:</span>
-            <span className="font-semibold text-foreground">{display_item_total}</span>
+            <span className="font-semibold text-foreground">
+              {display_item_total}
+            </span>
           </div>
           <div className="flex justify-between font-body text-sm">
             <span className="text-muted-foreground">Tax:</span>
@@ -202,9 +213,7 @@ export const Cart = () => {
         {/* Actions */}
         <div className="mt-8 flex flex-wrap gap-3">
           {user ? (
-            <Button onClick={() => router.push("/checkout")}>
-              Checkout
-            </Button>
+            <Button onClick={() => router.push("/checkout")}>Checkout</Button>
           ) : (
             <>
               <Button onClick={() => router.push("/checkout")}>

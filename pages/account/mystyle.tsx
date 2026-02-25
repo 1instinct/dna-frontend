@@ -30,9 +30,18 @@ const MyStyle = () => {
                   {item.desc}
                 </p>
                 <div className="mt-2 flex items-center gap-1.5">
-                  <span className="h-3 w-3 rounded-full border border-border" style={{ background: "#cbc8bf" }} />
-                  <span className="h-3 w-3 rounded-full border border-border" style={{ background: "#979d93" }} />
-                  <span className="h-3 w-3 rounded-full border border-border" style={{ background: "#979d93" }} />
+                  <span
+                    className="h-3 w-3 rounded-full border border-border"
+                    style={{ background: "#cbc8bf" }}
+                  />
+                  <span
+                    className="h-3 w-3 rounded-full border border-border"
+                    style={{ background: "#979d93" }}
+                  />
+                  <span
+                    className="h-3 w-3 rounded-full border border-border"
+                    style={{ background: "#979d93" }}
+                  />
                 </div>
               </div>
               <div className="flex shrink-0 flex-col items-end">

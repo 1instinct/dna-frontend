@@ -67,11 +67,11 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
               ? "bg-brand/90 text-white"
               : "bg-background/80 text-muted-foreground hover:bg-background/95 hover:text-brand"
           )}
-          aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
+          aria-label={
+            isFavorited ? "Remove from favorites" : "Add to favorites"
+          }
         >
-          <Heart
-            className={cn("h-4 w-4", isFavorited && "fill-current")}
-          />
+          <Heart className={cn("h-4 w-4", isFavorited && "fill-current")} />
         </button>
 
         {/* Quick Add Overlay */}

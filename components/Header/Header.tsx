@@ -43,9 +43,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
 
   const { data: favoritesData } = useFavorites(1);
 
-  const cartItemCount = cartData
-    ? cartData?.data?.attributes?.item_count
-    : 0;
+  const cartItemCount = cartData ? cartData?.data?.attributes?.item_count : 0;
   const favoritesCount = favoritesData?.meta?.total_count || 0;
 
   if (isMaint && isMaint === "true") {
@@ -107,7 +105,10 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
                     <ChevronDown className="ml-1 h-5 w-5 text-foreground hidden sm:block" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[160px] p-5 font-title text-right">
+                <DropdownMenuContent
+                  align="end"
+                  className="w-[160px] p-5 font-title text-right"
+                >
                   <DropdownMenuItem asChild>
                     <Link
                       href="/account"

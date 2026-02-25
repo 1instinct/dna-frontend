@@ -26,7 +26,9 @@ export const InputGroupWrapper = ({
       "[&_.carousel_.control-dots]:p-0",
       "[&_.carousel_.control-dots_.dot]:h-[5px] [&_.carousel_.control-dots_.dot]:w-[5px] [&_.carousel_.control-dots_.dot]:bg-muted-foreground [&_.carousel_.control-dots_.dot]:shadow-none [&_.carousel_.control-dots_.dot:focus]:outline-none",
       "[&_.carousel_.control-dots_.dot.selected]:bg-white [&_.carousel_.control-dots_.dot.selected]:shadow-[0_0_0_7px_hsl(var(--brand))]",
-      isIntro ? "sm:-mt-20 sm:mx-auto sm:pt-2.5" : "sm:mt-32 sm:mx-auto sm:pt-2.5",
+      isIntro
+        ? "sm:-mt-20 sm:mx-auto sm:pt-2.5"
+        : "sm:mt-32 sm:mx-auto sm:pt-2.5",
       className
     )}
     {...props}

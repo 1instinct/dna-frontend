@@ -10,9 +10,7 @@ export const ProductList: React.FC<ProductListProps> = (props: any) => {
 
   return (
     <section className="w-full pb-5 mb-5">
-      {title && (
-        <h1 className="font-title text-xl text-foreground">{title}</h1>
-      )}
+      {title && <h1 className="font-title text-xl text-foreground">{title}</h1>}
       <div className="product-grid-dense">
         {products?.data?.map((product: any) => {
           const defaultImg =

@@ -44,13 +44,13 @@ export const Home = (props: any) => {
   const {
     error: productsError,
     data: productsData,
-    isLoading: productsAreLoading,
+    isLoading: productsAreLoading
   }: any = useProducts(1);
 
   const {
     error: streamsError,
     data: streamsData,
-    isLoading: streamsAreLoading,
+    isLoading: streamsAreLoading
   }: any = useStreams(1);
 
   const productList = isMobile ? null : (
@@ -70,7 +70,10 @@ export const Home = (props: any) => {
       <div className="section-container space-y-8 py-8">
         {streamsData?.response_data?.length > 0 && (
           <BlurFade delay={0.1} inView>
-            <StreamList data={streamsData.response_data} title={"Live-Shopping"} />
+            <StreamList
+              data={streamsData.response_data}
+              title={"Live-Shopping"}
+            />
           </BlurFade>
         )}
         {!productsAreLoading && productList && (

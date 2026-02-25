@@ -9,9 +9,7 @@ export const ProductTeaser: React.FC<ProductTeaserProps> = (props: any) => {
 
   return (
     <section className="w-full pb-5">
-      {title && (
-        <p className="font-body text-sm text-foreground">{title}</p>
-      )}
+      {title && <p className="font-body text-sm text-foreground">{title}</p>}
       <div className="product-grid-dense">
         {products?.data?.map((product: any) => {
           const defaultImg =

@@ -157,7 +157,12 @@ const CheckoutForm = () => {
   };
 
   const handleRecalculateShipping = async () => {
-    if (!formData.country || !formData.state || !formData.city || !formData.zipcode) {
+    if (
+      !formData.country ||
+      !formData.state ||
+      !formData.city ||
+      !formData.zipcode
+    ) {
       setError("Please fill in the complete shipping address first");
       return;
     }
@@ -217,7 +222,10 @@ const CheckoutForm = () => {
           : null;
 
         return (
-          <div key={lineItem.id} className="flex items-center gap-3 border-b border-border/20 py-3">
+          <div
+            key={lineItem.id}
+            className="flex items-center gap-3 border-b border-border/20 py-3"
+          >
             {imageUrl && (
               <img
                 src={imageUrl}
@@ -414,8 +422,19 @@ const CheckoutForm = () => {
                 Contact Information
               </h2>
               <div>
-                <label htmlFor="email" className={labelClass}>Email Address *</label>
-                <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="you@example.com" className={inputClass} />
+                <label htmlFor="email" className={labelClass}>
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="you@example.com"
+                  className={inputClass}
+                />
               </div>
             </section>
 
@@ -446,7 +465,9 @@ const CheckoutForm = () => {
                   ))}
                 </div>
               ) : (
-                <p className="font-body text-sm text-muted-foreground">Loading payment methods...</p>
+                <p className="font-body text-sm text-muted-foreground">
+                  Loading payment methods...
+                </p>
               )}
             </section>
 
@@ -481,48 +502,138 @@ const CheckoutForm = () => {
               </h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="firstName" className={labelClass}>First Name *</label>
-                  <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleInputChange} required className={inputClass} />
+                  <label htmlFor="firstName" className={labelClass}>
+                    First Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    required
+                    className={inputClass}
+                  />
                 </div>
                 <div>
-                  <label htmlFor="lastName" className={labelClass}>Last Name *</label>
-                  <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleInputChange} required className={inputClass} />
+                  <label htmlFor="lastName" className={labelClass}>
+                    Last Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    required
+                    className={inputClass}
+                  />
                 </div>
               </div>
               <div>
-                <label htmlFor="address1" className={labelClass}>Address *</label>
-                <input type="text" id="address1" name="address1" value={formData.address1} onChange={handleInputChange} required placeholder="Street address" className={inputClass} />
+                <label htmlFor="address1" className={labelClass}>
+                  Address *
+                </label>
+                <input
+                  type="text"
+                  id="address1"
+                  name="address1"
+                  value={formData.address1}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Street address"
+                  className={inputClass}
+                />
               </div>
               <div>
-                <label htmlFor="address2" className={labelClass}>Apartment, suite, etc. (optional)</label>
-                <input type="text" id="address2" name="address2" value={formData.address2} onChange={handleInputChange} className={inputClass} />
+                <label htmlFor="address2" className={labelClass}>
+                  Apartment, suite, etc. (optional)
+                </label>
+                <input
+                  type="text"
+                  id="address2"
+                  name="address2"
+                  value={formData.address2}
+                  onChange={handleInputChange}
+                  className={inputClass}
+                />
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="city" className={labelClass}>City *</label>
-                  <input type="text" id="city" name="city" value={formData.city} onChange={handleInputChange} required className={inputClass} />
+                  <label htmlFor="city" className={labelClass}>
+                    City *
+                  </label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    required
+                    className={inputClass}
+                  />
                 </div>
                 <div>
-                  <label htmlFor="state" className={labelClass}>State *</label>
-                  <input type="text" id="state" name="state" value={formData.state} onChange={handleInputChange} required placeholder="CA" className={inputClass} />
+                  <label htmlFor="state" className={labelClass}>
+                    State *
+                  </label>
+                  <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    value={formData.state}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="CA"
+                    className={inputClass}
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="zipcode" className={labelClass}>ZIP Code *</label>
-                  <input type="text" id="zipcode" name="zipcode" value={formData.zipcode} onChange={handleInputChange} required className={inputClass} />
+                  <label htmlFor="zipcode" className={labelClass}>
+                    ZIP Code *
+                  </label>
+                  <input
+                    type="text"
+                    id="zipcode"
+                    name="zipcode"
+                    value={formData.zipcode}
+                    onChange={handleInputChange}
+                    required
+                    className={inputClass}
+                  />
                 </div>
                 <div>
-                  <label htmlFor="country" className={labelClass}>Country *</label>
-                  <select id="country" name="country" value={formData.country} onChange={handleInputChange} required className={inputClass}>
+                  <label htmlFor="country" className={labelClass}>
+                    Country *
+                  </label>
+                  <select
+                    id="country"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleInputChange}
+                    required
+                    className={inputClass}
+                  >
                     <option value="US">United States</option>
                     <option value="CA">Canada</option>
                   </select>
                 </div>
               </div>
               <div>
-                <label htmlFor="phone" className={labelClass}>Phone Number *</label>
-                <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleInputChange} required className={inputClass} />
+                <label htmlFor="phone" className={labelClass}>
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  required
+                  className={inputClass}
+                />
               </div>
             </section>
 
@@ -542,7 +653,11 @@ const CheckoutForm = () => {
                         type="radio"
                         name="shippingRate"
                         value={rate.attributes.shipping_method_id}
-                        checked={selectedShippingRate?.attributes?.shipping_method_id === rate.attributes.shipping_method_id}
+                        checked={
+                          selectedShippingRate?.attributes
+                            ?.shipping_method_id ===
+                          rate.attributes.shipping_method_id
+                        }
                         onChange={() => setSelectedShippingRate(rate)}
                         className="accent-brand"
                       />
@@ -558,7 +673,9 @@ const CheckoutForm = () => {
                   disabled={estimateShippingMutation.isLoading}
                   className="mt-3 rounded-lg bg-muted px-4 py-2 font-title text-xs font-semibold text-foreground transition-colors hover:bg-muted-foreground/20"
                 >
-                  {estimateShippingMutation.isLoading ? "Calculating..." : "Recalculate Shipping"}
+                  {estimateShippingMutation.isLoading
+                    ? "Calculating..."
+                    : "Recalculate Shipping"}
                 </button>
               </section>
             )}
@@ -581,48 +698,136 @@ const CheckoutForm = () => {
                 <>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label htmlFor="billFirstName" className={labelClass}>First Name *</label>
-                      <input type="text" id="billFirstName" name="billFirstName" value={formData.billFirstName} onChange={handleInputChange} required className={inputClass} />
+                      <label htmlFor="billFirstName" className={labelClass}>
+                        First Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="billFirstName"
+                        name="billFirstName"
+                        value={formData.billFirstName}
+                        onChange={handleInputChange}
+                        required
+                        className={inputClass}
+                      />
                     </div>
                     <div>
-                      <label htmlFor="billLastName" className={labelClass}>Last Name *</label>
-                      <input type="text" id="billLastName" name="billLastName" value={formData.billLastName} onChange={handleInputChange} required className={inputClass} />
+                      <label htmlFor="billLastName" className={labelClass}>
+                        Last Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="billLastName"
+                        name="billLastName"
+                        value={formData.billLastName}
+                        onChange={handleInputChange}
+                        required
+                        className={inputClass}
+                      />
                     </div>
                   </div>
                   <div>
-                    <label htmlFor="billAddress1" className={labelClass}>Address *</label>
-                    <input type="text" id="billAddress1" name="billAddress1" value={formData.billAddress1} onChange={handleInputChange} required className={inputClass} />
+                    <label htmlFor="billAddress1" className={labelClass}>
+                      Address *
+                    </label>
+                    <input
+                      type="text"
+                      id="billAddress1"
+                      name="billAddress1"
+                      value={formData.billAddress1}
+                      onChange={handleInputChange}
+                      required
+                      className={inputClass}
+                    />
                   </div>
                   <div>
-                    <label htmlFor="billAddress2" className={labelClass}>Apartment, suite, etc. (optional)</label>
-                    <input type="text" id="billAddress2" name="billAddress2" value={formData.billAddress2} onChange={handleInputChange} className={inputClass} />
+                    <label htmlFor="billAddress2" className={labelClass}>
+                      Apartment, suite, etc. (optional)
+                    </label>
+                    <input
+                      type="text"
+                      id="billAddress2"
+                      name="billAddress2"
+                      value={formData.billAddress2}
+                      onChange={handleInputChange}
+                      className={inputClass}
+                    />
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label htmlFor="billCity" className={labelClass}>City *</label>
-                      <input type="text" id="billCity" name="billCity" value={formData.billCity} onChange={handleInputChange} required className={inputClass} />
+                      <label htmlFor="billCity" className={labelClass}>
+                        City *
+                      </label>
+                      <input
+                        type="text"
+                        id="billCity"
+                        name="billCity"
+                        value={formData.billCity}
+                        onChange={handleInputChange}
+                        required
+                        className={inputClass}
+                      />
                     </div>
                     <div>
-                      <label htmlFor="billState" className={labelClass}>State *</label>
-                      <input type="text" id="billState" name="billState" value={formData.billState} onChange={handleInputChange} required className={inputClass} />
+                      <label htmlFor="billState" className={labelClass}>
+                        State *
+                      </label>
+                      <input
+                        type="text"
+                        id="billState"
+                        name="billState"
+                        value={formData.billState}
+                        onChange={handleInputChange}
+                        required
+                        className={inputClass}
+                      />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label htmlFor="billZipcode" className={labelClass}>ZIP Code *</label>
-                      <input type="text" id="billZipcode" name="billZipcode" value={formData.billZipcode} onChange={handleInputChange} required className={inputClass} />
+                      <label htmlFor="billZipcode" className={labelClass}>
+                        ZIP Code *
+                      </label>
+                      <input
+                        type="text"
+                        id="billZipcode"
+                        name="billZipcode"
+                        value={formData.billZipcode}
+                        onChange={handleInputChange}
+                        required
+                        className={inputClass}
+                      />
                     </div>
                     <div>
-                      <label htmlFor="billCountry" className={labelClass}>Country *</label>
-                      <select id="billCountry" name="billCountry" value={formData.billCountry} onChange={handleInputChange} required className={inputClass}>
+                      <label htmlFor="billCountry" className={labelClass}>
+                        Country *
+                      </label>
+                      <select
+                        id="billCountry"
+                        name="billCountry"
+                        value={formData.billCountry}
+                        onChange={handleInputChange}
+                        required
+                        className={inputClass}
+                      >
                         <option value="US">United States</option>
                         <option value="CA">Canada</option>
                       </select>
                     </div>
                   </div>
                   <div>
-                    <label htmlFor="billPhone" className={labelClass}>Phone Number *</label>
-                    <input type="tel" id="billPhone" name="billPhone" value={formData.billPhone} onChange={handleInputChange} required className={inputClass} />
+                    <label htmlFor="billPhone" className={labelClass}>
+                      Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      id="billPhone"
+                      name="billPhone"
+                      value={formData.billPhone}
+                      onChange={handleInputChange}
+                      required
+                      className={inputClass}
+                    />
                   </div>
                 </>
               )}
@@ -656,7 +861,9 @@ const CheckoutForm = () => {
 
               {/* Coupon */}
               <div className="mt-5 border-t border-border/20 pt-4">
-                <label htmlFor="coupon" className={labelClass}>Coupon Code</label>
+                <label htmlFor="coupon" className={labelClass}>
+                  Coupon Code
+                </label>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -669,7 +876,9 @@ const CheckoutForm = () => {
                   <button
                     type="button"
                     onClick={handleApplyCoupon}
-                    disabled={!couponCode.trim() || applyCouponMutation.isLoading}
+                    disabled={
+                      !couponCode.trim() || applyCouponMutation.isLoading
+                    }
                     className="rounded-lg bg-brand px-4 py-2 font-title text-xs font-semibold text-white transition-colors hover:bg-brand/90 disabled:opacity-50"
                   >
                     Apply
@@ -697,7 +906,9 @@ const CheckoutForm = () => {
                 <div className="flex justify-between font-body text-sm">
                   <span className="text-muted-foreground">Shipping:</span>
                   <span className="text-foreground">
-                    {estimateShippingMutation.isLoading ? "Calculating..." : shippingCost}
+                    {estimateShippingMutation.isLoading
+                      ? "Calculating..."
+                      : shippingCost}
                   </span>
                 </div>
                 {promo_total && (

@@ -92,13 +92,15 @@ export const Browse: React.FC = () => {
 
     if (!isNaN(minPrice)) {
       products = products.filter(
-        (product: any) => parseFloat(product.attributes?.price || "0") >= minPrice
+        (product: any) =>
+          parseFloat(product.attributes?.price || "0") >= minPrice
       );
     }
 
     if (!isNaN(maxPrice)) {
       products = products.filter(
-        (product: any) => parseFloat(product.attributes?.price || "0") <= maxPrice
+        (product: any) =>
+          parseFloat(product.attributes?.price || "0") <= maxPrice
       );
     }
 
@@ -107,7 +109,9 @@ export const Browse: React.FC = () => {
       products = products.filter(
         (product: any) =>
           product.attributes?.name?.toLowerCase().includes(searchLower) ||
-          product.attributes?.description?.toLowerCase().includes(searchLower) ||
+          product.attributes?.description
+            ?.toLowerCase()
+            .includes(searchLower) ||
           product.attributes?.slug?.toLowerCase().includes(searchLower)
       );
     }
@@ -116,13 +120,15 @@ export const Browse: React.FC = () => {
       case "price_asc":
         products.sort(
           (a: any, b: any) =>
-            parseFloat(a.attributes?.price || "0") - parseFloat(b.attributes?.price || "0")
+            parseFloat(a.attributes?.price || "0") -
+            parseFloat(b.attributes?.price || "0")
         );
         break;
       case "price_desc":
         products.sort(
           (a: any, b: any) =>
-            parseFloat(b.attributes?.price || "0") - parseFloat(a.attributes?.price || "0")
+            parseFloat(b.attributes?.price || "0") -
+            parseFloat(a.attributes?.price || "0")
         );
         break;
       case "name_asc":
@@ -198,14 +204,18 @@ export const Browse: React.FC = () => {
     <>
       {/* Search */}
       <div className="mb-6 border-b border-border/30 pb-6">
-        <h3 className="mb-3 font-title text-sm font-semibold text-foreground">Search</h3>
+        <h3 className="mb-3 font-title text-sm font-semibold text-foreground">
+          Search
+        </h3>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search products..."
             value={filters.search}
-            onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, search: e.target.value }))
+            }
             className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-3 font-body text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
           />
         </div>
@@ -214,7 +224,9 @@ export const Browse: React.FC = () => {
       {/* Categories */}
       {availableCategories.length > 0 && (
         <div className="mb-6 border-b border-border/30 pb-6">
-          <h3 className="mb-3 font-title text-sm font-semibold text-foreground">Categories</h3>
+          <h3 className="mb-3 font-title text-sm font-semibold text-foreground">
+            Categories
+          </h3>
           <div className="space-y-2.5">
             {availableCategories.map((category) => (
               <label
@@ -236,7 +248,9 @@ export const Browse: React.FC = () => {
 
       {/* Price Range */}
       <div className="mb-6">
-        <h3 className="mb-3 font-title text-sm font-semibold text-foreground">Price Range</h3>
+        <h3 className="mb-3 font-title text-sm font-semibold text-foreground">
+          Price Range
+        </h3>
         <div className="mb-3 flex items-center gap-2">
           <input
             type="number"
@@ -291,7 +305,10 @@ export const Browse: React.FC = () => {
             Filters
             {hasActiveFilters && (
               <span className="ml-auto rounded-full bg-brand px-2 py-0.5 text-xs text-white">
-                {filters.categories.length + (filters.priceMin ? 1 : 0) + (filters.priceMax ? 1 : 0) + (filters.search ? 1 : 0)}
+                {filters.categories.length +
+                  (filters.priceMin ? 1 : 0) +
+                  (filters.priceMax ? 1 : 0) +
+                  (filters.search ? 1 : 0)}
               </span>
             )}
           </button>
@@ -323,10 +340,14 @@ export const Browse: React.FC = () => {
                 {filteredProducts.length === 1 ? "product" : "products"}
               </span>
               <div className="flex items-center gap-2.5">
-                <span className="font-body text-sm text-muted-foreground">Sort by:</span>
+                <span className="font-body text-sm text-muted-foreground">
+                  Sort by:
+                </span>
                 <select
                   value={filters.sort}
-                  onChange={(e) => setFilters((prev) => ({ ...prev, sort: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({ ...prev, sort: e.target.value }))
+                  }
                   className="cursor-pointer rounded-lg border border-border bg-background px-3 py-2 pr-8 font-body text-sm text-foreground transition-colors hover:border-brand focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                 >
                   <option value="name_asc">Name (A-Z)</option>
@@ -348,7 +369,9 @@ export const Browse: React.FC = () => {
               />
             ) : (
               <div className="flex flex-col items-center justify-center rounded-xl bg-card px-5 py-20 text-center">
-                <h2 className="mb-3 font-title text-lg text-foreground">No products found</h2>
+                <h2 className="mb-3 font-title text-lg text-foreground">
+                  No products found
+                </h2>
                 <p className="mb-6 font-body text-sm text-muted-foreground">
                   Try adjusting your filters or search terms
                 </p>

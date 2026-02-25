@@ -1,19 +1,19 @@
-import { motion, MotionStyle, Transition } from "motion/react"
+import { motion, MotionStyle, Transition } from "motion/react";
 
-import { cn } from "@lib/utils"
+import { cn } from "@lib/utils";
 
 interface BorderBeamProps {
-  size?: number
-  duration?: number
-  delay?: number
-  colorFrom?: string
-  colorTo?: string
-  transition?: Transition
-  className?: string
-  style?: React.CSSProperties
-  reverse?: boolean
-  initialOffset?: number
-  borderWidth?: number
+  size?: number;
+  duration?: number;
+  delay?: number;
+  colorFrom?: string;
+  colorTo?: string;
+  transition?: Transition;
+  className?: string;
+  style?: React.CSSProperties;
+  reverse?: boolean;
+  initialOffset?: number;
+  borderWidth?: number;
 }
 
 export const BorderBeam = ({
@@ -27,7 +27,7 @@ export const BorderBeam = ({
   style,
   reverse = false,
   initialOffset = 0,
-  borderWidth = 1,
+  borderWidth = 1
 }: BorderBeamProps) => {
   return (
     <div
@@ -37,7 +37,7 @@ export const BorderBeam = ({
         WebkitMask:
           "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
         WebkitMaskComposite: "xor",
-        maskComposite: "exclude",
+        maskComposite: "exclude"
       }}
     >
       <motion.div
@@ -47,23 +47,23 @@ export const BorderBeam = ({
             width: size,
             offsetPath: `rect(0 auto auto 0 round ${size}px)`,
             background: `linear-gradient(to left, ${colorFrom}, ${colorTo}, transparent)`,
-            ...style,
+            ...style
           } as MotionStyle
         }
         initial={{ offsetDistance: `${initialOffset}%` }}
         animate={{
           offsetDistance: reverse
             ? [`${100 - initialOffset}%`, `${-initialOffset}%`]
-            : [`${initialOffset}%`, `${100 + initialOffset}%`],
+            : [`${initialOffset}%`, `${100 + initialOffset}%`]
         }}
         transition={{
           repeat: Infinity,
           ease: "linear",
           duration,
           delay: -delay,
-          ...transition,
+          ...transition
         }}
       />
     </div>
-  )
-}
+  );
+};

@@ -15,10 +15,7 @@ export const PostList: React.FC<PostListProps> = () => {
           <li key={post.id} className="mb-2.5 block">
             <div className="flex items-center">
               <span className="mr-1.5 text-sm">{index + 1}. </span>
-              <a
-                href="#"
-                className="mr-2.5 border-0 pb-0 text-sm no-underline"
-              >
+              <a href="#" className="mr-2.5 border-0 pb-0 text-sm no-underline">
                 {post.title}
               </a>
             </div>

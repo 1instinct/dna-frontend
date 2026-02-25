@@ -60,8 +60,7 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
     if (!menuItemsIsSuccess || !menuItemsData?.response_data) return null;
     const menuItems =
       menuItemsData?.response_data?.menu_location_listing?.length > 0
-        ? menuItemsData.response_data.menu_location_listing[0]
-            .menu_item_listing
+        ? menuItemsData.response_data.menu_location_listing[0].menu_item_listing
         : [];
     return menuItems.map((menuItem: any) => ({
       title: menuItem.name,

@@ -20,8 +20,7 @@ import "../components/Terms/ElectronicSignaturesModal.css";
 import "../components/Terms/FinancialPrivacyModal.css";
 import "./app.css";
 
-const isDarkMode =
-  (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
+const isDarkMode = (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
