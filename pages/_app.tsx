@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import type { AppProps /*, AppContext */ } from "next/app";
+import type { AppProps } from "next/app";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
 import { AuthProvider } from "../config/auth";
-import { MainMenu, Header, ComingSoon } from "../components";
+import { MainMenu } from "../components/MainMenu";
+import { Header } from "../components/Header";
+import { ComingSoon } from "../components/ComingSoon";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import * as tracking from "../config/tracking";
 
 // Styles
-import { ThemeProvider } from "@emotion/react";
-import { theme } from "../styles/theme";
-import { GlobalStyles } from "../styles/global-styles";
 import "../styles/globals.css";
 import "swiper/swiper-bundle.min.css";
 import "../styles/fonts.css";
@@ -22,7 +20,8 @@ import "../components/Terms/ElectronicSignaturesModal.css";
 import "../components/Terms/FinancialPrivacyModal.css";
 import "./app.css";
 
-import { AppWrapper } from "./_app.styles";
+const isDarkMode =
+  (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
@@ -42,46 +41,17 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     const handleRouteChange = (url: string) => {
       tracking.trackPageview(url);
     };
-
     router.events.on("routeChangeComplete", handleRouteChange);
-
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [router.events]);
 
-  const renderContent = (theme: any) => {
-    const darkMode = theme.isDarkMode ? theme.isDarkMode : false;
-
-    if (isMaint && isMaint === "true") {
-      return <ComingSoon />;
-    }
-
+  if (isMaint && isMaint === "true") {
     return (
-      <AppWrapper>
-        <Header darkMode={darkMode} />
-        <MainMenu
-          showMenuHeader
-          onMenuItemClick={(key: string) => router.push(key)}
-          customBurgerIcon={<i className="btb bt-bars" />}
-          pcMenuItemClassName={"pc-menu-item"}
-          pcWrapClassName={"pc-menu-wrap"}
-          outterContainerId={"outter-container"}
-          pageWrapId={"page-wrap"}
-          animationType={"slide"}
-          right={false}
-        />
-        <Component {...pageProps} wholesale={wholesale} />
-      </AppWrapper>
-    );
-  };
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Hydrate state={pageProps.dehydratedState}>
-          <ThemeProvider theme={theme}>
-            <GlobalStyles theme={theme} />
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <Hydrate state={pageProps.dehydratedState}>
             <Head>
               <title>{process.env.NEXT_PUBLIC_PAGE_TITLE}</title>
               <meta
@@ -89,11 +59,41 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0, minimal-ui"
               />
             </Head>
-            {renderContent(theme)}
-          </ThemeProvider>
+            <ComingSoon />
+          </Hydrate>
+        </AuthProvider>
+      </QueryClientProvider>
+    );
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Hydrate state={pageProps.dehydratedState}>
+          <Head>
+            <title>{process.env.NEXT_PUBLIC_PAGE_TITLE}</title>
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0, minimal-ui"
+            />
+          </Head>
+          <div className="m-0 flex h-screen w-full flex-col overflow-visible bg-background p-0 font-body text-body-md text-foreground">
+            <Header darkMode={isDarkMode} />
+            <MainMenu
+              showMenuHeader
+              onMenuItemClick={(key: string) => router.push(key)}
+              customBurgerIcon={<i className="btb bt-bars" />}
+              pcMenuItemClassName={"pc-menu-item"}
+              pcWrapClassName={"pc-menu-wrap"}
+              outterContainerId={"outter-container"}
+              pageWrapId={"page-wrap"}
+              animationType={"slide"}
+              right={false}
+            />
+            <Component {...pageProps} wholesale={wholesale} />
+          </div>
         </Hydrate>
       </AuthProvider>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }

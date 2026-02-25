@@ -1,158 +1,168 @@
-import styled from "@emotion/styled";
-import { Modal } from "@material-ui/core";
+import React from "react";
+import { cn } from "@lib/utils";
 
-export const QuestionWrapper = styled.div`
-  color: ${(props) => props.theme.colors.brand.primary};
-  ${"" /* width: 100%; */}
-  margin: -20px 0 15px 0;
-`;
+export const QuestionWrapper = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={cn("-mt-5 mb-4 text-brand", className)} {...props}>
+    {children}
+  </div>
+);
 
-interface GenericThemeType {
-  theme?: any;
-  isIntro?: boolean | true;
-}
+export const InputGroupWrapper = ({
+  children,
+  className,
+  isIntro,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { isIntro?: boolean }) => (
+  <div
+    className={cn(
+      "-mt-20 mx-4 mb-4 text-center",
+      "[&_[data-qa='title']]:text-[1.6rem] [&_[data-qa='title']]:text-brand",
+      "[&_.carousel_.thumbs-wrapper]:hidden",
+      "[&_.carousel_.slide]:bg-transparent [&_.carousel_.slide]:pb-5",
+      "[&_.carousel_.control-dots]:p-0",
+      "[&_.carousel_.control-dots_.dot]:h-[5px] [&_.carousel_.control-dots_.dot]:w-[5px] [&_.carousel_.control-dots_.dot]:bg-muted-foreground [&_.carousel_.control-dots_.dot]:shadow-none [&_.carousel_.control-dots_.dot:focus]:outline-none",
+      "[&_.carousel_.control-dots_.dot.selected]:bg-white [&_.carousel_.control-dots_.dot.selected]:shadow-[0_0_0_7px_hsl(var(--brand))]",
+      isIntro ? "sm:-mt-20 sm:mx-auto sm:pt-2.5" : "sm:mt-32 sm:mx-auto sm:pt-2.5",
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </div>
+);
 
-export const InputGroupWrapper = styled.div<GenericThemeType>`
-  ${
-    "" /* background: ${props => props.theme.colors.white.primary};
-  color: ${props => props.theme.colors.brand.primary};
-  box-shadow: 1px 3px 8px rgba(0,0,0,0.123);
-  width: 100%;
-  margin: 15px 15px 0 0px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px; */
-  }
-  margin: -85px 15px 15px 15px;
-  text-align: center;
+export const InputWrapper = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "mx-6 my-2.5 flex flex-col text-left",
+      "[&_.MuiFormControl-root.MuiTextField-root]:w-full",
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </div>
+);
 
-  & [data-qa="title"] {
-    color: ${(props) => props.theme.colors.brand.primary};
-    font-size: 1.6rem;
-  }
-  & .carousel .thumbs-wrapper {
-    display: none;
-  }
-  & .carousel .slide {
-    background: transparent;
-    padding-bottom: 20px;
-  }
-  & .carousel .control-dots {
-    padding: 0;
-  }
-  & .carousel .control-dots .dot {
-    width: 5px;
-    height: 5px;
-    background: ${(props) => props.theme.colors.gray.primary};
-    box-shadow: none;
-    &:focus {
-      outline: none;
-    }
-  }
-  & .carousel .control-dots .dot.selected {
-    background: ${(props) => props.theme.colors.white.primary};
-    box-shadow: 0 0 0 7px ${(props) => props.theme.colors.brand.primary};
-  }
+export const Title = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) => (
+  <h1
+    className={cn(
+      "mx-4 my-1 font-title text-lg leading-tight text-brand",
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </h1>
+);
 
-  @media (max-width: ${(props) => props.theme.breakpoints.values.sm}px) {
-    margin: ${(p) => (p.isIntro ? "-80px" : "125px")} auto 0;
-    padding: 10px 0px 0px 0px;
-  }
-`;
+export const Subtitle = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) => (
+  <h3 className={cn("mx-4 my-1 text-brand", className)} {...props}>
+    {children}
+  </h3>
+);
 
-export const InputWrapper = styled.div<GenericThemeType>`
-  text-align: left;
-  margin: 10px 25px;
-  display: flex;
-  flex-direction: column;
+export const Description = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) => (
+  <p
+    className={cn("mx-4 mb-6 mt-1 text-muted-foreground", className)}
+    {...props}
+  >
+    {children}
+  </p>
+);
 
-  & .MuiFormControl-root.MuiTextField-root {
-    width: 100%;
-  }
-`;
+export const LinkOut = ({
+  children,
+  className,
+  ...props
+}: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+  <a className={cn("[&_button]:mx-auto", className)} {...props}>
+    {children}
+  </a>
+);
 
-export const Title = styled.h1<GenericThemeType>`
-  margin: 5px 15px;
-  font-family: ${(props) => props.theme.typography.titleSM.fontFamily};
-  font-size: ${(props) => props.theme.typography.titleMD.fontSize};
-  line-height: ${(props) => props.theme.typography.titleSM.lineHeight};
-  color: ${(props) => props.theme.colors.brand.primary};
-`;
+export const TermsWrapper = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "flex w-full flex-row flex-nowrap items-start overflow-hidden px-6",
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </div>
+);
 
-export const Subtitle = styled.h3<GenericThemeType>`
-  margin: 5px 15px;
-  color: ${(props) => props.theme.colors.brand.primary};
-`;
+export const Term = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn("flex flex-row flex-nowrap items-start", className)}
+    {...props}
+  >
+    {children}
+  </div>
+);
 
-export const Description = styled.p`
-  margin: 5px 15px 25px 15px;
-  color: ${(props) => props.theme.colors.gray.medium};
-`;
+export const TermsStatement = ({
+  children,
+  className,
+  accepted,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement> & { accepted?: boolean }) => (
+  <p
+    className={cn(
+      "m-0 max-w-[420px] basis-full overflow-y-scroll text-left text-[0.7rem]",
+      accepted ? "text-brand" : "text-destructive",
+      "[&_button]:cursor-pointer [&_button]:contents [&_button]:font-bold [&_button]:underline",
+      accepted ? "[&_button]:text-brand" : "[&_button]:text-destructive",
+      "sm:basis-1/2",
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </p>
+);
 
-export const LinkOut = styled.a`
-  & button {
-    margin: 0 auto;
-  }
-`;
-
-export const TermsWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: start;
-  padding: 0 25px;
-  overflow: hidden;
-`;
-
-export const Term = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: flex-start;
-`;
-
-interface TermsStatementType {
-  accepted: boolean;
-  theme?: any;
-}
-
-export const TermsStatement = styled.p<TermsStatementType>`
-  font-size: 0.7rem;
-  text-align: left;
-  flex-basis: 100%;
-  color: ${(props) =>
-    props.accepted
-      ? props.theme.colors.brand.primary
-      : props.theme.colors.red.primary};
-  height: auto;
-  overflow-y: scroll;
-  margin: 0;
-  max-width: 420px;
-
-  & button {
-    cursor: pointer;
-    display: contents;
-    font-weight: 700;
-    text-decoration: underline;
-    color: ${(props) =>
-      props.accepted
-        ? props.theme.colors.brand.primary
-        : props.theme.colors.red.primary};
-  }
-
-  @media (max-width: ${(props) => props.theme.breakpoints.values.sm}px) {
-    flex-basis: 50%;
-  }
-`;
-
-export const StyledModalContent = styled.div`
-  ${"" /* Modal Header Container */}
-  max-width: 50%;
-  height: 100%;
-  margin: 40px auto;
-  overflow-y: scroll;
-  background: ${(p) => p.theme.colors.white.primary};
-`;
-
-// export const StyledModalHeader = styled(ModalHeader)`
-//   z-index: 1052;
-//   &
-// `;
+export const StyledModalContent = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "mx-auto my-10 h-full max-w-[50%] overflow-y-scroll bg-card",
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </div>
+);

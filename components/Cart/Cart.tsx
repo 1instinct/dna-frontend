@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { IProducts } from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
-import { Button } from "../shared";
 import { useRouter } from "next/router";
 import { useMutation, useQueryClient } from "react-query";
+import { Minus, Plus, X, Trash2 } from "lucide-react";
+import { Button } from "@components/ui";
 import {
   useCart,
   updateItemQuantity,
@@ -14,19 +15,6 @@ import { Loading } from "../Loading";
 import { QueryKeys } from "../../hooks/queryKeys";
 import { useAuth } from "../../config/auth";
 
-import {
-  CartWrapper,
-  CartTitle,
-  CartButton,
-  CartItem,
-  CartItemDescription,
-  QuantityAdjusterWrapper,
-  QuantitySelector,
-  QuantityAdjuster,
-  TotalLine,
-  EmptyCartMessage
-} from "./Cart.styles";
-
 export const Cart = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -34,10 +22,8 @@ export const Cart = () => {
   const { user } = useAuth();
 
   const { data: cartData, isLoading, isError, error } = useCart();
-
   const { data: productsData } = useProducts(1);
 
-  // Initialize quantities from line_items when cart loads
   useEffect(() => {
     if (Array.isArray(cartData?.included)) {
       const lineItems = cartData?.included.filter(
@@ -68,49 +54,35 @@ export const Cart = () => {
       updateItemQuantity(itemId, quantity),
     {
       onMutate: async ({ itemId, quantity }) => {
-        // Optimistically update local state
         setQuantities((prev) => ({ ...prev, [itemId]: quantity }));
       },
       onSuccess: () => {
-        console.log("Quantity updated successfully");
         queryClient.invalidateQueries(QueryKeys.CART);
       },
       onError: (error: any, { itemId }) => {
         console.error("Failed to update quantity:", error);
-        // Revert on error - refetch to get correct state
         queryClient.invalidateQueries(QueryKeys.CART);
       }
     }
   );
 
   const foundProduct = (productId: string, productsData: IProducts) => {
-    // Check if productsData and productsData.data exist and are iterable
-    if (!productsData || !Array.isArray(productsData.data)) {
-      console.error("Invalid or missing productsData");
-      return null;
-    }
-
+    if (!productsData || !Array.isArray(productsData.data)) return null;
     for (const product of productsData.data) {
-      // Also check if the relationships and variants exist and are iterable
       if (
-        product.relationships &&
-        product.relationships.variants &&
+        product.relationships?.variants &&
         Array.isArray(product.relationships.variants.data)
       ) {
         const variant = product.relationships.variants.data.find(
           (variant) => variant.id === productId
         );
-        if (variant) {
-          return product;
-        }
+        if (variant) return product;
       }
     }
-
     return null;
   };
 
   const handleRemoveItem = (itemId: string) => {
-    console.log("Removing item:", itemId);
     removeFromCartMutation.mutate(itemId);
   };
 
@@ -125,7 +97,6 @@ export const Cart = () => {
   };
 
   const handleUpdateItemQuantity = (itemId: string, newQuantity: number) => {
-    console.log("Updating item:", itemId, "to quantity:", newQuantity);
     const quantity = Math.max(0, newQuantity);
     updateQuantityMutation.mutate({ itemId, quantity });
   };
@@ -145,35 +116,38 @@ export const Cart = () => {
             quantities[lineItemId] || lineItem.attributes.quantity;
 
           return (
-            <CartItem key={`cart-item-${lineItemId}`}>
-              <CartItemDescription>
+            <div
+              key={`cart-item-${lineItemId}`}
+              className="flex items-center justify-between border-b border-border/30 py-4"
+            >
+              <span className="flex-1 font-body text-sm text-foreground">
                 {product?.attributes?.name} - ${product?.attributes?.price}
-              </CartItemDescription>
-              <QuantityAdjusterWrapper>
-                <QuantityAdjuster
-                  onClick={() =>
-                    handleUpdateItemQuantity(lineItemId, quantity - 1)
-                  }
+              </span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => handleUpdateItemQuantity(lineItemId, quantity - 1)}
+                  className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
                 >
-                  -
-                </QuantityAdjuster>
-                <QuantitySelector value={quantity} readOnly />
-                <QuantityAdjuster
-                  onClick={() =>
-                    handleUpdateItemQuantity(lineItemId, quantity + 1)
-                  }
+                  <Minus className="h-3.5 w-3.5" />
+                </button>
+                <span className="w-8 text-center font-body text-sm text-foreground">
+                  {quantity}
+                </span>
+                <button
+                  onClick={() => handleUpdateItemQuantity(lineItemId, quantity + 1)}
+                  className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
                 >
-                  +
-                </QuantityAdjuster>
-                <QuantityAdjuster
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+                <button
                   onClick={() => handleRemoveItem(lineItemId)}
-                  style={{ marginLeft: "8px", color: "red" }}
+                  className="ml-2 flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent text-destructive transition-colors hover:bg-destructive/10"
                   title="Remove item"
                 >
-                  ×
-                </QuantityAdjuster>
-              </QuantityAdjusterWrapper>
-            </CartItem>
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
           );
         });
     }
@@ -181,7 +155,7 @@ export const Cart = () => {
   };
 
   if (isLoading) return <Loading />;
-  if (isError) return <p>Error: {error.message}</p>;
+  if (isError) return <p className="p-8 text-center text-destructive">Error: {(error as any).message}</p>;
 
   const {
     item_count = 0,
@@ -192,47 +166,60 @@ export const Cart = () => {
 
   if (cartData !== undefined) {
     return (
-      <CartWrapper>
-        <CartTitle>Cart</CartTitle>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "16px"
-          }}
-        >
-          <div>
+      <div className="section-container py-8 font-title">
+        <h2 className="mb-6 text-2xl font-semibold text-foreground">Cart</h2>
+
+        <div className="mb-4 flex items-center justify-between">
+          <span className="font-body text-sm text-muted-foreground">
             {item_count} {item_count > 1 ? "items" : "item"} in your cart
-          </div>
+          </span>
           {item_count > 0 && (
-            <div>
-              <Button variant="outline" onClick={handleEmptyCart}>
-                Empty Cart
-              </Button>
-            </div>
+            <Button variant="outline" size="sm" onClick={handleEmptyCart}>
+              <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+              Empty Cart
+            </Button>
           )}
         </div>
+
         <div>{renderCartItems()}</div>
-        <TotalLine>Subtotal: {display_item_total}</TotalLine>
-        <TotalLine>Tax: {included_tax_total}</TotalLine>
-        <TotalLine>Total: {display_total}</TotalLine>
-        {user ? (
-          <Button onClick={() => router.push("/checkout")}>Checkout</Button>
-        ) : (
-          <>
+
+        {/* Totals */}
+        <div className="mt-6 space-y-2 border-t border-border/30 pt-6">
+          <div className="flex justify-between font-body text-sm">
+            <span className="text-muted-foreground">Subtotal:</span>
+            <span className="font-semibold text-foreground">{display_item_total}</span>
+          </div>
+          <div className="flex justify-between font-body text-sm">
+            <span className="text-muted-foreground">Tax:</span>
+            <span className="text-foreground">{included_tax_total}</span>
+          </div>
+          <div className="flex justify-between font-title text-lg font-bold text-foreground">
+            <span>Total:</span>
+            <span>{display_total}</span>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="mt-8 flex flex-wrap gap-3">
+          {user ? (
             <Button onClick={() => router.push("/checkout")}>
-              Checkout as Guest
+              Checkout
             </Button>
-            <Button variant="outline" onClick={() => router.push("/login")}>
-              Login
-            </Button>
-            <Button variant="outline" onClick={() => router.push("/signup")}>
-              Signup
-            </Button>
-          </>
-        )}
-      </CartWrapper>
+          ) : (
+            <>
+              <Button onClick={() => router.push("/checkout")}>
+                Checkout as Guest
+              </Button>
+              <Button variant="outline" onClick={() => router.push("/login")}>
+                Login
+              </Button>
+              <Button variant="outline" onClick={() => router.push("/signup")}>
+                Sign Up
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
     );
   }
   return null;

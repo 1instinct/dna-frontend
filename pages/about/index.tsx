@@ -1,176 +1,55 @@
 import React from "react";
-import styled from "@emotion/styled";
-import { pxPC } from "../../utilities/device-sizes";
-import { Layout } from "../../components";
+import { Layout } from "../../components/Layout";
 
-const Content = styled.div`
-  min-height: calc(100vh - 543px);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: ${pxPC(171)};
-  padding-bottom: ${pxPC(244.86)};
-`;
-const PageTitle = styled.div`
-  position: absolute;
-  left: ${pxPC(54)};
-  top: ${pxPC(491)};
-  font-size: 33px;
-  line-height: 41px;
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-  text-transform: uppercase;
-  transform: rotate(-90deg);
-  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
-  &:after {
-    position: absolute;
-    content: "";
-    left: 100%;
-    width: ${pxPC(86)};
-    height: 3px;
-    background-color: ${(p) =>
-      p.theme.isDarkMode
-        ? p.theme.colors.white.primary
-        : p.theme.colors.black.primary};
-    top: 40%;
-  }
-`;
-const SectionOneTitle = styled.div`
-  font-size: 33px;
-  line-height: 41px;
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
-  text-align: center;
-  text-transform: uppercase;
-`;
-const SectionOneText = styled.div`
-  width: ${pxPC(344)};
-  margin-top: ${pxPC(20)};
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-  font-family: Roboto;
-  font-size: 18px;
-  line-height: 18px;
-`;
-const Arrow = styled.img`
-  width: ${pxPC(62)};
-  height: auto;
-  margin-top: ${pxPC(45)};
-  margin-bottom: ${pxPC(45)};
-`;
-const SectionTwoTitle = styled.div`
-  font-size: 33px;
-  line-height: 41px;
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
-  text-align: center;
-  text-transform: uppercase;
-`;
-const SectionTwoText = styled.div`
-  width: ${pxPC(344)};
-  margin-top: ${pxPC(20)};
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-  font-family: Roboto;
-  font-size: 18px;
-  line-height: 18px;
-`;
-const SectionThreeTitle = styled.div`
-  font-size: 33px;
-  line-height: 41px;
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
-  text-align: center;
-  text-transform: uppercase;
-`;
-const SectionThree = styled.div`
-  display: grid;
-  justify-content: space-between;
-  grid-template-columns: 1fr 1fr 1fr;
-  column-gap: ${pxPC(25)};
-  row-gap: ${pxPC(25)};
-  width: ${pxPC(394)};
-  margin-top: ${pxPC(30)};
-`;
-const SectionFourTitle = styled.div`
-  font-size: 33px;
-  line-height: 41px;
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
-  text-align: center;
-  text-transform: uppercase;
-`;
-const SectionFour = styled.div`
-  display: grid;
-  justify-content: space-between;
-  grid-template-columns: 1fr 1fr 1fr;
-  column-gap: ${pxPC(25)};
-  row-gap: ${pxPC(25)};
-  width: ${pxPC(394)};
-  margin-top: ${pxPC(30)};
-`;
-const Paper = styled.img`
-  width: ${pxPC(114)};
-  height: auto;
-`;
 const About = () => {
   return (
     <Layout>
-      <Content>
-        <PageTitle>About POL</PageTitle>
-        <SectionOneTitle>Who we Are</SectionOneTitle>
-        <SectionOneText>
+      <div className="relative flex min-h-[calc(100vh-543px)] flex-col items-center pb-[17vw] pt-[11.875vw]">
+        <div className="absolute left-[3.75vw] top-[34.1vw] -rotate-90 font-title text-[33px] uppercase leading-[41px] text-foreground after:absolute after:left-full after:top-[40%] after:h-[3px] after:w-[5.97vw] after:bg-foreground after:content-['']">
+          About POL
+        </div>
+        <div className="text-center font-title text-[33px] uppercase leading-[41px] text-foreground">
+          Who we Are
+        </div>
+        <div className="mt-[1.39vw] w-[23.89vw] font-body text-lg leading-[18px] text-foreground">
           POL Clothing is a wholesale supplier to boutiques all over the world.
           POL focuses on coming together at the crossroads of fashion and
           business and creating styles inspired by the world around us.
-        </SectionOneText>
-        <Arrow src={"/Arrow.png"} />
-        <SectionTwoTitle>Our Mission</SectionTwoTitle>
-        <SectionTwoText>
+        </div>
+        <img src="/Arrow.png" alt="" className="my-[3.125vw] h-auto w-[4.31vw]" />
+        <div className="text-center font-title text-[33px] uppercase leading-[41px] text-foreground">
+          Our Mission
+        </div>
+        <div className="mt-[1.39vw] w-[23.89vw] font-body text-lg leading-[18px] text-foreground">
           POL Clothing is a wholesale supplier to boutiques all over the world.
           POL focuses on coming together at the crossroads of fashion and
           business and creating styles inspired by the world around us.
-        </SectionTwoText>
-        <Arrow src={"/Arrow.png"} />
-        <SectionThreeTitle>Our Values</SectionThreeTitle>
-        <SectionThree>
-          <Paper src={"paper.png"} />
-          <Paper src={"paper.png"} />
-          <Paper src={"paper.png"} />
-          <Paper src={"paper.png"} />
-          <Paper src={"paper.png"} />
-          <Paper src={"paper.png"} />
-        </SectionThree>
-        <Arrow src={"/Arrow.png"} />
-        <SectionFourTitle>Our Team</SectionFourTitle>
-        <SectionFour>
-          <Paper src={"paper.png"} />
-          <Paper src={"paper.png"} />
-          <Paper src={"paper.png"} />
-          <Paper src={"paper.png"} />
-          <Paper src={"paper.png"} />
-          <Paper src={"paper.png"} />
-        </SectionFour>
-      </Content>
+        </div>
+        <img src="/Arrow.png" alt="" className="my-[3.125vw] h-auto w-[4.31vw]" />
+        <div className="text-center font-title text-[33px] uppercase leading-[41px] text-foreground">
+          Our Values
+        </div>
+        <div className="mt-[2.08vw] grid w-[27.36vw] grid-cols-3 gap-[1.74vw]">
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+        </div>
+        <img src="/Arrow.png" alt="" className="my-[3.125vw] h-auto w-[4.31vw]" />
+        <div className="text-center font-title text-[33px] uppercase leading-[41px] text-foreground">
+          Our Team
+        </div>
+        <div className="mt-[2.08vw] grid w-[27.36vw] grid-cols-3 gap-[1.74vw]">
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+          <img src="paper.png" alt="" className="h-auto w-[7.92vw]" />
+        </div>
+      </div>
     </Layout>
   );
 };

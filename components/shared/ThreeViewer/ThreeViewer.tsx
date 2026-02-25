@@ -1,12 +1,13 @@
 import React, { useRef } from "react";
-import { useTheme } from "@emotion/react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Color } from "three";
 import type { Mesh } from "three";
 
+const isDarkMode =
+  (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
+
 // Simple rotating DNA helix
 const DNAHelix = () => {
-  const theme = useTheme();
   const group = useRef<any>();
 
   useFrame((state) => {
@@ -15,7 +16,7 @@ const DNAHelix = () => {
     }
   });
 
-  const helixColor = theme.isDarkMode ? "#ff1493" : "#4169e1";
+  const helixColor = isDarkMode ? "#ff1493" : "#4169e1";
 
   return (
     <group ref={group}>
@@ -69,8 +70,6 @@ const DNAHelix = () => {
 };
 
 export const ThreeViewer = () => {
-  const theme = useTheme();
-
   return (
     <Canvas
       camera={{ position: [0, 0, 3.5], fov: 50 }}
@@ -79,7 +78,7 @@ export const ThreeViewer = () => {
     >
       <color
         attach="background"
-        args={[theme.isDarkMode ? "#000000" : "#ffffff"]}
+        args={[isDarkMode ? "#000000" : "#ffffff"]}
       />
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} intensity={0.8} />

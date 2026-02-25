@@ -1,12 +1,9 @@
-// Vendor
 import React, { useState, useCallback, createRef } from "react";
 import { useRouter } from "next/router";
 import { Carousel } from "react-responsive-carousel";
 import { Formik, Form, Field, useFormikContext } from "formik";
 import parse from "html-react-parser";
-import { Modal } from "@material-ui/core";
 
-// Local
 import constants from "@utilities/constants";
 import { useAuth } from "@config/auth";
 import { signupForm } from "@components/AuthForm/constants";
@@ -17,32 +14,11 @@ import {
   FormikPassword,
   FormikCheckbox
 } from "@components/FormikWrappers";
-import {
-  Title,
-  Subtitle,
-  Description,
-  QuestionWrapper,
-  InputGroupWrapper,
-  InputWrapper,
-  TermsWrapper,
-  TermsStatement,
-  Term,
-  StyledModalContent
-} from "@components/SignupWizard/Questions/Questions.styles";
-import {
-  MainWrapper,
-  ContentWrapper,
-  SignupFormWrapper,
-  SignupActions,
-  NextButton
-} from "./SignupForm.styles";
+import { Button } from "@components/ui";
 import { ElectronicSignaturesModal } from "@components/Terms/ElectronicSignaturesModal";
 import { FinancialPrivacyModal } from "@components/Terms/FinancialPrivacyModal";
 
 export const SignupForm = () => {
-  // const { values, form, submitForm } = useFormikContext();
-  // console.log("FORM: ", values, useFormikContext);
-  // const { errors, touched } = useFormikContext();
   const router = useRouter();
   const { register } = useAuth();
   const [openSignatureModal, setOpenSignatureModal] = useState(false);
@@ -63,34 +39,16 @@ export const SignupForm = () => {
     setOpenPrivacyModal(!openPrivacyModal);
   };
 
-  // const updateCurrentSlide = index => {
-  //   if (currentSlide !== index) {
-  //     setCurrentSlide(index);
-  //   }
-  // };
-
   const nextSlide = () => {
     setCurrentSlide(currentSlide + 1);
   };
 
-  const handleSignatureCheckbox = (field: any) => {
-    setSignatureCheckbox(!signatureTerms);
-    // form.setFieldValue('acceptSignatureTerms', signatureTerms, false);
-  };
-
   const handlePrivacyCheckbox = (field: any) => {
     setPrivacyCheckbox(!privacyTerms);
-    // form.setFieldValue(field.name, privacyTerms, false);
   };
 
   const handleReportingCheckbox = (field: any) => {
     setReportingCheckbox(!reportingTerms);
-    // form.setFieldValue(field.name, reportingTerms, false);
-  };
-
-  const handleAuthorizeCheckbox = (field: any) => {
-    setAuthorizeCheckbox(!authorizeTerms);
-    // form.setFieldValue(field.name, authorizeTerms, false);
   };
 
   const speechMarkup = useCallback(() => {
@@ -99,11 +57,9 @@ export const SignupForm = () => {
 
   const { title, subtitle, description } = Static.questions.account;
 
-  const passwordRef = createRef();
-
   return (
-    <MainWrapper>
-      <ContentWrapper>
+    <div className="relative z-[1] flex flex-col pb-20">
+      <div className="mx-auto flex w-full max-w-2xl flex-row flex-wrap justify-center px-5 py-5 sm:px-10">
         <Formik
           initialValues={signupForm.fields}
           validationSchema={signupForm.validate}
@@ -121,70 +77,56 @@ export const SignupForm = () => {
               });
           }}
         >
-          {({ isSubmitting }) => (
-            <SignupFormWrapper>
+          {({ isSubmitting, handleSubmit }) => (
+            <Form className="w-full rounded-xl border border-border/30 bg-card p-6 shadow-lg sm:p-8">
               <TipBot speech={speechMarkup()} />
-              <InputGroupWrapper>
-                <Title>Signup</Title>
-                <Description>{parse(description)}</Description>
+              <div className="mt-4">
+                <h1 className="mb-2 text-center font-title text-2xl font-bold uppercase tracking-wider text-foreground">
+                  Signup
+                </h1>
+                <p className="mb-6 text-center font-body text-sm text-muted-foreground">
+                  {parse(description)}
+                </p>
 
-                <InputWrapper>
-                  <Field
-                    name="email"
-                    id="email"
-                    component={FormikInput}
-                    label="Email"
-                  />
-                </InputWrapper>
+                <div className="space-y-4">
+                  <div>
+                    <Field
+                      name="email"
+                      id="email"
+                      component={FormikInput}
+                      label="Email"
+                    />
+                  </div>
 
-                <InputWrapper>
-                  <Field
-                    name="password"
-                    id="password"
-                    component={FormikPassword}
-                    label="Password"
-                  />
-                </InputWrapper>
+                  <div>
+                    <Field
+                      name="password"
+                      id="password"
+                      component={FormikPassword}
+                      label="Password"
+                    />
+                  </div>
 
-                <InputWrapper>
-                  <Field
-                    name="passwordConfirm"
-                    id="passwordConfirm"
-                    component={FormikPassword}
-                    label="Re-type Password"
-                  />
-                </InputWrapper>
+                  <div>
+                    <Field
+                      name="passwordConfirm"
+                      id="passwordConfirm"
+                      component={FormikPassword}
+                      label="Re-type Password"
+                    />
+                  </div>
+                </div>
 
-                <TermsWrapper>
-                  {/* https://jasonwatmore.com/post/2020/02/08/react-formik-required-checkbox-example */}
+                {/* Terms */}
+                <div className="mt-6 rounded-lg border border-border/30 bg-muted/30 p-4">
                   <Carousel
                     showArrows={false}
-                    // renderIndicator={false}
                     showStatus={false}
                     showThumbs={false}
                     selectedItem={currentSlide}
                     onChange={setCurrentSlide}
                   >
-                    {/* <Term>
-                      <Field type="checkbox" name="acceptSignatureTerms">
-                        {(formikProps: any) => (
-                          <FormikCheckbox
-                            {...formikProps}
-                            nextTerm={nextSlide}
-                            accepted={signatureTerms}
-                            handleTermCheckbox={handleSignatureCheckbox}
-                          />
-                        )}
-                      </Field>
-                      <TermsStatement accepted={signatureTerms}>
-                        I have read and agree to the{" "}
-                        <button type="button" onClick={toggleSignatureModal}>
-                          E-SIGN Consent
-                        </button>{" "}
-                        that enables all transactions and disclosure delivery to occur electronically.
-                      </TermsStatement>
-                    </Term> */}
-                    <Term>
+                    <div className="flex items-start gap-3 text-left">
                       <Field type="checkbox" name="acceptPrivacyTerms">
                         {(formikProps: any) => (
                           <FormikCheckbox
@@ -195,15 +137,19 @@ export const SignupForm = () => {
                           />
                         )}
                       </Field>
-                      <TermsStatement accepted={privacyTerms}>
-                        I have received and read the&nbsp;
-                        <button type="button" onClick={togglePrivacyModal}>
+                      <span className={`font-body text-sm ${privacyTerms ? "text-foreground" : "text-muted-foreground"}`}>
+                        I have received and read the{" "}
+                        <button
+                          type="button"
+                          onClick={togglePrivacyModal}
+                          className="cursor-pointer border-none bg-transparent p-0 font-semibold text-brand underline"
+                        >
                           Privacy Policy
                         </button>
                         .
-                      </TermsStatement>
-                    </Term>
-                    <Term>
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-3 text-left">
                       <Field type="checkbox" name="acceptReportingTerms">
                         {(formikProps: any) => (
                           <FormikCheckbox
@@ -214,98 +160,76 @@ export const SignupForm = () => {
                           />
                         )}
                       </Field>
-                      <TermsStatement accepted={reportingTerms}>
-                        By clicking &quot;Signup&quot; I agree to the&nbsp;
-                        <button type="button" onClick={toggleSignatureModal}>
+                      <span className={`font-body text-sm ${reportingTerms ? "text-foreground" : "text-muted-foreground"}`}>
+                        By clicking &quot;Signup&quot; I agree to the{" "}
+                        <button
+                          type="button"
+                          onClick={toggleSignatureModal}
+                          className="cursor-pointer border-none bg-transparent p-0 font-semibold text-brand underline"
+                        >
                           Terms &amp; Conditions
                         </button>
-                      </TermsStatement>
-                    </Term>
-                    {/* <Term>
-                      <Field type="checkbox" name="acceptAuthorizeTerms">
-                        {(formikProps: any) => (
-                          <FormikCheckbox
-                            {...formikProps}
-                            nextTerm={nextSlide}
-                            accepted={authorizeTerms}
-                            handleTermCheckbox={handleAuthorizeCheckbox}
-                          />
-                        )}
-                      </Field>
-                      <TermsStatement accepted={authorizeTerms}>
-                        That by providing my phone number, {process.env.NEXT_PUBLIC_SITE_TITLE}, or{" "}
-                        {process.env.NEXT_PUBLIC_SITE_TITLE}&apos;s authorized representatives*, may call and/or send
-                        text messages (including by using equipment to automatically dial telephone numbers)
-                        about my interest in a purchase, for marketing/sales purposes, or for any other
-                        servicing or informational purpose related to my account. You do not have to consent
-                        to receiving calls or texts to purchase from {process.env.NEXT_PUBLIC_SITE_TITLE}.
-                        <br />
-                        <strong>
-                          *Including, but not limited to, Bridgecrest Credit Company, GO Financial and
-                          SilverRock Automotive.
-                        </strong>
-                      </TermsStatement>
-                    </Term> */}
-                    {/* Below term appears below current Softpull form submit buttons */}
-                    {/* <Term>
-                      <Field type="checkbox" name="acceptConstentTerms" component={FormikCheckbox} className={'form-check-input ' + (errors.acceptTerms && touched.acceptTerms ? ' is-invalid' : '')} />
-                      <TermsStatement accepted={Terms}>
-                        Consumer Report: By clicking &quot;GET TERMS&quot;, I give {process.env.NEXT_PUBLIC_SITE_TITLE} written consent to obtain consumer reports from one or more consumer reporting agencies to show me credit options I prequalify for when financing with {process.env.NEXT_PUBLIC_SITE_TITLE}. Retrieving my pre-qualification credit terms generates a soft credit inquiry, which is visible only to me and does not affect my credit score.
-                      </TermsStatement>
-                    </Term> */}
+                      </span>
+                    </div>
                   </Carousel>
+                </div>
+              </div>
 
-                  <Modal
-                    aria-labelledby="modal-title"
-                    aria-describedby="modal-description"
-                    onClose={toggleSignatureModal}
-                    open={openSignatureModal}
-                  >
-                    <StyledModalContent>
-                      <ElectronicSignaturesModal />
-                      <button
-                        onClick={togglePrivacyModal}
-                        role="button"
-                        onKeyDown={togglePrivacyModal}
-                        tabIndex={0}
-                      ></button>
-                    </StyledModalContent>
-                  </Modal>
-
-                  <Modal
-                    aria-labelledby="modal-title"
-                    aria-describedby="modal-description"
-                    onClose={togglePrivacyModal}
-                    open={openPrivacyModal}
-                  >
-                    <StyledModalContent>
-                      <FinancialPrivacyModal />
-                      <button
-                        onClick={togglePrivacyModal}
-                        role="button"
-                        onKeyDown={togglePrivacyModal}
-                        tabIndex={0}
-                      ></button>
-                    </StyledModalContent>
-                  </Modal>
-                </TermsWrapper>
-              </InputGroupWrapper>
-              <SignupActions>
-                <NextButton
-                  variant="solid"
-                  // type="submit"
-                  onClick={() => {
-                    console.log("SUBMITTING FORM");
-                  }}
+              {/* Submit */}
+              <div className="mt-6 flex justify-center">
+                <Button
+                  type="submit"
                   disabled={!(privacyTerms || !reportingTerms)}
+                  className="w-full max-w-xs"
                 >
                   Submit
-                </NextButton>
-              </SignupActions>
-            </SignupFormWrapper>
+                </Button>
+              </div>
+            </Form>
           )}
         </Formik>
-      </ContentWrapper>
-    </MainWrapper>
+      </div>
+
+      {/* Modals */}
+      {openSignatureModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          onClick={toggleSignatureModal}
+        >
+          <div
+            className="max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-card p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ElectronicSignaturesModal />
+            <button
+              onClick={toggleSignatureModal}
+              className="mt-4 w-full cursor-pointer rounded-lg border-none bg-brand px-4 py-2 font-title text-sm text-white"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {openPrivacyModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          onClick={togglePrivacyModal}
+        >
+          <div
+            className="max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-card p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <FinancialPrivacyModal />
+            <button
+              onClick={togglePrivacyModal}
+              className="mt-4 w-full cursor-pointer rounded-lg border-none bg-brand px-4 py-2 font-title text-sm text-white"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };

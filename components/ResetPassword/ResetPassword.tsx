@@ -1,41 +1,25 @@
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
-import styled from "@emotion/styled";
+import { Formik, Field, useFormikContext } from "formik";
 import { FormikInput } from "../FormikWrappers";
-import { Button } from "@components/shared";
-
+import { Button } from "@components/ui";
 import { resetPasswordForm } from "../AuthForm/constants";
-import {
-  ResetPasswordWrapper,
-  FormWrapper,
-  InputWrapper,
-  Title,
-  Subtext
-} from "./ResetPassword.styles";
-
-const FieldContainer = styled.div`
-  margin: 15px 0px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-`;
 
 export const ResetPassword = () => {
   const SubmitButton = () => {
     const { submitForm, isSubmitting } = useFormikContext();
     return (
-      <Button onClick={submitForm} disabled={isSubmitting}>
+      <Button onClick={submitForm} disabled={isSubmitting} className="w-full">
         Reset Password
       </Button>
     );
   };
 
   return (
-    <ResetPasswordWrapper>
-      <Title>{resetPasswordForm.title}</Title>
+    <div className="mx-auto my-10 w-full max-w-md rounded-xl border border-border/30 bg-card p-8 shadow-lg sm:p-10">
+      <h1 className="mb-6 text-center font-title text-2xl font-bold uppercase tracking-wider text-foreground">
+        {resetPasswordForm.title}
+      </h1>
       <Formik
         initialValues={resetPasswordForm.fields}
         validationSchema={resetPasswordForm.validate}
@@ -50,9 +34,9 @@ export const ResetPassword = () => {
             });
         }}
       >
-        {() => (
-          <FormWrapper>
-            <InputWrapper>
+        {({ handleSubmit }) => (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
               <Field
                 type="email"
                 name="username"
@@ -60,16 +44,26 @@ export const ResetPassword = () => {
                 label="Email"
                 placeholder="Email"
               />
-            </InputWrapper>
+            </div>
             <SubmitButton />
-            <Subtext>
-              <Link href="/login">Login</Link>
-              &nbsp;&nbsp;|&nbsp;&nbsp;
-              <Link href="/signup">Sign Up</Link>
-            </Subtext>
-          </FormWrapper>
+            <p className="mt-4 text-center font-body text-sm text-muted-foreground">
+              <Link
+                href="/login"
+                className="text-brand transition-colors hover:underline"
+              >
+                Login
+              </Link>
+              <span className="mx-2">|</span>
+              <Link
+                href="/signup"
+                className="text-brand transition-colors hover:underline"
+              >
+                Sign Up
+              </Link>
+            </p>
+          </form>
         )}
       </Formik>
-    </ResetPasswordWrapper>
+    </div>
   );
 };

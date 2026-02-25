@@ -1,8 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useQuery } from "react-query";
-import { LoadingIcon } from "../Loading";
+import React, { useEffect, useState } from "react";
 import { useProducts } from "../../hooks/useProducts";
-import { StyledSearchSuggestions } from "./SearchSuggestions.styles";
 import Suggestion from "./Suggestion";
 import { SearchSuggestionsProps } from "./types";
 
@@ -30,37 +27,39 @@ const SearchSuggestions = ({
   } = useProducts(1);
   const [page, setPage] = useState(1);
   const [suggestions, setSuggestions] = useState([]);
-  // const [error, setError] = useState('');
 
   useEffect(() => {
-    // getSearchData();
-    // data ? console.log("stuff: ", data) : null;
     console.log("suggestions: ", suggestions);
   }, [suggestions]);
 
   if (!isVisible) return null;
 
+  const wrapperClass =
+    "absolute z-10 block w-full max-h-[245px] overflow-y-auto overflow-x-hidden rounded-b-xl bg-card shadow-lg";
+
   if (isLoading) {
     setIsSearchLoading(true);
     return (
-      <StyledSearchSuggestions role="listbox" aria-labelledby={labelId} id={id}>
-        <LoadingIcon className="bts bt-spinner bt-pulse" />
-      </StyledSearchSuggestions>
+      <div className={wrapperClass} role="listbox" aria-labelledby={labelId} id={id}>
+        <div className="flex items-center justify-center py-4">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground border-t-brand" />
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <StyledSearchSuggestions role="listbox" aria-labelledby={labelId} id={id}>
-        <p>Error {status}</p>
-      </StyledSearchSuggestions>
+      <div className={wrapperClass} role="listbox" aria-labelledby={labelId} id={id}>
+        <p className="px-4 py-3 text-sm text-destructive">Error {status}</p>
+      </div>
     );
   }
 
   if (!data || data.data.length === 0) return null;
 
   return (
-    <StyledSearchSuggestions role="listbox" aria-labelledby={labelId} id={id}>
+    <div className={wrapperClass} role="listbox" aria-labelledby={labelId} id={id}>
       {isVisible &&
         data?.data?.map((item: any, index: any) => {
           return (
@@ -73,7 +72,7 @@ const SearchSuggestions = ({
             />
           );
         })}
-    </StyledSearchSuggestions>
+    </div>
   );
 };
 

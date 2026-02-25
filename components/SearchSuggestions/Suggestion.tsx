@@ -1,13 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { nanoid } from "nanoid";
-import { IProduct } from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
-// import { useDispatch } from 'react-redux';
-// import { commonOperations } from '@common/ducks';
-import {
-  StyledSuggestionLink,
-  StyledSuggestionContent
-} from "./SearchSuggestions.styles";
+
 const formatWithHighlight = (text: string, query: string | undefined) => {
   if (!query) return text;
 
@@ -22,12 +16,13 @@ const formatWithHighlight = (text: string, query: string | undefined) => {
     part.match(reg) ? (
       part
     ) : (
-      <span key={nanoid()} style={{ fontWeight: "normal" }}>
+      <span key={nanoid()} className="font-normal">
         {part}
       </span>
     )
   );
 };
+
 type OwnProps = {
   suggestion?: any;
   query?: string;
@@ -51,11 +46,14 @@ const Suggestion = ({
 
   if (suggestion) {
     return (
-      <StyledSuggestionLink onClick={handleSelection}>
-        <StyledSuggestionContent>
+      <div
+        onClick={handleSelection}
+        className="flex cursor-pointer items-center justify-between bg-card px-8 py-3 font-title text-sm font-bold text-foreground transition-colors hover:bg-muted"
+      >
+        <div className="overflow-hidden text-ellipsis whitespace-nowrap">
           {formatWithHighlight(suggestion.attributes.name, query)}
-        </StyledSuggestionContent>
-      </StyledSuggestionLink>
+        </div>
+      </div>
     );
   } else {
     return <></>;

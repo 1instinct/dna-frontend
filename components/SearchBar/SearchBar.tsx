@@ -4,29 +4,15 @@ import React, {
   createRef,
   useRef,
   useCallback,
-  KeyboardEvent,
-  MouseEvent,
-  TouchEvent
+  KeyboardEvent
 } from "react";
-import {
-  StyledSearch,
-  StyledInputContainer,
-  SearchInputWrapper,
-  StyledInput,
-  StyledIcon,
-  StyledInputPrefix,
-  StyledInputPostfix,
-  SearchButton,
-  BrowseButton,
-  SearchBarWrapper,
-  ButtonWrapper
-} from "./SearchBar.styles";
 import AutoComplete from "../SearchSuggestions";
 import { useRouter } from "next/router";
 import { useOnClickOutside } from "../../hooks";
 import { SearchBarProps } from "./types";
 import * as tracking from "../../config/tracking";
-import { Search } from "@material-ui/icons";
+import { Search, X } from "lucide-react";
+import { cn } from "@lib/utils";
 
 const SearchBar = ({
   darkMode,
@@ -41,7 +27,6 @@ const SearchBar = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isWidthSet, setIsWidthSet] = useState(false);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
-  // const [isSearchInputFocusable, setIsSearchInputFocusable] = useState(false);
 
   const handleSearchChange = (e: any) => {
     const { value } = e.target;
@@ -67,7 +52,6 @@ const SearchBar = ({
   useOnClickOutside(dropdownRef, handleClickOutside);
 
   useEffect(() => {
-    // !isSearchInputFocusable && setIsSearchInputFocusable(!isSearchInputFocusable);
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("touchstart", handleClickOutside);
 
@@ -78,7 +62,6 @@ const SearchBar = ({
   }, []);
 
   const keyboardEvents = (event: KeyboardEvent) => {
-    // TO DO: handle UP & DOWN keys
     switch (event.key) {
       case "Escape":
       case "Tab":
@@ -86,18 +69,14 @@ const SearchBar = ({
         break;
       case "Enter":
         if (query.length > 3) {
-          if (event.key === "Enter" && query.length > 3) {
-            tracking.trackEvent({
-              action: tracking.Action.PRESS_ENTER,
-              category: tracking.Category.SEARCH_BAR,
-              label: query
-            });
-
-            router.push(`/search?term=${query}`);
-          }
+          tracking.trackEvent({
+            action: tracking.Action.PRESS_ENTER,
+            category: tracking.Category.SEARCH_BAR,
+            label: query
+          });
+          router.push(`/search?term=${query}`);
         }
         break;
-
       default:
         break;
     }
@@ -109,17 +88,14 @@ const SearchBar = ({
       category: tracking.Category.SEARCH_BAR,
       label: suggestion
     });
-
     setQuery(suggestion);
   };
 
-  // Wait to set search width until exanding animation (0.33s) completes
   const handleSetSearchWidth = () =>
     setTimeout(() => {
       setIsWidthSet(!isWidthSet);
     }, 330);
 
-  // Open Search, unless open then close/hide everything and remove explicit search width
   const searchRef = createRef<HTMLInputElement>();
 
   const toggleSearch = () => {
@@ -137,28 +113,35 @@ const SearchBar = ({
   const dropdownId = "dropdown-search";
 
   return (
-    <StyledSearch
+    <div
       role="combobox"
       aria-haspopup="listbox"
       aria-owns="search"
       aria-expanded={isAutoCompleteVisible}
       ref={dropdownRef}
       aria-labelledby={labelId}
+      className="relative"
       {...rest}
     >
-      <SearchBarWrapper className="is-search-route">
-        <SearchInputWrapper>
-          <StyledInputContainer isExpanded={isExpanded} isWidthSet={isWidthSet}>
-            <StyledInputPrefix darkMode={darkMode}>
-              <i
-                onClick={toggleSearch}
-                className={
-                  isSearchLoading ? "bts bt-spinner bt-pulse" : "btr bt-search"
-                }
-              ></i>
-            </StyledInputPrefix>
-            <StyledInput
-              darkMode={!darkMode}
+      <div className="is-search-route flex flex-row justify-between">
+        <div className="flex w-full justify-end">
+          <div
+            className={cn(
+              "relative inline-block transition-all duration-300 ease-in-out",
+              isExpanded ? "w-[195px]" : "w-0"
+            )}
+          >
+            <div
+              className="absolute left-0 top-0 z-[3] flex h-full w-11 cursor-pointer items-center justify-start"
+              onClick={toggleSearch}
+            >
+              {isSearchLoading ? (
+                <i className="bts bt-spinner bt-pulse" />
+              ) : (
+                <Search className="h-4 w-4 text-foreground" />
+              )}
+            </div>
+            <input
               ref={searchRef}
               onKeyDown={(e: KeyboardEvent) => keyboardEvents(e)}
               tabIndex={0}
@@ -170,21 +153,25 @@ const SearchBar = ({
               aria-labelledby={labelId}
               role="textbox"
               autoComplete="off"
+              className={cn(
+                "h-[42px] w-full border-0 bg-transparent font-title text-sm font-normal text-foreground caret-foreground outline-none transition-all duration-300 ease-in-out",
+                isExpanded
+                  ? "border-b border-foreground px-[26px] pl-[30px]"
+                  : "pl-0",
+                isWidthSet ? "w-[140px]" : "w-full"
+              )}
             />
             {query && (
-              <StyledInputPostfix
+              <div
                 onClick={handleSearchClear}
-                darkMode={darkMode}
+                className="absolute right-[5px] top-0 z-[3] flex h-full w-11 cursor-pointer items-center justify-end text-foreground transition-colors hover:text-brand"
               >
-                <i className="btr bt-times"></i>
-              </StyledInputPostfix>
+                <X className="h-3.5 w-3.5" />
+              </div>
             )}
-          </StyledInputContainer>
-        </SearchInputWrapper>
-        {/* <ButtonWrapper>
-          <BrowseButton>Search</BrowseButton>
-        </ButtonWrapper> */}
-      </SearchBarWrapper>
+          </div>
+        </div>
+      </div>
 
       {autoComplete ? (
         <AutoComplete
@@ -197,13 +184,12 @@ const SearchBar = ({
           query={query}
         />
       ) : null}
-    </StyledSearch>
+    </div>
   );
 };
 
 const useCustomRef = <T extends HTMLElement>() => {
   const myRef = useRef<T>(null);
-
   return { ref: myRef };
 };
 

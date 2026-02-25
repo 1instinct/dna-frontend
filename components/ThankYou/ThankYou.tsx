@@ -3,117 +3,7 @@ import { useRouter } from "next/router";
 import { Layout } from "../Layout";
 import { useOrder } from "../../hooks";
 import { useAuth } from "../../config/auth";
-import styled from "@emotion/styled";
-
-const ThankYouContainer = styled.div`
-  max-width: 800px;
-  margin: 80px auto;
-  padding: 40px 20px;
-  text-align: center;
-`;
-
-const SuccessIcon = styled.div`
-  font-size: 80px;
-  color: #4caf50;
-  margin-bottom: 20px;
-`;
-
-const Title = styled.h1`
-  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
-  font-size: ${(p) => p.theme.typography.titleLG.fontSize};
-  margin-bottom: 20px;
-`;
-
-const Subtitle = styled.p`
-  font-family: ${(p) => p.theme.typography.bodyLG.fontFamily};
-  font-size: ${(p) => p.theme.typography.bodyLG.fontSize};
-  color: ${(p) => p.theme.colors.gray.primary || "#666"};
-  margin-bottom: 30px;
-`;
-
-const OrderNumber = styled.div`
-  background: ${(p) => p.theme.colors.gray.primary || "#f5f5f5"};
-  padding: 20px;
-  border-radius: 8px;
-  margin: 30px 0;
-`;
-
-const OrderLabel = styled.div`
-  font-size: 14px;
-  color: ${(p) => p.theme.colors.gray.primary || "#666"};
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-`;
-
-const OrderValue = styled.div`
-  font-size: 24px;
-  font-weight: bold;
-  font-family: monospace;
-`;
-
-const InfoBox = styled.div`
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin: 30px 0;
-  text-align: left;
-`;
-
-const InfoTitle = styled.h3`
-  font-family: ${(p) => p.theme.typography.titleSM.fontFamily};
-  margin-bottom: 15px;
-`;
-
-const InfoText = styled.p`
-  font-family: ${(p) => p.theme.typography.bodyMD.fontFamily};
-  line-height: 1.6;
-  color: ${(p) => p.theme.colors.gray.primary || "#333"};
-  margin-bottom: 10px;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  margin-top: 40px;
-
-  @media (max-width: 600px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-`;
-
-const Button = styled.button<{ variant?: "primary" | "secondary" }>`
-  padding: 14px 30px;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-
-  ${(p) =>
-    p.variant === "primary"
-      ? `
-    background-color: ${p.theme.colors.brand.primary};
-    color: white;
-    
-    &:hover {
-      background-color: ${p.theme.colors.brand.secondary};
-    }
-  `
-      : `
-    background-color: white;
-    color: ${p.theme.colors.brand.primary};
-    border: 2px solid ${p.theme.colors.brand.primary};
-    
-    &:hover {
-      background-color: ${p.theme.colors.gray.primary || "#f5f5f5"};
-    }
-  `}
-`;
+import { Button } from "@components/ui";
 
 export const ThankYou = () => {
   const router = useRouter();
@@ -125,10 +15,8 @@ export const ThankYou = () => {
   );
 
   useEffect(() => {
-    // Track successful order
     if (orderNumber) {
       console.log("Order completed:", orderNumber);
-      // You can add analytics tracking here
     }
   }, [orderNumber]);
 
@@ -136,86 +24,89 @@ export const ThankYou = () => {
 
   return (
     <Layout>
-      <ThankYouContainer>
-        <SuccessIcon>✓</SuccessIcon>
-        <Title>Thank You for Your Order!</Title>
-        <Subtitle>
+      <div className="mx-auto mt-20 max-w-[800px] px-5 py-10 text-center">
+        <div className="mb-5 text-[80px] text-green-DEFAULT">✓</div>
+        <h1 className="mb-5 font-title text-title-lg">
+          Thank You for Your Order!
+        </h1>
+        <p className="mb-8 font-body text-body-lg text-gray-DEFAULT">
           Your order has been successfully placed and is being processed.
-        </Subtitle>
+        </p>
 
         {orderNumber && (
-          <OrderNumber>
-            <OrderLabel>Order Number</OrderLabel>
-            <OrderValue>{orderNumber}</OrderValue>
-          </OrderNumber>
+          <div className="my-8 rounded-lg bg-muted p-5">
+            <div className="mb-2 text-sm uppercase tracking-widest text-muted-foreground">
+              Order Number
+            </div>
+            <div className="font-mono text-2xl font-bold">{orderNumber}</div>
+          </div>
         )}
 
         {!isLoading && order && (
-          <InfoBox>
-            <InfoTitle>Order Summary</InfoTitle>
-            <InfoText>
+          <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
+            <h3 className="mb-4 font-title text-title-sm">Order Summary</h3>
+            <p className="mb-2.5 font-body leading-relaxed text-foreground">
               <strong>Email:</strong> {order.attributes.email}
-            </InfoText>
-            <InfoText>
+            </p>
+            <p className="mb-2.5 font-body leading-relaxed text-foreground">
               <strong>Total:</strong> {order.attributes.display_total}
-            </InfoText>
-            <InfoText>
+            </p>
+            <p className="mb-2.5 font-body leading-relaxed text-foreground">
               <strong>Items:</strong> {order.attributes.item_count}
-            </InfoText>
-          </InfoBox>
+            </p>
+          </div>
         )}
 
-        <InfoBox>
-          <InfoTitle>What happens next?</InfoTitle>
-          <InfoText>
-            📧 You'll receive an email confirmation shortly with your order
-            details and tracking information.
-          </InfoText>
-          <InfoText>
-            📦 We'll notify you when your order ships, typically within 1-2
+        <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
+          <h3 className="mb-4 font-title text-title-sm">What happens next?</h3>
+          <p className="mb-2.5 font-body leading-relaxed text-foreground">
+            You'll receive an email confirmation shortly with your order details
+            and tracking information.
+          </p>
+          <p className="mb-2.5 font-body leading-relaxed text-foreground">
+            We'll notify you when your order ships, typically within 1-2
             business days.
-          </InfoText>
-          <InfoText>
-            🚚 Track your shipment using the tracking number in your
-            confirmation email.
-          </InfoText>
-        </InfoBox>
+          </p>
+          <p className="mb-2.5 font-body leading-relaxed text-foreground">
+            Track your shipment using the tracking number in your confirmation
+            email.
+          </p>
+        </div>
 
-        <InfoBox>
-          <InfoTitle>Need Help?</InfoTitle>
-          <InfoText>
+        <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
+          <h3 className="mb-4 font-title text-title-sm">Need Help?</h3>
+          <p className="mb-2.5 font-body leading-relaxed text-foreground">
             If you have any questions about your order, please don't hesitate to
             contact our customer support team.
-          </InfoText>
-          <InfoText>
+          </p>
+          <p className="mb-2.5 font-body leading-relaxed text-foreground">
             Email: {process.env.NEXT_PUBLIC_EMAIL || "hello@instinct.is"}
-          </InfoText>
-          <InfoText>
-            Phone: {process.env.NEXT_PUBLIC_COMPANY_PHONE || "1-800-000-0000"}
-          </InfoText>
-        </InfoBox>
+          </p>
+          <p className="mb-2.5 font-body leading-relaxed text-foreground">
+            Phone:{" "}
+            {process.env.NEXT_PUBLIC_COMPANY_PHONE || "1-800-000-0000"}
+          </p>
+        </div>
 
-        <ButtonGroup>
-          <Button variant="primary" onClick={() => router.push("/")}>
-            Continue Shopping
-          </Button>
+        <div className="mt-10 flex justify-center gap-5 max-sm:flex-col max-sm:items-stretch">
+          <Button onClick={() => router.push("/")}>Continue Shopping</Button>
           {user ? (
             <Button
-              variant="secondary"
+              variant="outline"
               onClick={() => router.push("/account/orders")}
             >
               View Order History
             </Button>
           ) : (
             <Button
-              variant="secondary"
+              variant="outline"
               onClick={() => router.push(`/account/orders/${orderNumber}`)}
             >
               View Order Details
             </Button>
           )}
-        </ButtonGroup>
-      </ThankYouContainer>
+        </div>
+      </div>
     </Layout>
   );
 };

@@ -19,30 +19,13 @@ import { ProductList } from "../ProductList";
 import { useMediaQuery } from "react-responsive";
 import homeData from "../Home/home.json";
 import {
-  CarouselProvider,
-  Slider,
-  Slide,
-  ButtonBack,
-  ButtonNext,
-  Image,
-  ImageWithZoom
-} from "pure-react-carousel";
-import "pure-react-carousel/dist/react-carousel.es.css";
-// import ProductCard from "../components";
-
-import {
-  ProductContainer,
-  ProductImageCarousel,
-  ProductInfoBox,
-  ProductDescription,
-  Detail
-} from "./Category.styles";
-
-const settings = {
-  speed: 500,
-  dots: false,
-  Infinite: false
-};
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext
+} from "@components/ui";
+import { Loading } from "../Loading";
 
 export const Category = () => {
   const router = useRouter();
@@ -79,7 +62,6 @@ export const Category = () => {
 
   React.useEffect(() => {
     if (isSuccess) {
-      // On page load, set focus on the product contaniner, because otherwise the arrow keys (left/right) won't work
       const productContainer = Array.from(
         document.getElementsByClassName("product-container")
       ).shift();
@@ -97,7 +79,13 @@ export const Category = () => {
   }, [`${id}`, isSuccess]);
 
   if (isLoading) {
-    return <div>Loading Product...</div>;
+    return (
+      <Layout>
+        <div className="flex min-h-[400px] items-center justify-center">
+          <Loading />
+        </div>
+      </Layout>
+    );
   }
 
   if (isSuccess) {
@@ -131,151 +119,124 @@ export const Category = () => {
       Array.isArray(data?.included) &&
       data?.included[0]?.attributes?.styles?.[2].url;
     const source = imageSource
-      ? `http://localhost:8080${imageSource}`
+      ? `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imageSource}`
       : "https://via.placeholder.com/400x600";
-    // const source = "https://via.placeholder.com/400x600";
 
     return (
       <Layout>
-        <ProductContainer
+        <div
           tabIndex={-1}
           onKeyDown={handleKeyPress}
-          className="product-container"
+          className="product-container section-container flex flex-wrap py-8 font-title"
         >
-          {/* <div className="slider-wrapper">
-            <Slider {...settings}>
-              <div className="slick-slide" key="1">
-                <img className="slick-slide-image" src="https://via.placeholder.com/400x600" />
-              </div>
-              <div className="slick-slide" key="2">
-                <img className="slick-slide-image" src={source} />
-              </div>
-            </Slider>
-          </div> */}
+          {/* Image Carousel */}
+          <div className="w-full md:w-2/5">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {[0, 1, 2].map((index) => (
+                  <CarouselItem key={index}>
+                    <div className="aspect-square overflow-hidden rounded-xl bg-muted">
+                      <img
+                        src={source}
+                        alt={data?.data?.attributes?.name}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-3" />
+              <CarouselNext className="right-3" />
+            </Carousel>
+          </div>
 
-          <ProductImageCarousel>
-            <CarouselProvider
-              naturalSlideWidth={600}
-              naturalSlideHeight={600}
-              totalSlides={3}
-              isIntrinsicHeight
-              touchEnabled
-            >
-              <Slider className="slider">
-                <Slide index={0} style={{ height: "500px" }}>
-                  <ImageWithZoom src={source} />
-                </Slide>
-                <Slide index={1} style={{ height: "500px" }}>
-                  <ImageWithZoom src={source} />
-                </Slide>
-                <Slide index={2} style={{ height: "500px" }}>
-                  <ImageWithZoom src={source} />
-                </Slide>
-              </Slider>
+          {/* Product Info */}
+          <div className="m-[2%] w-full md:w-auto">
+            <div className="max-w-[400px] text-center text-foreground">
+              <h2 className="font-title text-2xl font-semibold">
+                {data?.data?.attributes?.name}
+              </h2>
+              <p className="mt-3 font-body text-sm leading-relaxed text-muted-foreground">
+                {data?.data?.attributes?.description}
+              </p>
+              <h3 className="mt-4 font-title text-2xl font-bold">
+                ${data?.data?.attributes?.price}
+              </h3>
 
-              <ButtonBack>Back</ButtonBack>
-              <ButtonNext>Next</ButtonNext>
-            </CarouselProvider>
-          </ProductImageCarousel>
-
-          <ProductInfoBox>
-            <ProductDescription>
-              <h2>{data?.data?.attributes?.name}</h2>
-              <p>{data?.data?.attributes?.description}</p>
-              <h3>${data?.data?.attributes?.price}</h3>
-
-              <select>
-                <option selected>Color</option>
+              <select className="mt-4 w-full cursor-pointer rounded-lg border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors focus:border-brand focus:outline-none">
+                <option>Color</option>
                 <option>Blue</option>
                 <option>Beige</option>
                 <option>Pink</option>
               </select>
 
-              <div className="size-selection">
-                <button className="">XS</button>
-                <button className="">S</button>
-                <button className="">M</button>
-                <button className="">L</button>
-                <button className="">XL</button>
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                {["XS", "S", "M", "L", "XL"].map((size) => (
+                  <button
+                    key={size}
+                    className="rounded-lg border border-border px-5 py-2.5 font-title text-sm text-foreground transition-all hover:border-brand"
+                  >
+                    {size}
+                  </button>
+                ))}
               </div>
 
-              <button className="">add to cart</button>
-            </ProductDescription>
+              <button
+                onClick={handleAddToCart}
+                className="mt-6 w-full rounded-xl bg-brand px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px hover:shadow-lg active:translate-y-0"
+              >
+                Add to Cart
+              </button>
+            </div>
 
-            <div>
-              <Detail>Product Details</Detail>
-              <p>FABRIC : 100% POLYESTER BUST : 29”LENGTH : 25 1/2”</p>
-              <Detail>Model Info</Detail>
-              <p>
+            <div className="mt-8 text-left">
+              <h3 className="mb-2 font-title text-base font-semibold text-foreground md:text-sm md:text-center">
+                Product Details
+              </h3>
+              <p className="font-body text-sm text-muted-foreground">
+                FABRIC : 100% POLYESTER BUST : 29&quot;LENGTH : 25 1/2&quot;
+              </p>
+              <h3 className="mb-2 mt-4 font-title text-base font-semibold text-foreground md:text-sm md:text-center">
+                Model Info
+              </h3>
+              <p className="font-body text-sm text-muted-foreground">
                 Model info goes here:
                 <br />
-                Height: 5'8''
+                Height: 5&apos;8&apos;&apos;
                 <br />
                 Bust: 32
                 <br />
-                Waist: 24''
+                Waist: 24&apos;&apos;
                 <br />
-                Hip: 34"
+                Hip: 34&quot;
                 <br />
                 Wearing Size: XS
               </p>
             </div>
-          </ProductInfoBox>
-        </ProductContainer>
+          </div>
+        </div>
 
-        <h3>you may also like:</h3>
-        {polProductList ? polProductList : <></>}
-
-        <style jsx>
-          {`
-            .slider-wrapper {
-              width: 760px;
-              margin: auto;
-            }
-            .slick-slide {
-              text-align: center;
-              position: relative;
-            }
-            .slick-slide:focus {
-              outline: none;
-            }
-            .slick-slide-title {
-              text-transform: capitalize;
-            }
-            .slick-slide-image {
-              max-width: 100%;
-              height: auto;
-              border-radius: 8px;
-              box-shadow: 0 13px 27px -5px hsla(240, 30.1%, 28%, 0.25),
-                0 8px 16px -8px hsla(0, 0%, 0%, 0.3),
-                0 -6px 16px -6px hsla(0, 0%, 0%, 0.03);
-            }
-            .slick-slide-label {
-              color: #fff;
-              padding: 10px;
-              position: absolute;
-              left: 0px;
-              font-size: 1.5em;
-              bottom: 0px;
-              width: 100%;
-            }
-            .slick-prev:before,
-            .slick-next:before {
-              color: #777777;
-            }
-          `}
-        </style>
+        <div className="section-container pb-8">
+          <h3 className="mb-4 font-title text-lg text-foreground">
+            You may also like:
+          </h3>
+          {polProductList}
+        </div>
       </Layout>
     );
   }
 
-  return <div>PRODUCT NOT FOUND</div>;
+  return (
+    <Layout>
+      <div className="flex min-h-[400px] items-center justify-center font-title text-foreground">
+        PRODUCT NOT FOUND
+      </div>
+    </Layout>
+  );
 };
 
 export async function getServerSideProps() {
   const queryClient = new QueryClient();
-
-  // await queryClient.prefetchQuery(["posts", 1], () => fetchPosts(1));
   await queryClient.prefetchQuery(["streams", 1], () => fetchStreams(1));
   await queryClient.prefetchQuery(["products", 1], () => fetchProducts(1));
 

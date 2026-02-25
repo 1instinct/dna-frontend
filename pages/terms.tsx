@@ -1,5 +1,5 @@
-import { FinancialPrivacyModal } from "../components";
-import { Layout } from "../components";
+import { FinancialPrivacyModal } from "../components/Legal/FinancialPrivacyModal";
+import { Layout } from "../components/Layout";
 
 const TermsPage = () => {
   return (

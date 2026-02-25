@@ -1,146 +1,6 @@
 import React, { useState } from "react";
-import styled from "@emotion/styled";
 import Image from "next/image";
-
-const ViewerWrapper = styled.div<{ isExpanded: boolean }>`
-  position: relative;
-  background: ${(p) =>
-    p.theme.isDarkMode ? "rgba(0, 0, 0, 0.5)" : "rgba(255, 255, 255, 0.7)"};
-  border-radius: 24px;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 50;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-
-  &:hover {
-    background: ${(p) =>
-      p.theme.isDarkMode ? "rgba(0, 0, 0, 0.7)" : "rgba(255, 255, 255, 0.85)"};
-  }
-`;
-
-const ViewerCount = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-`;
-
-const LiveDot = styled.div`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: ${(p) => p.theme.colors.red.primary};
-  animation: pulse 2s infinite;
-
-  @keyframes pulse {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
-`;
-
-const AvatarStack = styled.div<{ isExpanded: boolean }>`
-  display: flex;
-  align-items: center;
-  margin-left: -4px;
-  max-width: ${(p) => (p.isExpanded ? "200px" : "120px")};
-  transition: max-width 0.3s;
-  overflow: hidden;
-  flex-shrink: 0;
-`;
-
-const Avatar = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid
-    ${(p) =>
-      p.theme.isDarkMode
-        ? p.theme.colors.black.primary
-        : p.theme.colors.white.primary};
-  overflow: hidden;
-  margin-left: -8px;
-  position: relative;
-  background: ${(p) => p.theme.colors.gray.light};
-
-  &:first-of-type {
-    margin-left: 0;
-  }
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
-
-const ExpandedList = styled.div`
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 8px;
-  background: ${(p) =>
-    p.theme.isDarkMode ? "rgba(0, 0, 0, 0.9)" : "rgba(255, 255, 255, 0.95)"};
-  border-radius: 12px;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 12px;
-  min-width: 200px;
-  max-height: 300px;
-  overflow-y: auto;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
-  }
-`;
-
-const ViewerItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 8px;
-  transition: background 0.2s;
-
-  &:hover {
-    background: ${(p) =>
-      p.theme.isDarkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)"};
-  }
-`;
-
-const ViewerName = styled.span`
-  font-size: 14px;
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-`;
+import { cn } from "@lib/utils";
 
 interface Viewer {
   id: string;
@@ -164,101 +24,88 @@ export const ViewerList: React.FC<ViewerListProps> = ({
 
   return (
     <>
-      <ViewerWrapper
-        isExpanded={isExpanded}
+      <div
+        className="relative z-50 flex cursor-pointer items-center gap-3 rounded-3xl border border-white/10 bg-black/50 px-4 py-2 shadow-[0_4px_12px_rgba(0,0,0,0.2)] backdrop-blur-[20px] transition-all hover:bg-black/70"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        {isLive && <LiveDot />}
-        <ViewerCount>👁️ {viewers.length}</ViewerCount>
-        <AvatarStack isExpanded={isExpanded}>
+        {isLive && (
+          <div className="h-2 w-2 animate-pulse rounded-full bg-destructive" />
+        )}
+        <div className="flex items-center gap-1.5 text-sm font-semibold text-white">
+          👁️ {viewers.length}
+        </div>
+        <div
+          className={cn(
+            "-ml-1 flex flex-shrink-0 items-center overflow-hidden transition-all",
+            isExpanded ? "max-w-[200px]" : "max-w-[120px]"
+          )}
+        >
           {visibleAvatars.map((viewer) => (
-            <Avatar key={viewer.id}>
+            <div
+              key={viewer.id}
+              className="relative -ml-2 h-8 w-8 overflow-hidden rounded-full border-2 border-black bg-muted first:-ml-0"
+            >
               {viewer.avatar ? (
                 <Image
                   src={viewer.avatar}
                   alt={viewer.name}
                   width={32}
                   height={32}
+                  className="h-full w-full object-cover"
                 />
               ) : (
                 <div
+                  className="flex h-full w-full items-center justify-center text-xs font-bold text-white"
                   style={{
-                    width: "100%",
-                    height: "100%",
-                    background: `hsl(${
-                      viewer.id.charCodeAt(0) * 10
-                    }, 70%, 60%)`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                    color: "white"
+                    background: `hsl(${viewer.id.charCodeAt(0) * 10}, 70%, 60%)`
                   }}
                 >
                   {viewer.name.charAt(0).toUpperCase()}
                 </div>
               )}
-            </Avatar>
+            </div>
           ))}
           {remainingCount > 0 && (
-            <Avatar>
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  background: "rgba(0, 0, 0, 0.6)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "11px",
-                  fontWeight: "bold",
-                  color: "white"
-                }}
-              >
+            <div className="relative -ml-2 h-8 w-8 overflow-hidden rounded-full border-2 border-black bg-muted">
+              <div className="flex h-full w-full items-center justify-center bg-black/60 text-[11px] font-bold text-white">
                 +{remainingCount}
               </div>
-            </Avatar>
+            </div>
           )}
-        </AvatarStack>
-      </ViewerWrapper>
+        </div>
+      </div>
 
       {isExpanded && (
-        <ExpandedList>
+        <div className="absolute right-0 top-full mt-2 min-w-[200px] max-h-[300px] overflow-y-auto rounded-xl border border-white/10 bg-black/90 p-3 shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-[20px]">
           {viewers.map((viewer) => (
-            <ViewerItem key={viewer.id}>
-              <Avatar>
+            <div
+              key={viewer.id}
+              className="flex items-center gap-2 rounded-lg p-2 transition-colors hover:bg-white/10"
+            >
+              <div className="relative h-8 w-8 overflow-hidden rounded-full border-2 border-black bg-muted">
                 {viewer.avatar ? (
                   <Image
                     src={viewer.avatar}
                     alt={viewer.name}
                     width={32}
                     height={32}
+                    className="h-full w-full object-cover"
                   />
                 ) : (
                   <div
+                    className="flex h-full w-full items-center justify-center text-xs font-bold text-white"
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      background: `hsl(${
-                        viewer.id.charCodeAt(0) * 10
-                      }, 70%, 60%)`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                      color: "white"
+                      background: `hsl(${viewer.id.charCodeAt(0) * 10}, 70%, 60%)`
                     }}
                   >
                     {viewer.name.charAt(0).toUpperCase()}
                   </div>
                 )}
-              </Avatar>
-              <ViewerName>{viewer.name}</ViewerName>
-            </ViewerItem>
+              </div>
+              <span className="text-sm text-white">{viewer.name}</span>
+            </div>
           ))}
-        </ExpandedList>
+        </div>
       )}
     </>
   );

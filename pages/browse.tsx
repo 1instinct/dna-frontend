@@ -1,3 +1,3 @@
-import { Browse } from "../components";
+import { Browse } from "../components/Browse";
 
 export default Browse;

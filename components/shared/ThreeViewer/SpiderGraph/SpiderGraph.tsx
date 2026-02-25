@@ -1,10 +1,12 @@
 import React, { useRef, useMemo } from "react";
-import { useTheme } from "@emotion/react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { GroupProps, Vector3 } from "@react-three/fiber";
 import { generatePoints } from "./utils";
 import { Tube } from "./Tube";
 import * as THREE from "three";
+
+const isDarkMode =
+  (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
 
 interface SpiderGraphProps {
   data: {
@@ -15,18 +17,11 @@ interface SpiderGraphProps {
 type Point = [number, number, number];
 
 export const SpiderGraph: React.FC<SpiderGraphProps> = ({ data }) => {
-  const theme = useTheme();
   const groupRef = useRef<THREE.Group>(null);
   const points: Point[] = useMemo(
     () => generatePoints(data) as Point[],
     [data]
   );
-
-  // useFrame(() => {
-  //   if (groupRef.current) {
-  //     groupRef.current.rotation.x = groupRef.current.rotation.y += 0.001;
-  //   }
-  // });
 
   useFrame(() => {
     if (groupRef.current) {
@@ -43,32 +38,13 @@ export const SpiderGraph: React.FC<SpiderGraphProps> = ({ data }) => {
       <mesh position={[0, 0, 0]}>
         <sphereGeometry args={[0.22, 25, 25]} />
         <meshPhysicalMaterial
-          color={theme.isDarkMode ? "black" : "white"}
+          color={isDarkMode ? "black" : "white"}
           transmission={0.5}
           roughness={0.1}
           metalness={0.9}
           reflectivity={0.9}
         />
       </mesh>
-      {/* {points.map(([x, y, z], i) => (
-        <React.Fragment key={i}>
-          <mesh position={[x, y, z]}>
-            <sphereGeometry args={[0.05, 16, 16]} />
-            <meshPhongMaterial
-              emissive={`hsl(${i * (360 / points.length)}, 100%, 50%)`}
-              emissiveIntensity={4}
-              color={`hsl(${i * (360 / points.length)}, 100%, 50%)`}
-              roughness={0.2}
-            />
-          </mesh>
-          <pointLight
-            intensity={1}
-            color={`hsl(${i * (360 / points.length)}, 100%, 50%)`}
-            distance={5}
-            position={[x, y, z]}
-          />
-        </React.Fragment>
-      ))} */}
       {points.map(([x, y, z], i) => (
         <React.Fragment key={`tube-${i}`}>
           <Tube start={[0, 0, 0]} end={[x, y, z]} radius={0.02} />

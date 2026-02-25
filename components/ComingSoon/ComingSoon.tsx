@@ -7,25 +7,10 @@ import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { useMutation, useQueryClient } from "react-query";
 import { fetchProducts, useProducts } from "../../hooks";
-import { ArrowBack, ArrowForward } from "@material-ui/icons";
-// import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import { CarouselProvider, Slider } from "pure-react-carousel";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CarouselProvider, Slider, Slide, ImageWithZoom } from "pure-react-carousel";
 import "pure-react-carousel/dist/react-carousel.es.css";
-
-import {
-  Container,
-  Logo,
-  LogoText,
-  ProductImageCarousel,
-  CarouselBackground,
-  StyledSlider,
-  StyledSlide,
-  StyledImageWithZoom,
-  CarouselNav,
-  CarouselBackButton,
-  CarouselNextButton,
-  Text
-} from "./ComingSoon.styles";
+import { ButtonBack, ButtonNext } from "pure-react-carousel";
 
 const siteTitle = process.env.NEXT_PUBLIC_SITE_TITLE || "";
 const siteDesc = process.env.NEXT_PUBLIC_SITE_DESC || "";
@@ -95,13 +80,14 @@ export const ComingSoon = () => {
         const imgSrc = image?.attributes?.styles[9]?.url || "";
         const imgUrl = `${spreeApiUrl}${imgSrc}`;
         return (
-          <StyledSlide
+          <Slide
             key={`image-${index}`}
             index={index}
+            className="h-screen"
             onClick={() => setIsSlideshow(false)}
           >
-            <StyledImageWithZoom src={imgUrl} />
-          </StyledSlide>
+            <ImageWithZoom src={imgUrl} />
+          </Slide>
         );
       });
     });
@@ -124,7 +110,7 @@ export const ComingSoon = () => {
           <div
             key={`image-${i.id}`}
             onClick={() => setIsSlideshow(true)}
-            style={{ cursor: "pointer" }}
+            className="cursor-pointer"
           >
             <img src={imgSrc} alt={`Product ${i.id}`} />
           </div>
@@ -142,30 +128,25 @@ export const ComingSoon = () => {
 
   return (
     <>
-      <Container>
+      <div className="relative flex min-h-screen flex-col bg-background">
         {logoPath ? (
-          <Logo src={logoPath} />
-        ) : siteTitle ? (
-          <LogoText>{siteTitle}</LogoText>
-        ) : null}
-        {siteDesc && <Text>{siteDesc}</Text>}
-        {/* {previewMode && (
-          <ProductTeaser
-            products={productsData}
-            title={""}
-            openSlideshow={(e: any) => setIsSlideshow(e)}
+          <img
+            src={logoPath}
+            className="h-60 w-auto sm:h-auto sm:w-[90%]"
+            alt="Logo"
           />
-        )} */}
+        ) : siteTitle ? (
+          <div className="mx-0 my-10 font-title text-4xl font-bold text-foreground">
+            {siteTitle}
+          </div>
+        ) : null}
+        {siteDesc && (
+          <div className="w-[425px] text-center font-title text-base text-foreground">
+            {siteDesc}
+          </div>
+        )}
         {previewMode && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "16px",
-              width: "100%",
-              margin: "32px 0"
-            }}
-          >
+          <div className="my-8 grid w-full grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
             {
               renderProductThumbnails(
                 productsData,
@@ -174,37 +155,43 @@ export const ComingSoon = () => {
             }
           </div>
         )}
-        {comingSoonText !== "" && <Text>{comingSoonText}</Text>}
+        {comingSoonText !== "" && (
+          <div className="w-[425px] text-center font-title text-base text-foreground">
+            {comingSoonText}
+          </div>
+        )}
         <NotifyForm />
         <SocialLinks />
         {isSlideshow && (
-          <ProductImageCarousel>
-            <CarouselBackground onClick={() => setIsSlideshow(false)} />
+          <div className="fixed inset-0 h-full w-full">
+            <div
+              className="fixed inset-0 h-full w-full bg-black/95"
+              onClick={() => setIsSlideshow(false)}
+            />
             <CarouselProvider
               naturalSlideWidth={600}
               naturalSlideHeight={600}
               totalSlides={productsData.data ? productsData.data.length : 1}
-              // isIntrinsicHeight
               touchEnabled
               infinite={productsData.data ? true : false}
             >
-              <StyledSlider className="slider">
+              <Slider className="slider h-screen bg-black/95">
                 {renderProductSlides()}
-              </StyledSlider>
+              </Slider>
 
-              <CarouselNav>
-                <CarouselBackButton>
-                  <ArrowBack />
-                </CarouselBackButton>
-                <CarouselNextButton>
-                  <ArrowForward />
-                </CarouselNextButton>
-              </CarouselNav>
+              <div className="fixed left-0 top-1/2 flex w-full justify-between">
+                <ButtonBack className="ml-2.5 flex h-[50px] w-[50px] items-center justify-center rounded-full opacity-[0.11] transition-opacity hover:opacity-100">
+                  <ChevronLeft className="h-6 w-6" />
+                </ButtonBack>
+                <ButtonNext className="mr-2.5 flex h-[50px] w-[50px] items-center justify-center rounded-full opacity-[0.11] transition-opacity hover:opacity-100">
+                  <ChevronRight className="h-6 w-6" />
+                </ButtonNext>
+              </div>
             </CarouselProvider>
-          </ProductImageCarousel>
+          </div>
         )}
         <LegalLinks />
-      </Container>
+      </div>
     </>
   );
 };

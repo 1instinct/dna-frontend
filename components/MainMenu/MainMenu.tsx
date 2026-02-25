@@ -1,5 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
-import classnames from "classnames";
+import React from "react";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import {
@@ -8,53 +7,26 @@ import {
   useMenuLocation,
   useMenuItems
 } from "../../hooks";
-import { MainMenuProps, menuDataItem } from "./types";
+import { MainMenuProps } from "./types";
 import { MegaMenu } from "./MegaMenu";
-
-import { HiddenOnDesktop, HiddenOnMobile } from "./MainMenu.styles";
 import { MobileMenu } from "./MobileMenu";
-
-// const SidebarMenu = styled(List)`
-//   width: 100%;
-// `;
 
 export const MainMenu = (props: MainMenuProps) => {
   const {
     showMenuHeader,
-    pcWrapClassName,
-    pcMenuItemClassName,
     onMenuItemClick,
-    animationType,
-    children,
     ...others
   } = props;
 
   const {
-    error: menuLocationError,
-    status: menuLocationStatus,
     data: menuLocationData,
-    isLoading: menuLocationIsLoading,
-    isSuccess: menuLocationIsSuccess
-  }: {
-    error: any;
-    status: any;
-    data: any;
-    isLoading: boolean;
-    isSuccess: boolean;
+    isLoading: menuLocationIsLoading
   } = useMenuLocation(1);
 
   const {
-    error: menuItemsError,
-    status: menuItemsStatus,
     data: menuItemsData,
     isLoading: menuItemsIsLoading,
     isSuccess: menuItemsIsSuccess
-  }: {
-    error: any;
-    status: any;
-    data: any;
-    isLoading: boolean;
-    isSuccess: boolean;
   } = useMenuItems(1);
 
   if (menuItemsIsLoading || menuLocationIsLoading || !menuItemsData)
@@ -67,32 +39,32 @@ export const MainMenu = (props: MainMenuProps) => {
 
   return (
     <>
-      <HiddenOnDesktop>
+      {/* Mobile: Sheet slide-out menu */}
+      <div className="sm:hidden">
         <MobileMenu
           showMenuHeader={showMenuHeader}
           onMenuItemClick={onMenuItemClick}
           menusLoading={menuItemsIsLoading}
           menusData={menuItemsData ? menuItemsData?.response_data : []}
         />
-      </HiddenOnDesktop>
-      <HiddenOnMobile>
+      </div>
+
+      {/* Desktop: Mega menu */}
+      <div className="relative z-[3] hidden shadow-[0_6px_12px_rgba(0,0,0,0.05)] sm:flex">
         {menuItemsIsSuccess ? (
           <MegaMenu menuItems={menuItems} loading={menuItemsIsLoading} />
         ) : null}
-      </HiddenOnMobile>
+      </div>
     </>
   );
 };
 
 export async function getServerSideProps() {
   const queryClient = new QueryClient();
-
-  // await queryClient.prefetchQuery(["posts", 1], () => fetchPosts(1));
   await queryClient.prefetchQuery(["menu_location", 1], () =>
     fetchMenuLocation(1)
   );
   await queryClient.prefetchQuery(["menu_items", 1], () => fetchMenuItems(1));
-
   return {
     props: {
       dehydratedState: dehydrate(queryClient)

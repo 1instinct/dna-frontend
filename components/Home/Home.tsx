@@ -1,10 +1,9 @@
-import { useRef, useEffect } from "react";
-import { useQuery } from "react-query";
+import { useRef } from "react";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { Layout } from "../Layout";
-import { InfoBox } from "../InfoBox";
 import { ProductList } from "../ProductList";
+import { BlurFade } from "@components/ui";
 import {
   fetchStreams,
   fetchProducts,
@@ -13,7 +12,6 @@ import {
 } from "../../hooks";
 import Hero from "./Hero";
 import Banner from "./Banner";
-import { Content } from "./Home.styles";
 import Featured from "./Featured";
 import MemberList from "./MemberList";
 import { StreamList } from "../StreamList";
@@ -22,12 +20,10 @@ import MobileLatest from "./MobileLatest";
 import { Loading } from "../Loading";
 import homeData from "./home.json";
 import { VideoJS } from "../VideoJS";
-import constants from "../../utilities/constants";
 import Products from "./Products";
 
 export const Home = (props: any) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
-
   const playerRef = useRef(null);
 
   const videoJsOptions = {
@@ -38,112 +34,79 @@ export const Home = (props: any) => {
     preload: "auto",
     muted: true,
     fluid: true,
-    sources: [
-      {
-        src: "pol-fw-21.mp4",
-        type: "video/mp4"
-      }
-    ]
+    sources: [{ src: "pol-fw-21.mp4", type: "video/mp4" }]
   };
 
   const handlePlayerReady = ({ player }: any) => {
     playerRef.current = player;
-
-    // you can handle player events here
-    // player.on('waiting', () => {
-    //   console.log('player is waiting');
-    // });
-
-    // player.on('dispose', () => {
-    //   console.log('player will dispose');
-    // });
   };
 
   const {
     error: productsError,
-    status: productsStatus,
     data: productsData,
     isLoading: productsAreLoading,
-    isSuccess: productsIsSuccess
-  }: {
-    error: any;
-    status: any;
-    data: any;
-    isLoading: boolean;
-    isSuccess: boolean;
-  } = useProducts(1);
+  }: any = useProducts(1);
 
   const {
     error: streamsError,
-    status: streamsStatus,
     data: streamsData,
     isLoading: streamsAreLoading,
-    isSuccess: streamsAreSuccess
-  }: {
-    error: any;
-    status: any;
-    data: any;
-    isLoading: boolean;
-    isSuccess: boolean;
-  } = useStreams(1);
+  }: any = useStreams(1);
 
-  const memberList = isMobile ? null : (
-    <MemberList data={homeData.memberList} />
-  );
-  const mobileMemberList = !isMobile ? null : (
-    <MemberList data={homeData.memberList} />
-  );
-  const advertListMobile = isMobile ? (
-    <MobileLatest products={productsData} title={""}></MobileLatest>
-  ) : null;
   const productList = isMobile ? null : (
     <Products products={productsData} title={"New Drops This Week"} />
   );
   const banner = isMobile ? null : <Banner data={homeData.bigHotDig} />;
+  const advertListMobile = isMobile ? (
+    <MobileLatest products={productsData} title={""} />
+  ) : null;
 
-  if (productsAreLoading || streamsAreLoading) {
-    return <Loading />;
-  }
-
-  if (productsError || streamsError) {
-    return <Loading />;
-  }
+  if (productsAreLoading || streamsAreLoading) return <Loading />;
+  if (productsError || streamsError) return <Loading />;
 
   return (
     <Layout>
       <Hero />
-      <Content>
-        {/* {memberList} */}
-        {streamsData &&
-          streamsData?.response_data &&
-          streamsData.response_data.length > 0 && (
-            <StreamList
-              data={streamsData.response_data}
-              title={"Live-Shopping"}
-            />
-          )}
-        {!productsAreLoading && productList}
-        {/* {mobileMemberList} */}
-        <Featured data={homeData.latestProducts} title="" />
-        <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
-        {advertListMobile}
-        {!productsAreLoading && productList}
-        {banner}
-      </Content>
+      <div className="section-container space-y-8 py-8">
+        {streamsData?.response_data?.length > 0 && (
+          <BlurFade delay={0.1} inView>
+            <StreamList data={streamsData.response_data} title={"Live-Shopping"} />
+          </BlurFade>
+        )}
+        {!productsAreLoading && productList && (
+          <BlurFade delay={0.2} inView>
+            {productList}
+          </BlurFade>
+        )}
+        <BlurFade delay={0.3} inView>
+          <Featured data={homeData.latestProducts} title="" />
+        </BlurFade>
+        <BlurFade delay={0.4} inView>
+          <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+        </BlurFade>
+        {advertListMobile && (
+          <BlurFade delay={0.3} inView>
+            {advertListMobile}
+          </BlurFade>
+        )}
+        {!productsAreLoading && productList && (
+          <BlurFade delay={0.5} inView>
+            {productList}
+          </BlurFade>
+        )}
+        {banner && (
+          <BlurFade delay={0.6} inView>
+            {banner}
+          </BlurFade>
+        )}
+      </div>
     </Layout>
   );
 };
 
 export async function getServerSideProps() {
   const queryClient = new QueryClient();
-
-  // await queryClient.prefetchQuery(["posts", 1], () => fetchPosts(1));
   await queryClient.prefetchQuery(["streams", 1], () => fetchStreams(1));
   await queryClient.prefetchQuery(["products", 1], () => fetchProducts(1));
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
-  };
+  return { props: { dehydratedState: dehydrate(queryClient) } };
 }

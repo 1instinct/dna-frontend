@@ -10,30 +10,14 @@ import { AuthFormType, signupForm } from "../AuthForm/constants";
 import { useAuth } from "../../config/auth";
 import { SlideInLeft, SlideOutLeft } from "../Animations";
 import { Questions } from "./Questions";
-// import { Questions } from "./POLQuestions";
 import { Alert } from "../Alerts";
+import { Button } from "@components/ui";
 
 import FormikWizardStepType from "formik-wizard";
 
-import {
-  MainWrapper,
-  InitialTitle,
-  Title,
-  Subtitle,
-  ContentWrapper,
-  LeftHalf,
-  RightHalf,
-  WizardForm,
-  WizardActions,
-  PreviousButton,
-  NextButton,
-  SkipAction,
-  LoginAction,
-  Disclaimer,
-  CongratsWrapper
-} from "./SignupWizard.styles";
 import constants from "@utilities/constants";
 import { Loading } from "../Loading";
+import { cn } from "@lib/utils";
 
 const ThreeViewer = dynamic(
   () => import("@components/shared/ThreeViewer").then((mod) => mod.ThreeViewer),
@@ -46,34 +30,24 @@ const ThreeViewer = dynamic(
 const FormWrapper: React.FC<any> = ({
   steps,
   children,
-  // onEachStepSubmit,
-  // onSubmit,
-  // onNext,
   wizard,
   isLastStep,
   status,
   goToPreviousStep,
-  // getErrorMessage,
   canGoBack,
-  // onFinalSubmit,
   hasError,
   isDirty,
   showNextStep,
   actionLabel
 }: any) => {
   const isMobile = useMediaQuery({
-    // query: `(min-device-width: ${props => props.theme.breakpoints.values.lg}px)`
     query: `(max-device-width: 768px)`
   });
 
-  // const { values, Formik, Form, Field } = useFormikContext();
   const { values }: any = useFormikContext();
 
-  // const { step } = this.props;
   const termsAccepted = !!(
-    (values.acceptSignatureTerms && values.acceptPrivacyTerms)
-    // values.acceptReportingTerms &&
-    // values.acceptAuthorizeTerms
+    values.acceptSignatureTerms && values.acceptPrivacyTerms
   );
 
   const keyboardListener = (e: any) => {
@@ -91,107 +65,89 @@ const FormWrapper: React.FC<any> = ({
     };
   });
 
-  // We assume this method cannot be called on the first step
-  // const goToNextStep = () => {
-  //   console.log('next step: ', steps[stepNumber + 1]);
-  //   const nextStepId = steps[stepNumber + 1].id;
-  //   // setState({step: { id: "personal-info" }});
-  //   setState(prevState => ({ ...prevState, stepNumber: prevState.stepNumber + 1, step: { id: nextStepId} }));
-  // };
-
   switch (status ? status.code : status) {
     case 200:
       window.scrollTo(0, 0);
       return (
-        <CongratsWrapper>
-          <Title>{status.message}</Title>
-          <Subtitle>{status.subtitle}</Subtitle>
-
-          {/* <p>Need to fix something?</p>
-          <PreviousButton onClick={goToPreviousStep} disabled={!canGoBack}>← Go Back</PreviousButton> */}
-        </CongratsWrapper>
+        <div className="flex flex-col items-center justify-center p-5 pt-4 text-center">
+          <div className="pointer-events-none text-center text-2xl font-black uppercase text-foreground">
+            {status.message}
+          </div>
+          <div className="pt-5 text-center text-xl text-foreground">
+            {status.subtitle}
+          </div>
+        </div>
       );
     default:
       return (
-        <WizardForm canGoBack={canGoBack}>
-          {/* {isMobile && !canGoBack && (
-            <InitialTitle>Welcome! Let's get you started..</InitialTitle>
-          )} */}
+        <div className="w-full rounded-lg bg-card pt-0 shadow-[0px_22px_33px_rgba(0,0,0,0.066)] md:mt-[165px] [&_[data-qa='title']]:text-[1.6rem] [&_[data-qa='title']]:text-brand">
           {children}
-          <WizardActions>
+          <div className="mx-2.5 flex justify-between gap-4 px-4 pb-1 sm:mx-6">
             {canGoBack && (
-              <PreviousButton
+              <Button
                 variant="outline"
                 onClick={goToPreviousStep}
                 disabled={!canGoBack}
-                width={20}
+                className="flex-[0.3] flex-grow"
               >
                 <i className="bts bt-angles-left" />
-              </PreviousButton>
+              </Button>
             )}
-            {/* <NextButton type="submit" onClick={() => console.log(wizard, wizard.step, wizard.next)} disabled={isLastStep && !termsAccepted}>{actionLabel || (isLastStep ? 'Submit' : 'Next step')}</NextButton> */}
-            {/* <NextButton type={isLastStep ? "submit" : "button"} onClick={() => { */}
             {isLastStep ? (
-              <NextButton
-                variant="solid"
-                // type={isLastStep ? "submit" : "button"}
+              <Button
                 onClick={() => {
                   console.log("next: ", values, wizard, isLastStep);
-                  // console.log("next: ", wizard, isLastStep);
                   wizard.next();
                 }}
                 disabled={isLastStep && !termsAccepted}
+                className="flex-[0.7] flex-grow"
               >
                 {actionLabel || (isLastStep ? "Submit" : "Next")}
-              </NextButton>
+              </Button>
             ) : (
-              <NextButton
-                variant="solid"
-                // type={isLastStep ? "submit" : "button"}
+              <Button
                 onClick={() => {
                   constants.IS_DEBUG &&
                     console.log("next: ", values, wizard, isLastStep);
-                  // console.log("next: ", wizard, isLastStep);
                   wizard.next();
                 }}
                 disabled={
                   (isLastStep && !termsAccepted) || hasError || !isDirty
                 }
+                className="flex-[0.7] flex-grow"
               >
                 {actionLabel || (isLastStep ? "Submit" : "Next")}
-              </NextButton>
+              </Button>
             )}
-          </WizardActions>
+          </div>
           {!canGoBack && (
-            <Disclaimer>
-              <Link href="/login">Already have an account?</Link>
-            </Disclaimer>
+            <div className="px-5 py-4 text-center text-[0.7rem] text-muted-foreground">
+              <Link href="/login" className="text-brand hover:underline">
+                Already have an account?
+              </Link>
+            </div>
           )}
-          {/* {<div><pre>VALUE: {JSON.stringify(values, null, 2)}</pre></div>} */}
           {canGoBack && (
-            <Disclaimer>
-              Don’t worry your information is safe{" "}
+            <div className="px-5 py-4 text-center text-[0.7rem] text-muted-foreground">
+              Don&apos;t worry your information is safe{" "}
               <span role="img" aria-label="lock">
                 🔐
               </span>{" "}
               and we never share your information without your consent.
-              {/* <Subtitle>– or –</Subtitle> */}
-              <LoginAction>
-                {/* <Link href="/login" target="_blank" rel="noopener noreferrer">
+              <div className="mt-2 flex justify-center px-4 py-4">
+                <Link href="/login" className="text-brand hover:underline">
                   Already have an account?
-                </Link> */}
-                <Link href="/login">Already have an account?</Link>
-              </LoginAction>
-            </Disclaimer>
+                </Link>
+              </div>
+            </div>
           )}
-        </WizardForm>
+        </div>
       );
   }
 };
 
 export const SignupWizard = () => {
   const isLargeDevice = useMediaQuery({
-    // query: `(min-device-width: ${props => props.theme.breakpoints.values.}px)`
     query: `(min-device-width: 768px)`
   });
 
@@ -202,12 +158,9 @@ export const SignupWizard = () => {
       register({ user: values })
         .then((res) => {
           console.log("yup: ", res);
-          // setSubmitting(false);
-          // router.push("/");
         })
         .catch((err) => {
           console.log("nope: ", err);
-          // setSubmitting(false);
         });
 
       console.log("new Promise");
@@ -223,39 +176,38 @@ export const SignupWizard = () => {
       })
       .catch((err) => {
         console.log("handleSubmit error: ", err);
-        // toggleErrorModal();
-        // setErrorMessage(err);
         Alert.fire({ icon: "error", title: "Uh oh!", text: err });
-        // return Promise.resolve({
-        //   message: 'Uh oh.',
-        //   subtitle: err
-        // })
       });
   }, []);
 
   return (
-    <MainWrapper>
-      <ContentWrapper>
-        <LeftHalf show={isLargeDevice ? "flex" : "flex"}>
-          {/* <ThreeViewer /> */}
-          <Title>
+    <div className="relative z-[1] flex flex-col pb-20">
+      <div className="mx-[10%] flex flex-row flex-nowrap justify-center sm:mx-[5%] sm:flex-col">
+        <div className="relative mr-4 flex flex-[0_0_48%] flex-col rounded-lg bg-card p-4 text-center sm:mr-0 sm:mt-4 sm:hidden">
+          <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1] -translate-x-1/2 -translate-y-1/2 text-center text-2xl font-black uppercase text-foreground [text-shadow:0px_2px_22px_rgba(255,255,255,1)]">
             Enjoy The Journey{" "}
             <span role="img" aria-label="sunglasses">
               😎
             </span>
-          </Title>
-        </LeftHalf>
-        <RightHalf isLargeDevice={isLargeDevice}>
+          </div>
+        </div>
+        <div
+          className={cn(
+            "flex flex-1 flex-col",
+            isLargeDevice ? "w-[48%] max-w-[48%]" : "w-full max-w-full",
+            "[&_form]:rounded-lg [&_form]:bg-card [&_form]:text-brand [&_form_[data-qa='title']]:text-[1.6rem] [&_form_[data-qa='title']]:text-brand",
+            "sm:w-full sm:max-w-full"
+          )}
+        >
           <SlideInLeft>
             <FormikWizard
               steps={Questions}
-              // onSubmit={(values: any, { formikProps: { isSubmitting } }: any) => handleSubmit(values, isSubmitting)}
               onSubmit={(values) => handleSubmit(values)}
               render={FormWrapper}
             />
           </SlideInLeft>
-        </RightHalf>
-      </ContentWrapper>
-    </MainWrapper>
+        </div>
+      </div>
+    </div>
   );
 };

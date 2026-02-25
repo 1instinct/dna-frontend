@@ -215,9 +215,11 @@ ssh smokey01 sudo microk8s kubectl logs -l app=dna-frontend -n default --tail=50
 ```
 
 # SSH into the cluster and list secrets in the namespace
+
 `ssh smokey01 "microk8s kubectl get secrets"`
 
 ### Decode a specific secret (shows all key-value pairs decrypted)
+
 `ssh smokey01 "microk8s kubectl get secret dna-frontend-secrets -o json" | jq '.data | to_entries[] | "\(.key)=\(.value | @base64d)"' -r | sort`
 
 ### Rollback

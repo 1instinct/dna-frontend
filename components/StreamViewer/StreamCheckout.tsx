@@ -23,56 +23,12 @@ import {
 } from "@stripe/react-stripe-js";
 import Image from "next/image";
 import { LoginDialog } from "@components/Login/LoginDialog";
-import {
-  CheckoutWrapper,
-  ToggleButton,
-  CartBadge,
-  CheckoutContent,
-  StepIndicator,
-  StepDot,
-  CheckoutTitle,
-  CartItem,
-  ItemImage,
-  ItemDetails,
-  ItemName,
-  ItemPrice,
-  RemoveButton,
-  FormField,
-  Label,
-  Input,
-  FormRow,
-  ErrorText,
-  TotalRow,
-  TotalLabel,
-  TotalValue,
-  StepActions,
-  StepButton,
-  CardElementWrapper,
-  SuccessMessage,
-  SuccessIcon,
-  SuccessText,
-  OrderNumber,
-  ShippingMethodOption,
-  ShippingMethodName,
-  ShippingMethodCost,
-  LoginPrompt,
-  LoginIcon,
-  LoginText,
-  LoginSubtext,
-  AddressOption,
-  AddressOptionContent,
-  AddressRadio,
-  AddressDetails,
-  AddressName,
-  AddressLine,
-  NewAddressButton
-} from "./StreamCheckout.styles";
+import { cn } from "@lib/utils";
 
 const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
   ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   : null;
 
-// Validation Schema
 const addressSchema = Yup.object({
   firstName: Yup.string().required("Required"),
   lastName: Yup.string().required("Required"),
@@ -121,32 +77,37 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const displayTotal = cartData?.data?.attributes?.display_total || "$0.00";
   const savedAddresses = addressesData?.data || [];
 
-  // If not logged in, show login prompt
   if (!user) {
     return (
       <>
-        <CheckoutContent>
-          <LoginPrompt>
-            <LoginIcon>🔒</LoginIcon>
-            <LoginText>Login Required</LoginText>
-            <LoginSubtext>Please login to complete your purchase</LoginSubtext>
-            <StepActions>
-              <StepButton onClick={onClose}>Keep Shopping</StepButton>
-              <StepButton
-                variant="primary"
+        <div className="flex-1 overflow-y-auto p-5">
+          <div className="px-5 py-10 text-center">
+            <div className="mb-4 text-5xl">🔒</div>
+            <div className="mb-2 text-base text-foreground">Login Required</div>
+            <div className="mb-6 text-sm text-muted-foreground">
+              Please login to complete your purchase
+            </div>
+            <div className="mt-5 flex gap-3">
+              <button
+                onClick={onClose}
+                className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+              >
+                Keep Shopping
+              </button>
+              <button
                 onClick={() => setShowLoginDialog(true)}
+                className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
               >
                 Login
-              </StepButton>
-            </StepActions>
-          </LoginPrompt>
-        </CheckoutContent>
+              </button>
+            </div>
+          </div>
+        </div>
 
         <LoginDialog
           isOpen={showLoginDialog}
           onClose={() => setShowLoginDialog(false)}
           onSuccess={() => {
-            // After successful login, user state will update and component will re-render
             queryClient.invalidateQueries(QueryKeys.CART);
           }}
         />
@@ -162,17 +123,11 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const loadShippingMethods = async () => {
     try {
       const response = await getShippingMethods();
-      console.log("Shipping methods response:", response);
-
-      // Find shipping rates in the included array (same pattern as full checkout)
       const shippingRates =
         response?.included?.filter(
           (item: any) => item.type === "shipping_rate"
         ) || [];
-
-      console.log("Shipping rates:", shippingRates);
       setShippingMethods(shippingRates);
-
       if (shippingRates.length > 0) {
         setSelectedShipping(shippingRates[0].id);
       }
@@ -295,18 +250,30 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   return (
-    <CheckoutContent>
-      <StepIndicator>
-        <StepDot isActive={currentStep === 0} isCompleted={currentStep > 0} />
-        <StepDot isActive={currentStep === 1} isCompleted={currentStep > 1} />
-        <StepDot isActive={currentStep === 2} isCompleted={currentStep > 2} />
-        <StepDot isActive={currentStep === 3} isCompleted={currentStep > 3} />
-      </StepIndicator>
+    <div className="flex-1 overflow-y-auto p-5">
+      {/* Step Indicator */}
+      <div className="mb-5 flex justify-between gap-2">
+        {[0, 1, 2, 3].map((step) => (
+          <div
+            key={step}
+            className={cn(
+              "h-1 flex-1 rounded-full transition-all",
+              currentStep > step
+                ? "bg-brand"
+                : currentStep === step
+                ? "bg-brand/60"
+                : "bg-white/20"
+            )}
+          />
+        ))}
+      </div>
 
       {/* Step 0: Cart Review */}
       {currentStep === 0 && (
         <>
-          <CheckoutTitle>Your Cart ({cartItems.length})</CheckoutTitle>
+          <h3 className="m-0 mb-4 text-lg font-semibold text-foreground">
+            Your Cart ({cartItems.length})
+          </h3>
 
           {cartItems.map((item: any) => {
             const variant = cartData?.included?.find(
@@ -317,8 +284,11 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             const image = variant?.attributes?.images?.[0]?.url;
 
             return (
-              <CartItem key={item.id}>
-                <ItemImage>
+              <div
+                key={item.id}
+                className="flex gap-3 border-b border-white/10 py-3"
+              >
+                <div className="h-[60px] w-[60px] flex-shrink-0 overflow-hidden rounded-lg bg-white/5">
                   {image && (
                     <Image
                       src={image}
@@ -328,92 +298,132 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       style={{ objectFit: "cover" }}
                     />
                   )}
-                </ItemImage>
-                <ItemDetails>
-                  <ItemName>{item.attributes?.name}</ItemName>
-                  <ItemPrice>
-                    {item.attributes?.quantity} ×{" "}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="mb-1 truncate text-sm font-medium text-foreground">
+                    {item.attributes?.name}
+                  </div>
+                  <div className="text-[13px] text-brand">
+                    {item.attributes?.quantity} &times;{" "}
                     {item.attributes?.display_price}
-                  </ItemPrice>
-                </ItemDetails>
-                {/* Remove button disabled during checkout - items can't be removed once checkout starts */}
-                <RemoveButton
+                  </div>
+                </div>
+                <button
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log("Remove button clicked for item:", item.id);
                     handleRemoveItem(item.id);
                   }}
                   disabled={removeFromCartMutation.isLoading}
+                  className="border-none bg-transparent p-1 text-lg text-destructive hover:opacity-70"
                 >
-                  ×
-                </RemoveButton>
-              </CartItem>
+                  &times;
+                </button>
+              </div>
             );
           })}
 
-          <TotalRow>
-            <TotalLabel>Total</TotalLabel>
-            <TotalValue>{displayTotal}</TotalValue>
-          </TotalRow>
+          <div className="mt-3 flex justify-between border-t border-white/10 pt-3">
+            <span className="text-sm font-medium text-muted-foreground">
+              Total
+            </span>
+            <span className="text-base font-semibold text-foreground">
+              {displayTotal}
+            </span>
+          </div>
 
-          <StepActions>
-            <StepButton onClick={onClose}>Keep Shopping</StepButton>
-            <StepButton
-              variant="primary"
+          <div className="mt-5 flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+            >
+              Keep Shopping
+            </button>
+            <button
               onClick={() => setCurrentStep(1)}
               disabled={cartItems.length === 0}
+              className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
             >
               Continue
-            </StepButton>
-          </StepActions>
+            </button>
+          </div>
         </>
       )}
 
       {/* Step 1: Shipping Address */}
       {currentStep === 1 && (
         <>
-          <CheckoutTitle>Checkout - Shipping Address</CheckoutTitle>
+          <h3 className="m-0 mb-4 text-lg font-semibold text-foreground">
+            Checkout - Shipping Address
+          </h3>
 
-          {/* Show saved addresses if available */}
           {!showNewAddressForm && savedAddresses.length > 0 && (
             <>
               {savedAddresses.map((address: any) => (
-                <AddressOption
+                <label
                   key={address.id}
-                  selected={selectedAddress === address.id}
+                  className={cn(
+                    "mb-3 block cursor-pointer rounded-lg border-2 p-3 transition-all hover:border-brand/60",
+                    selectedAddress === address.id
+                      ? "border-brand bg-white/5"
+                      : "border-white/10 bg-transparent"
+                  )}
                   onClick={() => setSelectedAddress(address.id)}
                 >
-                  <AddressOptionContent>
-                    <AddressRadio selected={selectedAddress === address.id} />
-                    <AddressDetails>
-                      <AddressName>
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={cn(
+                        "relative mt-0.5 h-5 w-5 flex-shrink-0 rounded-full border-2",
+                        selectedAddress === address.id
+                          ? "border-brand bg-brand"
+                          : "border-white/30 bg-transparent"
+                      )}
+                    >
+                      {selectedAddress === address.id && (
+                        <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="mb-1 text-sm font-semibold text-foreground">
                         {address.attributes.firstname}{" "}
                         {address.attributes.lastname}
-                      </AddressName>
-                      <AddressLine>{address.attributes.address1}</AddressLine>
+                      </div>
+                      <div className="text-[13px] leading-relaxed text-muted-foreground">
+                        {address.attributes.address1}
+                      </div>
                       {address.attributes.address2 && (
-                        <AddressLine>{address.attributes.address2}</AddressLine>
+                        <div className="text-[13px] leading-relaxed text-muted-foreground">
+                          {address.attributes.address2}
+                        </div>
                       )}
-                      <AddressLine>
+                      <div className="text-[13px] leading-relaxed text-muted-foreground">
                         {address.attributes.city},{" "}
                         {address.attributes.state_name}{" "}
                         {address.attributes.zipcode}
-                      </AddressLine>
-                      <AddressLine>{address.attributes.phone}</AddressLine>
-                    </AddressDetails>
-                  </AddressOptionContent>
-                </AddressOption>
+                      </div>
+                      <div className="text-[13px] leading-relaxed text-muted-foreground">
+                        {address.attributes.phone}
+                      </div>
+                    </div>
+                  </div>
+                </label>
               ))}
 
-              <NewAddressButton onClick={() => setShowNewAddressForm(true)}>
+              <button
+                onClick={() => setShowNewAddressForm(true)}
+                className="mb-5 w-full cursor-pointer rounded-lg border-2 border-dashed border-white/20 bg-transparent p-3 text-sm font-semibold text-brand transition-all hover:border-brand hover:bg-white/5"
+              >
                 + Add New Address
-              </NewAddressButton>
+              </button>
 
-              <StepActions>
-                <StepButton onClick={() => setCurrentStep(0)}>Back</StepButton>
-                <StepButton
-                  variant="primary"
+              <div className="mt-5 flex gap-3">
+                <button
+                  onClick={() => setCurrentStep(0)}
+                  className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+                >
+                  Back
+                </button>
+                <button
                   onClick={() => {
                     const address = savedAddresses.find(
                       (a: any) => a.id === selectedAddress
@@ -421,14 +431,14 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     if (address) handleSelectAddress(address);
                   }}
                   disabled={!selectedAddress}
+                  className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
                 >
                   Continue
-                </StepButton>
-              </StepActions>
+                </button>
+              </div>
             </>
           )}
 
-          {/* Show form if adding new address or no saved addresses */}
           {(showNewAddressForm || savedAddresses.length === 0) && (
             <Formik
               initialValues={{
@@ -447,87 +457,148 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               {({ errors, touched }) => (
                 <Form>
                   {savedAddresses.length > 0 && (
-                    <StepButton
+                    <button
                       onClick={() => setShowNewAddressForm(false)}
-                      style={{ marginBottom: "16px" }}
+                      className="mb-4 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
                       type="button"
                     >
-                      ← Back to Saved Addresses
-                    </StepButton>
+                      &larr; Back to Saved Addresses
+                    </button>
                   )}
 
-                  <FormRow>
-                    <FormField>
-                      <Label>First Name</Label>
-                      <Field name="firstName" as={Input} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="mb-4">
+                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                        First Name
+                      </label>
+                      <Field
+                        name="firstName"
+                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                      />
                       {errors.firstName && touched.firstName && (
-                        <ErrorText>{errors.firstName}</ErrorText>
+                        <div className="mt-1 text-xs text-destructive">
+                          {errors.firstName}
+                        </div>
                       )}
-                    </FormField>
-                    <FormField>
-                      <Label>Last Name</Label>
-                      <Field name="lastName" as={Input} />
+                    </div>
+                    <div className="mb-4">
+                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                        Last Name
+                      </label>
+                      <Field
+                        name="lastName"
+                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                      />
                       {errors.lastName && touched.lastName && (
-                        <ErrorText>{errors.lastName}</ErrorText>
+                        <div className="mt-1 text-xs text-destructive">
+                          {errors.lastName}
+                        </div>
                       )}
-                    </FormField>
-                  </FormRow>
+                    </div>
+                  </div>
 
-                  <FormField>
-                    <Label>Address</Label>
-                    <Field name="address1" as={Input} />
+                  <div className="mb-4">
+                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      Address
+                    </label>
+                    <Field
+                      name="address1"
+                      className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                    />
                     {errors.address1 && touched.address1 && (
-                      <ErrorText>{errors.address1}</ErrorText>
+                      <div className="mt-1 text-xs text-destructive">
+                        {errors.address1}
+                      </div>
                     )}
-                  </FormField>
+                  </div>
 
-                  <FormField>
-                    <Label>Apartment, suite, etc. (optional)</Label>
-                    <Field name="address2" as={Input} />
-                  </FormField>
+                  <div className="mb-4">
+                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      Apartment, suite, etc. (optional)
+                    </label>
+                    <Field
+                      name="address2"
+                      className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                    />
+                  </div>
 
-                  <FormRow>
-                    <FormField>
-                      <Label>City</Label>
-                      <Field name="city" as={Input} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="mb-4">
+                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                        City
+                      </label>
+                      <Field
+                        name="city"
+                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                      />
                       {errors.city && touched.city && (
-                        <ErrorText>{errors.city}</ErrorText>
+                        <div className="mt-1 text-xs text-destructive">
+                          {errors.city}
+                        </div>
                       )}
-                    </FormField>
-                    <FormField>
-                      <Label>State</Label>
-                      <Field name="state" as={Input} />
+                    </div>
+                    <div className="mb-4">
+                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                        State
+                      </label>
+                      <Field
+                        name="state"
+                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                      />
                       {errors.state && touched.state && (
-                        <ErrorText>{errors.state}</ErrorText>
+                        <div className="mt-1 text-xs text-destructive">
+                          {errors.state}
+                        </div>
                       )}
-                    </FormField>
-                  </FormRow>
+                    </div>
+                  </div>
 
-                  <FormRow>
-                    <FormField>
-                      <Label>ZIP Code</Label>
-                      <Field name="zipcode" as={Input} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="mb-4">
+                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                        ZIP Code
+                      </label>
+                      <Field
+                        name="zipcode"
+                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                      />
                       {errors.zipcode && touched.zipcode && (
-                        <ErrorText>{errors.zipcode}</ErrorText>
+                        <div className="mt-1 text-xs text-destructive">
+                          {errors.zipcode}
+                        </div>
                       )}
-                    </FormField>
-                    <FormField>
-                      <Label>Phone</Label>
-                      <Field name="phone" as={Input} />
+                    </div>
+                    <div className="mb-4">
+                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                        Phone
+                      </label>
+                      <Field
+                        name="phone"
+                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                      />
                       {errors.phone && touched.phone && (
-                        <ErrorText>{errors.phone}</ErrorText>
+                        <div className="mt-1 text-xs text-destructive">
+                          {errors.phone}
+                        </div>
                       )}
-                    </FormField>
-                  </FormRow>
+                    </div>
+                  </div>
 
-                  <StepActions>
-                    <StepButton onClick={() => setCurrentStep(0)} type="button">
+                  <div className="mt-5 flex gap-3">
+                    <button
+                      onClick={() => setCurrentStep(0)}
+                      type="button"
+                      className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+                    >
                       Modify Cart
-                    </StepButton>
-                    <StepButton variant="primary" type="submit">
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+                    >
                       Continue
-                    </StepButton>
-                  </StepActions>
+                    </button>
+                  </div>
                 </Form>
               )}
             </Formik>
@@ -538,44 +609,54 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       {/* Step 2: Shipping Method */}
       {currentStep === 2 && (
         <>
-          <CheckoutTitle>Checkout - Shipping Method</CheckoutTitle>
+          <h3 className="m-0 mb-4 text-lg font-semibold text-foreground">
+            Checkout - Shipping Method
+          </h3>
 
-          {shippingMethods.map((method: any) => {
-            console.log("Rendering method:", method);
-            return (
-              <ShippingMethodOption
-                key={method.id}
-                selected={selectedShipping === method.id}
-              >
-                <input
-                  type="radio"
-                  name="shipping"
-                  value={method.id}
-                  checked={selectedShipping === method.id}
-                  onChange={(e) => setSelectedShipping(e.target.value)}
-                />
-                <div>
-                  <ShippingMethodName>
-                    {method.attributes?.name}
-                  </ShippingMethodName>
-                  <ShippingMethodCost>
-                    {method.attributes?.display_cost}
-                  </ShippingMethodCost>
+          {shippingMethods.map((method: any) => (
+            <label
+              key={method.id}
+              className={cn(
+                "mb-2 flex cursor-pointer items-center gap-3 rounded-md border-2 p-3 transition-all hover:border-brand/60",
+                selectedShipping === method.id
+                  ? "border-brand bg-white/5"
+                  : "border-white/10 bg-transparent"
+              )}
+            >
+              <input
+                type="radio"
+                name="shipping"
+                value={method.id}
+                checked={selectedShipping === method.id}
+                onChange={(e) => setSelectedShipping(e.target.value)}
+                className="h-5 w-5 flex-shrink-0 cursor-pointer"
+              />
+              <div>
+                <div className="text-sm font-medium text-foreground">
+                  {method.attributes?.name}
                 </div>
-              </ShippingMethodOption>
-            );
-          })}
+                <div className="mt-1 text-[13px] text-brand">
+                  {method.attributes?.display_cost}
+                </div>
+              </div>
+            </label>
+          ))}
 
-          <StepActions>
-            <StepButton onClick={() => setCurrentStep(1)}>Back</StepButton>
-            <StepButton
-              variant="primary"
+          <div className="mt-5 flex gap-3">
+            <button
+              onClick={() => setCurrentStep(1)}
+              className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+            >
+              Back
+            </button>
+            <button
               onClick={handleShippingSubmit}
               disabled={!selectedShipping}
+              className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
             >
               Continue
-            </StepButton>
-          </StepActions>
+            </button>
+          </div>
         </>
       )}
 
@@ -594,18 +675,23 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
       {/* Step 4: Confirmation */}
       {currentStep === 4 && (
-        <SuccessMessage>
-          <SuccessIcon>🎉</SuccessIcon>
-          <SuccessText>Order Complete!</SuccessText>
-          <OrderNumber>Order #{orderNumber}</OrderNumber>
-          <StepActions>
-            <StepButton variant="primary" onClick={onClose}>
+        <div className="px-5 py-10 text-center">
+          <div className="mb-4 text-5xl">🎉</div>
+          <div className="mb-2 text-base text-foreground">Order Complete!</div>
+          <div className="text-sm text-muted-foreground">
+            Order #{orderNumber}
+          </div>
+          <div className="mt-5 flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+            >
               Continue Watching
-            </StepButton>
-          </StepActions>
-        </SuccessMessage>
+            </button>
+          </div>
+        </div>
       )}
-    </CheckoutContent>
+    </div>
   );
 };
 
@@ -648,7 +734,6 @@ const PaymentStep: React.FC<{
         return;
       }
 
-      // First update checkout with payment method
       await updateCheckoutMutation.mutateAsync({
         order: {
           payments_attributes: [
@@ -669,7 +754,6 @@ const PaymentStep: React.FC<{
 
       await advanceCheckoutMutation.mutateAsync();
 
-      // Then complete the checkout
       const result = await completeCheckoutMutation.mutateAsync();
 
       const orderNum = result?.data?.attributes?.number || "N/A";
@@ -682,11 +766,15 @@ const PaymentStep: React.FC<{
 
   return (
     <form onSubmit={handlePayment}>
-      <CheckoutTitle>Checkout - Payment</CheckoutTitle>
+      <h3 className="m-0 mb-4 text-lg font-semibold text-foreground">
+        Checkout - Payment
+      </h3>
 
-      <FormField>
-        <Label>Card Details</Label>
-        <CardElementWrapper>
+      <div className="mb-4">
+        <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+          Card Details
+        </label>
+        <div className="rounded-md border border-white/20 bg-white/5 p-3">
           <CardElement
             options={{
               style: {
@@ -703,23 +791,29 @@ const PaymentStep: React.FC<{
               }
             }}
           />
-        </CardElementWrapper>
-      </FormField>
+        </div>
+      </div>
 
-      {error && <ErrorText>{error}</ErrorText>}
+      {error && (
+        <div className="mt-1 text-xs text-destructive">{error}</div>
+      )}
 
-      <StepActions>
-        <StepButton onClick={onBack} type="button">
+      <div className="mt-5 flex gap-3">
+        <button
+          onClick={onBack}
+          type="button"
+          className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+        >
           Back
-        </StepButton>
-        <StepButton
-          variant="primary"
+        </button>
+        <button
           type="submit"
           disabled={!stripe || processing}
+          className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
         >
           {processing ? "Processing..." : "Complete Order"}
-        </StepButton>
-      </StepActions>
+        </button>
+      </div>
     </form>
   );
 };
@@ -731,16 +825,30 @@ export const StreamCheckout: React.FC = () => {
   const itemCount = cartData?.data?.attributes?.item_count || 0;
 
   return (
-    <CheckoutWrapper isExpanded={isExpanded}>
-      <ToggleButton
-        isExpanded={isExpanded}
+    <div
+      className={cn(
+        "absolute bottom-[60px] left-5 z-[100] flex flex-col overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-[20px] transition-all duration-300",
+        isExpanded
+          ? "w-[380px] max-h-[85vh] rounded-xl border border-white/10 bg-black/95"
+          : "h-[60px] w-[60px] bg-background"
+      )}
+    >
+      <button
         onClick={() => setIsExpanded(!isExpanded)}
+        className={cn(
+          "relative flex h-[60px] w-[60px] flex-shrink-0 cursor-pointer items-center justify-center border-none bg-background text-2xl text-foreground transition-all",
+          isExpanded ? "rounded-t-xl" : "rounded-full hover:bg-muted"
+        )}
       >
         🛒
-        {itemCount > 0 && <CartBadge>{itemCount}</CartBadge>}
-      </ToggleButton>
+        {itemCount > 0 && (
+          <div className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[11px] font-bold text-white">
+            {itemCount}
+          </div>
+        )}
+      </button>
 
       {isExpanded && <CheckoutWizard onClose={() => setIsExpanded(false)} />}
-    </CheckoutWrapper>
+    </div>
   );
 };

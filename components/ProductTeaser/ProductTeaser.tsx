@@ -2,23 +2,17 @@ import React from "react";
 import { ProductTeaserProps } from "./types";
 import { Loading } from "../Loading";
 
-import {
-  ProductsRow,
-  ProductContainer,
-  ProductImg,
-  ProductTitle,
-  ProductSection
-} from "./productteaser-styles";
-
 export const ProductTeaser: React.FC<ProductTeaserProps> = (props: any) => {
   const { products, title, openSlideshow } = props;
 
   if (!products) return <Loading />;
 
   return (
-    <ProductSection>
-      <ProductTitle>{title}</ProductTitle>
-      <ProductsRow>
+    <section className="w-full pb-5">
+      {title && (
+        <p className="font-body text-sm text-foreground">{title}</p>
+      )}
+      <div className="product-grid-dense">
         {products?.data?.map((product: any) => {
           const defaultImg =
             "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
@@ -38,17 +32,21 @@ export const ProductTeaser: React.FC<ProductTeaserProps> = (props: any) => {
             : defaultImg;
           return (
             <div key={product.id}>
-              <ProductContainer>
-                <ProductImg
+              <div className="flex flex-col items-center justify-center">
+                <img
                   src={imgSrc}
-                  onClick={(e: any) => openSlideshow(true)}
+                  onClick={() => openSlideshow(true)}
+                  alt={product.attributes.name}
+                  className="h-[300px] w-[240px] cursor-pointer object-contain transition-transform duration-300 hover:scale-105"
                 />
-                <ProductTitle>{product.attributes.name}</ProductTitle>
-              </ProductContainer>
+                <p className="mt-2 font-body text-sm text-foreground">
+                  {product.attributes.name}
+                </p>
+              </div>
             </div>
           );
         })}
-      </ProductsRow>
-    </ProductSection>
+      </div>
+    </section>
   );
 };

@@ -8,7 +8,7 @@ export {
   CardFooter,
   CardTitle,
   CardDescription,
-  CardContent,
+  CardContent
 } from "./card";
 export {
   Dialog,
@@ -20,7 +20,7 @@ export {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-  DialogDescription,
+  DialogDescription
 } from "./dialog";
 export { Badge, badgeVariants } from "./badge";
 export {
@@ -31,7 +31,7 @@ export {
   SelectContent,
   SelectLabel,
   SelectItem,
-  SelectSeparator,
+  SelectSeparator
 } from "./select";
 export {
   DropdownMenu,
@@ -48,7 +48,7 @@ export {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuRadioGroup,
+  DropdownMenuRadioGroup
 } from "./dropdown-menu";
 export {
   Sheet,
@@ -60,7 +60,7 @@ export {
   SheetHeader,
   SheetFooter,
   SheetTitle,
-  SheetDescription,
+  SheetDescription
 } from "./sheet";
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs";
 export { Avatar, AvatarImage, AvatarFallback } from "./avatar";
@@ -74,20 +74,24 @@ export {
   ToastTitle,
   ToastDescription,
   ToastClose,
-  ToastAction,
+  ToastAction
 } from "./toast";
 export { Toaster } from "./toaster";
 export { useToast, toast } from "./use-toast";
 export { Checkbox } from "./checkbox";
 export { RadioGroup, RadioGroupItem } from "./radio-group";
-export { Collapsible, CollapsibleTrigger, CollapsibleContent } from "./collapsible";
+export {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent
+} from "./collapsible";
 export {
   type CarouselApi,
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselPrevious,
-  CarouselNext,
+  CarouselNext
 } from "./carousel";
 export { Separator } from "./separator";
 export { Popover, PopoverTrigger, PopoverContent } from "./popover";
@@ -101,7 +105,32 @@ export {
   NavigationMenuTrigger,
   NavigationMenuLink,
   NavigationMenuIndicator,
-  NavigationMenuViewport,
+  NavigationMenuViewport
 } from "./navigation-menu";
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./tooltip";
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider
+} from "./tooltip";
 export { Rating } from "./rating";
+
+// Magic UI components
+export { Marquee } from "./marquee";
+export { ShimmerButton } from "./shimmer-button";
+export type { ShimmerButtonProps } from "./shimmer-button";
+export { AnimatedList, AnimatedListItem } from "./animated-list";
+export { BentoGrid, BentoCard } from "./bento-grid";
+export { NumberTicker } from "./number-ticker";
+export { BlurFade } from "./blur-fade";
+export { ShineBorder } from "./shine-border";
+export { BorderBeam } from "./border-beam";
+export { AnimatedGradientText } from "./animated-gradient-text";
+export type { AnimatedGradientTextProps } from "./animated-gradient-text";
+export { Dock, DockIcon, dockVariants } from "./dock";
+export type { DockProps, DockIconProps } from "./dock";
+export { Particles } from "./particles";
+
+// Shared components
+export { LottieAnimation } from "./lottie-animation";
+export { EmptyState } from "./empty-state";

@@ -14,7 +14,7 @@ interface RatingProps {
 const sizeMap = {
   sm: "h-3.5 w-3.5",
   md: "h-5 w-5",
-  lg: "h-6 w-6",
+  lg: "h-6 w-6"
 };
 
 const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
@@ -35,8 +35,7 @@ const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
         {Array.from({ length: max }, (_, i) => {
           const starValue = i + 1;
           const filled = displayValue >= starValue;
-          const halfFilled =
-            !filled && displayValue >= starValue - 0.5;
+          const halfFilled = !filled && displayValue >= starValue - 0.5;
 
           return (
             <button
@@ -45,8 +44,7 @@ const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
               disabled={readOnly}
               className={cn(
                 "relative transition-transform duration-150",
-                !readOnly &&
-                  "cursor-pointer hover:scale-110 focus:outline-none"
+                !readOnly && "cursor-pointer hover:scale-110 focus:outline-none"
               )}
               onClick={() => !readOnly && onChange?.(starValue)}
               onMouseEnter={() => !readOnly && setHoverValue(starValue)}

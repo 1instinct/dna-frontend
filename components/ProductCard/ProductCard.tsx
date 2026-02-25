@@ -1,35 +1,14 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { useQueryClient } from "react-query";
+import { useQueryClient, useMutation } from "react-query";
+import { Heart, ShoppingCart } from "lucide-react";
 import { QueryKeys } from "@hooks/queryKeys";
-import { useMutation } from "react-query";
 import { AddItem } from "@spree/storefront-api-v2-sdk/types/interfaces/endpoints/CartClass";
 import { addItemToCart } from "@hooks/useCart";
 import { useToggleFavorite, useCheckFavorite } from "@hooks/useFavorites";
 import { useAuth } from "@config/auth";
-
-import {
-  ProductCardWrapper,
-  ProductImgWrapper,
-  ProductImg,
-  ProductTitle,
-  ProductDesc,
-  ProductFooter,
-  ProductFooterLeft,
-  ProductFooterRight,
-  // ProductRate,
-  Price,
-  AddToCartButton,
-  ThreeDot,
-  Dot,
-  FavoriteButton
-  // Dot1,
-  // Dot2,
-  // Dot3
-} from "./ProductCard.styles";
+import { cn } from "@lib/utils";
 import constants from "@utilities/constants";
-import { IProduct } from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
-import { encode } from "punycode";
 
 export const ProductCard = ({ imgSrc, item, opts }: any) => {
   const router = useRouter();
@@ -65,67 +44,78 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
     toggleFavorite.mutate(variantId);
   };
 
-  // console.log("ProductCard opts:", opts);
-  // console.log("ProductCard item:", item.attributes.name);
+  const isFavorited = favoriteCheck?.is_favorited;
 
-  // constants.IS_DEBUG && console.log("Product Card: ", item, "Opts: ", opts);
   return (
-    <ProductCardWrapper>
-      <>
-        <ProductImgWrapper>
-          <ProductImg
-            src={imgSrc}
-            onClick={(e) => router.push(`${item.attributes.slug}`)}
+    <div className="group mt-4 cursor-pointer">
+      {/* Image Container */}
+      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-muted">
+        <img
+          src={imgSrc}
+          onClick={() => router.push(`${item.attributes.slug}`)}
+          alt={item.attributes.name}
+          className="h-full w-full object-cover transition-transform duration-500 ease-expo-out group-hover:scale-105"
+        />
+
+        {/* Favorite Button */}
+        <button
+          onClick={(e) => handleToggleFavorite(e, item)}
+          className={cn(
+            "absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border-none backdrop-blur-sm transition-all duration-200",
+            "hover:scale-110 active:scale-95",
+            isFavorited
+              ? "bg-brand/90 text-white"
+              : "bg-background/80 text-muted-foreground hover:bg-background/95 hover:text-brand"
+          )}
+          aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
+        >
+          <Heart
+            className={cn("h-4 w-4", isFavorited && "fill-current")}
           />
-          <FavoriteButton
-            onClick={(e) => handleToggleFavorite(e, item)}
-            isFavorited={favoriteCheck?.is_favorited}
+        </button>
+
+        {/* Quick Add Overlay */}
+        <div className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-black/60 to-transparent p-3 pt-8 transition-transform duration-300 ease-expo-out group-hover:translate-y-0">
+          <button
+            onClick={() =>
+              handleAddToCart({
+                variant_id: item.relationships.default_variant.data.id,
+                quantity: 1
+              })
+            }
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-brand px-4 py-2.5 font-title text-sm font-medium text-white transition-colors hover:bg-brand/90"
           >
-            {favoriteCheck?.is_favorited ? "❤️" : "🤍"}
-          </FavoriteButton>
-        </ProductImgWrapper>
-        <ProductFooter>
-          <ProductFooterLeft>
-            <ProductTitle>{item.attributes.name}</ProductTitle>
-            {/* <ProductDesc>{item.attributes.description}</ProductDesc> */}
-            <ThreeDot>
-              {opts?.map((opt: any, index: any) => {
-                // constants.IS_DEBUG && console.log("opt: ", opt);
-                return (
-                  <Dot
-                    key={`color-${index}`}
-                    as={"span"}
-                    color={opt?.attributes?.presentation}
-                  ></Dot>
-                );
-              })}
-            </ThreeDot>
-          </ProductFooterLeft>
-          <ProductFooterRight>
-            {/* <ProductRate name="simple-controlled" value={item.attributes.rate} /> */}
-            <Price>${item.attributes.price}</Price>
-            <AddToCartButton
-              onClick={() =>
-                handleAddToCart({
-                  variant_id: item.relationships.default_variant.data.id,
-                  quantity: 1
-                  // public_metadata: {
-                  //   first_item_order: true
-                  // },
-                  // private_metadata: {
-                  //   recommended_by_us: false
-                  // }
-                  // options?: {
-                  //     [key: string]: string;
-                  // };
-                })
-              }
-            >
-              + <i className="bts bt-shopping-cart" />
-            </AddToCartButton>
-          </ProductFooterRight>
-        </ProductFooter>
-      </>
-    </ProductCardWrapper>
+            <ShoppingCart className="h-4 w-4" />
+            Add to Cart
+          </button>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-3 flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <h4 className="truncate font-title text-sm text-foreground">
+            {item.attributes.name}
+          </h4>
+          {/* Color Swatches */}
+          {opts && opts.length > 0 && (
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+              {opts.map((opt: any, index: number) => (
+                <span
+                  key={`color-${index}`}
+                  className="h-3 w-3 rounded-full border border-border"
+                  style={{ backgroundColor: opt?.attributes?.presentation }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col items-end">
+          <span className="font-title text-sm font-semibold text-foreground">
+            ${item.attributes.price}
+          </span>
+        </div>
+      </div>
+    </div>
   );
 };

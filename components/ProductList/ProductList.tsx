@@ -1,38 +1,19 @@
 import React from "react";
-// import Link from "next/link";
-import { useRouter } from "next/router";
-// import { useProducts } from "../../hooks/useProducts";
 import { ProductListProps } from "./types";
-import styled from "@emotion/styled";
 import { ProductCard } from "@components/ProductCard/ProductCard";
-
-import {
-  ProductsRow,
-  ProductContainer,
-  MyImg,
-  MyH1,
-  MySection,
-  MyLi,
-  MyDiv
-} from "./ProductList.styles";
 import { Loading } from "@components/Loading";
 
 export const ProductList: React.FC<ProductListProps> = (props: any) => {
-  const router = useRouter();
   const { products, title } = props;
-  // const { data: products, isLoading, isSuccess } = useProducts(1);
-  // if (isLoading) return <MyDiv>Loading</MyDiv>;
-
-  // if (!isSuccess) {
-  //   return <MyDiv>Could not load products</MyDiv>;
-  // }
 
   if (!products) return <Loading />;
 
   return (
-    <MySection>
-      <MyH1>{title}</MyH1>
-      <ProductsRow>
+    <section className="w-full pb-5 mb-5">
+      {title && (
+        <h1 className="font-title text-xl text-foreground">{title}</h1>
+      )}
+      <div className="product-grid-dense">
         {products?.data?.map((product: any) => {
           const defaultImg =
             "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
@@ -55,13 +36,11 @@ export const ProductList: React.FC<ProductListProps> = (props: any) => {
           const variantIds =
             product.relationships?.variants?.data?.map((v: any) => v.id) || [];
 
-          // Find variant objects in included array
           const productVariants = products?.included?.filter(
             (item: any) =>
               item.type === "variant" && variantIds.includes(item.id)
           );
 
-          // Get all option_value IDs from these variants
           const variantOptionValueIds =
             productVariants?.flatMap(
               (variant: any) =>
@@ -70,7 +49,6 @@ export const ProductList: React.FC<ProductListProps> = (props: any) => {
                 ) || []
             ) || [];
 
-          // Find the actual option_value objects that are colors
           const allOptions = products?.included?.filter(
             (e: any) => e.type === "option_value"
           );
@@ -91,7 +69,7 @@ export const ProductList: React.FC<ProductListProps> = (props: any) => {
             />
           );
         })}
-      </ProductsRow>
-    </MySection>
+      </div>
+    </section>
   );
 };

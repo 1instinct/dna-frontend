@@ -2,85 +2,13 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Formik, Field } from "formik";
 import * as Yup from "yup";
-import styled from "@emotion/styled";
+import { Package, MapPin, Heart, CreditCard, User, Mail, Lock } from "lucide-react";
+import { cn } from "@lib/utils";
+import { Button } from "@components/ui";
 import { Layout } from "../Layout";
 import { Loading } from "../Loading";
-import { Button } from "../shared/Button";
 import { FormikInput, FormikPassword } from "@components/FormikWrappers";
 import { useAccountInfo, useUpdateAccount } from "@hooks/useAccounts";
-
-import {
-  Content,
-  PageTitle,
-  PageBottom,
-  AccountImg,
-  FormWrapper,
-  LeftCol,
-  RightCol,
-  FormItem,
-  FormLabel
-} from "./Account.styles";
-
-const ErrorMessageDisplay = styled.div`
-  color: ${(p) => p.theme.colors.red?.primary || "#ff0000"};
-  padding: 10px;
-  margin: 10px 0;
-  background: ${(p) => p.theme.colors.red?.light || "#ffe6e6"};
-  border-radius: 4px;
-  font-size: 14px;
-`;
-
-const SuccessMessageDisplay = styled.div`
-  color: ${(p) => p.theme.colors.green?.primary || "#00ff00"};
-  padding: 10px;
-  margin: 10px 0;
-  background: ${(p) => p.theme.colors.green?.light || "#e6ffe6"};
-  border-radius: 4px;
-  font-size: 14px;
-`;
-
-const FormSection = styled.div`
-  margin-bottom: 20px;
-`;
-
-const SectionTitle = styled.h3`
-  font-family: ${(p) => p.theme.typography.titleLG.fontFamily};
-  font-size: 18px;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-`;
-
-const StyledFormInput = styled(Field)`
-  font-size: 14px;
-  color: ${(p) =>
-    p.theme.isDarkMode
-      ? p.theme.colors.white.primary
-      : p.theme.colors.black.primary};
-  border-bottom: 1px solid #707070;
-  width: 100%;
-  padding: 8px 0;
-  background: transparent;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  outline: none;
-  margin-bottom: 10px;
-
-  &::placeholder {
-    color: ${(p) =>
-      p.theme.isDarkMode
-        ? p.theme.colors.white.secondary
-        : p.theme.colors.black.secondary};
-  }
-`;
-
-const ButtonWrapper = styled.div`
-  margin-top: 20px;
-`;
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -92,6 +20,34 @@ const validationSchema = Yup.object({
     "Passwords must match"
   )
 });
+
+const quickLinks = [
+  {
+    title: "Order History",
+    description:
+      "Look at your order history, manage your current orders, track deliveries, or request a return.",
+    href: "/account/orders",
+    icon: Package
+  },
+  {
+    title: "Addresses",
+    description: "Add or edit billing and shipping addresses here.",
+    href: "/account/addresses",
+    icon: MapPin
+  },
+  {
+    title: "Favorites",
+    description: "View and manage your saved favorite products.",
+    href: "/account/favorites",
+    icon: Heart
+  },
+  {
+    title: "Payment Methods",
+    description: "Add or edit payment methods here.",
+    href: "/account/payment",
+    icon: CreditCard
+  }
+];
 
 export const Account = () => {
   const router = useRouter();
@@ -111,11 +67,11 @@ export const Account = () => {
   if (error) {
     return (
       <Layout>
-        <Content>
-          <ErrorMessageDisplay>
+        <div className="section-container py-10">
+          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
             Failed to load account information. Please try again.
-          </ErrorMessageDisplay>
-        </Content>
+          </div>
+        </div>
       </Layout>
     );
   }
@@ -127,162 +83,139 @@ export const Account = () => {
     password_confirmation: ""
   };
 
+  const inputClass =
+    "w-full rounded-lg border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
+
   return (
     <Layout>
-      <Content>
-        <PageTitle>account</PageTitle>
-        <PageBottom>
-          <AccountImg src={"/account.png"} alt="Account" />
-          <FormWrapper>
-            <Formik
-              initialValues={initialValues}
-              validationSchema={validationSchema}
-              onSubmit={async (values, { setSubmitting, resetForm }) => {
-                try {
-                  setUpdateError(null);
-                  setUpdateSuccess(null);
+      <div className="section-container py-10">
+        <h1 className="mb-8 font-title text-3xl font-bold uppercase tracking-wider text-foreground">
+          My Account
+        </h1>
 
-                  // Only send password fields if password is being changed
-                  const updateData: any = { email: values.email };
-                  if (values.password) {
-                    updateData.password = values.password;
-                    updateData.password_confirmation =
-                      values.password_confirmation;
-                  }
+        {/* Quick Links Grid */}
+        <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {quickLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <button
+                key={link.href}
+                onClick={() => router.push(link.href)}
+                className="group flex flex-col items-start rounded-xl border border-border/30 bg-card p-6 text-left transition-all hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-md cursor-pointer outline-none"
+              >
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10 text-brand transition-colors group-hover:bg-brand group-hover:text-white">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mb-1 font-title text-sm font-semibold text-foreground">
+                  {link.title}
+                </h3>
+                <p className="font-body text-xs text-muted-foreground">
+                  {link.description}
+                </p>
+              </button>
+            );
+          })}
+        </div>
 
-                  await updateAccount.mutateAsync(updateData);
-                  setUpdateSuccess("Account updated successfully!");
+        {/* Account Details Form */}
+        <div className="max-w-lg rounded-xl border border-border/30 bg-card p-6">
+          <h2 className="mb-6 font-title text-lg font-semibold uppercase tracking-wider text-foreground">
+            Account Details
+          </h2>
 
-                  // Reset password fields
-                  resetForm({
-                    values: {
-                      email: values.email,
-                      password: "",
-                      password_confirmation: ""
-                    }
-                  });
-                } catch (e: any) {
-                  setUpdateError(
-                    e?.message || "Failed to update account. Please try again."
-                  );
-                } finally {
-                  setSubmitting(false);
+          {updateError && (
+            <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              {updateError}
+            </div>
+          )}
+          {updateSuccess && (
+            <div className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700">
+              {updateSuccess}
+            </div>
+          )}
+
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={async (values, { setSubmitting, resetForm }) => {
+              try {
+                setUpdateError(null);
+                setUpdateSuccess(null);
+
+                const updateData: any = { email: values.email };
+                if (values.password) {
+                  updateData.password = values.password;
+                  updateData.password_confirmation =
+                    values.password_confirmation;
                 }
-              }}
-            >
-              {({ handleSubmit, isSubmitting, values }) => (
-                <form onSubmit={handleSubmit}>
-                  <LeftCol>
-                    <FormSection>
-                      <SectionTitle>Order History</SectionTitle>
-                      <FormLabel>
-                        Look at your order history, manage your current orders,
-                        track deliveries, or request a return.
-                      </FormLabel>
-                      <ButtonWrapper>
-                        <Button onClick={() => router.push("/account/orders")}>
-                          View Orders
-                        </Button>
-                      </ButtonWrapper>
-                    </FormSection>
 
-                    <FormSection>
-                      <SectionTitle>Addresses</SectionTitle>
-                      <FormLabel>
-                        Where you at? Add or edit billing and shipping addresses
-                        here.
-                      </FormLabel>
-                      <ButtonWrapper>
-                        <Button
-                          onClick={() => router.push("/account/addresses")}
-                        >
-                          Manage Addresses
-                        </Button>
-                      </ButtonWrapper>
-                    </FormSection>
+                await updateAccount.mutateAsync(updateData);
+                setUpdateSuccess("Account updated successfully!");
 
-                    <FormSection>
-                      <SectionTitle>Favorites</SectionTitle>
-                      <FormLabel>
-                        View and manage your saved favorite products.
-                      </FormLabel>
-                      <ButtonWrapper>
-                        <Button
-                          onClick={() => router.push("/account/favorites")}
-                        >
-                          View Favorites
-                        </Button>
-                      </ButtonWrapper>
-                    </FormSection>
-
-                    <FormSection>
-                      <SectionTitle>Account Details</SectionTitle>
-                      {updateError && (
-                        <ErrorMessageDisplay>{updateError}</ErrorMessageDisplay>
-                      )}
-                      {updateSuccess && (
-                        <SuccessMessageDisplay>
-                          {updateSuccess}
-                        </SuccessMessageDisplay>
-                      )}
-                      <FormLabel>
-                        Add or edit your e-mail address and password.
-                      </FormLabel>
-                      <FormItem>
-                        <Field
-                          type="email"
-                          name="email"
-                          placeholder="Email"
-                          component={FormikInput}
-                          label="Email"
-                        />
-                      </FormItem>
-                      <FormItem>
-                        <Field
-                          name="password"
-                          placeholder="New Password (leave blank to keep current)"
-                          component={FormikPassword}
-                          label="New Password"
-                        />
-                      </FormItem>
-                      <FormItem>
-                        <Field
-                          name="password_confirmation"
-                          placeholder="Confirm New Password"
-                          component={FormikPassword}
-                          label="Confirm Password"
-                        />
-                      </FormItem>
-                      <ButtonWrapper>
-                        <Button
-                          onClick={handleSubmit as any}
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? "Updating..." : "Update Account"}
-                        </Button>
-                      </ButtonWrapper>
-                    </FormSection>
-                  </LeftCol>
-
-                  <RightCol>
-                    <FormSection>
-                      <SectionTitle>Payment Methods</SectionTitle>
-                      <FormLabel>
-                        Get it. Add or edit payment methods here.
-                      </FormLabel>
-                      <ButtonWrapper>
-                        <Button onClick={() => router.push("/account/payment")}>
-                          Manage Payment Methods
-                        </Button>
-                      </ButtonWrapper>
-                    </FormSection>
-                  </RightCol>
-                </form>
-              )}
-            </Formik>
-          </FormWrapper>
-        </PageBottom>
-      </Content>
+                resetForm({
+                  values: {
+                    email: values.email,
+                    password: "",
+                    password_confirmation: ""
+                  }
+                });
+              } catch (e: any) {
+                setUpdateError(
+                  e?.message || "Failed to update account. Please try again."
+                );
+              } finally {
+                setSubmitting(false);
+              }
+            }}
+          >
+            {({ handleSubmit, isSubmitting }) => (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label className="mb-1.5 block font-title text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Email
+                  </label>
+                  <Field
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    component={FormikInput}
+                    label="Email"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block font-title text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    New Password
+                  </label>
+                  <Field
+                    name="password"
+                    placeholder="New Password (leave blank to keep current)"
+                    component={FormikPassword}
+                    label="New Password"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block font-title text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Confirm Password
+                  </label>
+                  <Field
+                    name="password_confirmation"
+                    placeholder="Confirm New Password"
+                    component={FormikPassword}
+                    label="Confirm Password"
+                  />
+                </div>
+                <Button
+                  onClick={handleSubmit as any}
+                  disabled={isSubmitting}
+                  className="mt-2"
+                >
+                  {isSubmitting ? "Updating..." : "Update Account"}
+                </Button>
+              </form>
+            )}
+          </Formik>
+        </div>
+      </div>
     </Layout>
   );
 };

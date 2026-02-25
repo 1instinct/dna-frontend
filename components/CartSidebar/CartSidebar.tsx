@@ -1,9 +1,19 @@
-import * as BurgerMenu from "react-burger-menu";
-const Menu = BurgerMenu.slide as unknown as React.ComponentType<any>;
-import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { useMutation, useQueryClient } from "react-query";
-import { Loading, LoadingWrapper } from "../Loading";
+import { ShoppingCart, Minus, Plus, X, Trash2 } from "lucide-react";
+import { cn } from "@lib/utils";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetClose,
+  ScrollArea,
+  Button
+} from "@components/ui";
+import { Loading } from "../Loading";
 import {
   useCart,
   updateItemQuantity,
@@ -12,26 +22,10 @@ import {
 import { useProducts } from "../../hooks";
 import { QueryKeys } from "../../hooks/queryKeys";
 import { useAuth } from "../../config/auth";
-import cartStyles from "./cartStyles";
-
-import {
-  CartWrapper,
-  CartTitle,
-  CartButton,
-  CartItem,
-  CartItemDescription,
-  QuantityAdjusterWrapper,
-  QuantitySelector,
-  QuantityAdjuster,
-  TotalLine,
-  EmptyCartMessage,
-  Actions
-} from "./CartSidebar.styles";
 import {
   IProduct,
   IProducts
 } from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
-import { Button } from "../shared";
 
 interface Props {
   isVisible: boolean;
@@ -52,7 +46,6 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
 
   const { data: productsData } = useProducts(1);
 
-  // Initialize quantities from item_count when cart loads
   useEffect(() => {
     if (
       cartData?.data?.attributes?.item_count &&
@@ -96,16 +89,13 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
       updateItemQuantity(itemId, quantity),
     {
       onMutate: async ({ itemId, quantity }) => {
-        // Optimistically update local state
         setQuantities((prev) => ({ ...prev, [itemId]: quantity }));
       },
       onSuccess: () => {
-        console.log("Quantity updated successfully");
         queryClient.invalidateQueries(QueryKeys.CART);
       },
-      onError: (error: any, { itemId, quantity }) => {
+      onError: (error: any, { itemId }) => {
         console.error("Failed to update quantity:", error);
-        // Revert on error
         setQuantities((prev) => {
           const newQuantities = { ...prev };
           delete newQuantities[itemId];
@@ -116,39 +106,27 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   );
 
   const foundProduct = (productId: string, productsData: IProducts) => {
-    // Check if productsData and productsData.data exist and are iterable
-    if (!productsData || !Array.isArray(productsData.data)) {
-      console.error("Invalid or missing productsData");
-      return null;
-    }
-
+    if (!productsData || !Array.isArray(productsData.data)) return null;
     for (const product of productsData.data) {
-      // Also check if the relationships and variants exist and are iterable
       if (
-        product.relationships &&
-        product.relationships.variants &&
+        product.relationships?.variants &&
         Array.isArray(product.relationships.variants.data)
       ) {
         const variant = product.relationships.variants.data.find(
           (variant) => variant.id === productId
         );
-        if (variant) {
-          return product;
-        }
+        if (variant) return product;
       }
     }
-
     return null;
   };
 
   const handleUpdateItemQuantity = (itemId: string, newQuantity: number) => {
-    console.log("Updating item:", itemId, "to quantity:", newQuantity);
     const quantity = Math.max(0, newQuantity);
     updateQuantityMutation.mutate({ itemId, quantity });
   };
 
   const handleRemoveItem = (itemId: string) => {
-    console.log("Removing item:", itemId);
     removeFromCartMutation.mutate(itemId);
   };
 
@@ -166,10 +144,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   };
 
   const renderCartItems = () => {
-    // Early return if productsData isn't loaded yet
-    if (!productsData || !Array.isArray(productsData.data)) {
-      return null;
-    }
+    if (!productsData || !Array.isArray(productsData.data)) return null;
 
     const lineItemRefs = cartData?.data?.relationships?.line_items?.data || [];
     const variantRefs = cartData?.data?.relationships?.variants?.data || [];
@@ -180,32 +155,28 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
       Array.isArray(lineItemRefs)
     ) {
       return variantRefs.map((variantRef, index): any => {
-        // Match line_item by index (they should be in the same order)
         const lineItemRef = lineItemRefs[index];
+        if (!lineItemRef) return null;
 
-        if (!lineItemRef) {
-          console.error("Could not find line_item at index", index);
-          return null;
-        }
-
-        // Use local quantity state
         const quantity = quantities[lineItemRef.id] || 1;
         const product = foundProduct(variantRef.id, productsData);
 
         return (
-          <CartItem key={lineItemRef.id || `cart-item-${index}`}>
-            <CartItemDescription>
+          <div
+            key={lineItemRef.id || `cart-item-${index}`}
+            className="flex items-center justify-between border-b border-border/30 py-3"
+          >
+            <span className="flex-1 font-body text-sm text-foreground">
               {product?.attributes?.name} - ${product?.attributes?.price}
-            </CartItemDescription>
-            <QuantityAdjusterWrapper>
-              <QuantityAdjuster
-                onClick={() =>
-                  handleUpdateItemQuantity(lineItemRef.id, quantity - 1)
-                }
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => handleUpdateItemQuantity(lineItemRef.id, quantity - 1)}
+                className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
               >
-                -
-              </QuantityAdjuster>
-              <QuantitySelector
+                <Minus className="h-3 w-3" />
+              </button>
+              <input
                 type="number"
                 value={quantity}
                 onChange={(e: any) => {
@@ -214,87 +185,28 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                     handleUpdateItemQuantity(lineItemRef.id, newQty);
                   }
                 }}
+                className="w-10 border-none bg-transparent text-center font-body text-sm text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               />
-              <QuantityAdjuster
-                onClick={() =>
-                  handleUpdateItemQuantity(lineItemRef.id, quantity + 1)
-                }
+              <button
+                onClick={() => handleUpdateItemQuantity(lineItemRef.id, quantity + 1)}
+                className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
               >
-                +
-              </QuantityAdjuster>
-              <QuantityAdjuster
+                <Plus className="h-3 w-3" />
+              </button>
+              <button
                 onClick={() => handleRemoveItem(lineItemRef.id)}
-                style={{ marginLeft: "8px", color: "red" }}
+                className="ml-1 flex h-7 w-7 items-center justify-center rounded border-none bg-transparent text-destructive transition-colors hover:bg-destructive/10"
                 title="Remove item"
               >
-                ×
-              </QuantityAdjuster>
-            </QuantityAdjusterWrapper>
-          </CartItem>
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
         );
       });
     }
     return null;
   };
-
-  if (cartIsLoading) {
-    return (
-      <CartWrapper>
-        <Menu
-          right
-          customBurgerIcon={<i className="btb bt-lg bt-shopping-cart" />}
-          isOpen={isVisible}
-          onOpen={toggle}
-          styles={cartStyles()}
-          onClose={toggle}
-        >
-          <LoadingWrapper>
-            <Loading />
-          </LoadingWrapper>
-        </Menu>
-        <style jsx>{`
-          .cart-modal {
-            background-color: white;
-            padding: 50px;
-            border: 2px grey solid;
-            position: absolute;
-            top: 150px;
-            right: 50px;
-          }
-        `}</style>
-      </CartWrapper>
-    );
-  }
-
-  if (cartHasError) {
-    return (
-      <CartWrapper>
-        <CartButton onClick={toggle}>
-          <i className="btb bt-lg bt-shopping-cart" />
-        </CartButton>
-        <Menu
-          right
-          isOpen={isVisible}
-          onOpen={toggle}
-          styles={cartStyles()}
-          onClose={toggle}
-        >
-          <CartTitle>Cart</CartTitle>
-          <p>Cart Error</p>
-        </Menu>
-        <style jsx>{`
-          .cart-modal {
-            background-color: white;
-            padding: 50px;
-            border: 2px grey solid;
-            position: absolute;
-            top: 150px;
-            right: 50px;
-          }
-        `}</style>
-      </CartWrapper>
-    );
-  }
 
   const {
     item_count = 0,
@@ -303,89 +215,114 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
     display_total
   } = cartData?.data?.attributes || {};
 
-  if (cartData !== undefined) {
-    return (
-      <CartWrapper>
-        <CartButton onClick={toggle}>
-          <i className="btb bt-lg bt-shopping-cart" />
-        </CartButton>
-        <Menu
-          right
-          isOpen={isVisible}
-          onOpen={toggle}
-          styles={cartStyles()}
-          onClose={toggle}
-          width={360}
+  return (
+    <Sheet open={isVisible} onOpenChange={toggle}>
+      <SheetTrigger asChild>
+        <button
+          className="cursor-pointer border-none bg-transparent p-1 text-foreground transition-colors hover:text-brand outline-none"
+          aria-label="Open cart"
         >
-          <CartTitle>Cart</CartTitle>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "8px"
-            }}
-          >
-            <div>
-              {item_count} {item_count > 1 ? "items" : "item"} in your cart
-            </div>
-            {item_count > 0 && (
-              <button
-                onClick={handleEmptyCart}
-                style={{
-                  padding: "4px 12px",
-                  fontSize: "12px",
-                  background: "transparent",
-                  border: "1px solid currentColor",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  color: "red"
-                }}
-              >
-                Empty Cart
-              </button>
-            )}
-          </div>
-          <div>{renderCartItems()}</div>
-          <TotalLine>Subtotal: {display_item_total}</TotalLine>
-          <TotalLine>Tax: {included_tax_total}</TotalLine>
-          <TotalLine>Total: {display_total}</TotalLine>
-          <Actions>
-            <Button variant="outline" onClick={() => router.push("/cart")}>
-              View Cart
-            </Button>
-            {user ? (
-              <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+          <ShoppingCart className="h-5 w-5" />
+        </button>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-[360px] max-w-[90vw] p-0">
+        <SheetHeader className="border-b border-border/30 px-6 py-4">
+          <SheetTitle className="font-title text-lg">Cart</SheetTitle>
+        </SheetHeader>
+
+        <ScrollArea className="h-[calc(100vh-80px)]">
+          <div className="px-6 py-4">
+            {cartIsLoading ? (
+              <div className="flex min-h-[200px] items-center justify-center">
+                <Loading />
+              </div>
+            ) : cartHasError ? (
+              <p className="text-center font-body text-sm text-muted-foreground">
+                Cart Error
+              </p>
             ) : (
               <>
-                <Button onClick={() => router.push("/checkout")}>
-                  Checkout as Guest
-                </Button>
-                <Button variant="outline" onClick={() => router.push("/login")}>
-                  Login
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => router.push("/signup")}
-                >
-                  Signup
-                </Button>
+                {/* Item count & empty cart */}
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="font-body text-sm text-muted-foreground">
+                    {item_count} {item_count > 1 ? "items" : "item"} in your cart
+                  </span>
+                  {item_count > 0 && (
+                    <button
+                      onClick={handleEmptyCart}
+                      className="flex items-center gap-1 rounded border border-destructive/30 bg-transparent px-2.5 py-1 font-body text-xs text-destructive transition-colors hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                      Empty
+                    </button>
+                  )}
+                </div>
+
+                {/* Cart Items */}
+                <div>{renderCartItems()}</div>
+
+                {/* Totals */}
+                <div className="mt-4 space-y-2 border-t border-border/30 pt-4">
+                  <div className="flex justify-between font-body text-sm">
+                    <span className="text-muted-foreground">Subtotal:</span>
+                    <span className="font-semibold text-foreground">{display_item_total}</span>
+                  </div>
+                  <div className="flex justify-between font-body text-sm">
+                    <span className="text-muted-foreground">Tax:</span>
+                    <span className="text-foreground">{included_tax_total}</span>
+                  </div>
+                  <div className="flex justify-between font-title text-base font-bold">
+                    <span>Total:</span>
+                    <span>{display_total}</span>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="mt-6 flex flex-col gap-2">
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => { toggle(); router.push("/cart"); }}
+                  >
+                    View Cart
+                  </Button>
+                  {user ? (
+                    <Button
+                      className="w-full"
+                      onClick={() => { toggle(); router.push("/checkout"); }}
+                    >
+                      Checkout
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        className="w-full"
+                        onClick={() => { toggle(); router.push("/checkout"); }}
+                      >
+                        Checkout as Guest
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => { toggle(); router.push("/login"); }}
+                      >
+                        Login
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => { toggle(); router.push("/signup"); }}
+                      >
+                        Sign Up
+                      </Button>
+                    </>
+                  )}
+                </div>
               </>
             )}
-          </Actions>
-        </Menu>
-        <style jsx>{`
-          .cart-modal {
-            background-color: white;
-            padding: 50px;
-            border: 2px grey solid;
-            position: absolute;
-            top: 150px;
-            right: 50px;
-          }
-        `}</style>
-      </CartWrapper>
-    );
-  }
-  return null;
+          </div>
+        </ScrollArea>
+      </SheetContent>
+    </Sheet>
+  );
 };
