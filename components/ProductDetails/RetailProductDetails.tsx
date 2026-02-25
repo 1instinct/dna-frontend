@@ -27,6 +27,9 @@ import { ProductList } from "../ProductList";
 import { FourOhFour } from "../404/FourOhFour";
 import { useMediaQuery } from "react-responsive";
 import homeData from "../Home/home.json";
+import { useProductFeed } from "../../hooks/useProductFeed";
+import { useRecentlyViewed } from "../../hooks/useRecentlyViewed";
+import { RecentlyViewed } from "../RecentlyViewed";
 import {
   Carousel,
   CarouselContent,
@@ -104,9 +107,26 @@ export const RetailProductDetails = ({
     thisProduct &&
     thisProduct?.included?.filter((e: any) => e["type"] === "product_property");
   const thisProductId = thisProduct?.data?.id || "";
+
+  // Extract taxon name from current product for "similar" filtering
+  const currentTaxon = thisProduct?.included?.find(
+    (item: any) => item.type === "taxon"
+  )?.attributes?.name;
+
+  // Fetch similar products by same taxon (falls back to latest if no taxon)
   const {
-    error: productsError,
-    status: productsStatus,
+    data: similarData,
+    isLoading: similarLoading
+  } = useProductFeed("similar", currentTaxon ? { filter: { taxons: currentTaxon } } : {});
+
+  // Fetch recommended products (generic latest, distinct from similar)
+  const {
+    data: recommendedData,
+    isLoading: recommendedLoading
+  } = useProductFeed("latest");
+
+  // Legacy products query for arrow key navigation
+  const {
     data: productsData,
     isLoading: productsAreLoading,
     isSuccess: productsAreSuccess
@@ -115,6 +135,10 @@ export const RetailProductDetails = ({
     ? productsData?.data[Math.floor(Math.random() * productsData?.data?.length)]
         .id
     : "";
+
+  // Track recently viewed products
+  const currentSlug = thisProduct?.data?.attributes?.slug;
+  const { addProduct: trackView } = useRecentlyViewed(currentSlug);
 
   const {
     error: variantsError,
@@ -143,20 +167,28 @@ export const RetailProductDetails = ({
   const [selectedSize, setSelectedSize] = useState<string>("");
 
   const renderSimilarProducts = () => {
-    if (productsAreLoading) return <Loading />;
+    if (similarLoading) return <Loading />;
+    if (!similarData?.data?.length) return null;
     return (
-      !isMobile && (
-        <ProductList products={productsData} title={"Similar Products"} />
-      )
+      <ProductList
+        products={similarData}
+        title="Similar Products"
+        layout="scroll"
+        excludeProductId={thisProductId}
+      />
     );
   };
 
-  const recommendedProducts = () => {
-    if (productsAreLoading) return <Loading />;
+  const renderRecommendedProducts = () => {
+    if (recommendedLoading) return <Loading />;
+    if (!recommendedData?.data?.length) return null;
     return (
-      !isMobile && (
-        <ProductList products={productsData} title={"Recommended For You"} />
-      )
+      <ProductList
+        products={recommendedData}
+        title="Recommended For You"
+        layout="scroll"
+        excludeProductId={thisProductId}
+      />
     );
   };
 
@@ -236,11 +268,24 @@ export const RetailProductDetails = ({
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && thisProduct?.data) {
       tracking.trackEvent({
         action: tracking.Action.VIEW_PRODUCT,
         category: tracking.Category.PRODUCT_DETAIL,
         label: thisProduct?.data?.attributes?.name
+      });
+
+      // Track this product as recently viewed
+      const firstImg = productImgs?.[0];
+      const imgUrl = firstImg?.attributes?.styles?.filter(
+        (e: any) => e["width"] == "600"
+      )[0]?.url;
+      trackView({
+        slug: thisProduct.data.attributes.slug,
+        name: thisProduct.data.attributes.name,
+        imgSrc: imgUrl
+          ? `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`
+          : ""
       });
     }
     window.addEventListener("keydown", handleKeyPress);
@@ -445,10 +490,11 @@ export const RetailProductDetails = ({
             </div>
           </div>
 
-          {/* Similar / Recommended */}
+          {/* Similar / Recommended / Recently Viewed */}
           <div className="mt-12 space-y-8">
             {renderSimilarProducts()}
-            {recommendedProducts()}
+            {renderRecommendedProducts()}
+            <RecentlyViewed excludeSlug={currentSlug} />
           </div>
         </div>
       </Layout>
