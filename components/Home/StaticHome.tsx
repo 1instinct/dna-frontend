@@ -9,7 +9,7 @@ import {
   fetchProducts,
   useProducts,
   useStreams
-} from "../../hooks";
+} from "../../hooks/index";
 import Hero from "./Hero";
 import Banner from "./Banner";
 import Featured from "./Featured";
@@ -22,7 +22,7 @@ import homeData from "./home.json";
 import { VideoJS } from "../VideoJS";
 import Products from "./Products";
 
-export const Home = (props: any) => {
+export const StaticHome = (props: any) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const playerRef = useRef(null);
 

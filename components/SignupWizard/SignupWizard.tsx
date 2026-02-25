@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useMediaQuery } from "react-responsive";
@@ -95,9 +96,10 @@ const FormWrapper: React.FC<any> = ({
             )}
             {isLastStep ? (
               <Button
+                type="submit"
                 onClick={() => {
-                  console.log("next: ", values, wizard, isLastStep);
-                  wizard.next();
+                  constants.IS_DEBUG &&
+                    console.log("Submitting form: ", values);
                 }}
                 disabled={isLastStep && !termsAccepted}
                 className="flex-[0.7] flex-grow"
@@ -147,38 +149,31 @@ const FormWrapper: React.FC<any> = ({
 };
 
 export const SignupWizard = () => {
+  const router = useRouter();
   const isLargeDevice = useMediaQuery({
     query: `(min-device-width: 768px)`
   });
 
   const { register } = useAuth();
 
-  const handleSubmit = useCallback((values: any) => {
-    new Promise((resolve, reject) => {
-      register({ user: values })
-        .then((res) => {
-          console.log("yup: ", res);
-        })
-        .catch((err) => {
-          console.log("nope: ", err);
-        });
-
-      console.log("new Promise");
-      return Promise.resolve({
-        code: 200,
-        status: 200,
-        message: "Congrats!",
-        subtitle: `Your new User ID is: ###`
-      });
-    })
-      .then((res) => {
-        console.log("handleSubmit res: ", res);
-      })
-      .catch((err) => {
-        console.log("handleSubmit error: ", err);
-        Alert.fire({ icon: "error", title: "Uh oh!", text: err });
-      });
-  }, []);
+  const handleSubmit = useCallback(
+    async (values: any) => {
+      try {
+        const res = await register({ user: values });
+        console.log("Registration successful: ", res);
+        router.push("/account");
+      } catch (err) {
+        console.log("Registration error: ", err);
+        const errorMessage =
+          err && typeof err === "object" && "message" in err
+            ? (err as { message?: string }).message
+            : String(err);
+        Alert.fire({ icon: "error", title: "Uh oh!", text: errorMessage });
+        throw err;
+      }
+    },
+    [register, router]
+  );
 
   return (
     <div className="relative z-[1] flex flex-col pb-20">

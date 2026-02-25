@@ -282,7 +282,9 @@ export const RetailProductDetails = ({
                 <CarouselContent>
                   {productImgs && productImgs.length > 0 ? (
                     productImgs.map((image: any, index: number) => {
-                      const imgUrl = image.attributes.styles[9]?.url;
+                      const imgUrl = image.attributes.styles?.filter(
+                        (e: any) => e["width"] == "600"
+                      )[0]?.url;
                       const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`;
                       return (
                         <CarouselItem key={`image-${index}`}>

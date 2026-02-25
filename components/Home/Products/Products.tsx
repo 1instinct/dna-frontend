@@ -16,14 +16,15 @@ SwiperCore.use([Navigation, Thumbs]);
 const Products: React.FC<ProductsProps> = ({ products, title }) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
-  const optionValuesLookup = products?.included
-    ?.filter((item) => item.type === "option_value")
-    .reduce((acc: any, curr) => {
-      const optionTypeId = curr.relationships.option_type.data.id;
-      if (!acc[optionTypeId]) acc[optionTypeId] = [];
-      acc[optionTypeId].push(curr.attributes);
-      return acc;
-    }, {});
+  const optionValuesLookup =
+    products?.included
+      ?.filter((item) => item.type === "option_value")
+      .reduce((acc: any, curr) => {
+        const optionTypeId = curr.relationships.option_type.data.id;
+        if (!acc[optionTypeId]) acc[optionTypeId] = [];
+        acc[optionTypeId].push(curr.attributes);
+        return acc;
+      }, {}) || {};
 
   return (
     <div className="my-8 overflow-hidden">

@@ -25,9 +25,6 @@ export const StreamCard = ({ isPast, item }: any) => {
       <h2 className="mt-10 text-center font-title text-base text-foreground">
         {item.title}
       </h2>
-      <p className="text-center font-body text-sm font-light text-foreground">
-        {item.description}
-      </p>
     </div>
   );
 };

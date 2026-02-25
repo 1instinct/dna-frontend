@@ -80,7 +80,8 @@ export const ThankYou = () => {
             contact our customer support team.
           </p>
           <p className="mb-2.5 font-body leading-relaxed text-foreground">
-            Email: {process.env.NEXT_PUBLIC_EMAIL || "hello@instinct.is"}
+            Email:{" "}
+            {process.env.NEXT_PUBLIC_COMPANY_EMAIL || "hello@instinct.is"}
           </p>
           <p className="mb-2.5 font-body leading-relaxed text-foreground">
             Phone: {process.env.NEXT_PUBLIC_COMPANY_PHONE || "1-800-000-0000"}
