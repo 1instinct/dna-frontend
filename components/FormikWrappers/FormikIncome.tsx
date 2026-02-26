@@ -1,5 +1,4 @@
 import React from "react";
-import { TextField } from "@material-ui/core";
 import MaskedInput from "react-text-mask";
 import createNumberMask from "text-mask-addons/dist/createNumberMask";
 
@@ -35,8 +34,6 @@ export const FormikIncome = ({
           {...inputProps}
           innerRef={ref}
           id="income"
-          variant="outlined"
-          selectedTheme="dark"
           placeholder="Yearly Income"
           invalid={touched[fields.name] && errors[fields.name] ? 1 : 0}
         />

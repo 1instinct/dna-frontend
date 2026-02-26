@@ -35,7 +35,6 @@
     "@kontent-ai/model-generator": "5.8.0",
     "@kontent-ai/react-components": "0.1.1",
     "@mailchimp/mailchimp_marketing": "^3.0.72",
-    "@material-ui/core": "^4.12.3",
     "@mux/mux-node": "^3.3.1",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-checkbox": "^1.3.3",

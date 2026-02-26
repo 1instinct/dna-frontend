@@ -3,8 +3,6 @@ import React, { useState, useCallback, createRef } from "react";
 import { Carousel } from "react-responsive-carousel";
 import { Field, useFormikContext } from "formik";
 import parse from "html-react-parser";
-import { Modal } from "@material-ui/core";
-
 // Local
 import TipBot from "../../TipBot";
 import Static from "../../../utilities/staticData";
@@ -215,40 +213,39 @@ export const Account = () => {
             </Term> */}
           </Carousel>
 
-          <Modal
-            // aria-labelledby="modal-title"
-            // aria-describedby="modal-description"
-            onClose={toggleSignatureModal}
-            open={openSignatureModal}
-          >
-            <StyledModalContent>
-              {/* <ElectronicSignaturesModal handleClose={() => setOpenSignatureModal(!openSignatureModal)} /> */}
-              <ElectronicSignaturesModal />
-              {/* <button
-                onClick={togglePrivacyModal}
-                role="button"
-                onKeyDown={togglePrivacyModal}
-                tabIndex={0}
-              >Signature</button> */}
-            </StyledModalContent>
-          </Modal>
+          {openSignatureModal && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+              onClick={toggleSignatureModal}
+              onKeyDown={(e) => e.key === "Escape" && toggleSignatureModal()}
+              role="dialog"
+              aria-modal="true"
+            >
+              <div
+                className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-background p-6 shadow-xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ElectronicSignaturesModal />
+              </div>
+            </div>
+          )}
 
-          <Modal
-            // aria-labelledby="modal-title"
-            // aria-describedby="modal-description"
-            onClose={togglePrivacyModal}
-            open={openPrivacyModal}
-          >
-            <StyledModalContent>
-              <FinancialPrivacyModal />
-              {/* <button
-                onClick={togglePrivacyModal}
-                role="button"
-                onKeyDown={togglePrivacyModal}
-                tabIndex={0}
-              >Close</button> */}
-            </StyledModalContent>
-          </Modal>
+          {openPrivacyModal && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+              onClick={togglePrivacyModal}
+              onKeyDown={(e) => e.key === "Escape" && togglePrivacyModal()}
+              role="dialog"
+              aria-modal="true"
+            >
+              <div
+                className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-background p-6 shadow-xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <FinancialPrivacyModal />
+              </div>
+            </div>
+          )}
         </TermsWrapper>
       </InputGroupWrapper>
     </QuestionWrapper>

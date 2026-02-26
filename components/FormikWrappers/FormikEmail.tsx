@@ -1,8 +1,9 @@
 import React from "react";
-import { TextField } from "@material-ui/core";
-// import { Field, useFormikContext } from 'formik';
 
 import { Error } from "./FormikInput.styles";
+
+const inputClass =
+  "w-full rounded-lg border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
 
 const FormikInput = ({
   field: { ...fields },
@@ -11,12 +12,16 @@ const FormikInput = ({
   ...props
 }: any) => (
   <>
-    <TextField
+    <input
       id="email"
-      variant="email"
+      type="email"
+      className={`${inputClass}${
+        touched[fields.name] && errors[fields.name]
+          ? " border-destructive"
+          : ""
+      }`}
       {...props}
       {...fields}
-      invalid={Boolean(touched[fields.name] && errors[fields.name])}
     />
     {touched[fields.name] && errors[fields.name] ? (
       <Error>{errors[fields.name]}</Error>

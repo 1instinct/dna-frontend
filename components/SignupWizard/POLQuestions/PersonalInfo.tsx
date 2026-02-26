@@ -1,8 +1,6 @@
 // Vendor
 import React, { useCallback } from "react";
 import { Field } from "formik";
-import { Button } from "@material-ui/core";
-
 // Local
 import TipBot from "../../TipBot";
 import { FormikInput, FormikDateOfBirth } from "../../FormikWrappers";
