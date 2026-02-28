@@ -223,6 +223,17 @@ const config: Config = {
         },
         gradient: {
           to: { backgroundPosition: "var(--bg-size, 300%) 0" }
+        },
+        "float-up": {
+          "0%": {
+            opacity: "1",
+            transform: "translateY(0) translateX(0) scale(1)"
+          },
+          "100%": {
+            opacity: "0",
+            transform:
+              "translateY(-120px) translateX(var(--drift-x, 0px)) scale(1.3)"
+          }
         }
       },
       animation: {
@@ -245,7 +256,8 @@ const config: Config = {
           "shimmer-slide var(--speed, 3s) ease-in-out infinite alternate",
         "spin-around": "spin-around calc(var(--speed, 3s) * 2) infinite linear",
         shine: "shine var(--duration, 14s) infinite linear",
-        gradient: "gradient 8s linear infinite"
+        gradient: "gradient 8s linear infinite",
+        "float-up": "float-up 2s ease-expo-out forwards"
       }
     }
   },

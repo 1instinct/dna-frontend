@@ -11,17 +11,61 @@ interface Viewer {
 interface ViewerListProps {
   viewers: Viewer[];
   isLive?: boolean;
+  compact?: boolean;
 }
 
 export const ViewerList: React.FC<ViewerListProps> = ({
   viewers = [],
-  isLive = false
+  isLive = false,
+  compact = false
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const visibleAvatars = viewers.slice(0, 3);
-  const remainingCount = Math.max(0, viewers.length - 3);
+  const visibleAvatars = viewers.slice(0, compact ? 2 : 3);
+  const remainingCount = Math.max(
+    0,
+    viewers.length - (compact ? 2 : 3)
+  );
 
+  // ── Compact variant: inline viewer count for the streamer info bar ──
+  if (compact) {
+    return (
+      <div className="flex items-center gap-1.5">
+        <div className="flex -space-x-1.5">
+          {visibleAvatars.map((viewer) => (
+            <div
+              key={viewer.id}
+              className="h-4 w-4 overflow-hidden rounded-full border border-black bg-muted"
+            >
+              {viewer.avatar ? (
+                <Image
+                  src={viewer.avatar}
+                  alt={viewer.name}
+                  width={16}
+                  height={16}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div
+                  className="flex h-full w-full items-center justify-center text-[7px] font-bold text-white"
+                  style={{
+                    background: `hsl(${viewer.id.charCodeAt(0) * 10}, 70%, 60%)`
+                  }}
+                >
+                  {viewer.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <span className="font-mono-semibold text-[10px] tabular-nums text-white/40">
+          {viewers.length} watching
+        </span>
+      </div>
+    );
+  }
+
+  // ── Full variant: expandable viewer list ──
   return (
     <>
       <div
@@ -32,7 +76,18 @@ export const ViewerList: React.FC<ViewerListProps> = ({
           <div className="h-2 w-2 animate-pulse rounded-full bg-destructive" />
         )}
         <div className="flex items-center gap-1.5 text-sm font-semibold text-white">
-          👁️ {viewers.length}
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          {viewers.length}
         </div>
         <div
           className={cn(

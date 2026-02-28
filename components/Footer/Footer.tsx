@@ -142,16 +142,16 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
             {item.links &&
               item.links.map((v: LinkType, i: number) =>
                 v.url !== "" ? (
-                  <a
+                  <Link
                     className={cn(
-                      "font-body text-sm leading-[150%] text-gray-medium transition-colors hover:text-brand",
+                      "font-body text-sm leading-[150%] text-gray-medium no-underline transition-colors hover:text-brand",
                       classes?.linkItem
                     )}
                     href={v.url}
                     key={i}
                   >
                     {v.text}
-                  </a>
+                  </Link>
                 ) : (
                   <div
                     className={cn(

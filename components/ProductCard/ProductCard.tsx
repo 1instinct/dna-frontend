@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useQueryClient, useMutation } from "react-query";
 import { Heart, ShoppingCart } from "lucide-react";
 import { QueryKeys } from "@hooks/queryKeys";
@@ -35,6 +36,7 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
   };
 
   const handleToggleFavorite = (e: React.MouseEvent, product: any) => {
+    e.preventDefault();
     e.stopPropagation();
     if (!user) {
       const redirectUrl = encodeURIComponent(`/${product.attributes.slug}`);
@@ -47,12 +49,11 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
   const isFavorited = favoriteCheck?.is_favorited;
 
   return (
-    <div className="group mt-4 cursor-pointer">
+    <Link href={`/${item.attributes.slug}`} className="group mt-4 block cursor-pointer no-underline">
       {/* Image Container */}
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-muted">
         <img
           src={imgSrc}
-          onClick={() => router.push(`${item.attributes.slug}`)}
           alt={item.attributes.name}
           className="h-full w-full object-cover transition-transform duration-500 ease-expo-out group-hover:scale-105"
         />
@@ -77,12 +78,14 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
         {/* Quick Add Overlay */}
         <div className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-black/60 to-transparent p-3 pt-8 transition-transform duration-300 ease-expo-out group-hover:translate-y-0">
           <button
-            onClick={() =>
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               handleAddToCart({
                 variant_id: item.relationships.default_variant.data.id,
                 quantity: 1
-              })
-            }
+              });
+            }}
             className="flex w-full items-center justify-center gap-2 rounded-md bg-brand px-4 py-2.5 font-title text-sm font-medium text-white transition-colors hover:bg-brand/90"
           >
             <ShoppingCart className="h-4 w-4" />
@@ -116,6 +119,6 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };

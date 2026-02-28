@@ -89,7 +89,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               animationType={"slide"}
               right={false}
             />
-            <Component {...pageProps} wholesale={wholesale} />
+            <Component {...pageProps} key={router.asPath} wholesale={wholesale} />
           </div>
         </Hydrate>
       </AuthProvider>

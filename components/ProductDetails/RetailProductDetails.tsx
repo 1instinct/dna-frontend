@@ -114,16 +114,14 @@ export const RetailProductDetails = ({
   )?.attributes?.name;
 
   // Fetch similar products by same taxon (falls back to latest if no taxon)
-  const {
-    data: similarData,
-    isLoading: similarLoading
-  } = useProductFeed("similar", currentTaxon ? { filter: { taxons: currentTaxon } } : {});
+  const { data: similarData, isLoading: similarLoading } = useProductFeed(
+    "similar",
+    currentTaxon ? { filter: { taxons: currentTaxon } } : {}
+  );
 
   // Fetch recommended products (generic latest, distinct from similar)
-  const {
-    data: recommendedData,
-    isLoading: recommendedLoading
-  } = useProductFeed("latest");
+  const { data: recommendedData, isLoading: recommendedLoading } =
+    useProductFeed("latest");
 
   // Legacy products query for arrow key navigation
   const {

@@ -198,9 +198,7 @@ export const DynamicHome = () => {
           <h2 className="text-2xl font-bold text-foreground">
             Unable to load page
           </h2>
-          <p className="mt-2 text-muted-foreground">
-            Please try again later.
-          </p>
+          <p className="mt-2 text-muted-foreground">Please try again later.</p>
         </div>
       </Layout>
     );
@@ -230,9 +228,7 @@ export const DynamicHome = () => {
         {sections.length === 0 && (
           <div className="px-5 py-24 text-center">
             <h2 className="text-2xl font-bold text-foreground">Welcome</h2>
-            <p className="mt-2 text-muted-foreground">
-              Content coming soon...
-            </p>
+            <p className="mt-2 text-muted-foreground">Content coming soon...</p>
           </div>
         )}
       </div>

@@ -27,9 +27,7 @@ export const ProductList: React.FC<ProductListProps> = ({
 
   return (
     <section className="w-full pb-5">
-      {title && (
-        <h2 className="font-title text-xl text-foreground">{title}</h2>
-      )}
+      {title && <h2 className="font-title text-xl text-foreground">{title}</h2>}
       <div
         className={
           isScroll
@@ -88,11 +86,7 @@ export const ProductList: React.FC<ProductListProps> = ({
               key={product.id}
               className={isScroll ? "w-40 flex-shrink-0 md:w-auto" : undefined}
             >
-              <ProductCard
-                item={product}
-                imgSrc={imgSrc}
-                opts={foundOptions}
-              />
+              <ProductCard item={product} imgSrc={imgSrc} opts={foundOptions} />
             </div>
           );
         })}

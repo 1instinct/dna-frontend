@@ -16,9 +16,7 @@ const FormikInput = ({
       id="email"
       type="email"
       className={`${inputClass}${
-        touched[fields.name] && errors[fields.name]
-          ? " border-destructive"
-          : ""
+        touched[fields.name] && errors[fields.name] ? " border-destructive" : ""
       }`}
       {...props}
       {...fields}
