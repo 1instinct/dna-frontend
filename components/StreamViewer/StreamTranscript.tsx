@@ -148,7 +148,10 @@ export const StreamTranscript: React.FC<StreamTranscriptProps> = ({
                   : "hover:bg-white/[0.03]",
                 "animate-fade-up"
               )}
-              style={{ animationDelay: `${i * 50}ms`, animationFillMode: "both" }}
+              style={{
+                animationDelay: `${i * 50}ms`,
+                animationFillMode: "both"
+              }}
             >
               {/* Timestamp pill */}
               <button
@@ -163,8 +166,7 @@ export const StreamTranscript: React.FC<StreamTranscriptProps> = ({
                 <p
                   className={cn(
                     "m-0 font-body text-[13px] leading-[1.5] text-white/80",
-                    entry.isProductMention &&
-                      "border-l-2 border-brand/40 pl-2"
+                    entry.isProductMention && "border-l-2 border-brand/40 pl-2"
                   )}
                 >
                   {entry.text}

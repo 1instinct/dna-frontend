@@ -22,10 +22,7 @@ export const ViewerList: React.FC<ViewerListProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   const visibleAvatars = viewers.slice(0, compact ? 2 : 3);
-  const remainingCount = Math.max(
-    0,
-    viewers.length - (compact ? 2 : 3)
-  );
+  const remainingCount = Math.max(0, viewers.length - (compact ? 2 : 3));
 
   // ── Compact variant: inline viewer count for the streamer info bar ──
   if (compact) {

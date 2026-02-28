@@ -17,7 +17,13 @@ interface StreamChatProps {
   className?: string;
 }
 
-const REACTION_EMOJIS = ["\u2764\uFE0F", "\uD83D\uDD25", "\uD83D\uDC8E", "\u2728", "\uD83D\uDC4F"];
+const REACTION_EMOJIS = [
+  "\u2764\uFE0F",
+  "\uD83D\uDD25",
+  "\uD83D\uDC8E",
+  "\u2728",
+  "\uD83D\uDC4F"
+];
 
 const MOCK_MESSAGES: ChatMessage[] = [
   {
@@ -139,7 +145,8 @@ export const StreamChat: React.FC<StreamChatProps> = ({
   };
 
   const getInitialColor = (name: string) => {
-    const hue = name.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
+    const hue =
+      name.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
     return `hsl(${hue}, 65%, 55%)`;
   };
 
@@ -176,9 +183,7 @@ export const StreamChat: React.FC<StreamChatProps> = ({
                   <span
                     className={cn(
                       "truncate font-mono-semibold text-[11px] tracking-wide",
-                      msg.isStreamer
-                        ? "text-brand"
-                        : "text-white/70"
+                      msg.isStreamer ? "text-brand" : "text-white/70"
                     )}
                   >
                     {msg.user}

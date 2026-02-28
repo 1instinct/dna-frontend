@@ -256,7 +256,8 @@ export const StreamViewer = ({ props }: any) => {
       <div
         className={cn(
           "relative flex flex-1 flex-col overflow-hidden border-t border-white/[0.06] bg-[#0a0a0a] transition-all md:max-w-[380px] md:border-l md:border-t-0",
-          panelExpanded && "max-sm:absolute max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-[30%] max-sm:z-30 max-sm:rounded-t-2xl"
+          panelExpanded &&
+            "max-sm:absolute max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-[30%] max-sm:z-30 max-sm:rounded-t-2xl"
         )}
       >
         {/* Drag handle (mobile) */}
@@ -315,7 +316,10 @@ export const StreamViewer = ({ props }: any) => {
                       <div
                         key={product.id}
                         className="w-[160px] flex-shrink-0 animate-fade-up"
-                        style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
+                        style={{
+                          animationDelay: `${i * 60}ms`,
+                          animationFillMode: "both"
+                        }}
                       >
                         <ProductMiniCard product={product} variant="compact" />
                       </div>
@@ -329,7 +333,10 @@ export const StreamViewer = ({ props }: any) => {
                     <div
                       key={product.id}
                       className="animate-fade-up"
-                      style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
+                      style={{
+                        animationDelay: `${i * 80}ms`,
+                        animationFillMode: "both"
+                      }}
                     >
                       <ProductMiniCard product={product} />
                     </div>

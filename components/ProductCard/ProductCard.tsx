@@ -49,7 +49,10 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
   const isFavorited = favoriteCheck?.is_favorited;
 
   return (
-    <Link href={`/${item.attributes.slug}`} className="group mt-4 block cursor-pointer no-underline">
+    <Link
+      href={`/${item.attributes.slug}`}
+      className="group mt-4 block cursor-pointer no-underline"
+    >
       {/* Image Container */}
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-muted">
         <img
