@@ -3,6 +3,7 @@
 ## Goal
 
 Improve product discovery on mobile product pages with three changes:
+
 1. Show similar/recommended products on mobile (currently hidden)
 2. Taxon-based similar product filtering (currently shows generic page 1 products)
 3. Recently viewed products tracking via localStorage
@@ -48,13 +49,13 @@ Renders recently viewed products as compact cards in a horizontal scroll row. Us
 
 ## Files
 
-| File | Change |
-|---|---|
-| `hooks/useRecentlyViewed/useRecentlyViewed.ts` | New - localStorage hook |
-| `hooks/useRecentlyViewed/index.ts` | New - barrel export |
-| `hooks/index.ts` | Add useRecentlyViewed export |
-| `components/RecentlyViewed/RecentlyViewed.tsx` | New - horizontal scroll component |
-| `components/RecentlyViewed/index.ts` | New - barrel export |
-| `components/ProductDetails/RetailProductDetails.tsx` | Taxon-based similar, remove !isMobile, add recently viewed, track views |
-| `components/ProductDetails/WholesaleProductDetails.tsx` | Same changes |
-| `components/ProductList/ProductList.tsx` | Add horizontal scroll variant for mobile |
+| File                                                    | Change                                                                  |
+| ------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `hooks/useRecentlyViewed/useRecentlyViewed.ts`          | New - localStorage hook                                                 |
+| `hooks/useRecentlyViewed/index.ts`                      | New - barrel export                                                     |
+| `hooks/index.ts`                                        | Add useRecentlyViewed export                                            |
+| `components/RecentlyViewed/RecentlyViewed.tsx`          | New - horizontal scroll component                                       |
+| `components/RecentlyViewed/index.ts`                    | New - barrel export                                                     |
+| `components/ProductDetails/RetailProductDetails.tsx`    | Taxon-based similar, remove !isMobile, add recently viewed, track views |
+| `components/ProductDetails/WholesaleProductDetails.tsx` | Same changes                                                            |
+| `components/ProductList/ProductList.tsx`                | Add horizontal scroll variant for mobile                                |

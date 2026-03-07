@@ -7,13 +7,16 @@ import { Logo } from "@components/shared/Logo";
 export const MyLogo = () => <Logo />;
 
 export const Layout: React.FC<LayoutProps> = ({
-  children
+  children,
+  background
 }: {
   children: JSX.Element[] | JSX.Element;
+  background?: React.ReactNode;
 }) => {
   return (
-    <main className="flex-1 overflow-auto scrollbar-none">
-      <div className="flex-1 overflow-auto">
+    <>
+      {background}
+      <main className="flex-1">
         {children}
         <Footer
           footerData={{
@@ -21,7 +24,7 @@ export const Layout: React.FC<LayoutProps> = ({
             columns
           }}
         />
-      </div>
-    </main>
+      </main>
+    </>
   );
 };

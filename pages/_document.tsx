@@ -96,7 +96,7 @@ class MyDocument extends Document {
       `;
 
     return (
-      <Html>
+      <Html className="dark">
         <Head>
           <meta charSet="utf-8" />
           <meta name="description" content={siteDesc} />

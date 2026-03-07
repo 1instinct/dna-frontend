@@ -12,6 +12,7 @@ import {
 } from "../../hooks";
 import { SocialLinks } from "../SocialLinks";
 import { Logo } from "@components/shared/Logo";
+import { AnimatedLogo } from "../Logo/AnimatedLogo";
 import hardcodedColumns from "./footer.json";
 
 export type CLASSESTYPE = {
@@ -58,16 +59,20 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
 
   const apiColumns = useMemo(() => {
     if (!menuItemsIsSuccess || !menuItemsData?.response_data) return null;
-    const menuItems =
+    const allItems =
       menuItemsData?.response_data?.menu_location_listing?.length > 0
         ? menuItemsData.response_data.menu_location_listing[0].menu_item_listing
         : [];
+    // Filter to root items only — children are nested via `childrens` field
+    const menuItems = allItems.filter(
+      (item: any) => !item.parent_id || item.parent_id === 0
+    );
     return menuItems.map((menuItem: any) => ({
       title: menuItem.name,
       links:
         menuItem.childrens?.map((child: any) => ({
           text: child.name,
-          url: child.link || ""
+          url: child.url || ""
         })) || []
     }));
   }, [menuItemsIsSuccess, menuItemsData]);
@@ -81,7 +86,7 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
   return (
     <footer
       className={cn(
-        "border-t border-border/30 bg-background pt-10 pb-16 text-foreground",
+        "border-t border-glass-border bg-surface-deep pt-10 pb-16 text-white",
         classes?.root
       )}
     >
@@ -89,25 +94,14 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
       <div className="flex items-center justify-center">
         <Link
           href="/"
-          className="no-underline text-foreground hover:text-brand transition-colors"
+          className="no-underline text-white transition-opacity hover:opacity-80"
         >
-          {logoPath ? (
-            <Image
-              src={
-                logoPath.startsWith("/") || logoPath.startsWith("http")
-                  ? logoPath
-                  : `/${logoPath}`
-              }
-              alt={siteTitle}
-              width={0}
-              height={0}
-              sizes="(max-width: 768px) 100px, 141px"
-              style={{ width: "auto", height: "65px" }}
-              priority
-            />
-          ) : (
-            FooterLogo
-          )}
+          <AnimatedLogo
+            className="h-[50px] w-auto"
+            animate={false}
+            showTagline={false}
+            variant="outline"
+          />
         </Link>
       </div>
 
@@ -127,7 +121,7 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
             {item.title && (
               <div
                 className={cn(
-                  "mb-5 whitespace-nowrap text-sm font-normal leading-[17px] text-foreground xs:mb-2 xs:text-title-md xs:leading-6 xs:text-gray-medium",
+                  "mb-5 whitespace-nowrap font-pressstart text-[10px] leading-[17px] text-neon-cyan xs:mb-3 xs:text-xs xs:leading-6",
                   classes?.columnTitle
                 )}
               >
@@ -135,27 +129,29 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
               </div>
             )}
             {item.subTitle && (
-              <div className={cn("font-title", classes?.subTitle)}>
+              <div
+                className={cn("font-title text-white/60", classes?.subTitle)}
+              >
                 {item.subTitle}
               </div>
             )}
             {item.links &&
               item.links.map((v: LinkType, i: number) =>
                 v.url !== "" ? (
-                  <a
+                  <Link
                     className={cn(
-                      "font-body text-sm leading-[150%] text-gray-medium transition-colors hover:text-brand",
+                      "font-body text-sm leading-[150%] text-white/70 no-underline transition-colors hover:text-neon-cyan",
                       classes?.linkItem
                     )}
                     href={v.url}
                     key={i}
                   >
                     {v.text}
-                  </a>
+                  </Link>
                 ) : (
                   <div
                     className={cn(
-                      "mb-1 font-body text-sm leading-[150%] text-gray-medium",
+                      "mb-1 font-body text-sm leading-[150%] text-white/70",
                       classes?.description
                     )}
                     key={i}
@@ -168,7 +164,7 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
               item.descriptions.map((desc: string, i: number) => (
                 <div
                   className={cn(
-                    "mb-1 font-body text-sm leading-[150%] text-gray-medium",
+                    "mb-1 font-mono-extralight text-sm leading-[150%] text-white/40",
                     classes?.description
                   )}
                   key={i}
@@ -180,7 +176,17 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
         ))}
       </div>
 
+      {/* Divider */}
+      <div className="section-container">
+        <div className="my-6 border-t border-glass-border" />
+      </div>
+
       <SocialLinks isDark />
+
+      {/* Copyright */}
+      <p className="mt-6 text-center font-mono-extralight text-xs text-white/40">
+        &copy; {new Date().getFullYear()} {siteTitle}. All rights reserved.
+      </p>
     </footer>
   );
 };

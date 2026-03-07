@@ -138,7 +138,7 @@ const SearchBar = ({
               {isSearchLoading ? (
                 <i className="bts bt-spinner bt-pulse" />
               ) : (
-                <Search className="h-4 w-4 text-foreground" />
+                <Search className="h-4 w-4 text-white" />
               )}
             </div>
             <input
@@ -154,9 +154,9 @@ const SearchBar = ({
               role="textbox"
               autoComplete="off"
               className={cn(
-                "h-[42px] w-full border-0 bg-transparent font-title text-sm font-normal text-foreground caret-foreground outline-none transition-all duration-300 ease-in-out",
+                "h-[42px] w-full border-0 bg-transparent font-title text-sm font-normal text-white caret-white outline-none transition-all duration-300 ease-in-out",
                 isExpanded
-                  ? "border-b border-foreground px-[26px] pl-[30px]"
+                  ? "border-b border-white px-[26px] pl-[30px]"
                   : "pl-0",
                 isWidthSet ? "w-[140px]" : "w-full"
               )}
@@ -164,7 +164,7 @@ const SearchBar = ({
             {query && (
               <div
                 onClick={handleSearchClear}
-                className="absolute right-[5px] top-0 z-[3] flex h-full w-11 cursor-pointer items-center justify-end text-foreground transition-colors hover:text-brand"
+                className="absolute right-[5px] top-0 z-[3] flex h-full w-11 cursor-pointer items-center justify-end text-white transition-colors hover:text-neon-cyan"
               >
                 <X className="h-3.5 w-3.5" />
               </div>

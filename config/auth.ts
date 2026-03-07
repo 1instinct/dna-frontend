@@ -26,9 +26,10 @@ async function mergeCarts(guestOrderToken: string) {
   // Fetch guest cart details
   constants.IS_DEBUG &&
     console.log("Fetching guest cart with token:", guestOrderToken);
-  const guestCartResponse = await spreeClient.cart.show({
-    orderToken: guestOrderToken
-  });
+  const guestCartResponse = await spreeClient.cart.show(
+    { orderToken: guestOrderToken },
+    { include: "line_items,variants" }
+  );
   if (!guestCartResponse.isSuccess()) {
     console.error("Failed to retrieve guest cart:", guestCartResponse.fail());
     return;
@@ -77,7 +78,7 @@ async function mergeCarts(guestOrderToken: string) {
     ? guestCart.data.relationships.line_items.data
     : [guestCart.data.relationships.line_items.data];
   for (const item of lineItems) {
-    // Find the full line item object in guestCart.included to get the quantity
+    // Find the full line item object in guestCart.included to get the quantity and variant_id
     const fullLineItem = Array.isArray(guestCart.included)
       ? guestCart.included.find(
           (includedItem) =>
@@ -90,15 +91,18 @@ async function mergeCarts(guestOrderToken: string) {
       typeof fullLineItem.attributes.quantity === "number"
         ? fullLineItem.attributes.quantity
         : 1;
+    // Extract variant_id from the line item's relationship, not the line_item id
+    const variantId =
+      fullLineItem?.relationships?.variant?.data?.id || item.id;
     constants.IS_DEBUG &&
       console.log(
-        `Adding item to user cart: ${item.id} with quantity: ${quantity}`
+        `Adding item to user cart: variant ${variantId} with quantity: ${quantity}`
       );
     try {
       const addItemResponse = await spreeClient.cart.addItem(
         { bearerToken: userToken?.access_token },
         {
-          variant_id: item.id,
+          variant_id: variantId,
           quantity: quantity
         }
       );

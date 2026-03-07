@@ -34,9 +34,9 @@ const TipBot = ({ speech }: any) => {
       {isMobile ? (
         <div
           className={cn(
-            "absolute bottom-[-90px] left-[68px] flex items-center justify-around bg-card text-foreground shadow-[5px_8px_20px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out",
-            "before:absolute before:bottom-0 before:left-[-6px] before:h-[16px] before:w-[16px] before:rounded-full before:bg-card before:content-['']",
-            "after:absolute after:bottom-[-5px] after:left-[-18px] after:h-[8px] after:w-[8px] after:rounded-full after:bg-card after:content-['']",
+            "absolute bottom-[-90px] left-[68px] flex items-center justify-around glass-panel text-white shadow-[5px_8px_20px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out",
+            "before:absolute before:bottom-0 before:left-[-6px] before:h-[16px] before:w-[16px] before:rounded-full before:bg-surface-deep before:content-['']",
+            "after:absolute after:bottom-[-5px] after:left-[-18px] after:h-[8px] after:w-[8px] after:rounded-full after:bg-surface-deep after:content-['']",
             speechReady
               ? "h-auto w-auto rounded-[20px] px-3.5 py-2.5 text-sm"
               : "h-10 w-20 rounded-[36px]"
@@ -57,7 +57,7 @@ const TipBot = ({ speech }: any) => {
         </div>
       ) : (
         <div className="relative mb-1 rounded-lg bg-muted/50 p-4 after:absolute after:-bottom-3 after:left-20 after:block after:h-0 after:w-0 after:border-x-[10px] after:border-t-[12px] after:border-x-transparent after:border-t-muted/50 after:content-['']">
-          <div className="text-left text-base font-light text-foreground">
+          <div className="text-left text-base font-light text-white">
             <Typist
               avgTypingDelay={50}
               stdTypingDelay={80}

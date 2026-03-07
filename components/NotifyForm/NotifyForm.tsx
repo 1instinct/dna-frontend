@@ -82,7 +82,7 @@ export const NotifyForm = () => {
         >
           {!isLast && (
             <div className="space-y-3">
-              <p className="font-title text-base font-semibold text-foreground">
+              <p className="font-title text-base font-semibold text-white">
                 {question.question}
               </p>
               <input
@@ -94,12 +94,12 @@ export const NotifyForm = () => {
                 onChange={(e: any) =>
                   switchQuestionSetter(question.id, e.target.value)
                 }
-                className="w-full rounded-lg border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                className="w-full rounded-lg border border-glass-border bg-surface-deep px-4 py-3 font-body text-sm text-white transition-colors placeholder:text-white/50 focus:border-neon-cyan focus:outline-none focus:ring-2 focus:ring-neon-cyan/20"
               />
               <button
                 id="signup-button"
                 type="submit"
-                className="w-full cursor-pointer rounded-lg border-none bg-brand px-6 py-3 font-title text-sm font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px active:translate-y-0"
+                className="w-full cursor-pointer rounded-lg border-none bg-neon-cyan px-6 py-3 font-title text-sm font-semibold uppercase tracking-wider text-black transition-all hover:bg-neon-cyan/90 hover:-translate-y-px active:translate-y-0"
               >
                 {question.buttonText}
               </button>
@@ -172,9 +172,7 @@ export const NotifyForm = () => {
         </form>
 
         {status === "sending" && (
-          <p className="mt-3 font-body text-sm text-muted-foreground">
-            sending...
-          </p>
+          <p className="mt-3 font-body text-sm text-white/50">sending...</p>
         )}
         {status === "error" && (
           <p className="mt-3 font-body text-sm text-destructive">
@@ -190,7 +188,7 @@ export const NotifyForm = () => {
       <a
         id="mailto"
         href={`mailto:${process.env.NEXT_PUBLIC_COMPANY_EMAIL}`}
-        className="mt-6 block text-center font-body text-sm text-brand transition-colors hover:underline"
+        className="mt-6 block text-center font-body text-sm text-neon-cyan transition-colors hover:underline"
       >
         Got Questions? We'd love to hear from you.
       </a>

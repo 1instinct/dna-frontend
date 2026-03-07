@@ -7,21 +7,21 @@ export const LegalLinks = ({ darkMode, hasBackground }: any) => {
   const siteName = process.env.NEXT_PUBLIC_SITE_TITLE || "Material Instinct";
 
   return (
-    <div className="py-4 text-center font-body text-xs text-muted-foreground">
+    <div className="py-4 text-center font-body text-xs text-white/50">
       <p>
         All materials copyright &copy; {currentYear}, {siteName}
       </p>
       <p className="mt-1">
         <a
           href={privacySlug}
-          className="text-muted-foreground transition-colors hover:text-brand"
+          className="text-white/50 transition-colors hover:text-neon-cyan"
         >
           Privacy Policy
         </a>
         {" | "}
         <a
           href={termsSlug}
-          className="text-muted-foreground transition-colors hover:text-brand"
+          className="text-white/50 transition-colors hover:text-neon-cyan"
         >
           Terms of Service
         </a>

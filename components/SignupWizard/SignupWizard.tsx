@@ -1,207 +1,229 @@
-import { useCallback, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { useMediaQuery } from "react-responsive";
-import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
-import FormikWizard from "formik-wizard";
-import { useFormikContext } from "formik";
-import { withWizard } from "react-albus";
-import { AuthFormType, signupForm } from "../AuthForm/constants";
+import { Formik, Form } from "formik";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 import { useAuth } from "../../config/auth";
-import { SlideInLeft, SlideOutLeft } from "../Animations";
 import { Questions } from "./Questions";
 import { Alert } from "../Alerts";
-import { Button } from "@components/ui";
-
-import FormikWizardStepType from "formik-wizard";
-
 import constants from "@utilities/constants";
-import { Loading } from "../Loading";
-import { cn } from "@lib/utils";
-
-const ThreeViewer = dynamic(
-  () => import("@components/shared/ThreeViewer").then((mod) => mod.ThreeViewer),
-  {
-    loading: () => <Loading />,
-    ssr: false
-  }
-);
-
-const FormWrapper: React.FC<any> = ({
-  steps,
-  children,
-  wizard,
-  isLastStep,
-  status,
-  goToPreviousStep,
-  canGoBack,
-  hasError,
-  isDirty,
-  showNextStep,
-  actionLabel
-}: any) => {
-  const isMobile = useMediaQuery({
-    query: `(max-device-width: 768px)`
-  });
-
-  const { values }: any = useFormikContext();
-
-  const termsAccepted = !!(
-    values.acceptSignatureTerms && values.acceptPrivacyTerms
-  );
-
-  const keyboardListener = (e: any) => {
-    if (e.keyCode === 13) {
-      wizard.next();
-      return true;
-    }
-    return false;
-  };
-
-  useEffect(() => {
-    window.addEventListener("keydown", keyboardListener);
-    return () => {
-      window.removeEventListener("keydown", keyboardListener);
-    };
-  });
-
-  switch (status ? status.code : status) {
-    case 200:
-      window.scrollTo(0, 0);
-      return (
-        <div className="flex flex-col items-center justify-center p-5 pt-4 text-center">
-          <div className="pointer-events-none text-center text-2xl font-black uppercase text-foreground">
-            {status.message}
-          </div>
-          <div className="pt-5 text-center text-xl text-foreground">
-            {status.subtitle}
-          </div>
-        </div>
-      );
-    default:
-      return (
-        <div className="w-full rounded-lg bg-card pt-0 shadow-[0px_22px_33px_rgba(0,0,0,0.066)] md:mt-[165px] [&_[data-qa='title']]:text-[1.6rem] [&_[data-qa='title']]:text-brand">
-          {children}
-          <div className="mx-2.5 flex justify-between gap-4 px-4 pb-1 sm:mx-6">
-            {canGoBack && (
-              <Button
-                variant="outline"
-                onClick={goToPreviousStep}
-                disabled={!canGoBack}
-                className="flex-[0.3] flex-grow"
-              >
-                <i className="bts bt-angles-left" />
-              </Button>
-            )}
-            {isLastStep ? (
-              <Button
-                type="submit"
-                onClick={() => {
-                  constants.IS_DEBUG &&
-                    console.log("Submitting form: ", values);
-                }}
-                disabled={isLastStep && !termsAccepted}
-                className="flex-[0.7] flex-grow"
-              >
-                {actionLabel || (isLastStep ? "Submit" : "Next")}
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  constants.IS_DEBUG &&
-                    console.log("next: ", values, wizard, isLastStep);
-                  wizard.next();
-                }}
-                disabled={
-                  (isLastStep && !termsAccepted) || hasError || !isDirty
-                }
-                className="flex-[0.7] flex-grow"
-              >
-                {actionLabel || (isLastStep ? "Submit" : "Next")}
-              </Button>
-            )}
-          </div>
-          {!canGoBack && (
-            <div className="px-5 py-4 text-center text-[0.7rem] text-muted-foreground">
-              <Link href="/login" className="text-brand hover:underline">
-                Already have an account?
-              </Link>
-            </div>
-          )}
-          {canGoBack && (
-            <div className="px-5 py-4 text-center text-[0.7rem] text-muted-foreground">
-              Don&apos;t worry your information is safe{" "}
-              <span role="img" aria-label="lock">
-                🔐
-              </span>{" "}
-              and we never share your information without your consent.
-              <div className="mt-2 flex justify-center px-4 py-4">
-                <Link href="/login" className="text-brand hover:underline">
-                  Already have an account?
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-  }
-};
 
 export const SignupWizard = () => {
   const router = useRouter();
-  const isLargeDevice = useMediaQuery({
-    query: `(min-device-width: 768px)`
-  });
-
   const { register } = useAuth();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [direction, setDirection] = useState(1);
+
+  const step = Questions[currentStep];
+  const isFirstStep = currentStep === 0;
+  const isLastStep = currentStep === Questions.length - 1;
+
+  const initialValues = useMemo(
+    () =>
+      Questions.reduce(
+        (acc, q) => ({ ...acc, ...(q.initialValues || {}) }),
+        {} as Record<string, any>
+      ),
+    []
+  );
+
+  const goNext = useCallback(
+    async (values: any, validateForm: any, setTouched: any) => {
+      if (step.validationSchema) {
+        try {
+          await step.validationSchema.validate(values, { abortEarly: false });
+        } catch {
+          // Mark all current step fields as touched to show errors
+          const fields = Object.keys(step.initialValues || {});
+          const touched = fields.reduce(
+            (acc, f) => ({ ...acc, [f]: true }),
+            {}
+          );
+          setTouched(touched, true);
+          return;
+        }
+      }
+
+      if (step.onAction) {
+        try {
+          step.onAction(values);
+        } catch {
+          return;
+        }
+      }
+
+      setDirection(1);
+      setCurrentStep((s) => Math.min(s + 1, Questions.length - 1));
+      window.scrollTo(0, 0);
+    },
+    [step]
+  );
+
+  const goBack = useCallback(() => {
+    setDirection(-1);
+    setCurrentStep((s) => Math.max(s - 1, 0));
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleSubmit = useCallback(
-    async (values: any) => {
+    async (values: any, { setSubmitting }: any) => {
       try {
         const res = await register({ user: values });
-        console.log("Registration successful: ", res);
+        constants.IS_DEBUG && console.log("Registration successful:", res);
         router.push("/account");
       } catch (err) {
-        console.log("Registration error: ", err);
         const errorMessage =
           err && typeof err === "object" && "message" in err
             ? (err as { message?: string }).message
             : String(err);
         Alert.fire({ icon: "error", title: "Uh oh!", text: errorMessage });
-        throw err;
+      } finally {
+        setSubmitting(false);
       }
     },
     [register, router]
   );
 
+  const slideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 80 : -80,
+      opacity: 0
+    }),
+    center: {
+      x: 0,
+      opacity: 1
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? -80 : 80,
+      opacity: 0
+    })
+  };
+
   return (
-    <div className="relative z-[1] flex flex-col pb-20">
-      <div className="mx-[10%] flex flex-row flex-nowrap justify-center sm:mx-[5%] sm:flex-col">
-        <div className="relative mr-4 flex flex-[0_0_48%] flex-col rounded-lg bg-card p-4 text-center sm:mr-0 sm:mt-4 sm:hidden">
-          <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1] -translate-x-1/2 -translate-y-1/2 text-center text-2xl font-black uppercase text-foreground [text-shadow:0px_2px_22px_rgba(255,255,255,1)]">
-            Enjoy The Journey{" "}
-            <span role="img" aria-label="sunglasses">
-              😎
-            </span>
+    <div
+      className="flex min-h-screen items-center justify-center px-4 py-12"
+      style={{
+        background:
+          "linear-gradient(180deg, #0A0020 0%, #1a0040 50%, #0A0020 100%)"
+      }}
+    >
+      <div className="w-full max-w-lg">
+        {/* Progress bar */}
+        <div className="mb-8">
+          <div className="mb-3 flex items-center justify-between">
+            {Questions.map((q, i) => (
+              <div key={q.id} className="flex flex-1 items-center">
+                <div
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all duration-300 ${
+                    i < currentStep
+                      ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan"
+                      : i === currentStep
+                        ? "border-neon-cyan text-neon-cyan shadow-[0_0_12px_rgba(0,255,255,0.4)]"
+                        : "border-white/20 text-white/30"
+                  }`}
+                >
+                  {i < currentStep ? "\u2713" : i + 1}
+                </div>
+                {i < Questions.length - 1 && (
+                  <div className="mx-1 h-px flex-1">
+                    <div
+                      className="h-full transition-all duration-500"
+                      style={{
+                        background:
+                          i < currentStep
+                            ? "linear-gradient(90deg, #00ffff, #00ffff)"
+                            : "rgba(255,255,255,0.1)"
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
+          <p className="font-micro5 text-xs tracking-widest text-white/50">
+            Step {currentStep + 1} of {Questions.length} &mdash; {step.label}
+          </p>
         </div>
-        <div
-          className={cn(
-            "flex flex-1 flex-col",
-            isLargeDevice ? "w-[48%] max-w-[48%]" : "w-full max-w-full",
-            "[&_form]:rounded-lg [&_form]:bg-card [&_form]:text-brand [&_form_[data-qa='title']]:text-[1.6rem] [&_form_[data-qa='title']]:text-brand",
-            "sm:w-full sm:max-w-full"
-          )}
+
+        {/* Form card */}
+        <Formik
+          initialValues={initialValues}
+          validationSchema={isLastStep ? step.validationSchema : undefined}
+          onSubmit={handleSubmit}
+          validateOnChange={false}
+          validateOnBlur={true}
         >
-          <SlideInLeft>
-            <FormikWizard
-              steps={Questions}
-              onSubmit={(values) => handleSubmit(values)}
-              render={FormWrapper}
-            />
-          </SlideInLeft>
-        </div>
+          {({ values, validateForm, setTouched, isSubmitting }) => (
+            <Form>
+              <div className="glass-panel overflow-hidden p-6 sm:p-8">
+                <AnimatePresence mode="wait" custom={direction}>
+                  <motion.div
+                    key={step.id}
+                    custom={direction}
+                    variants={slideVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                      x: { type: "spring", stiffness: 300, damping: 30 },
+                      opacity: { duration: 0.2 }
+                    }}
+                  >
+                    <step.component />
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Navigation */}
+                <div className="mt-6 flex items-center gap-3">
+                  {!isFirstStep && (
+                    <button
+                      type="button"
+                      onClick={goBack}
+                      className="neon-btn flex items-center gap-1 text-xs"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Back
+                    </button>
+                  )}
+                  <div className="flex-1" />
+                  {isLastStep ? (
+                    <button
+                      type="submit"
+                      disabled={
+                        isSubmitting ||
+                        !(values.acceptPrivacyTerms && values.acceptReportingTerms)
+                      }
+                      className="neon-btn flex items-center gap-1 text-xs disabled:pointer-events-none disabled:opacity-40"
+                    >
+                      {isSubmitting ? "Submitting..." : step.actionLabel}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => goNext(values, validateForm, setTouched)}
+                      className="neon-btn flex items-center gap-1 text-xs"
+                    >
+                      {step.actionLabel}
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Login link */}
+              <div className="mt-6 text-center">
+                <Link
+                  href="/login"
+                  className="font-title text-xs text-white/40 transition-colors hover:text-neon-cyan"
+                >
+                  Already have an account?
+                </Link>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );

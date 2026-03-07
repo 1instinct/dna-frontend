@@ -23,7 +23,7 @@ export const StreamList: React.FC<StreamListProps> = (props) => {
 
   return (
     <div className="mt-8 overflow-hidden">
-      <h2 className="mb-8 font-title text-4xl leading-tight text-foreground">
+      <h2 className="mb-8 font-title text-4xl leading-tight text-white">
         {title}
       </h2>
       <Swiper

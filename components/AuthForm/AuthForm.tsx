@@ -6,7 +6,7 @@ import { AuthFormType } from "./constants";
 import { SignupForm } from "@components/SignupForm";
 
 const isSimpleSignup =
-  (process.env.NEXT_PUBLIC_SIMPLE_SIGNUP || "true") === "true";
+  (process.env.NEXT_PUBLIC_SIMPLE_SIGNUP || "false") === "true";
 
 interface Props {
   formType: AuthFormType;

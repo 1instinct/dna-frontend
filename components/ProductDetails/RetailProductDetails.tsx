@@ -4,6 +4,7 @@ import Head from "next/head";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { Heart } from "lucide-react";
+import { motion } from "framer-motion";
 import { cn } from "@lib/utils";
 import {
   fetchStreams,
@@ -51,14 +52,14 @@ export const RetailProductDetails = ({
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const { user } = useAuth();
-  const { asPath: productSlug } = router;
+  const productSlug = (router.query.productSlug as string) || "";
   const {
     data: thisProduct,
     isLoading,
     isSuccess,
     isError,
     error: productError
-  } = useProduct(`${productSlug.toLowerCase().replace("/", "")}`);
+  } = useProduct(productSlug);
 
   const defaultVariantData =
     thisProduct?.data?.relationships?.default_variant?.data;
@@ -114,16 +115,14 @@ export const RetailProductDetails = ({
   )?.attributes?.name;
 
   // Fetch similar products by same taxon (falls back to latest if no taxon)
-  const {
-    data: similarData,
-    isLoading: similarLoading
-  } = useProductFeed("similar", currentTaxon ? { filter: { taxons: currentTaxon } } : {});
+  const { data: similarData, isLoading: similarLoading } = useProductFeed(
+    "similar",
+    currentTaxon ? { filter: { taxons: currentTaxon } } : {}
+  );
 
   // Fetch recommended products (generic latest, distinct from similar)
-  const {
-    data: recommendedData,
-    isLoading: recommendedLoading
-  } = useProductFeed("latest");
+  const { data: recommendedData, isLoading: recommendedLoading } =
+    useProductFeed("latest");
 
   // Legacy products query for arrow key navigation
   const {
@@ -193,8 +192,12 @@ export const RetailProductDetails = ({
   };
 
   const addToCart = useMutation(addItemToCart, {
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("[AddToCart] SUCCESS:", data);
       queryClient.invalidateQueries(QueryKeys.CART);
+    },
+    onError: (error: any) => {
+      console.error("[AddToCart] ERROR:", error?.message || error);
     }
   });
 
@@ -318,183 +321,292 @@ export const RetailProductDetails = ({
           </title>
         </Head>
 
-        <div className="section-container py-8">
-          {/* Product Layout */}
-          <div className="flex flex-col gap-8 md:flex-row md:gap-12">
-            {/* Image Carousel */}
-            <div className="w-full md:w-1/2">
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {productImgs && productImgs.length > 0 ? (
-                    productImgs.map((image: any, index: number) => {
-                      const imgUrl = image.attributes.styles?.filter(
-                        (e: any) => e["width"] == "600"
-                      )[0]?.url;
-                      const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`;
-                      return (
-                        <CarouselItem key={`image-${index}`}>
-                          <div className="aspect-square overflow-hidden rounded-xl bg-muted">
-                            <img
-                              src={imgSrc}
-                              alt={`${
-                                thisProduct?.data?.attributes?.name
-                              } - Image ${index + 1}`}
-                              className="h-full w-full object-cover"
-                            />
+        {/* Dark gradient page wrapper */}
+        <div
+          className="min-h-screen"
+          style={{
+            background:
+              "linear-gradient(180deg, #0A0020 0%, #0D0030 40%, #0A0020 100%)"
+          }}
+        >
+          <div className="section-container py-10 md:py-16">
+            {/* Product Layout */}
+            <div className="flex flex-col gap-8 md:flex-row md:gap-12">
+              {/* Image Carousel with neon glow backdrop */}
+              <motion.div
+                className="w-full md:w-1/2"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              >
+                <div
+                  className="relative rounded-2xl p-1"
+                  style={{
+                    background:
+                      "radial-gradient(circle at center, rgba(0, 255, 255, 0.1) 0%, transparent 70%)"
+                  }}
+                >
+                  <Carousel className="w-full">
+                    <CarouselContent>
+                      {productImgs && productImgs.length > 0 ? (
+                        productImgs.map((image: any, index: number) => {
+                          const imgUrl = image.attributes.styles?.filter(
+                            (e: any) => e["width"] == "600"
+                          )[0]?.url;
+                          const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`;
+                          return (
+                            <CarouselItem key={`image-${index}`}>
+                              <div className="aspect-square overflow-hidden rounded-xl bg-surface-deep">
+                                <img
+                                  src={imgSrc}
+                                  alt={`${
+                                    thisProduct?.data?.attributes?.name
+                                  } - Image ${index + 1}`}
+                                  className="h-full w-full object-cover"
+                                />
+                              </div>
+                            </CarouselItem>
+                          );
+                        })
+                      ) : (
+                        <CarouselItem>
+                          <div className="flex aspect-square items-center justify-center rounded-xl bg-surface-deep">
+                            <Loading />
                           </div>
                         </CarouselItem>
-                      );
-                    })
-                  ) : (
-                    <CarouselItem>
-                      <div className="flex aspect-square items-center justify-center rounded-xl bg-muted">
-                        <Loading />
+                      )}
+                    </CarouselContent>
+                    {productImgs && productImgs.length > 1 && (
+                      <>
+                        <CarouselPrevious className="left-3" />
+                        <CarouselNext className="right-3" />
+                      </>
+                    )}
+                  </Carousel>
+                </div>
+              </motion.div>
+
+              {/* Product Info — Glass Panel */}
+              <motion.div
+                className="w-full md:w-1/2"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+              >
+                <div className="glass-panel p-6 md:p-8">
+                  {/* Product Name */}
+                  <h2 className="font-pressstart text-lg leading-relaxed text-white md:text-xl">
+                    {thisProduct?.data?.attributes?.name}
+                  </h2>
+
+                  {/* Pre-order badge (if applicable) */}
+                  {thisProduct?.data?.attributes?.available_on &&
+                    new Date(thisProduct.data.attributes.available_on) >
+                      new Date() && (
+                      <span className="badge-preorder mt-3 inline-block">
+                        PRE-ORDER
+                      </span>
+                    )}
+
+                  {/* Favorite Button */}
+                  <button
+                    onClick={handleToggleFavorite}
+                    className={cn(
+                      "mt-4 flex items-center gap-2 rounded-lg border px-5 py-2.5 font-mono text-sm transition-all hover:-translate-y-px active:translate-y-0",
+                      isFavorited
+                        ? "neon-border-magenta bg-neon-magenta/10 text-neon-magenta"
+                        : "border-glass-border bg-transparent text-white/70 hover:border-neon-cyan/50 hover:text-neon-cyan"
+                    )}
+                  >
+                    <Heart
+                      className={cn("h-4 w-4", isFavorited && "fill-current")}
+                    />
+                    {isFavorited ? "Remove from Favorites" : "Add to Favorites"}
+                  </button>
+
+                  {/* Color Swatches */}
+                  {productColors && productColors.length > 0 && (
+                    <div className="mt-6">
+                      <span className="font-mono text-xs uppercase tracking-wider text-white/50">
+                        Color
+                      </span>
+                      <div className="mt-2 flex items-center gap-3">
+                        {productColors.map((option: any, index: number) => (
+                          <button
+                            key={`variant-${index}`}
+                            onClick={() => setSelectedColor(option.id)}
+                            className={cn(
+                              "h-8 w-8 rounded-full border-2 transition-all duration-300",
+                              selectedColor === option.id
+                                ? "scale-110 border-neon-cyan shadow-[0_0_10px_rgba(0,255,255,0.5)]"
+                                : "border-glass-border hover:border-white/40"
+                            )}
+                            style={{
+                              backgroundColor: option.attributes.presentation
+                            }}
+                            aria-label={option.attributes.name}
+                          />
+                        ))}
                       </div>
-                    </CarouselItem>
+                    </div>
                   )}
-                </CarouselContent>
-                {productImgs && productImgs.length > 1 && (
-                  <>
-                    <CarouselPrevious className="left-3" />
-                    <CarouselNext className="right-3" />
-                  </>
-                )}
-              </Carousel>
-            </div>
 
-            {/* Product Info */}
-            <div className="w-full md:w-1/2">
-              <div className="max-w-lg">
-                <h2 className="font-title text-2xl font-semibold text-foreground md:text-3xl">
-                  {thisProduct?.data?.attributes?.name}
-                </h2>
+                  {/* Description */}
+                  <p className="mt-6 font-mono text-sm leading-relaxed text-white/60">
+                    {thisProduct?.data?.attributes?.description}
+                  </p>
 
-                {/* Favorite Button */}
-                <button
-                  onClick={handleToggleFavorite}
-                  className={cn(
-                    "mt-4 flex items-center gap-2 rounded-lg border px-5 py-2.5 font-body text-sm transition-all hover:-translate-y-px active:translate-y-0",
-                    isFavorited
-                      ? "border-brand bg-brand text-white hover:bg-brand/90"
-                      : "border-border bg-transparent text-foreground hover:border-brand hover:text-brand"
-                  )}
-                >
-                  <Heart
-                    className={cn("h-4 w-4", isFavorited && "fill-current")}
-                  />
-                  {isFavorited ? "Remove from Favorites" : "Add to Favorites"}
-                </button>
+                  <hr className="my-6 border-glass-border" />
 
-                {/* Color Swatches */}
-                {productColors && productColors.length > 0 && (
-                  <div className="mt-6 flex items-center gap-2">
-                    {productColors.map((option: any, index: number) => (
-                      <button
-                        key={`variant-${index}`}
-                        onClick={() => setSelectedColor(option.id)}
-                        className={cn(
-                          "h-8 w-8 rounded-full border-2 transition-all",
-                          selectedColor === option.id
-                            ? "border-brand scale-110"
-                            : "border-border hover:border-foreground"
-                        )}
-                        style={{
-                          backgroundColor: option.attributes.presentation
-                        }}
-                        aria-label={option.attributes.name}
-                      />
-                    ))}
+                  {/* Price */}
+                  <div className="text-2xl font-bold text-neon-cyan">
+                    ${thisProduct?.data?.attributes?.price}
                   </div>
-                )}
 
-                {/* Description */}
-                <p className="mt-6 font-body text-sm leading-relaxed text-muted-foreground">
-                  {thisProduct?.data?.attributes?.description}
-                </p>
+                  {/* Color Select dropdown */}
+                  {productColors && productColors.length > 0 && (
+                    <select
+                      value={selectedColor}
+                      onChange={(e) => setSelectedColor(e.target.value)}
+                      className="neon-focus mt-4 w-full cursor-pointer rounded-lg border border-glass-border bg-surface-deep px-4 py-3 font-mono text-sm text-white transition-colors"
+                    >
+                      <option value="">Color</option>
+                      {productColors.map((color: any, index: number) => (
+                        <option key={`color-${index}`} value={color.id}>
+                          {color.attributes.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
 
-                <hr className="my-6 border-border/30" />
+                  {/* Size Selection — glass pill buttons */}
+                  {productSizes && productSizes.length > 0 && (
+                    <div className="mt-4">
+                      <span className="font-mono text-xs uppercase tracking-wider text-white/50">
+                        Size
+                      </span>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {productSizes.map((size: any, index: number) => (
+                          <button
+                            key={`size-${index}`}
+                            onClick={() =>
+                              setSelectedSize(size.attributes.presentation)
+                            }
+                            className={cn(
+                              "rounded-lg border px-5 py-2.5 font-mono text-sm transition-all duration-300",
+                              selectedSize === size.attributes.presentation
+                                ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan shadow-[0_0_10px_rgba(0,255,255,0.25)]"
+                                : "border-glass-border bg-glass-bg text-white/70 hover:border-neon-cyan/40 hover:text-white"
+                            )}
+                          >
+                            {size.attributes.presentation}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-                {/* Price */}
-                <div className="font-title text-3xl font-bold text-foreground">
-                  ${thisProduct?.data?.attributes?.price}
+                  {/* Quantity selector */}
+                  <div className="mt-4">
+                    <span className="font-mono text-xs uppercase tracking-wider text-white/50">
+                      Qty
+                    </span>
+                    <div className="glass-panel mt-2 flex w-32 items-center overflow-hidden">
+                      <button
+                        onClick={() =>
+                          setAddItem((prev: any) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  quantity: Math.max(
+                                    1,
+                                    (prev.quantity || 1) - 1
+                                  )
+                                }
+                              : prev
+                          )
+                        }
+                        className="px-3 py-2 font-mono text-white/70 transition-colors hover:text-neon-cyan"
+                      >
+                        -
+                      </button>
+                      <span className="flex-1 text-center font-mono text-sm text-white">
+                        {addItem?.quantity || 1}
+                      </span>
+                      <button
+                        onClick={() =>
+                          setAddItem((prev: any) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  quantity: (prev.quantity || 1) + 1
+                                }
+                              : prev
+                          )
+                        }
+                        className="px-3 py-2 font-mono text-white/70 transition-colors hover:text-neon-cyan"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* ADD TO CART — neon button */}
+                  <button
+                    onClick={() => handleAddToCart(addItem)}
+                    className="neon-btn mt-6 w-full text-center"
+                  >
+                    ADD TO CART
+                  </button>
                 </div>
 
-                {/* Color Select */}
-                {productColors && productColors.length > 0 && (
-                  <select
-                    value={selectedColor}
-                    onChange={(e) => setSelectedColor(e.target.value)}
-                    className="mt-4 w-full cursor-pointer rounded-lg border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
-                  >
-                    <option value="">Color</option>
-                    {productColors.map((color: any, index: number) => (
-                      <option key={`color-${index}`} value={color.id}>
-                        {color.attributes.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
-
-                {/* Size Selection */}
-                {productSizes && productSizes.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {productSizes.map((size: any, index: number) => (
-                      <button
-                        key={`size-${index}`}
-                        onClick={() =>
-                          setSelectedSize(size.attributes.presentation)
-                        }
-                        className={cn(
-                          "rounded-lg border px-5 py-2.5 font-title text-sm transition-all",
-                          selectedSize === size.attributes.presentation
-                            ? "border-brand bg-brand text-white"
-                            : "border-border bg-transparent text-foreground hover:border-brand"
-                        )}
-                      >
-                        {size.attributes.presentation}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Add to Cart */}
-                <button
-                  onClick={() => handleAddToCart(addItem)}
-                  className="mt-6 w-full rounded-xl bg-brand px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px hover:shadow-lg active:translate-y-0"
-                >
-                  Add to Cart
-                </button>
-
-                {/* Product Properties */}
+                {/* Product Properties / Specs — Glass Panel */}
                 {productProperties && productProperties.length > 0 && (
-                  <div className="mt-8 text-left">
-                    <h3 className="mb-3 font-title text-base font-semibold text-foreground">
-                      Product Info
+                  <motion.div
+                    className="glass-panel mt-6 p-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
+                  >
+                    <h3 className="mb-4 font-pressstart text-xs uppercase tracking-wider text-neon-cyan">
+                      Specs
                     </h3>
-                    <div className="space-y-1.5">
+                    <div className="divide-y divide-glass-border">
                       {productProperties.map((property: any, index: number) => (
                         <div
                           key={`property-${index}`}
-                          className="font-body text-sm text-muted-foreground"
+                          className={cn(
+                            "flex justify-between gap-4 px-2 py-2.5 font-mono text-sm",
+                            index % 2 === 0
+                              ? "bg-white/[0.02]"
+                              : "bg-transparent"
+                          )}
                         >
-                          <span className="font-medium text-foreground">
+                          <span className="text-white/50">
                             {property.attributes.name}
                           </span>
-                          : {property.attributes.value}
+                          <span className="text-right text-white">
+                            {property.attributes.value}
+                          </span>
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 )}
-              </div>
+              </motion.div>
             </div>
-          </div>
 
-          {/* Similar / Recommended / Recently Viewed */}
-          <div className="mt-12 space-y-8">
-            {renderSimilarProducts()}
-            {renderRecommendedProducts()}
-            <RecentlyViewed excludeSlug={currentSlug} />
+            {/* Related / Recommended / Recently Viewed */}
+            <motion.div
+              className="mt-16 space-y-12"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+            >
+              {renderSimilarProducts()}
+              {renderRecommendedProducts()}
+              <RecentlyViewed excludeSlug={currentSlug} />
+            </motion.div>
           </div>
         </div>
       </Layout>
