@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: saltea-frontend
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    acme.cert-manager.io/http01-edit-in-place: "true"
+  labels:
+    app: saltea-frontend
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: saltea.co
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: saltea-frontend
+                port:
+                  number: 8080
+    - host: www.saltea.co
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: saltea-frontend
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - saltea.co
+        - www.saltea.co
+      secretName: saltea-frontend-tls
