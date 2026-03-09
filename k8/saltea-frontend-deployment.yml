@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: saltea-frontend
+  namespace: default
+  labels:
+    app: saltea-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: saltea-frontend
+  template:
+    metadata:
+      labels:
+        app: saltea-frontend
+    spec:
+      containers:
+        - name: saltea-frontend
+          image: localhost:32000/dna-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: DEPLOY_ENV
+              value: "prod"
+            - name: PORT
+              value: "3000"
+          envFrom:
+            - secretRef:
+                name: saltea-frontend-secrets
