@@ -83,20 +83,20 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div className="flex-1 overflow-y-auto p-5">
           <div className="px-5 py-10 text-center">
             <div className="mb-4 text-5xl">🔒</div>
-            <div className="mb-2 text-base text-foreground">Login Required</div>
-            <div className="mb-6 text-sm text-muted-foreground">
+            <div className="mb-2 text-base text-white">Login Required</div>
+            <div className="mb-6 text-sm text-white/50">
               Please login to complete your purchase
             </div>
             <div className="mt-5 flex gap-3">
               <button
                 onClick={onClose}
-                className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+                className="flex-1 rounded-full bg-white/[0.07] px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-white/70 transition-all hover:bg-white/[0.12] hover:text-white active:scale-[0.97]"
               >
                 Keep Shopping
               </button>
               <button
                 onClick={() => setShowLoginDialog(true)}
-                className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+                className="flex-1 rounded-full bg-neon-cyan px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-black transition-all hover:bg-neon-cyan/85 active:scale-[0.97]"
               >
                 Login
               </button>
@@ -252,17 +252,17 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   return (
     <div className="flex-1 overflow-y-auto p-5">
       {/* Step Indicator */}
-      <div className="mb-5 flex justify-between gap-2">
+      <div className="mb-5 flex justify-between gap-1.5">
         {[0, 1, 2, 3].map((step) => (
           <div
             key={step}
             className={cn(
-              "h-1 flex-1 rounded-full transition-all",
+              "h-[3px] flex-1 rounded-full transition-all duration-500",
               currentStep > step
-                ? "bg-brand"
+                ? "bg-neon-cyan"
                 : currentStep === step
-                ? "bg-brand/60"
-                : "bg-white/20"
+                ? "bg-neon-cyan/50 animate-[shimmer_2s_ease-in-out_infinite]"
+                : "bg-white/10"
             )}
           />
         ))}
@@ -271,7 +271,7 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       {/* Step 0: Cart Review */}
       {currentStep === 0 && (
         <>
-          <h3 className="m-0 mb-4 text-lg font-semibold text-foreground">
+          <h3 className="m-0 mb-4 font-title text-[15px] tracking-tight text-white">
             Your Cart ({cartItems.length})
           </h3>
 
@@ -300,10 +300,10 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="mb-1 truncate text-sm font-medium text-foreground">
+                  <div className="mb-1 truncate text-sm font-medium text-white">
                     {item.attributes?.name}
                   </div>
-                  <div className="text-[13px] text-brand">
+                  <div className="text-[13px] text-neon-cyan">
                     {item.attributes?.quantity} &times;{" "}
                     {item.attributes?.display_price}
                   </div>
@@ -324,10 +324,8 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           })}
 
           <div className="mt-3 flex justify-between border-t border-white/10 pt-3">
-            <span className="text-sm font-medium text-muted-foreground">
-              Total
-            </span>
-            <span className="text-base font-semibold text-foreground">
+            <span className="text-sm font-medium text-white/50">Total</span>
+            <span className="text-base font-semibold text-white">
               {displayTotal}
             </span>
           </div>
@@ -335,14 +333,14 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <div className="mt-5 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+              className="flex-1 rounded-full bg-white/[0.07] px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-white/70 transition-all hover:bg-white/[0.12] hover:text-white active:scale-[0.97]"
             >
               Keep Shopping
             </button>
             <button
               onClick={() => setCurrentStep(1)}
               disabled={cartItems.length === 0}
-              className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
+              className="flex-1 rounded-full bg-neon-cyan px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-black transition-all hover:bg-neon-cyan/85 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
             >
               Continue
             </button>
@@ -353,7 +351,7 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       {/* Step 1: Shipping Address */}
       {currentStep === 1 && (
         <>
-          <h3 className="m-0 mb-4 text-lg font-semibold text-foreground">
+          <h3 className="m-0 mb-4 font-title text-[15px] tracking-tight text-white">
             Checkout - Shipping Address
           </h3>
 
@@ -363,9 +361,9 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <label
                   key={address.id}
                   className={cn(
-                    "mb-3 block cursor-pointer rounded-lg border-2 p-3 transition-all hover:border-brand/60",
+                    "mb-3 block cursor-pointer rounded-lg border-2 p-3 transition-all hover:border-neon-cyan/60",
                     selectedAddress === address.id
-                      ? "border-brand bg-white/5"
+                      ? "border-neon-cyan bg-white/5"
                       : "border-white/10 bg-transparent"
                   )}
                   onClick={() => setSelectedAddress(address.id)}
@@ -375,7 +373,7 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       className={cn(
                         "relative mt-0.5 h-5 w-5 flex-shrink-0 rounded-full border-2",
                         selectedAddress === address.id
-                          ? "border-brand bg-brand"
+                          ? "border-neon-cyan bg-neon-cyan"
                           : "border-white/30 bg-transparent"
                       )}
                     >
@@ -384,24 +382,24 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       )}
                     </div>
                     <div className="flex-1">
-                      <div className="mb-1 text-sm font-semibold text-foreground">
+                      <div className="mb-1 text-sm font-semibold text-white">
                         {address.attributes.firstname}{" "}
                         {address.attributes.lastname}
                       </div>
-                      <div className="text-[13px] leading-relaxed text-muted-foreground">
+                      <div className="text-[13px] leading-relaxed text-white/50">
                         {address.attributes.address1}
                       </div>
                       {address.attributes.address2 && (
-                        <div className="text-[13px] leading-relaxed text-muted-foreground">
+                        <div className="text-[13px] leading-relaxed text-white/50">
                           {address.attributes.address2}
                         </div>
                       )}
-                      <div className="text-[13px] leading-relaxed text-muted-foreground">
+                      <div className="text-[13px] leading-relaxed text-white/50">
                         {address.attributes.city},{" "}
                         {address.attributes.state_name}{" "}
                         {address.attributes.zipcode}
                       </div>
-                      <div className="text-[13px] leading-relaxed text-muted-foreground">
+                      <div className="text-[13px] leading-relaxed text-white/50">
                         {address.attributes.phone}
                       </div>
                     </div>
@@ -411,7 +409,7 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
               <button
                 onClick={() => setShowNewAddressForm(true)}
-                className="mb-5 w-full cursor-pointer rounded-lg border-2 border-dashed border-white/20 bg-transparent p-3 text-sm font-semibold text-brand transition-all hover:border-brand hover:bg-white/5"
+                className="mb-5 w-full cursor-pointer rounded-lg border-2 border-dashed border-white/20 bg-transparent p-3 text-sm font-semibold text-neon-cyan transition-all hover:border-neon-cyan hover:bg-white/5"
               >
                 + Add New Address
               </button>
@@ -419,7 +417,7 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <div className="mt-5 flex gap-3">
                 <button
                   onClick={() => setCurrentStep(0)}
-                  className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+                  className="flex-1 rounded-full bg-white/[0.07] px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-white/70 transition-all hover:bg-white/[0.12] hover:text-white active:scale-[0.97]"
                 >
                   Back
                 </button>
@@ -431,7 +429,7 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     if (address) handleSelectAddress(address);
                   }}
                   disabled={!selectedAddress}
-                  className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
+                  className="flex-1 rounded-full bg-neon-cyan px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-black transition-all hover:bg-neon-cyan/85 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
                 >
                   Continue
                 </button>
@@ -459,7 +457,7 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   {savedAddresses.length > 0 && (
                     <button
                       onClick={() => setShowNewAddressForm(false)}
-                      className="mb-4 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+                      className="mb-4 rounded-full bg-white/[0.07] px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-white/70 transition-all hover:bg-white/[0.12] hover:text-white active:scale-[0.97]"
                       type="button"
                     >
                       &larr; Back to Saved Addresses
@@ -468,12 +466,12 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="mb-4">
-                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      <label className="mb-1.5 block text-xs font-medium text-white/50">
                         First Name
                       </label>
                       <Field
                         name="firstName"
-                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                        className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 font-body text-[13px] text-white placeholder:text-white/25 transition-colors focus:border-neon-cyan/50 focus:bg-white/[0.06] focus:outline-none"
                       />
                       {errors.firstName && touched.firstName && (
                         <div className="mt-1 text-xs text-destructive">
@@ -482,12 +480,12 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       )}
                     </div>
                     <div className="mb-4">
-                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      <label className="mb-1.5 block text-xs font-medium text-white/50">
                         Last Name
                       </label>
                       <Field
                         name="lastName"
-                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                        className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 font-body text-[13px] text-white placeholder:text-white/25 transition-colors focus:border-neon-cyan/50 focus:bg-white/[0.06] focus:outline-none"
                       />
                       {errors.lastName && touched.lastName && (
                         <div className="mt-1 text-xs text-destructive">
@@ -498,12 +496,12 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   </div>
 
                   <div className="mb-4">
-                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                    <label className="mb-1.5 block text-xs font-medium text-white/50">
                       Address
                     </label>
                     <Field
                       name="address1"
-                      className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 font-body text-[13px] text-white placeholder:text-white/25 transition-colors focus:border-neon-cyan/50 focus:bg-white/[0.06] focus:outline-none"
                     />
                     {errors.address1 && touched.address1 && (
                       <div className="mt-1 text-xs text-destructive">
@@ -513,23 +511,23 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   </div>
 
                   <div className="mb-4">
-                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                    <label className="mb-1.5 block text-xs font-medium text-white/50">
                       Apartment, suite, etc. (optional)
                     </label>
                     <Field
                       name="address2"
-                      className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 font-body text-[13px] text-white placeholder:text-white/25 transition-colors focus:border-neon-cyan/50 focus:bg-white/[0.06] focus:outline-none"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="mb-4">
-                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      <label className="mb-1.5 block text-xs font-medium text-white/50">
                         City
                       </label>
                       <Field
                         name="city"
-                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                        className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 font-body text-[13px] text-white placeholder:text-white/25 transition-colors focus:border-neon-cyan/50 focus:bg-white/[0.06] focus:outline-none"
                       />
                       {errors.city && touched.city && (
                         <div className="mt-1 text-xs text-destructive">
@@ -538,12 +536,12 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       )}
                     </div>
                     <div className="mb-4">
-                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      <label className="mb-1.5 block text-xs font-medium text-white/50">
                         State
                       </label>
                       <Field
                         name="state"
-                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                        className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 font-body text-[13px] text-white placeholder:text-white/25 transition-colors focus:border-neon-cyan/50 focus:bg-white/[0.06] focus:outline-none"
                       />
                       {errors.state && touched.state && (
                         <div className="mt-1 text-xs text-destructive">
@@ -555,12 +553,12 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="mb-4">
-                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      <label className="mb-1.5 block text-xs font-medium text-white/50">
                         ZIP Code
                       </label>
                       <Field
                         name="zipcode"
-                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                        className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 font-body text-[13px] text-white placeholder:text-white/25 transition-colors focus:border-neon-cyan/50 focus:bg-white/[0.06] focus:outline-none"
                       />
                       {errors.zipcode && touched.zipcode && (
                         <div className="mt-1 text-xs text-destructive">
@@ -569,12 +567,12 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       )}
                     </div>
                     <div className="mb-4">
-                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      <label className="mb-1.5 block text-xs font-medium text-white/50">
                         Phone
                       </label>
                       <Field
                         name="phone"
-                        className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none"
+                        className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 font-body text-[13px] text-white placeholder:text-white/25 transition-colors focus:border-neon-cyan/50 focus:bg-white/[0.06] focus:outline-none"
                       />
                       {errors.phone && touched.phone && (
                         <div className="mt-1 text-xs text-destructive">
@@ -588,13 +586,13 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <button
                       onClick={() => setCurrentStep(0)}
                       type="button"
-                      className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+                      className="flex-1 rounded-full bg-white/[0.07] px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-white/70 transition-all hover:bg-white/[0.12] hover:text-white active:scale-[0.97]"
                     >
                       Modify Cart
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+                      className="flex-1 rounded-full bg-neon-cyan px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-black transition-all hover:bg-neon-cyan/85 active:scale-[0.97]"
                     >
                       Continue
                     </button>
@@ -609,7 +607,7 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       {/* Step 2: Shipping Method */}
       {currentStep === 2 && (
         <>
-          <h3 className="m-0 mb-4 text-lg font-semibold text-foreground">
+          <h3 className="m-0 mb-4 font-title text-[15px] tracking-tight text-white">
             Checkout - Shipping Method
           </h3>
 
@@ -617,9 +615,9 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <label
               key={method.id}
               className={cn(
-                "mb-2 flex cursor-pointer items-center gap-3 rounded-md border-2 p-3 transition-all hover:border-brand/60",
+                "mb-2 flex cursor-pointer items-center gap-3 rounded-md border-2 p-3 transition-all hover:border-neon-cyan/60",
                 selectedShipping === method.id
-                  ? "border-brand bg-white/5"
+                  ? "border-neon-cyan bg-white/5"
                   : "border-white/10 bg-transparent"
               )}
             >
@@ -632,10 +630,10 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 className="h-5 w-5 flex-shrink-0 cursor-pointer"
               />
               <div>
-                <div className="text-sm font-medium text-foreground">
+                <div className="text-sm font-medium text-white">
                   {method.attributes?.name}
                 </div>
-                <div className="mt-1 text-[13px] text-brand">
+                <div className="mt-1 text-[13px] text-neon-cyan">
                   {method.attributes?.display_cost}
                 </div>
               </div>
@@ -645,14 +643,14 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <div className="mt-5 flex gap-3">
             <button
               onClick={() => setCurrentStep(1)}
-              className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+              className="flex-1 rounded-full bg-white/[0.07] px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-white/70 transition-all hover:bg-white/[0.12] hover:text-white active:scale-[0.97]"
             >
               Back
             </button>
             <button
               onClick={handleShippingSubmit}
               disabled={!selectedShipping}
-              className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
+              className="flex-1 rounded-full bg-neon-cyan px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-black transition-all hover:bg-neon-cyan/85 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
             >
               Continue
             </button>
@@ -677,14 +675,12 @@ const CheckoutWizard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       {currentStep === 4 && (
         <div className="px-5 py-10 text-center">
           <div className="mb-4 text-5xl">🎉</div>
-          <div className="mb-2 text-base text-foreground">Order Complete!</div>
-          <div className="text-sm text-muted-foreground">
-            Order #{orderNumber}
-          </div>
+          <div className="mb-2 text-base text-white">Order Complete!</div>
+          <div className="text-sm text-white/50">Order #{orderNumber}</div>
           <div className="mt-5 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+              className="flex-1 rounded-full bg-neon-cyan px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-black transition-all hover:bg-neon-cyan/85 active:scale-[0.97]"
             >
               Continue Watching
             </button>
@@ -766,12 +762,12 @@ const PaymentStep: React.FC<{
 
   return (
     <form onSubmit={handlePayment}>
-      <h3 className="m-0 mb-4 text-lg font-semibold text-foreground">
+      <h3 className="m-0 mb-4 font-title text-[15px] tracking-tight text-white">
         Checkout - Payment
       </h3>
 
       <div className="mb-4">
-        <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+        <label className="mb-1.5 block text-xs font-medium text-white/50">
           Card Details
         </label>
         <div className="rounded-md border border-white/20 bg-white/5 p-3">
@@ -800,14 +796,14 @@ const PaymentStep: React.FC<{
         <button
           onClick={onBack}
           type="button"
-          className="flex-1 rounded-lg bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90"
+          className="flex-1 rounded-full bg-white/[0.07] px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-white/70 transition-all hover:bg-white/[0.12] hover:text-white active:scale-[0.97]"
         >
           Back
         </button>
         <button
           type="submit"
           disabled={!stripe || processing}
-          className="flex-1 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
+          className="flex-1 rounded-full bg-neon-cyan px-5 py-3 font-mono-semibold text-[12px] uppercase tracking-wider text-black transition-all hover:bg-neon-cyan/85 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
         >
           {processing ? "Processing..." : "Complete Order"}
         </button>
@@ -825,24 +821,61 @@ export const StreamCheckout: React.FC = () => {
   return (
     <div
       className={cn(
-        "absolute bottom-[60px] left-5 z-[100] flex flex-col overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-[20px] transition-all duration-300",
+        "fixed z-[1100] flex flex-col overflow-hidden transition-all duration-300 ease-expo-out",
         isExpanded
-          ? "w-[380px] max-h-[85vh] rounded-xl border border-white/10 bg-black/95"
-          : "h-[60px] w-[60px] bg-background"
+          ? "bottom-0 left-0 right-0 max-h-[85vh] rounded-t-2xl border-t border-white/10 bg-black/[0.97] shadow-[0_-8px_40px_rgba(0,0,0,0.5)] backdrop-blur-2xl md:bottom-6 md:left-auto md:right-6 md:w-[400px] md:rounded-2xl md:border md:shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
+          : "bottom-4 right-4 h-14 w-14 md:bottom-6 md:right-6"
       )}
     >
+      {/* Cart FAB / Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className={cn(
-          "relative flex h-[60px] w-[60px] flex-shrink-0 cursor-pointer items-center justify-center border-none bg-background text-2xl text-foreground transition-all",
-          isExpanded ? "rounded-t-xl" : "rounded-full hover:bg-muted"
+          "relative flex flex-shrink-0 cursor-pointer items-center border-none transition-all",
+          isExpanded
+            ? "h-14 w-full justify-between rounded-t-2xl border-b border-white/[0.06] bg-transparent px-5 md:rounded-t-2xl"
+            : "h-14 w-14 justify-center rounded-full border border-white/15 bg-black/70 shadow-[0_4px_20px_rgba(0,0,0,0.4)] backdrop-blur-xl hover:scale-105 hover:bg-black/90 active:scale-95"
         )}
       >
-        🛒
-        {itemCount > 0 && (
-          <div className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[11px] font-bold text-white">
-            {itemCount}
-          </div>
+        {isExpanded ? (
+          <>
+            <span className="font-mono-semibold text-[11px] uppercase tracking-widest text-white/60">
+              Your Cart
+            </span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="text-white/40"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </>
+        ) : (
+          <>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              className="text-white"
+            >
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 01-8 0" />
+            </svg>
+            {itemCount > 0 && (
+              <div className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-neon-cyan px-1 text-[10px] font-bold text-white shadow-[0_2px_8px_rgba(235,139,139,0.4)]">
+                {itemCount}
+              </div>
+            )}
+          </>
         )}
       </button>
 

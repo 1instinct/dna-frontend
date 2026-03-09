@@ -2,50 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "./synthwave.css";
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
-    --primary: 0 72% 73%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 18 49% 82%;
-    --secondary-foreground: 0 0% 0%;
-    --muted: 0 0% 93%;
-    --muted-foreground: 0 0% 40%;
-    --accent: 0 0% 93%;
-    --accent-foreground: 0 0% 0%;
+    --background: 260 100% 4%;
+    --foreground: 0 0% 95%;
+    --card: 260 60% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 260 60% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 180 100% 50%;
+    --primary-foreground: 260 100% 6%;
+    --secondary: 260 50% 18%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 260 30% 15%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 260 40% 20%;
+    --accent-foreground: 0 0% 95%;
     --destructive: 0 58% 53%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 77%;
-    --input: 0 0% 77%;
-    --ring: 0 72% 73%;
+    --border: 260 30% 20%;
+    --input: 260 30% 20%;
+    --ring: 180 100% 50%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 100%;
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 0 72% 73%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 20%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 20%;
+    --background: 260 100% 4%;
+    --foreground: 0 0% 95%;
+    --card: 260 60% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 260 60% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 180 100% 50%;
+    --primary-foreground: 260 100% 6%;
+    --secondary: 260 50% 18%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 260 30% 15%;
     --muted-foreground: 0 0% 60%;
-    --accent: 0 0% 20%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 260 40% 20%;
+    --accent-foreground: 0 0% 95%;
     --destructive: 0 58% 53%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 72% 73%;
+    --border: 260 30% 20%;
+    --input: 260 30% 20%;
+    --ring: 180 100% 50%;
   }
 
   * {
@@ -54,10 +56,14 @@
 
   body {
     @apply bg-background text-foreground;
+    background: linear-gradient(180deg, #0a0020 0%, #000000 100%);
+    min-height: 100vh;
+    color: #e0e0e0;
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
+    overflow-x: hidden;
     text-rendering: auto;
     -moz-osx-font-smoothing: grayscale;
     font-smooth: 2em;
@@ -66,26 +72,38 @@
   html {
     width: 100%;
     height: 100%;
+    touch-action: manipulation;
+    overflow-x: hidden;
+  }
+
+  /* Prevent iOS Safari zoom on input focus — iOS zooms when font-size < 16px */
+  @supports (-webkit-touch-callout: none) {
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
   }
 
   #__next {
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
   }
 
   ::selection {
-    color: white;
-    background: #eb8b8b;
+    color: #0a0020;
+    background: #00ffff;
   }
 
   ::-moz-selection {
-    color: white;
-    background: #eb8b8b;
+    color: #0a0020;
+    background: #00ffff;
   }
 
   a {
     cursor: pointer;
-    color: #eb8b8b;
+    color: #00e5ff;
   }
 
   p {

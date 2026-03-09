@@ -1,207 +1,149 @@
-import { useCallback, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { useMediaQuery } from "react-responsive";
-import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
-import FormikWizard from "formik-wizard";
-import { useFormikContext } from "formik";
-import { withWizard } from "react-albus";
-import { AuthFormType, signupForm } from "../AuthForm/constants";
+import { Formik, Form, Field } from "formik";
+import { object, string, bool, ref } from "yup";
+
 import { useAuth } from "../../config/auth";
-import { SlideInLeft, SlideOutLeft } from "../Animations";
-import { Questions } from "./Questions";
+import { FormikInput, FormikPassword } from "../FormikWrappers";
 import { Alert } from "../Alerts";
-import { Button } from "@components/ui";
-
-import FormikWizardStepType from "formik-wizard";
-
 import constants from "@utilities/constants";
-import { Loading } from "../Loading";
-import { cn } from "@lib/utils";
 
-const ThreeViewer = dynamic(
-  () => import("@components/shared/ThreeViewer").then((mod) => mod.ThreeViewer),
-  {
-    loading: () => <Loading />,
-    ssr: false
-  }
-);
-
-const FormWrapper: React.FC<any> = ({
-  steps,
-  children,
-  wizard,
-  isLastStep,
-  status,
-  goToPreviousStep,
-  canGoBack,
-  hasError,
-  isDirty,
-  showNextStep,
-  actionLabel
-}: any) => {
-  const isMobile = useMediaQuery({
-    query: `(max-device-width: 768px)`
-  });
-
-  const { values }: any = useFormikContext();
-
-  const termsAccepted = !!(
-    values.acceptSignatureTerms && values.acceptPrivacyTerms
-  );
-
-  const keyboardListener = (e: any) => {
-    if (e.keyCode === 13) {
-      wizard.next();
-      return true;
-    }
-    return false;
-  };
-
-  useEffect(() => {
-    window.addEventListener("keydown", keyboardListener);
-    return () => {
-      window.removeEventListener("keydown", keyboardListener);
-    };
-  });
-
-  switch (status ? status.code : status) {
-    case 200:
-      window.scrollTo(0, 0);
-      return (
-        <div className="flex flex-col items-center justify-center p-5 pt-4 text-center">
-          <div className="pointer-events-none text-center text-2xl font-black uppercase text-foreground">
-            {status.message}
-          </div>
-          <div className="pt-5 text-center text-xl text-foreground">
-            {status.subtitle}
-          </div>
-        </div>
-      );
-    default:
-      return (
-        <div className="w-full rounded-lg bg-card pt-0 shadow-[0px_22px_33px_rgba(0,0,0,0.066)] md:mt-[165px] [&_[data-qa='title']]:text-[1.6rem] [&_[data-qa='title']]:text-brand">
-          {children}
-          <div className="mx-2.5 flex justify-between gap-4 px-4 pb-1 sm:mx-6">
-            {canGoBack && (
-              <Button
-                variant="outline"
-                onClick={goToPreviousStep}
-                disabled={!canGoBack}
-                className="flex-[0.3] flex-grow"
-              >
-                <i className="bts bt-angles-left" />
-              </Button>
-            )}
-            {isLastStep ? (
-              <Button
-                type="submit"
-                onClick={() => {
-                  constants.IS_DEBUG &&
-                    console.log("Submitting form: ", values);
-                }}
-                disabled={isLastStep && !termsAccepted}
-                className="flex-[0.7] flex-grow"
-              >
-                {actionLabel || (isLastStep ? "Submit" : "Next")}
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  constants.IS_DEBUG &&
-                    console.log("next: ", values, wizard, isLastStep);
-                  wizard.next();
-                }}
-                disabled={
-                  (isLastStep && !termsAccepted) || hasError || !isDirty
-                }
-                className="flex-[0.7] flex-grow"
-              >
-                {actionLabel || (isLastStep ? "Submit" : "Next")}
-              </Button>
-            )}
-          </div>
-          {!canGoBack && (
-            <div className="px-5 py-4 text-center text-[0.7rem] text-muted-foreground">
-              <Link href="/login" className="text-brand hover:underline">
-                Already have an account?
-              </Link>
-            </div>
-          )}
-          {canGoBack && (
-            <div className="px-5 py-4 text-center text-[0.7rem] text-muted-foreground">
-              Don&apos;t worry your information is safe{" "}
-              <span role="img" aria-label="lock">
-                🔐
-              </span>{" "}
-              and we never share your information without your consent.
-              <div className="mt-2 flex justify-center px-4 py-4">
-                <Link href="/login" className="text-brand hover:underline">
-                  Already have an account?
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-  }
-};
+const SignupSchema = object().shape({
+  email: string().email("Invalid email").required("Required"),
+  password: string()
+    .min(6, "Too Short")
+    .matches(
+      constants.PASSWORD_REGEX,
+      "Must include uppercase, lowercase, and number"
+    )
+    .required("Required"),
+  passwordConfirm: string()
+    .required("Required")
+    .oneOf([ref("password"), null], "Passwords must match"),
+  acceptTerms: bool().oneOf([true], "You must accept the terms")
+});
 
 export const SignupWizard = () => {
   const router = useRouter();
-  const isLargeDevice = useMediaQuery({
-    query: `(min-device-width: 768px)`
-  });
+  const { register, login } = useAuth();
+  const [serverError, setServerError] = useState("");
 
-  const { register } = useAuth();
+  const handleSubmit = async (values: any, { setSubmitting }: any) => {
+    setServerError("");
+    try {
+      await register({
+        user: {
+          email: values.email,
+          password: values.password,
+          password_confirmation: values.passwordConfirm
+        }
+      });
 
-  const handleSubmit = useCallback(
-    async (values: any) => {
+      // Auto-login after successful registration
       try {
-        const res = await register({ user: values });
-        console.log("Registration successful: ", res);
-        router.push("/account");
-      } catch (err) {
-        console.log("Registration error: ", err);
-        const errorMessage =
-          err && typeof err === "object" && "message" in err
-            ? (err as { message?: string }).message
-            : String(err);
-        Alert.fire({ icon: "error", title: "Uh oh!", text: errorMessage });
-        throw err;
+        await login({ username: values.email, password: values.password });
+        router.push("/account/profile?welcome=true");
+      } catch {
+        // If auto-login fails, redirect to login page
+        router.push("/login");
       }
-    },
-    [register, router]
-  );
+    } catch (err: any) {
+      const msg = err?.message || String(err);
+      setServerError(msg);
+      Alert.fire({ icon: "error", title: "Registration failed", text: msg });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
-    <div className="relative z-[1] flex flex-col pb-20">
-      <div className="mx-[10%] flex flex-row flex-nowrap justify-center sm:mx-[5%] sm:flex-col">
-        <div className="relative mr-4 flex flex-[0_0_48%] flex-col rounded-lg bg-card p-4 text-center sm:mr-0 sm:mt-4 sm:hidden">
-          <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1] -translate-x-1/2 -translate-y-1/2 text-center text-2xl font-black uppercase text-foreground [text-shadow:0px_2px_22px_rgba(255,255,255,1)]">
-            Enjoy The Journey{" "}
-            <span role="img" aria-label="sunglasses">
-              😎
-            </span>
-          </div>
-        </div>
-        <div
-          className={cn(
-            "flex flex-1 flex-col",
-            isLargeDevice ? "w-[48%] max-w-[48%]" : "w-full max-w-full",
-            "[&_form]:rounded-lg [&_form]:bg-card [&_form]:text-brand [&_form_[data-qa='title']]:text-[1.6rem] [&_form_[data-qa='title']]:text-brand",
-            "sm:w-full sm:max-w-full"
-          )}
+    <div className="animate-gradient-shift flex min-h-screen items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md">
+        <h1 className="font-pressstart text-center text-lg text-white mb-2">
+          Create Account
+        </h1>
+        <p className="font-micro5 text-center text-xs tracking-widest text-white/50 mb-8">
+          Join the Beeper marketplace
+        </p>
+
+        <Formik
+          initialValues={{
+            email: "",
+            password: "",
+            passwordConfirm: "",
+            acceptTerms: false
+          }}
+          validationSchema={SignupSchema}
+          onSubmit={handleSubmit}
         >
-          <SlideInLeft>
-            <FormikWizard
-              steps={Questions}
-              onSubmit={(values) => handleSubmit(values)}
-              render={FormWrapper}
-            />
-          </SlideInLeft>
-        </div>
+          {({ isSubmitting, values }) => (
+            <Form>
+              <div className="glass-panel p-6 sm:p-8 space-y-4">
+                {serverError && (
+                  <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+                    {serverError}
+                  </div>
+                )}
+
+                <Field name="email" component={FormikInput} label="Email" />
+                <Field
+                  name="password"
+                  component={FormikPassword}
+                  label="Password"
+                />
+                <Field
+                  name="passwordConfirm"
+                  component={FormikPassword}
+                  label="Confirm Password"
+                />
+
+                <div className="pt-2">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <Field
+                      type="checkbox"
+                      name="acceptTerms"
+                      className="mt-1 accent-cyan-400"
+                    />
+                    <span className="text-xs text-white/60">
+                      I agree to the{" "}
+                      <Link
+                        href="/terms"
+                        className="text-neon-cyan hover:underline"
+                      >
+                        Terms & Conditions
+                      </Link>{" "}
+                      and{" "}
+                      <Link
+                        href="/privacy"
+                        className="text-neon-cyan hover:underline"
+                      >
+                        Privacy Policy
+                      </Link>
+                    </span>
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !values.acceptTerms}
+                  className="neon-btn w-full text-center text-xs disabled:pointer-events-none disabled:opacity-40"
+                >
+                  {isSubmitting ? "Creating Account..." : "Create Account"}
+                </button>
+              </div>
+
+              <div className="mt-6 text-center">
+                <Link
+                  href="/login"
+                  className="font-title text-xs text-white/40 transition-colors hover:text-neon-cyan"
+                >
+                  Already have an account?
+                </Link>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );

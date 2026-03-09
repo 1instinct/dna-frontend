@@ -22,7 +22,7 @@ export interface TestimonialsProps {
 const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
   const defaultAvatar = "https://ui-avatars.com/api/?size=80&background=random";
   return (
-    <div className="flex min-h-[280px] flex-col items-center justify-center rounded-lg bg-card p-8 text-center shadow-sm">
+    <div className="flex min-h-[280px] flex-col items-center justify-center rounded-lg glass-panel p-8 text-center shadow-sm">
       <img
         src={
           testimonial.avatar ||
@@ -32,10 +32,10 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
         className="mb-4 h-20 w-20 rounded-full object-cover"
       />
       <Rating value={testimonial.rating} readOnly size="sm" />
-      <p className="my-4 text-base italic leading-relaxed text-muted-foreground">
+      <p className="my-4 text-base italic leading-relaxed text-white/50">
         &ldquo;{testimonial.text}&rdquo;
       </p>
-      <p className="mt-2 text-base font-semibold text-foreground">
+      <p className="mt-2 text-base font-semibold text-white">
         {testimonial.name}
       </p>
     </div>
@@ -52,13 +52,13 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     return (
       <div className="mx-auto max-w-[1200px] px-5 py-16 text-center sm:py-10">
         {title && (
-          <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-2xl">
+          <h2 className="mb-4 text-3xl font-bold text-white sm:text-2xl">
             {title}
           </h2>
         )}
         {content && <div dangerouslySetInnerHTML={{ __html: content }} />}
 
-        <div className="mt-10 px-10 sm:px-5 [&_.swiper-button-next]:text-brand [&_.swiper-button-prev]:text-brand">
+        <div className="mt-10 px-10 sm:px-5 [&_.swiper-button-next]:text-neon-cyan [&_.swiper-button-prev]:text-neon-cyan">
           <Swiper
             loop={true}
             spaceBetween={30}

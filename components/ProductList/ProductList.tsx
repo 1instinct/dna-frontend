@@ -1,20 +1,72 @@
 import React from "react";
-import { ProductCard } from "@components/ProductCard/ProductCard";
+import {
+  ProductCard,
+  PlaceholderProductCard,
+  PlaceholderShopProduct
+} from "@components/ProductCard/ProductCard";
+import {
+  MarketplaceCard,
+  MarketplaceProduct
+} from "@components/Browse/MarketplaceCard";
 import { Loading } from "@components/Loading";
+import { BrowseMode } from "@components/Browse/ModeToggle";
 
 interface ProductListProps {
-  products: any;
+  /** Spree API product data */
+  products?: any;
+  /** Static shop product placeholders */
+  placeholderProducts?: PlaceholderShopProduct[];
+  /** Static marketplace product placeholders */
+  marketplaceProducts?: MarketplaceProduct[];
   title?: string;
   layout?: "grid" | "scroll";
   excludeProductId?: string;
+  /** Browse page mode — controls grid layout and card type */
+  mode?: BrowseMode;
 }
 
 export const ProductList: React.FC<ProductListProps> = ({
   products,
+  placeholderProducts,
+  marketplaceProducts,
   title,
   layout = "grid",
-  excludeProductId
+  excludeProductId,
+  mode
 }) => {
+  // ── Marketplace mode ──
+  if (mode === "marketplace" && marketplaceProducts) {
+    return (
+      <section className="w-full pb-5">
+        {title && <h2 className="font-title text-xl text-white">{title}</h2>}
+        <div className="mt-3 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {marketplaceProducts.map((product, i) => (
+            <MarketplaceCard key={product.slug} product={product} index={i} />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  // ── Shop mode with placeholder data ──
+  if (mode === "shop" && placeholderProducts) {
+    return (
+      <section className="w-full pb-5">
+        {title && <h2 className="font-title text-xl text-white">{title}</h2>}
+        <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          {placeholderProducts.map((product, i) => (
+            <PlaceholderProductCard
+              key={product.slug}
+              product={product}
+              index={i}
+            />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  // ── Original Spree-powered product list ──
   if (!products) return <Loading />;
 
   const filteredData = excludeProductId
@@ -25,15 +77,18 @@ export const ProductList: React.FC<ProductListProps> = ({
 
   const isScroll = layout === "scroll";
 
+  // When mode is "shop" (with Spree data), use the shop grid
+  const useShopGrid = mode === "shop";
+
   return (
     <section className="w-full pb-5">
-      {title && (
-        <h2 className="font-title text-xl text-foreground">{title}</h2>
-      )}
+      {title && <h2 className="font-title text-xl text-white">{title}</h2>}
       <div
         className={
           isScroll
             ? "mt-3 flex gap-4 overflow-x-auto pb-4 scrollbar-hide md:grid md:grid-cols-4 md:overflow-visible lg:grid-cols-5"
+            : useShopGrid
+            ? "mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
             : "product-grid-dense"
         }
       >
@@ -88,11 +143,7 @@ export const ProductList: React.FC<ProductListProps> = ({
               key={product.id}
               className={isScroll ? "w-40 flex-shrink-0 md:w-auto" : undefined}
             >
-              <ProductCard
-                item={product}
-                imgSrc={imgSrc}
-                opts={foundOptions}
-              />
+              <ProductCard item={product} imgSrc={imgSrc} opts={foundOptions} />
             </div>
           );
         })}

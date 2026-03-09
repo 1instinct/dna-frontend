@@ -6,7 +6,7 @@ export const QuestionWrapper = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("-mt-5 mb-4 text-brand", className)} {...props}>
+  <div className={cn("mb-4 text-brand", className)} {...props}>
     {children}
   </div>
 );
@@ -19,7 +19,7 @@ export const InputGroupWrapper = ({
 }: React.HTMLAttributes<HTMLDivElement> & { isIntro?: boolean }) => (
   <div
     className={cn(
-      "-mt-20 mx-4 mb-4 text-center",
+      "mt-0 mx-4 mb-4 text-center",
       "[&_[data-qa='title']]:text-[1.6rem] [&_[data-qa='title']]:text-brand",
       "[&_.carousel_.thumbs-wrapper]:hidden",
       "[&_.carousel_.slide]:bg-transparent [&_.carousel_.slide]:pb-5",
@@ -27,8 +27,8 @@ export const InputGroupWrapper = ({
       "[&_.carousel_.control-dots_.dot]:h-[5px] [&_.carousel_.control-dots_.dot]:w-[5px] [&_.carousel_.control-dots_.dot]:bg-muted-foreground [&_.carousel_.control-dots_.dot]:shadow-none [&_.carousel_.control-dots_.dot:focus]:outline-none",
       "[&_.carousel_.control-dots_.dot.selected]:bg-white [&_.carousel_.control-dots_.dot.selected]:shadow-[0_0_0_7px_hsl(var(--brand))]",
       isIntro
-        ? "sm:-mt-20 sm:mx-auto sm:pt-2.5"
-        : "sm:mt-32 sm:mx-auto sm:pt-2.5",
+        ? "sm:mx-auto sm:pt-2"
+        : "sm:mx-auto sm:pt-2",
       className
     )}
     {...props}
@@ -44,7 +44,7 @@ export const InputWrapper = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "mx-6 my-2.5 flex flex-col text-left",
+      "mx-6 my-3 flex flex-col text-left",
       "[&_.MuiFormControl-root.MuiTextField-root]:w-full",
       className
     )}

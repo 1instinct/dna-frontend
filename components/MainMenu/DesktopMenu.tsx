@@ -33,7 +33,7 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
   }, []);
 
   if (menusLoading) {
-    return <div className="text-sm text-muted-foreground">Loading...</div>;
+    return <div className="text-sm text-white/50">Loading...</div>;
   }
 
   return (
@@ -51,11 +51,11 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
           onMouseLeave={handleMouseLeave}
           onClick={() => item.childrens?.length < 1 && router.push(item.url)}
           className={cn(
-            "cursor-pointer border-none bg-transparent px-3 py-2 font-title text-sm font-medium transition-colors",
+            "cursor-pointer border-none bg-transparent px-3 py-2 font-title text-sm font-medium transition-all",
             "outline-none",
             currentKey === item.id
-              ? "text-brand"
-              : "text-foreground hover:text-brand"
+              ? "neon-text-cyan"
+              : "text-[#e0e0e0] hover:text-neon-cyan hover:[text-shadow:0_0_7px_rgba(0,255,255,0.5)]"
           )}
         >
           {item.name}
@@ -71,7 +71,7 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
               onMouseEnter={() => handleMouseEnter(item)}
               onMouseLeave={handleMouseLeave}
               className={cn(
-                "absolute left-0 top-full z-50 flex min-w-[200px] gap-4 rounded-xl border border-border/30 bg-card p-5 shadow-lg transition-all",
+                "glass-panel absolute left-0 top-full z-50 flex min-w-[200px] gap-4 p-5 shadow-lg transition-all",
                 currentKey === item.id
                   ? "visible translate-y-0 opacity-100"
                   : "invisible -translate-y-2 opacity-0"
@@ -81,15 +81,15 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = (props: IDesktopMenuProps) => {
                 <div key={`${childIndex}-column`} className="flex flex-col">
                   <a
                     href={child.url}
-                    className="whitespace-nowrap px-2 py-1.5 font-body text-sm text-foreground transition-colors hover:text-brand"
+                    className="whitespace-nowrap px-2 py-1.5 font-title text-sm text-[#e0e0e0] transition-all hover:text-neon-cyan hover:[text-shadow:0_0_7px_rgba(0,255,255,0.5)]"
                   >
                     {child.name}
                   </a>
                 </div>
               ))}
-              <div className="mx-2 w-px self-stretch bg-border/30" />
+              <div className="mx-2 w-px self-stretch bg-neon-cyan/20" />
               <div className="flex items-center px-2">
-                <h3 className="font-title text-sm font-semibold text-brand">
+                <h3 className="font-title text-sm font-semibold neon-text-cyan">
                   On Sale
                 </h3>
               </div>

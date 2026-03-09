@@ -4,6 +4,7 @@ import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { useRouter } from "next/router";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@lib/utils";
 import { Layout } from "@components/Layout";
 import { ProductList } from "@components/ProductList";
@@ -11,6 +12,87 @@ import { Loading } from "@components/Loading";
 import { useProducts } from "@hooks/useProducts";
 import { fetchProducts } from "@hooks/useProducts";
 import { QueryKeys } from "@hooks/queryKeys";
+import { ModeToggle, BrowseMode } from "./ModeToggle";
+import { MarketplaceProduct } from "./MarketplaceCard";
+
+// ──────────────────────────────────────────────
+// Placeholder product data (fallback when Spree is not seeded)
+// ──────────────────────────────────────────────
+
+export interface ShopProduct {
+  name: string;
+  slug: string;
+  price: string;
+  category: string;
+  preorder?: boolean;
+  colors?: string[];
+}
+
+const SHOP_PRODUCTS: ShopProduct[] = [
+  {
+    name: "Beeper \u03948",
+    slug: "beeper-8",
+    price: "$199.99",
+    category: "Devices",
+    preorder: true,
+    colors: ["#000", "#fff"]
+  },
+  {
+    name: "Carrying Case",
+    slug: "beeper-carrying-case",
+    price: "$29.99",
+    category: "Accessories"
+  },
+  {
+    name: "USB-C Cable",
+    slug: "usb-c-cable",
+    price: "$14.99",
+    category: "Accessories"
+  },
+  {
+    name: "Beeper T-Shirt",
+    slug: "beeper-t-shirt",
+    price: "$34.99",
+    category: "Apparel"
+  }
+];
+
+const MARKETPLACE_PRODUCTS: MarketplaceProduct[] = [
+  {
+    name: "Beeper iOS App",
+    slug: "beeper-ios-app",
+    price: "$4.99",
+    type: "Synths",
+    compatibility: "iOS 16+"
+  },
+  {
+    name: "Starter Sample Pack",
+    slug: "starter-sample-pack",
+    price: "$9.99",
+    type: "Sample Packs",
+    format: "WAV / MIDI",
+    fileCount: "64 samples"
+  },
+  {
+    name: "Analog Dreams Synth",
+    slug: "analog-dreams-synth",
+    price: "$6.99",
+    type: "Synths",
+    compatibility: "iOS 16+"
+  },
+  {
+    name: "Neon Grid Visualizer",
+    slug: "neon-grid-visualizer",
+    price: "$3.99",
+    type: "Visualizers",
+    compatibility: "iOS 16+"
+  }
+];
+
+const SHOP_CATEGORIES = ["Devices", "Accessories", "Apparel"];
+const MARKETPLACE_CATEGORIES = ["Sample Packs", "Synths", "Visualizers"];
+
+// ──────────────────────────────────────────────
 
 interface FiltersState {
   categories: string[];
@@ -22,6 +104,10 @@ interface FiltersState {
 
 export const Browse: React.FC = () => {
   const router = useRouter();
+
+  // Mode from query param — defaults to "shop"
+  const mode: BrowseMode =
+    router.query.mode === "marketplace" ? "marketplace" : "shop";
 
   const [filters, setFilters] = useState<FiltersState>({
     categories:
@@ -35,12 +121,28 @@ export const Browse: React.FC = () => {
   const [tempPriceMin, setTempPriceMin] = useState(filters.priceMin);
   const [tempPriceMax, setTempPriceMax] = useState(filters.priceMax);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [activeChips, setActiveChips] = useState<string[]>([]);
 
+  // Spree API products (may be empty if not seeded)
   const { data: productsData, isLoading } = useProducts(1);
 
-  // Update URL when filters change
+  // Reset filter chips when mode changes
   useEffect(() => {
-    const query: any = {};
+    setActiveChips([]);
+    setFilters((prev) => ({
+      ...prev,
+      categories: [],
+      search: "",
+      priceMin: "",
+      priceMax: ""
+    }));
+    setTempPriceMin("");
+    setTempPriceMax("");
+  }, [mode]);
+
+  // Update URL when filters change (preserve mode param)
+  useEffect(() => {
+    const query: any = { mode };
     if (filters.categories.length > 0)
       query.categories = filters.categories.join(",");
     if (filters.priceMin) query.priceMin = filters.priceMin;
@@ -58,6 +160,18 @@ export const Browse: React.FC = () => {
     );
   }, [filters]);
 
+  // Category chips for the active mode
+  const chipCategories =
+    mode === "shop" ? SHOP_CATEGORIES : MARKETPLACE_CATEGORIES;
+
+  const handleChipToggle = (chip: string) => {
+    setActiveChips((prev) =>
+      prev.includes(chip) ? prev.filter((c) => c !== chip) : [...prev, chip]
+    );
+  };
+
+  // ── Shop mode: merge Spree API data with placeholder fallback ──
+
   const availableCategories = useMemo(() => {
     if (!productsData?.data) return [];
     const categoriesSet = new Set<string>();
@@ -74,7 +188,8 @@ export const Browse: React.FC = () => {
     return Array.from(categoriesSet).sort();
   }, [productsData]);
 
-  const filteredProducts = useMemo(() => {
+  // Shop: Spree-sourced products, filtered
+  const filteredSpreeProducts = useMemo(() => {
     if (!productsData?.data) return [];
     let products = [...productsData.data];
 
@@ -155,6 +270,42 @@ export const Browse: React.FC = () => {
     return products;
   }, [productsData, filters]);
 
+  // Shop placeholder products, filtered by chip + search
+  const filteredShopPlaceholders = useMemo(() => {
+    let items = [...SHOP_PRODUCTS];
+    if (activeChips.length > 0) {
+      items = items.filter((p) => activeChips.includes(p.category));
+    }
+    if (filters.search) {
+      const s = filters.search.toLowerCase();
+      items = items.filter(
+        (p) =>
+          p.name.toLowerCase().includes(s) || p.slug.toLowerCase().includes(s)
+      );
+    }
+    return items;
+  }, [activeChips, filters.search]);
+
+  // Marketplace placeholder products, filtered by chip + search
+  const filteredMarketplacePlaceholders = useMemo(() => {
+    let items = [...MARKETPLACE_PRODUCTS];
+    if (activeChips.length > 0) {
+      items = items.filter((p) => activeChips.includes(p.type));
+    }
+    if (filters.search) {
+      const s = filters.search.toLowerCase();
+      items = items.filter(
+        (p) =>
+          p.name.toLowerCase().includes(s) || p.slug.toLowerCase().includes(s)
+      );
+    }
+    return items;
+  }, [activeChips, filters.search]);
+
+  // Determine if Spree data is available
+  const hasSpreeData =
+    mode === "shop" && productsData?.data && productsData.data.length > 0;
+
   const handleCategoryToggle = (category: string) => {
     setFilters((prev) => ({
       ...prev,
@@ -182,33 +333,28 @@ export const Browse: React.FC = () => {
     });
     setTempPriceMin("");
     setTempPriceMax("");
+    setActiveChips([]);
   };
 
-  const hasActiveFilters =
+  const hasActiveFilters = Boolean(
     filters.categories.length > 0 ||
-    filters.priceMin ||
-    filters.priceMax ||
-    filters.search;
+      filters.priceMin ||
+      filters.priceMax ||
+      filters.search ||
+      activeChips.length > 0
+  );
 
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="flex min-h-[400px] items-center justify-center">
-          <Loading />
-        </div>
-      </Layout>
-    );
-  }
+  // ── Sidebar filters (Spree-powered, for Shop mode with Spree data) ──
 
   const FilterContent = () => (
     <>
       {/* Search */}
-      <div className="mb-6 border-b border-border/30 pb-6">
-        <h3 className="mb-3 font-title text-sm font-semibold text-foreground">
+      <div className="mb-6 border-b border-glass-border pb-6">
+        <h3 className="mb-3 font-title text-sm font-semibold text-white">
           Search
         </h3>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50" />
           <input
             type="text"
             placeholder="Search products..."
@@ -216,28 +362,28 @@ export const Browse: React.FC = () => {
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, search: e.target.value }))
             }
-            className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-3 font-body text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+            className="w-full rounded-lg border border-glass-border bg-surface-deep py-2.5 pl-10 pr-3 font-body text-sm text-white placeholder:text-white/50 transition-colors focus:border-neon-cyan focus:outline-none focus:ring-2 focus:ring-neon-cyan/20"
           />
         </div>
       </div>
 
       {/* Categories */}
       {availableCategories.length > 0 && (
-        <div className="mb-6 border-b border-border/30 pb-6">
-          <h3 className="mb-3 font-title text-sm font-semibold text-foreground">
+        <div className="mb-6 border-b border-glass-border pb-6">
+          <h3 className="mb-3 font-title text-sm font-semibold text-white">
             Categories
           </h3>
           <div className="space-y-2.5">
             {availableCategories.map((category) => (
               <label
                 key={category}
-                className="flex cursor-pointer select-none items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                className="flex cursor-pointer select-none items-center gap-2.5 text-sm text-white/50 transition-colors hover:text-white"
               >
                 <input
                   type="checkbox"
                   checked={filters.categories.includes(category)}
                   onChange={() => handleCategoryToggle(category)}
-                  className="h-4 w-4 cursor-pointer rounded border-border accent-brand"
+                  className="h-4 w-4 cursor-pointer rounded border-glass-border accent-neon-cyan"
                 />
                 {category}
               </label>
@@ -248,7 +394,7 @@ export const Browse: React.FC = () => {
 
       {/* Price Range */}
       <div className="mb-6">
-        <h3 className="mb-3 font-title text-sm font-semibold text-foreground">
+        <h3 className="mb-3 font-title text-sm font-semibold text-white">
           Price Range
         </h3>
         <div className="mb-3 flex items-center gap-2">
@@ -259,9 +405,9 @@ export const Browse: React.FC = () => {
             onChange={(e) => setTempPriceMin(e.target.value)}
             min="0"
             step="0.01"
-            className="w-full flex-1 rounded-lg border border-border bg-background px-3 py-2 font-body text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className="w-full flex-1 rounded-lg border border-glass-border bg-surface-deep px-3 py-2 font-body text-sm text-white placeholder:text-white/50 transition-colors focus:border-neon-cyan focus:outline-none focus:ring-2 focus:ring-neon-cyan/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
-          <span className="text-muted-foreground">-</span>
+          <span className="text-white/50">-</span>
           <input
             type="number"
             placeholder="Max"
@@ -269,12 +415,12 @@ export const Browse: React.FC = () => {
             onChange={(e) => setTempPriceMax(e.target.value)}
             min="0"
             step="0.01"
-            className="w-full flex-1 rounded-lg border border-border bg-background px-3 py-2 font-body text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className="w-full flex-1 rounded-lg border border-glass-border bg-surface-deep px-3 py-2 font-body text-sm text-white placeholder:text-white/50 transition-colors focus:border-neon-cyan focus:outline-none focus:ring-2 focus:ring-neon-cyan/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
         </div>
         <button
           onClick={handleApplyPrice}
-          className="w-full rounded-lg bg-brand px-4 py-2 font-title text-sm font-semibold text-white transition-all hover:bg-brand/90 hover:-translate-y-px active:translate-y-0"
+          className="w-full rounded-lg bg-neon-cyan px-4 py-2 font-title text-sm font-semibold text-black transition-all hover:bg-neon-cyan/90 hover:-translate-y-px active:translate-y-0"
         >
           Apply
         </button>
@@ -284,7 +430,7 @@ export const Browse: React.FC = () => {
       {hasActiveFilters && (
         <button
           onClick={handleClearFilters}
-          className="mt-2 w-full rounded-lg border border-brand bg-transparent px-4 py-2.5 font-title text-sm font-semibold text-brand transition-all hover:bg-brand hover:text-white hover:-translate-y-px active:translate-y-0"
+          className="mt-2 w-full rounded-lg border border-neon-cyan bg-transparent px-4 py-2.5 font-title text-sm font-semibold text-neon-cyan transition-all hover:bg-neon-cyan hover:text-black hover:-translate-y-px active:translate-y-0"
         >
           Clear All Filters
         </button>
@@ -292,105 +438,253 @@ export const Browse: React.FC = () => {
     </>
   );
 
+  // ── Determine total product count ──
+  const productCount =
+    mode === "shop"
+      ? hasSpreeData
+        ? filteredSpreeProducts.length
+        : filteredShopPlaceholders.length
+      : filteredMarketplacePlaceholders.length;
+
   return (
     <Layout>
-      <div className="min-h-screen w-full bg-background px-5 py-10 sm:px-5 md:px-10">
-        <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-8 md:grid-cols-[280px_1fr]">
-          {/* Mobile Filter Toggle */}
-          <button
-            onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 font-title text-sm text-foreground md:hidden"
+      <div className="min-h-screen w-full bg-surface-deep px-5 py-10 sm:px-5 md:px-10">
+        <div className="mx-auto max-w-[1400px]">
+          {/* Page header */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="mb-8 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between"
           >
-            <SlidersHorizontal className="h-4 w-4" />
-            Filters
-            {hasActiveFilters && (
-              <span className="ml-auto rounded-full bg-brand px-2 py-0.5 text-xs text-white">
-                {filters.categories.length +
-                  (filters.priceMin ? 1 : 0) +
-                  (filters.priceMax ? 1 : 0) +
-                  (filters.search ? 1 : 0)}
-              </span>
-            )}
-          </button>
+            <h1
+              className={cn(
+                "font-pressstart text-2xl sm:text-3xl",
+                mode === "shop" ? "neon-text-cyan" : "neon-text-magenta"
+              )}
+            >
+              {mode === "shop" ? "SHOP" : "MARKETPLACE"}
+            </h1>
 
-          {/* Filter Sidebar - Desktop */}
-          <aside className="sticky top-24 hidden h-fit rounded-xl border border-border/30 bg-card p-6 shadow-sm md:block">
-            <FilterContent />
-          </aside>
+            <ModeToggle mode={mode} />
+          </motion.div>
 
-          {/* Filter Sidebar - Mobile */}
-          {showMobileFilters && (
-            <div className="rounded-xl border border-border/30 bg-card p-6 shadow-sm md:hidden">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-title text-base font-semibold">Filters</h2>
-                <button onClick={() => setShowMobileFilters(false)}>
-                  <X className="h-5 w-5 text-muted-foreground" />
-                </button>
-              </div>
-              <FilterContent />
-            </div>
-          )}
-
-          {/* Products Area */}
-          <main className="min-h-[400px]">
-            {/* Sort Bar */}
-            <div className="mb-6 flex flex-col items-start justify-between gap-3 rounded-xl border border-border/30 bg-card px-5 py-4 shadow-sm sm:flex-row sm:items-center">
-              <span className="font-title text-sm font-semibold text-foreground">
-                {filteredProducts.length}{" "}
-                {filteredProducts.length === 1 ? "product" : "products"}
-              </span>
-              <div className="flex items-center gap-2.5">
-                <span className="font-body text-sm text-muted-foreground">
-                  Sort by:
-                </span>
-                <select
-                  value={filters.sort}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, sort: e.target.value }))
-                  }
-                  className="cursor-pointer rounded-lg border border-border bg-background px-3 py-2 pr-8 font-body text-sm text-foreground transition-colors hover:border-brand focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+          {/* Filter chips + search bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+            className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+          >
+            {/* Filter chips */}
+            <div className="flex flex-wrap gap-2">
+              {chipCategories.map((chip) => (
+                <button
+                  key={chip}
+                  onClick={() => handleChipToggle(chip)}
+                  className={cn(
+                    "rounded-lg px-4 py-2 font-title text-xs uppercase tracking-wider transition-all duration-200",
+                    activeChips.includes(chip)
+                      ? mode === "shop"
+                        ? "bg-neon-cyan/20 border border-neon-cyan text-neon-cyan"
+                        : "bg-neon-magenta/20 border border-neon-magenta text-neon-magenta"
+                      : "glass-panel text-white/50 hover:text-white/70 hover:bg-white/[0.08]"
+                  )}
                 >
-                  <option value="name_asc">Name (A-Z)</option>
-                  <option value="name_desc">Name (Z-A)</option>
-                  <option value="price_asc">Price (Low to High)</option>
-                  <option value="price_desc">Price (High to Low)</option>
-                  <option value="newest">Newest First</option>
-                </select>
-              </div>
+                  {chip}
+                </button>
+              ))}
             </div>
 
-            {filteredProducts.length > 0 ? (
-              <ProductList
-                products={{
-                  data: filteredProducts,
-                  included: productsData?.included
-                }}
-                title=""
+            {/* Search bar */}
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={filters.search}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, search: e.target.value }))
+                }
+                className="neon-focus w-full rounded-lg border border-glass-border bg-surface-deep py-2.5 pl-10 pr-3 font-title text-sm text-white placeholder:text-white/30 transition-all"
               />
-            ) : (
-              <div className="flex flex-col items-center justify-center rounded-xl bg-card px-5 py-20 text-center">
-                <h2 className="mb-3 font-title text-lg text-foreground">
-                  No products found
-                </h2>
-                <p className="mb-6 font-body text-sm text-muted-foreground">
-                  Try adjusting your filters or search terms
-                </p>
-                {hasActiveFilters && (
-                  <button
-                    onClick={handleClearFilters}
-                    className="rounded-lg border border-brand bg-transparent px-6 py-2.5 font-title text-sm font-semibold text-brand transition-all hover:bg-brand hover:text-white"
-                  >
-                    Clear All Filters
-                  </button>
-                )}
-              </div>
+            </div>
+          </motion.div>
+
+          {/* Main content area */}
+          <div
+            className={cn(
+              "grid gap-8",
+              // Only show sidebar when in shop mode with Spree data
+              hasSpreeData
+                ? "grid-cols-1 md:grid-cols-[280px_1fr]"
+                : "grid-cols-1"
             )}
-          </main>
+          >
+            {/* Filter Sidebar — only for shop mode w/ Spree data */}
+            {hasSpreeData && (
+              <>
+                {/* Mobile Filter Toggle */}
+                <button
+                  onClick={() => setShowMobileFilters(!showMobileFilters)}
+                  className="flex items-center gap-2 rounded-lg border border-glass-border glass-panel px-4 py-3 font-title text-sm text-white md:hidden"
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                  Filters
+                  {hasActiveFilters && (
+                    <span className="ml-auto rounded-full bg-neon-cyan px-2 py-0.5 text-xs text-black">
+                      {filters.categories.length +
+                        (filters.priceMin ? 1 : 0) +
+                        (filters.priceMax ? 1 : 0) +
+                        (filters.search ? 1 : 0)}
+                    </span>
+                  )}
+                </button>
+
+                {/* Desktop sidebar */}
+                <aside className="sticky top-24 hidden h-fit rounded-xl border border-glass-border glass-panel p-6 shadow-sm md:block">
+                  <FilterContent />
+                </aside>
+
+                {/* Mobile sidebar */}
+                {showMobileFilters && (
+                  <div className="rounded-xl border border-glass-border glass-panel p-6 shadow-sm md:hidden">
+                    <div className="mb-4 flex items-center justify-between">
+                      <h2 className="font-title text-base font-semibold">
+                        Filters
+                      </h2>
+                      <button onClick={() => setShowMobileFilters(false)}>
+                        <X className="h-5 w-5 text-white/50" />
+                      </button>
+                    </div>
+                    <FilterContent />
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Products area */}
+            <main className="min-h-[400px]">
+              {/* Sort bar */}
+              <div className="mb-6 flex flex-col items-start justify-between gap-3 glass-panel px-5 py-4 sm:flex-row sm:items-center">
+                <span className="font-title text-sm font-semibold text-white">
+                  {productCount} {productCount === 1 ? "product" : "products"}
+                </span>
+                <div className="flex items-center gap-2.5">
+                  <span className="font-body text-sm text-white/50">
+                    Sort by:
+                  </span>
+                  <select
+                    value={filters.sort}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        sort: e.target.value
+                      }))
+                    }
+                    className="cursor-pointer rounded-lg border border-glass-border bg-surface-deep px-3 py-2 pr-8 font-body text-sm text-white transition-colors hover:border-neon-cyan/40 focus:border-neon-cyan focus:outline-none focus:ring-2 focus:ring-neon-cyan/20"
+                  >
+                    <option value="name_asc">Name (A-Z)</option>
+                    <option value="name_desc">Name (Z-A)</option>
+                    <option value="price_asc">Price (Low to High)</option>
+                    <option value="price_desc">Price (High to Low)</option>
+                    <option value="newest">Newest First</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Loading state */}
+              {isLoading && mode === "shop" && (
+                <div className="flex min-h-[300px] items-center justify-center">
+                  <Loading />
+                </div>
+              )}
+
+              {/* Product grid */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={mode}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                >
+                  {mode === "shop" ? (
+                    // ── Shop mode ──
+                    hasSpreeData ? (
+                      filteredSpreeProducts.length > 0 ? (
+                        <ProductList
+                          products={{
+                            data: filteredSpreeProducts,
+                            included: productsData?.included
+                          }}
+                          title=""
+                          mode="shop"
+                        />
+                      ) : (
+                        <EmptyState
+                          hasActiveFilters={hasActiveFilters}
+                          onClear={handleClearFilters}
+                        />
+                      )
+                    ) : !isLoading ? (
+                      filteredShopPlaceholders.length > 0 ? (
+                        <ProductList
+                          placeholderProducts={filteredShopPlaceholders}
+                          title=""
+                          mode="shop"
+                        />
+                      ) : (
+                        <EmptyState
+                          hasActiveFilters={hasActiveFilters}
+                          onClear={handleClearFilters}
+                        />
+                      )
+                    ) : null
+                  ) : // ── Marketplace mode ──
+                  filteredMarketplacePlaceholders.length > 0 ? (
+                    <ProductList
+                      marketplaceProducts={filteredMarketplacePlaceholders}
+                      title=""
+                      mode="marketplace"
+                    />
+                  ) : (
+                    <EmptyState
+                      hasActiveFilters={hasActiveFilters}
+                      onClear={handleClearFilters}
+                    />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </main>
+          </div>
         </div>
       </div>
     </Layout>
   );
 };
+
+// ── Empty state sub-component ──
+
+const EmptyState: React.FC<{
+  hasActiveFilters: boolean;
+  onClear: () => void;
+}> = ({ hasActiveFilters, onClear }) => (
+  <div className="glass-panel flex flex-col items-center justify-center px-5 py-20 text-center">
+    <h2 className="mb-3 font-title text-lg text-white">No products found</h2>
+    <p className="mb-6 font-body text-sm text-white/50">
+      Try adjusting your filters or search terms
+    </p>
+    {hasActiveFilters && (
+      <button
+        onClick={onClear}
+        className="rounded-lg border border-neon-cyan bg-transparent px-6 py-2.5 font-title text-sm font-semibold text-neon-cyan transition-all hover:bg-neon-cyan hover:text-black"
+      >
+        Clear All Filters
+      </button>
+    )}
+  </div>
+);
 
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient();

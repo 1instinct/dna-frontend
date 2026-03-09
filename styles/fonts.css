@@ -67,3 +67,76 @@
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+  font-family: "PressStart2P";
+  src: url("../public/fonts/PressStart2P-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "MicroTechnic";
+  src: url("../public/fonts/beeper/Micro Technic Extended Bold.ttf")
+    format("truetype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DS-Digital";
+  src: url("../public/fonts/beeper/DS-DIGITAL-BOLD.TTF") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DS-Digital";
+  src: url("../public/fonts/beeper/DS-DIGITAL-BOLDITALIC.TTF")
+    format("truetype");
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DS-Digital";
+  src: url("../public/fonts/beeper/DS-DIGITAL-ITALIC.TTF") format("truetype");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Digital7";
+  src: url("../public/fonts/beeper/DIGITAL-7.TTF") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Digital7Mono";
+  src: url("../public/fonts/beeper/DIGITAL-7MONO.TTF") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Michroma";
+  src: url("../public/fonts/beeper/Michroma-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Micro5";
+  src: url("../public/fonts/beeper/Micro5-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Micro5Charted";
+  src: url("../public/fonts/beeper/Micro5Charted-Regular.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

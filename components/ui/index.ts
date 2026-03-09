@@ -134,3 +134,5 @@ export { Particles } from "./particles";
 // Shared components
 export { LottieAnimation } from "./lottie-animation";
 export { EmptyState } from "./empty-state";
+export { MicroTechnicInput } from "./micro-technic-input";
+export type { MicroTechnicInputProps } from "./micro-technic-input";

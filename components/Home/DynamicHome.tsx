@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 import { useHomepage, HomepageSection } from "@hooks/useHomepage";
 import { Layout } from "../Layout";
 import { Loading } from "../Loading";
@@ -6,7 +6,7 @@ import Hero from "./Hero";
 import Products from "./Products";
 import { StreamList } from "../StreamList";
 import { VideoJS } from "../VideoJS";
-import Featured from "./Featured";
+import Featured, { FeaturedProduct } from "./Featured";
 import Banner from "./Banner";
 import { Features } from "./Features";
 import { Testimonials } from "./Testimonials";
@@ -14,6 +14,9 @@ import { Newsletter } from "./Newsletter";
 import { CallToAction } from "./CallToAction";
 import { useStreams } from "@hooks/useStreams";
 import { useProductFeed, FeedType } from "@hooks/useProductFeed";
+import { LogoBlob } from "../LogoBlob/LogoBlob";
+import { ShopMarketplaceSplit } from "./ShopMarketplaceSplit";
+import { SpecsGrid } from "./SpecsGrid";
 
 // Utility to parse settings (handles Ruby hash string or object)
 function parseSettings(settings: any): any {
@@ -31,12 +34,23 @@ function parseSettings(settings: any): any {
   return settings || {};
 }
 
-// Section renderers for each type
+// Section renderers for each type (used for CMS-driven sections)
 const SectionRenderers: Record<
   string,
   React.FC<{ section: HomepageSection; additionalData?: any }>
 > = {
-  hero: () => <Hero />,
+  hero: ({ section }) => {
+    const settings = parseSettings(section.settings);
+    return (
+      <Hero
+        title={section.title || undefined}
+        content={section.content || undefined}
+        buttonText={settings.button_text}
+        buttonLink={settings.button_link}
+        backgroundImage={settings.background_image}
+      />
+    );
+  },
 
   live_streams: ({ section }) => {
     const { data: streamsData } = useStreams(1);
@@ -76,9 +90,7 @@ const SectionRenderers: Record<
   content: ({ section }) => (
     <div className="px-10 py-5">
       {section.title && (
-        <h2 className="mb-4 text-2xl font-bold text-foreground">
-          {section.title}
-        </h2>
+        <h2 className="mb-4 text-2xl font-bold text-white">{section.title}</h2>
       )}
       <div dangerouslySetInnerHTML={{ __html: section.content }} />
     </div>
@@ -119,7 +131,7 @@ const SectionRenderers: Record<
     return (
       <div className="py-10">
         {section.title && (
-          <h2 className="mb-4 text-2xl font-bold text-foreground">
+          <h2 className="mb-4 text-2xl font-bold text-white">
             {section.title}
           </h2>
         )}
@@ -179,8 +191,48 @@ const SectionRenderers: Record<
   }
 };
 
-export const DynamicHome = () => {
+interface DynamicHomeProps {
+  initialProducts?: any;
+}
+
+export const DynamicHome = ({ initialProducts }: DynamicHomeProps = {}) => {
   const { data: homepageData, isLoading, error } = useHomepage();
+  const { data: feedData } = useProductFeed("latest", { per_page: 8 }, true, initialProducts);
+
+  // Transform Spree product feed into FeaturedProduct[] for the Featured strip
+  const featuredProducts = useMemo<FeaturedProduct[] | undefined>(() => {
+    if (!feedData?.data || feedData.data.length === 0) return undefined;
+    const allImages =
+      feedData.included?.filter((e: any) => e.type === "image") || [];
+    const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL || "";
+    return feedData.data.map((item: any) => {
+      const imgId = item.relationships?.images?.data?.[0]?.id;
+      const imgRecord = imgId
+        ? allImages.find((e: any) => e.id === imgId)
+        : null;
+      const imgUrl =
+        imgRecord?.attributes?.styles?.[4]?.url ||
+        imgRecord?.attributes?.styles?.[0]?.url;
+      return {
+        name: item.attributes.name,
+        price: item.attributes.display_price || `$${item.attributes.price}`,
+        href: `/${item.attributes.slug}`,
+        image: imgUrl ? `${apiUrl}${imgUrl}` : undefined
+      };
+    });
+  }, [feedData]);
+
+  // Ensure video is muted for autoplay (iOS requires muted attribute set via JS)
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    video.play().catch(() => {});
+  }, []);
 
   if (isLoading) {
     return (
@@ -192,47 +244,78 @@ export const DynamicHome = () => {
 
   if (error) {
     console.error("Homepage error:", error);
-    return (
-      <Layout>
-        <div className="px-5 py-24 text-center">
-          <h2 className="text-2xl font-bold text-foreground">
-            Unable to load page
-          </h2>
-          <p className="mt-2 text-muted-foreground">
-            Please try again later.
-          </p>
-        </div>
-      </Layout>
-    );
   }
 
-  const sections =
+  // CMS-driven sections (if any)
+  const cmsSections =
     homepageData?.homepage_sections?.filter((s) => s.is_visible) || [];
 
-  return (
-    <Layout>
-      <div className="space-y-8">
-        {sections.map((section) => {
-          const Renderer = SectionRenderers[section.section_type];
-          if (!Renderer) {
-            console.warn(
-              `No renderer found for section type: ${section.section_type}`
-            );
-            return null;
-          }
-          return (
-            <div key={section.id} data-section-id={section.id}>
-              <Renderer section={section} />
-            </div>
-          );
-        })}
+  // Fixed background — rendered outside <main> scroll container to avoid
+  // cross-browser issues with position:fixed inside overflow:auto
+  const videoBackground = (
+    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" style={{ willChange: "transform" }}>
+      <video
+        ref={videoRef}
+        src="/device-rotate.mp4"
+        muted
+        autoPlay
+        loop
+        playsInline
+        preload="auto"
+        className="absolute top-1/2 left-1/2 min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover opacity-25"
+      />
+      <div
+        className="absolute inset-0 animate-gradient-sweep"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(124,58,237,0.3) 0%, rgba(255,0,138,0.2) 33%, rgba(0,255,255,0.15) 66%, rgba(124,58,237,0.3) 100%)",
+          backgroundSize: "300% 300%",
+          mixBlendMode: "overlay"
+        }}
+      />
+    </div>
+  );
 
-        {sections.length === 0 && (
-          <div className="px-5 py-24 text-center">
-            <h2 className="text-2xl font-bold text-foreground">Welcome</h2>
-            <p className="mt-2 text-muted-foreground">
-              Content coming soon...
-            </p>
+  return (
+    <Layout background={videoBackground}>
+      <div className="relative z-10">
+        {/* 0. LogoBlob Hero */}
+        <section className="flex items-center justify-center py-16 md:py-20" style={{ contain: "layout style paint" }}>
+          <LogoBlob hasBlob isAnimated={true} showTagline={true} />
+        </section>
+
+        {/* 1. Hero Section -- Beeper Delta 8 */}
+        <Hero />
+
+        {/* 2. Featured Products Strip */}
+        <Featured products={featuredProducts} />
+
+        {/* 3. Shop / Marketplace Split */}
+        <ShopMarketplaceSplit />
+
+        {/* 4. Specs Grid */}
+        <SpecsGrid />
+
+        {/* 5. Newsletter CTA */}
+        <Newsletter />
+
+        {/* CMS-driven sections (from Spree) rendered below */}
+        {cmsSections.length > 0 && (
+          <div className="space-y-8 py-8">
+            {cmsSections.map((section) => {
+              const Renderer = SectionRenderers[section.section_type];
+              if (!Renderer) {
+                console.warn(
+                  `No renderer found for section type: ${section.section_type}`
+                );
+                return null;
+              }
+              return (
+                <div key={section.id} data-section-id={section.id}>
+                  <Renderer section={section} />
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

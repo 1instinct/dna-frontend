@@ -32,7 +32,7 @@ const Products: React.FC<ProductsProps> = ({ products, title }) => {
         <h2 className="heading-lg">{title}</h2>
         <Link
           href="/browse"
-          className="text-sm text-brand hover:underline transition-colors"
+          className="text-sm text-neon-cyan hover:underline transition-colors"
         >
           View All
         </Link>

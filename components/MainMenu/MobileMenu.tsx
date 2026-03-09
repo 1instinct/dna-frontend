@@ -77,17 +77,20 @@ export const MobileMenu = ({
               <button
                 onClick={() => handleItemClick(item, hasChildren, pathSlug)}
                 className={cn(
-                  "flex w-full items-center justify-between border-none bg-transparent py-2.5 text-left font-title text-base text-foreground transition-colors hover:text-brand",
-                  "cursor-pointer outline-none"
+                  "flex w-full items-center justify-between border-none bg-transparent py-2.5 text-left font-title transition-colors hover:text-neon-cyan",
+                  "cursor-pointer outline-none",
+                  level === 0 && "text-base text-white",
+                  level === 1 && "text-sm text-white/70",
+                  level >= 2 && "text-sm text-white/50"
                 )}
                 style={{ paddingLeft: `${level * 20}px` }}
               >
                 <span>{item.name}</span>
                 {hasChildren &&
                   (isExpanded ? (
-                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                    <ChevronUp className="h-4 w-4 text-white/50" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    <ChevronDown className="h-4 w-4 text-white/50" />
                   ))}
               </button>
               {hasChildren && isExpanded && (
@@ -106,28 +109,41 @@ export const MobileMenu = ({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <button
-          className="fixed left-4 top-4 z-[60] flex h-9 w-9 items-center justify-center rounded-md border-none bg-transparent text-foreground outline-none sm:hidden"
+          className={cn(
+            "fixed left-3 top-[42px] z-[60] flex h-9 w-9 items-center justify-center rounded-md border-none bg-transparent text-white outline-none transition-opacity sm:hidden",
+            open && "pointer-events-none opacity-0"
+          )}
           aria-label="Open menu"
         >
           <Menu className="h-6 w-6" />
         </button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[66vw] max-w-[320px] p-0">
-        <SheetHeader className="border-b border-border/30 px-6 py-4">
-          <SheetTitle className="font-title text-lg">Menu</SheetTitle>
+      <SheetContent
+        side="left"
+        className="w-[66vw] max-w-[320px] p-0 border-r border-glass-border"
+        style={{
+          background: "rgba(10, 0, 32, 0.95)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)"
+        }}
+      >
+        <SheetHeader className="border-b border-neon-cyan/20 px-6 py-4">
+          <SheetTitle className="font-pressstart text-sm text-neon-cyan">
+            Menu
+          </SheetTitle>
         </SheetHeader>
         <ScrollArea className="h-[calc(100vh-60px)]">
           <div className="flex flex-col px-6 py-4">
             {menuItems && renderMenuItems(menuItems, "", 0)}
 
-            <hr className="my-4 border-border/30" />
+            <hr className="my-4 border-neon-cyan/20" />
 
             <button
               onClick={() => {
                 setOpen(false);
                 router.push("/login");
               }}
-              className="w-full cursor-pointer border-none bg-transparent py-2.5 text-left font-title text-base text-foreground transition-colors hover:text-brand outline-none"
+              className="w-full cursor-pointer border-none bg-transparent py-2.5 text-left font-title text-base text-white transition-colors hover:text-neon-cyan outline-none"
             >
               Login
             </button>
@@ -136,7 +152,7 @@ export const MobileMenu = ({
                 setOpen(false);
                 router.push("/signup");
               }}
-              className="w-full cursor-pointer border-none bg-transparent py-2.5 text-left font-title text-base text-foreground transition-colors hover:text-brand outline-none"
+              className="w-full cursor-pointer border-none bg-transparent py-2.5 text-left font-title text-base text-white transition-colors hover:text-neon-cyan outline-none"
             >
               Sign Up
             </button>
@@ -145,18 +161,18 @@ export const MobileMenu = ({
               <SocialLinks />
             </div>
 
-            <div className="mt-8 font-title text-xs text-gray-light">
+            <div className="mt-8 font-title text-xs text-white/40">
               <div>
                 <a
                   href="/privacy"
-                  className="text-gray-medium hover:text-brand transition-colors"
+                  className="text-white/50 hover:text-neon-cyan transition-colors"
                 >
                   Privacy Policy
                 </a>
                 {" - "}
                 <a
                   href="/terms"
-                  className="text-gray-medium hover:text-brand transition-colors"
+                  className="text-white/50 hover:text-neon-cyan transition-colors"
                 >
                   Terms &amp; Conditions
                 </a>
