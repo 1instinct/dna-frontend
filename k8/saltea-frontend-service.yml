@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: saltea-frontend
+  namespace: default
+spec:
+  selector:
+    app: saltea-frontend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 3000
+  type: ClusterIP
