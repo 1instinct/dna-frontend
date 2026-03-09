@@ -9,37 +9,40 @@ Saltea is a bottled tea brand (est. 2016) currently running a Meteor+React marke
 
 **Source repo:** `Saltea/saltea-app` — Meteor+React, 12 components, LESS styling, no cart/checkout.
 
-## Approach: Separate Deployment
+## Approach: Separate Deployment with Isolated Admin
 
-Deploy a separate instance of dna-frontend with Saltea-specific environment variables, pointing to a Saltea store within the shared Spree instance.
+Deploy a separate instance of dna-frontend with Saltea-specific environment variables, plus a separate saltea-admin deployment (fork of dna-admin) for Saltea-specific seeds and admin UI. Both admin apps share the same PostgreSQL database.
 
 ### Architecture
 
 ```
-┌─────────────────────────────────────────────────┐
-│              On-Prem K8s Cluster                │
-│                                                 │
-│  ┌──────────────┐       ┌──────────────────┐    │
-│  │ dna-frontend │       │    dna-admin     │    │
-│  │ (Saltea env) │──API──│  (Spree + Saltea │    │
-│  │  saltea.co   │       │    Store)        │    │
-│  └──────────────┘       └──────────────────┘    │
-│         │                        │              │
-│  ┌──────────────┐       ┌──────────────────┐    │
-│  │ dna-frontend │──API──│  (Spree + DNA    │    │
-│  │  (DNA env)   │       │    Store)        │    │
-│  └──────────────┘       └──────────────────┘    │
-│         │                                       │
-│  ┌──────────────┐                               │
-│  │ NGINX Ingress│ ← saltea.co / instinct.is     │
-│  └──────────────┘                               │
-└─────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│                 On-Prem K8s Cluster                  │
+│                                                      │
+│  ┌───────────────┐      ┌──────────────────────┐     │
+│  │saltea-frontend│      │    saltea-admin       │    │
+│  │(dna-frontend  │      │  (Saltea/saltea-admin │    │
+│  │ image + env)  │──API─│   fork)               │    │
+│  │ saltea.co     │      │ saltea-admin.         │    │
+│  └───────────────┘      │  instinct.is          │    │
+│                         └──────────┬────────────┘    │
+│  ┌───────────────┐                 │                 │
+│  │ dna-frontend  │         ┌───────▼────────┐        │
+│  │ instinct.is   │──┐      │ PostgreSQL 13  │        │
+│  └───────────────┘  │      │ (db-entrypoint)│        │
+│                     │      │  SHARED DB     │        │
+│  ┌───────────────┐  │      └───────▲────────┘        │
+│  │  dna-admin    │──┘              │                 │
+│  │ dna-admin.    │─────────────────┘                 │
+│  │ instinct.is   │                                   │
+│  └───────────────┘                                   │
+└──────────────────────────────────────────────────────┘
 ```
 
-- **Shared codebase** — same dna-frontend Docker image, different env vars
-- **Shared dna-admin** — Spree multi-store; Saltea is a separate Store in the same Spree instance
-- **Separate K8s deployments** — `saltea-frontend` deployment + service + ingress
-- **Shared database** — one Spree DB, two stores
+- **Shared frontend codebase** — same dna-frontend Docker image, different env vars
+- **Separate admin repos** — `Saltea/saltea-admin` fork keeps Saltea code out of dna-admin
+- **Shared database** — both admin apps connect to the same `db-entrypoint:5432` PostgreSQL instance
+- **Separate K8s deployments** — saltea-frontend + saltea-admin, each with own service + ingress
 
 ## Brand Theme (Fresh Redesign)
 
@@ -47,17 +50,18 @@ Deploy a separate instance of dna-frontend with Saltea-specific environment vari
 
 Modernized from original Saltea site (`@brand: #916A70`):
 
-| Token | Value | Notes |
-|-------|-------|-------|
-| `--primary` | `#916A70` | Burgundy — earthy, tea-appropriate |
-| `--secondary` | `#F0E8E5` | Warm white (lightened from `#E6DDDE`) |
-| `--accent` | TBD sage/teal | Natural, tea-aligned complementary |
-| `--background` | `#FAFAF8` | Clean warm white |
-| `--foreground` | `#2D2D2D` | Soft dark |
+| Token          | Value         | Notes                                 |
+| -------------- | ------------- | ------------------------------------- |
+| `--primary`    | `#916A70`     | Burgundy — earthy, tea-appropriate    |
+| `--secondary`  | `#F0E8E5`     | Warm white (lightened from `#E6DDDE`) |
+| `--accent`     | TBD sage/teal | Natural, tea-aligned complementary    |
+| `--background` | `#FAFAF8`     | Clean warm white                      |
+| `--foreground` | `#2D2D2D`     | Soft dark                             |
 
 ### Typography
 
 Use fonts already in dna-frontend or select a refined pairing:
+
 - Display/headings: one serif or distinctive sans
 - Body: clean sans-serif (Anybody or Roboto from existing set)
 
@@ -77,27 +81,36 @@ Use fonts already in dna-frontend or select a refined pairing:
 
 ## Pages
 
-| Page | Old Source | DNA Route | Work Required |
-|------|-----------|-----------|---------------|
-| Home (hero + products) | `home.jsx` | `/` | Theme + content |
-| Product detail | new | `/[productSlug]` | Exists — theme only |
-| Browse/shop | new | `/browse` | Exists — theme only |
-| Cart | new | `/cart` | Exists — theme only |
-| Checkout | new | `/checkout` | Exists — theme only |
-| About/story | `what-is-this.jsx` | `/about` | Content migration |
-| Contact | `contact.jsx` | New page or env config | Build or configure |
-| Legal | `legal.jsx` | `/terms` | Content migration |
+| Page                   | Old Source         | DNA Route              | Work Required       |
+| ---------------------- | ------------------ | ---------------------- | ------------------- |
+| Home (hero + products) | `home.jsx`         | `/`                    | Theme + content     |
+| Product detail         | new                | `/[productSlug]`       | Exists — theme only |
+| Browse/shop            | new                | `/browse`              | Exists — theme only |
+| Cart                   | new                | `/cart`                | Exists — theme only |
+| Checkout               | new                | `/checkout`            | Exists — theme only |
+| About/story            | `what-is-this.jsx` | `/about`               | Content migration   |
+| Contact                | `contact.jsx`      | New page or env config | Build or configure  |
+| Legal                  | `legal.jsx`        | `/terms`               | Content migration   |
 
 Most pages already exist in dna-frontend. Primary work is theming via CSS variables and Spree store setup.
 
 ## K8s Deployment
 
-### New Manifests
+### saltea-frontend Manifests (in dna-frontend/k8/)
 
-- `saltea-frontend-deployment.yml`
-- `saltea-frontend-service.yml`
-- `saltea-frontend-ingress.yml`
-- `saltea-frontend-secrets.yml`
+- `saltea-frontend-deployment.yml` — uses dna-frontend:latest image
+- `saltea-frontend-service.yml` — ClusterIP 8080 → 3000
+- `saltea-frontend-ingress.yml` — saltea.co + www.saltea.co
+- `saltea-frontend-secrets.example.yml` — env var template
+- `saltea-build-deploy.sh` — deploy script
+
+### saltea-admin Manifests (in Saltea/saltea-admin/k8/)
+
+- `saltea-admin-deployment.yml` — uses saltea-admin:latest image
+- `saltea-admin-service.yml` — ClusterIP 8080 → 8080
+- `saltea-admin-ingress.yml` — saltea-admin.instinct.is
+- `saltea-admin-secrets.example.yml` — shares DB creds with dna-admin
+- `build-deploy.sh` — build image + deploy script
 
 ### Environment Variables
 
@@ -124,13 +137,27 @@ NEXT_PUBLIC_INSTAGRAM_SLUG=saltea.co
 
 ## Spree Store Setup
 
-1. Create "Saltea" store in Spree admin
-2. Add 3 products with variants (flavor, size)
-3. Upload product images (from Cloudinary)
-4. Configure shipping zones and rates
-5. Configure tax settings
-6. Set up Stripe payment integration
-7. Generate Saltea-specific API access token
+Automated via seed file in `Saltea/saltea-admin` (db/seeds/011_saltea_store.rb):
+
+```bash
+make build-saltea-admin    # Build the image
+make deploy-saltea-admin   # Deploy to K8s
+make seed-saltea           # Run seed (creates store + products)
+```
+
+The seed creates:
+
+1. Saltea store (code: "saltea", url: saltea.co)
+2. Taxonomy: "Saltea Flavors" (All Teas, Signature Blends)
+3. 3 products at $5.99 (Caribbean Sea, Rio Grande, Finger Lakes)
+4. Shipping category: "Bottled Tea"
+
+Manual steps after seeding:
+
+5. Upload product images via saltea-admin UI
+6. Configure shipping method/zone
+7. Set up Stripe payment integration
+8. Generate Saltea-specific API access token (Rails console)
 
 ## Out of Scope (for now)
 
