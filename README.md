@@ -99,6 +99,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 All deployment is run **from your Mac** via the Makefile in the parent `dna-infra` repo. You do not need to SSH into the Pis manually.
 
+> **Custom domains (e.g. saltea.co):** If deploying a fork under a custom domain, you must also add the domain to the CoreDNS `hosts` ConfigMap and your Mac's `/etc/hosts`. Without this, TLS certs won't issue and the site is unreachable from the LAN. See `K8_NOTES.md` § "Adding a New Site / Domain" in `dna-infra`.
+
 ### Quick Reference
 
 ```bash
