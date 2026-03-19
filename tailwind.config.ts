@@ -26,11 +26,11 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         brand: {
-          DEFAULT: "#EB8B8B",
-          secondary: "#E6CDC0",
-          bright: "#ff7777",
-          dark: "#af1e1e",
-          light: "#efa1a1"
+          DEFAULT: "#00ffff",
+          secondary: "#7b61ff",
+          bright: "#00e5ff",
+          dark: "#0a0020",
+          light: "#66ffff"
         },
         gray: {
           dark: "#333333",
@@ -102,6 +102,22 @@ const config: Config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))"
+        },
+        neon: {
+          cyan: "#00FFFF",
+          magenta: "#FF00FF",
+          pink: "#FF1493",
+          lime: "#39FF14",
+          amber: "#FF6600"
+        },
+        glass: {
+          bg: "rgba(255, 255, 255, 0.05)",
+          border: "rgba(255, 255, 255, 0.10)",
+          highlight: "rgba(255, 255, 255, 0.15)"
+        },
+        surface: {
+          deep: "#0A0020",
+          void: "#000000"
         }
       },
       fontFamily: {
@@ -112,7 +128,14 @@ const config: Config = {
         "body-bold": ["Anybody Light", "sans-serif"],
         "mono-bold": ["ibmplexmono_body_mono_bold", "monospace"],
         "mono-semibold": ["ibmplexmono_body_mono_semibold", "monospace"],
-        "mono-extralight": ["ibmplexmono_body_mono_extralight", "monospace"]
+        "mono-extralight": ["ibmplexmono_body_mono_extralight", "monospace"],
+        pressstart: ["PressStart2P", "monospace"],
+        microtechnic: ["MicroTechnic", "sans-serif"],
+        "ds-digital": ["DS-Digital", "monospace"],
+        digital7: ["Digital7Mono", "Digital7", "monospace"],
+        michroma: ["Michroma", "sans-serif"],
+        micro5: ["Micro5", "monospace"],
+        "micro5-charted": ["Micro5Charted", "monospace"]
       },
       fontSize: {
         "title-xxl": ["72px", { lineHeight: "86px", fontWeight: "700" }],
@@ -128,26 +151,26 @@ const config: Config = {
         "body-xs": ["9px", { lineHeight: "0.9rem", fontWeight: "400" }]
       },
       backgroundImage: {
-        ambient: "linear-gradient(180deg, #EB8B8B 0%, #CC8BEB 100%)",
+        ambient: "linear-gradient(180deg, #00ffff 0%, #7b61ff 100%)",
         "brand-gradient":
-          "linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 51.56%)",
+          "linear-gradient(180deg, rgba(10, 0, 32, 0) 0%, #0a0020 51.56%)",
         "yellow-gradient":
           "linear-gradient(180deg, rgba(248, 207, 81, 0.64) 0%, rgba(248, 207, 81, 0) 100%)",
         "omniscient-pink":
-          "linear-gradient(180deg, #EB8B8B 0%, rgba(235, 139, 139, 0) 100%)",
+          "linear-gradient(180deg, #00ffff 0%, rgba(0, 255, 255, 0) 100%)",
         "ambient-vectors":
-          "linear-gradient(142.27deg, #EB8B8B 21.81%, #DC8BBA 43.8%, #CC8BEB 66.99%)",
+          "linear-gradient(142.27deg, #00ffff 21.81%, #7b61ff 43.8%, #ff1493 66.99%)",
         "ambient-vectors-reversed":
-          "linear-gradient(180deg, #EB8B8B 0%, #CC8BEB 100%)"
+          "linear-gradient(180deg, #00ffff 0%, #7b61ff 100%)"
       },
       boxShadow: {
-        "brand-glow": "0px 4px 4px rgba(94, 0, 249, 0.42)",
+        "brand-glow": "0px 4px 4px rgba(0, 255, 255, 0.3)",
         "brand-glow-primary-lg":
-          "0px 4px 4px rgba(48, 196, 160, 0.65), -4px -4px 10px #D8B5B5, 4px 4px 20px rgba(94, 0, 249, 0.42)",
+          "0px 4px 4px rgba(0, 255, 255, 0.4), -4px -4px 10px rgba(123, 97, 255, 0.3), 4px 4px 20px rgba(94, 0, 249, 0.42)",
         "brand-glow-primary-sm":
-          "0px 2px 2px rgba(0, 0, 0, 0.25), -2px -2px 4px #D8B5B5, 2px 2px 10px rgba(94, 0, 249, 0.42)",
+          "0px 2px 2px rgba(0, 0, 0, 0.25), -2px -2px 4px rgba(123, 97, 255, 0.2), 2px 2px 10px rgba(94, 0, 249, 0.42)",
         "brand-glow-secondary-sm":
-          "2px 3px 2px 1px rgba(122, 73, 152, 0.25), 0px -1px 2px #D8B5B5",
+          "2px 3px 2px 1px rgba(122, 73, 152, 0.25), 0px -1px 2px rgba(123, 97, 255, 0.2)",
         skeuomorphism: "1px 1px 3px #FFFFFF, -1px -1px 2px rgba(2, 2, 2, 0.33)"
       },
       borderRadius: {
@@ -223,6 +246,26 @@ const config: Config = {
         },
         gradient: {
           to: { backgroundPosition: "var(--bg-size, 300%) 0" }
+        },
+        "float-up": {
+          "0%": {
+            opacity: "1",
+            transform: "translateY(0) translateX(0) scale(1)"
+          },
+          "100%": {
+            opacity: "0",
+            transform:
+              "translateY(-120px) translateX(var(--drift-x, 0px)) scale(1.3)"
+          }
+        },
+        "blob-breathe": {
+          "0%, 100%": { transform: "scale(0.98)", opacity: "0.85" },
+          "50%": { transform: "scale(1.02)", opacity: "1" }
+        },
+        "gradient-sweep": {
+          "0%": { backgroundPosition: "0% 0%" },
+          "50%": { backgroundPosition: "100% 100%" },
+          "100%": { backgroundPosition: "0% 0%" }
         }
       },
       animation: {
@@ -245,7 +288,10 @@ const config: Config = {
           "shimmer-slide var(--speed, 3s) ease-in-out infinite alternate",
         "spin-around": "spin-around calc(var(--speed, 3s) * 2) infinite linear",
         shine: "shine var(--duration, 14s) infinite linear",
-        gradient: "gradient 8s linear infinite"
+        gradient: "gradient 8s linear infinite",
+        "float-up": "float-up 2s ease-expo-out forwards",
+        "blob-breathe": "blob-breathe 4s ease-in-out infinite",
+        "gradient-sweep": "gradient-sweep 12s ease-in-out infinite"
       }
     }
   },

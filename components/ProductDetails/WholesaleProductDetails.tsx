@@ -4,6 +4,7 @@ import Head from "next/head";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { Heart } from "lucide-react";
+import { motion } from "framer-motion";
 import { cn } from "@lib/utils";
 import {
   fetchStreams,
@@ -113,16 +114,14 @@ export const WholesaleProductDetails = ({
   )?.attributes?.name;
 
   // Fetch similar products by same taxon
-  const {
-    data: similarData,
-    isLoading: similarLoading
-  } = useProductFeed("similar", currentTaxon ? { filter: { taxons: currentTaxon } } : {});
+  const { data: similarData, isLoading: similarLoading } = useProductFeed(
+    "similar",
+    currentTaxon ? { filter: { taxons: currentTaxon } } : {}
+  );
 
   // Fetch recommended products (generic latest)
-  const {
-    data: recommendedData,
-    isLoading: recommendedLoading
-  } = useProductFeed("latest");
+  const { data: recommendedData, isLoading: recommendedLoading } =
+    useProductFeed("latest");
 
   // Legacy products query for arrow key navigation
   const {
@@ -326,240 +325,294 @@ export const WholesaleProductDetails = ({
           </title>
         </Head>
 
-        <div className="section-container py-8">
-          <div className="flex flex-col gap-8 md:flex-row md:gap-12">
-            {/* Image Carousel */}
-            <div className="w-full md:w-2/5">
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {productImgs && productImgs.length > 0 ? (
-                    productImgs.map((image: any, index: number) => {
-                      const imgUrl = image.attributes.styles?.filter(
-                        (e: any) => e["width"] == "600"
-                      )[0]?.url;
-                      const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`;
-                      return (
-                        <CarouselItem key={`image-${index}`}>
-                          <div className="aspect-square overflow-hidden rounded-xl bg-muted">
-                            <img
-                              src={imgSrc}
-                              alt={`${
-                                thisProduct?.data?.attributes?.name
-                              } - Image ${index + 1}`}
-                              className="h-full w-full object-cover"
-                            />
+        {/* Dark gradient page wrapper */}
+        <div
+          className="min-h-screen"
+          style={{
+            background:
+              "linear-gradient(180deg, #0A0020 0%, #0D0030 40%, #0A0020 100%)"
+          }}
+        >
+          <div className="section-container py-10 md:py-16">
+            <div className="flex flex-col gap-8 md:flex-row md:gap-12">
+              {/* Image Carousel with neon glow backdrop */}
+              <motion.div
+                className="w-full md:w-2/5"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              >
+                <div
+                  className="relative rounded-2xl p-1"
+                  style={{
+                    background:
+                      "radial-gradient(circle at center, rgba(0, 255, 255, 0.1) 0%, transparent 70%)"
+                  }}
+                >
+                  <Carousel className="w-full">
+                    <CarouselContent>
+                      {productImgs && productImgs.length > 0 ? (
+                        productImgs.map((image: any, index: number) => {
+                          const imgUrl = image.attributes.styles?.filter(
+                            (e: any) => e["width"] == "600"
+                          )[0]?.url;
+                          const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`;
+                          return (
+                            <CarouselItem key={`image-${index}`}>
+                              <div className="aspect-square overflow-hidden rounded-xl bg-surface-deep">
+                                <img
+                                  src={imgSrc}
+                                  alt={`${
+                                    thisProduct?.data?.attributes?.name
+                                  } - Image ${index + 1}`}
+                                  className="h-full w-full object-cover"
+                                />
+                              </div>
+                            </CarouselItem>
+                          );
+                        })
+                      ) : (
+                        <CarouselItem>
+                          <div className="flex aspect-square items-center justify-center rounded-xl bg-surface-deep">
+                            <Loading />
                           </div>
                         </CarouselItem>
-                      );
-                    })
-                  ) : (
-                    <CarouselItem>
-                      <div className="flex aspect-square items-center justify-center rounded-xl bg-muted">
-                        <Loading />
-                      </div>
-                    </CarouselItem>
-                  )}
-                </CarouselContent>
-                {productImgs && productImgs.length > 1 && (
-                  <>
-                    <CarouselPrevious className="left-3" />
-                    <CarouselNext className="right-3" />
-                  </>
-                )}
-              </Carousel>
-            </div>
-
-            {/* Product Info */}
-            <div className="w-full md:w-3/5">
-              <div className="max-w-lg text-center text-foreground">
-                <h2 className="font-title text-2xl font-semibold md:text-3xl">
-                  {thisProduct?.data?.attributes?.name}
-                </h2>
-
-                {/* Favorite Button */}
-                <button
-                  onClick={handleToggleFavorite}
-                  className={cn(
-                    "mx-auto mt-4 flex items-center gap-2 rounded-lg border px-5 py-2.5 font-body text-sm transition-all hover:-translate-y-px active:translate-y-0",
-                    isFavorited
-                      ? "border-brand bg-brand text-white hover:bg-brand/90"
-                      : "border-border bg-transparent text-foreground hover:border-brand hover:text-brand"
-                  )}
-                >
-                  <Heart
-                    className={cn("h-4 w-4", isFavorited && "fill-current")}
-                  />
-                  {isFavorited ? "Remove from Favorites" : "Add to Favorites"}
-                </button>
-
-                {/* Color Swatches */}
-                {productColors && productColors.length > 0 && (
-                  <div className="mt-6 flex items-center justify-center gap-2.5">
-                    {productColors.map((option: any, index: number) => (
-                      <div
-                        key={`variant-${index}`}
-                        className="h-[30px] w-[30px] border border-border"
-                        style={{
-                          backgroundColor: option.attributes.presentation
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                <p className="mt-4 font-body text-sm leading-relaxed text-muted-foreground">
-                  {thisProduct?.data?.attributes?.description}
-                </p>
-
-                <hr className="my-6 border-border/30" />
-
-                <p className="font-body text-sm text-muted-foreground">
-                  Price Per Pack
-                </p>
-                <div className="font-title text-3xl font-bold">
-                  ${thisProduct?.data?.attributes?.price}
-                </div>
-
-                {/* Sizes Per Pack */}
-                {productSizes && productSizes.length > 0 && (
-                  <>
-                    <p className="mt-4 text-left font-body text-sm text-muted-foreground">
-                      Sizes Per Pack
-                    </p>
-                    <div className="grid grid-cols-5">
-                      {productSizes.map((i: any, index: number) => (
-                        <div
-                          key={`size-${index}`}
-                          className="grid grid-cols-2 items-center border border-border"
-                        >
-                          <div className="border-r border-border p-1 text-center text-sm">
-                            2
-                          </div>
-                          <div className="bg-muted p-1 text-center text-sm uppercase">
-                            {i.attributes.presentation}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                {/* Wholesale Colors Table */}
-                {productColors && productColors.length > 0 && (
-                  <div className="my-8">
-                    {/* Table Head */}
-                    <div className="grid grid-cols-[30%_25%_20%_20%] rounded-t-lg bg-brand text-sm font-semibold text-white">
-                      <div className="flex items-center justify-center p-2">
-                        Colors
-                      </div>
-                      <div className="flex items-center justify-center p-2">
-                        Pack Qty
-                      </div>
-                      <div className="flex items-center justify-center p-2">
-                        Pieces Qty
-                      </div>
-                      <div className="flex items-center justify-center p-2">
-                        Pack Price
-                      </div>
-                    </div>
-                    {/* Table Body */}
-                    <div className="border-x border-b border-border">
-                      {variantsAreLoading ? (
-                        <div className="flex items-center justify-center p-4">
-                          <Loading />
-                        </div>
-                      ) : (
-                        productColors.map((item: any, index: number) => (
-                          <div
-                            key={`${index}-row`}
-                            className="grid grid-cols-[30%_5%_15%_5%_20%_25%] items-center"
-                          >
-                            <div className="flex items-center justify-center p-1">
-                              <div
-                                className="h-[30px] w-[30px] border border-border"
-                                style={{
-                                  backgroundColor: item.attributes.presentation
-                                }}
-                              />
-                            </div>
-                            <div className="flex items-center justify-center p-1">
-                              <button className="rounded border border-border px-2 py-1 text-sm hover:bg-muted">
-                                -
-                              </button>
-                            </div>
-                            <div className="flex items-center justify-center p-1">
-                              <input
-                                value={chosenVariantQty}
-                                type="number"
-                                min="0"
-                                max="999"
-                                onChange={(e) =>
-                                  setChosenVariantQty(Number(e.target.value))
-                                }
-                                className="w-16 border border-border bg-transparent p-1 text-center text-sm text-foreground focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                              />
-                            </div>
-                            <div className="flex items-center justify-center p-1">
-                              <button
-                                onClick={() =>
-                                  setChosenVariantQty(chosenVariantQty + 1)
-                                }
-                                className="rounded border border-border px-2 py-1 text-sm hover:bg-muted"
-                              >
-                                +
-                              </button>
-                            </div>
-                            <div className="flex items-center justify-center p-1 text-sm">
-                              {chosenVariantQty}
-                            </div>
-                            <div className="flex items-center justify-center p-1 text-sm">
-                              ${item.attributes.price}
-                            </div>
-                          </div>
-                        ))
                       )}
-                    </div>
-                  </div>
-                )}
+                    </CarouselContent>
+                    {productImgs && productImgs.length > 1 && (
+                      <>
+                        <CarouselPrevious className="left-3" />
+                        <CarouselNext className="right-3" />
+                      </>
+                    )}
+                  </Carousel>
+                </div>
+              </motion.div>
 
-                {/* Add to Cart */}
-                <button
-                  onClick={() => handleAddToCart(addItem)}
-                  className="w-full rounded-xl bg-brand px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px hover:shadow-lg active:translate-y-0"
-                >
-                  Add to Cart
-                </button>
+              {/* Product Info — Glass Panel */}
+              <motion.div
+                className="w-full md:w-3/5"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+              >
+                <div className="glass-panel p-6 text-center md:p-8">
+                  {/* Product Name */}
+                  <h2 className="font-pressstart text-lg leading-relaxed text-white md:text-xl">
+                    {thisProduct?.data?.attributes?.name}
+                  </h2>
 
-                {/* Product Properties */}
-                {productProperties && productProperties.length > 0 && (
-                  <div className="mt-8 text-left">
-                    <h3 className="mb-3 font-title text-base font-semibold">
-                      Product Info
-                    </h3>
-                    <div className="space-y-1.5">
-                      {productProperties.map((property: any, index: number) => (
+                  {/* Favorite Button */}
+                  <button
+                    onClick={handleToggleFavorite}
+                    className={cn(
+                      "mx-auto mt-4 flex items-center gap-2 rounded-lg border px-5 py-2.5 font-mono text-sm transition-all hover:-translate-y-px active:translate-y-0",
+                      isFavorited
+                        ? "neon-border-magenta bg-neon-magenta/10 text-neon-magenta"
+                        : "border-glass-border bg-transparent text-white/70 hover:border-neon-cyan/50 hover:text-neon-cyan"
+                    )}
+                  >
+                    <Heart
+                      className={cn("h-4 w-4", isFavorited && "fill-current")}
+                    />
+                    {isFavorited ? "Remove from Favorites" : "Add to Favorites"}
+                  </button>
+
+                  {/* Color Swatches */}
+                  {productColors && productColors.length > 0 && (
+                    <div className="mt-6 flex items-center justify-center gap-3">
+                      {productColors.map((option: any, index: number) => (
                         <div
-                          key={`property-${index}`}
-                          className="font-body text-sm text-muted-foreground"
-                        >
-                          <span className="font-medium text-foreground">
-                            {property.attributes.name}
-                          </span>
-                          : {property.attributes.value}
-                        </div>
+                          key={`variant-${index}`}
+                          className="h-[30px] w-[30px] rounded border border-glass-border"
+                          style={{
+                            backgroundColor: option.attributes.presentation
+                          }}
+                        />
                       ))}
                     </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+                  )}
 
-          {/* Similar / Recommended / Recently Viewed */}
-          <div className="mt-12 space-y-8">
-            {renderSimilarProducts()}
-            {renderRecommendedProducts()}
-            <RecentlyViewed excludeSlug={currentSlug} />
+                  <p className="mt-4 font-mono text-sm leading-relaxed text-white/60">
+                    {thisProduct?.data?.attributes?.description}
+                  </p>
+
+                  <hr className="my-6 border-glass-border" />
+
+                  <p className="font-mono text-xs uppercase tracking-wider text-white/50">
+                    Price Per Pack
+                  </p>
+                  <div className="mt-1 text-2xl font-bold text-neon-cyan">
+                    ${thisProduct?.data?.attributes?.price}
+                  </div>
+
+                  {/* Sizes Per Pack */}
+                  {productSizes && productSizes.length > 0 && (
+                    <>
+                      <p className="mt-4 text-left font-mono text-xs uppercase tracking-wider text-white/50">
+                        Sizes Per Pack
+                      </p>
+                      <div className="mt-1 grid grid-cols-5">
+                        {productSizes.map((i: any, index: number) => (
+                          <div
+                            key={`size-${index}`}
+                            className="grid grid-cols-2 items-center border border-glass-border"
+                          >
+                            <div className="border-r border-glass-border p-1 text-center font-mono text-sm text-white/70">
+                              2
+                            </div>
+                            <div className="bg-white/[0.03] p-1 text-center font-mono text-sm uppercase text-white">
+                              {i.attributes.presentation}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Wholesale Colors Table */}
+                  {productColors && productColors.length > 0 && (
+                    <div className="my-8">
+                      {/* Table Head */}
+                      <div
+                        className="grid grid-cols-[30%_25%_20%_20%] rounded-t-lg font-mono text-xs font-semibold uppercase tracking-wider text-neon-cyan"
+                        style={{
+                          background: "rgba(0, 255, 255, 0.08)",
+                          borderBottom: "1px solid rgba(0, 255, 255, 0.2)"
+                        }}
+                      >
+                        <div className="flex items-center justify-center p-2">
+                          Colors
+                        </div>
+                        <div className="flex items-center justify-center p-2">
+                          Pack Qty
+                        </div>
+                        <div className="flex items-center justify-center p-2">
+                          Pieces Qty
+                        </div>
+                        <div className="flex items-center justify-center p-2">
+                          Pack Price
+                        </div>
+                      </div>
+                      {/* Table Body */}
+                      <div className="border-x border-b border-glass-border">
+                        {variantsAreLoading ? (
+                          <div className="flex items-center justify-center p-4">
+                            <Loading />
+                          </div>
+                        ) : (
+                          productColors.map((item: any, index: number) => (
+                            <div
+                              key={`${index}-row`}
+                              className={cn(
+                                "grid grid-cols-[30%_5%_15%_5%_20%_25%] items-center",
+                                index % 2 === 0
+                                  ? "bg-white/[0.02]"
+                                  : "bg-transparent"
+                              )}
+                            >
+                              <div className="flex items-center justify-center p-1">
+                                <div
+                                  className="h-[30px] w-[30px] rounded border border-glass-border"
+                                  style={{
+                                    backgroundColor:
+                                      item.attributes.presentation
+                                  }}
+                                />
+                              </div>
+                              <div className="flex items-center justify-center p-1">
+                                <button className="rounded border border-glass-border px-2 py-1 font-mono text-sm text-white/70 transition-colors hover:border-neon-cyan/50 hover:text-neon-cyan">
+                                  -
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-center p-1">
+                                <input
+                                  value={chosenVariantQty}
+                                  type="number"
+                                  min="0"
+                                  max="999"
+                                  onChange={(e) =>
+                                    setChosenVariantQty(Number(e.target.value))
+                                  }
+                                  className="neon-focus w-16 rounded border border-glass-border bg-surface-deep p-1 text-center font-mono text-sm text-white [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                />
+                              </div>
+                              <div className="flex items-center justify-center p-1">
+                                <button
+                                  onClick={() =>
+                                    setChosenVariantQty(chosenVariantQty + 1)
+                                  }
+                                  className="rounded border border-glass-border px-2 py-1 font-mono text-sm text-white/70 transition-colors hover:border-neon-cyan/50 hover:text-neon-cyan"
+                                >
+                                  +
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-center p-1 font-mono text-sm text-white/70">
+                                {chosenVariantQty}
+                              </div>
+                              <div className="flex items-center justify-center p-1 font-mono text-sm text-neon-cyan">
+                                ${item.attributes.price}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ADD TO CART — neon button */}
+                  <button
+                    onClick={() => handleAddToCart(addItem)}
+                    className="neon-btn w-full text-center"
+                  >
+                    ADD TO CART
+                  </button>
+
+                  {/* Product Properties */}
+                  {productProperties && productProperties.length > 0 && (
+                    <div className="mt-8 text-left">
+                      <h3 className="mb-4 font-pressstart text-xs uppercase tracking-wider text-neon-cyan">
+                        Specs
+                      </h3>
+                      <div className="divide-y divide-glass-border">
+                        {productProperties.map(
+                          (property: any, index: number) => (
+                            <div
+                              key={`property-${index}`}
+                              className={cn(
+                                "flex justify-between gap-4 px-2 py-2.5 font-mono text-sm",
+                                index % 2 === 0
+                                  ? "bg-white/[0.02]"
+                                  : "bg-transparent"
+                              )}
+                            >
+                              <span className="text-white/50">
+                                {property.attributes.name}
+                              </span>
+                              <span className="text-right text-white">
+                                {property.attributes.value}
+                              </span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Related / Recommended / Recently Viewed */}
+            <motion.div
+              className="mt-16 space-y-12"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+            >
+              {renderSimilarProducts()}
+              {renderRecommendedProducts()}
+              <RecentlyViewed excludeSlug={currentSlug} />
+            </motion.div>
           </div>
         </div>
       </Layout>

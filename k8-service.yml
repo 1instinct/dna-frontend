@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: dna-frontend
+  name: beeper-frontend
   namespace: default
 spec:
   selector:
-    app: dna-frontend
+    app: beeper-frontend
   ports:
     - protocol: TCP
       port: 8080

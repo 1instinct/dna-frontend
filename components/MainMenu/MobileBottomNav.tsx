@@ -23,7 +23,7 @@ export const MobileBottomNav = () => {
         iconSize={28}
         iconMagnification={40}
         disableMagnification
-        className="mx-auto mb-2 h-14 w-[calc(100%-2rem)] gap-1 rounded-2xl border border-border/50 bg-background/90 backdrop-blur-md"
+        className="glass-panel mx-auto mb-2 h-14 w-[calc(100%-2rem)] gap-1 !rounded-2xl"
       >
         {navItems.map(({ icon: Icon, label, href }) => {
           const isActive = pathname === href;
@@ -32,13 +32,13 @@ export const MobileBottomNav = () => {
               key={href}
               className={cn(
                 "transition-colors",
-                isActive ? "text-brand" : "text-muted-foreground"
+                isActive ? "text-neon-cyan" : "text-white"
               )}
               onClick={() => router.push(href)}
             >
               <div className="flex flex-col items-center gap-0.5">
                 <Icon className="h-5 w-5" />
-                <span className="text-[9px] font-medium leading-none">
+                <span className="font-title text-[9px] font-medium leading-none">
                   {label}
                 </span>
               </div>

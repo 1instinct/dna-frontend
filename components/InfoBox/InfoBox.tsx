@@ -5,4 +5,4 @@ export const InfoBox: React.FC<InfoBoxProps> = ({
   children
 }: {
   children: string;
-}) => <div className="my-5 border-y border-border/30 py-5">{children}</div>;
+}) => <div className="my-5 border-y border-glass-border py-5">{children}</div>;

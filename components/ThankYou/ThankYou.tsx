@@ -35,7 +35,7 @@ export const ThankYou = () => {
 
         {orderNumber && (
           <div className="my-8 rounded-lg bg-muted p-5">
-            <div className="mb-2 text-sm uppercase tracking-widest text-muted-foreground">
+            <div className="mb-2 text-sm uppercase tracking-widest text-white/50">
               Order Number
             </div>
             <div className="font-mono text-2xl font-bold">{orderNumber}</div>
@@ -43,47 +43,47 @@ export const ThankYou = () => {
         )}
 
         {!isLoading && order && (
-          <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
+          <div className="my-8 rounded-lg glass-panel p-8 text-left shadow-md">
             <h3 className="mb-4 font-title text-title-sm">Order Summary</h3>
-            <p className="mb-2.5 font-body leading-relaxed text-foreground">
+            <p className="mb-2.5 font-body leading-relaxed text-white">
               <strong>Email:</strong> {order.attributes.email}
             </p>
-            <p className="mb-2.5 font-body leading-relaxed text-foreground">
+            <p className="mb-2.5 font-body leading-relaxed text-white">
               <strong>Total:</strong> {order.attributes.display_total}
             </p>
-            <p className="mb-2.5 font-body leading-relaxed text-foreground">
+            <p className="mb-2.5 font-body leading-relaxed text-white">
               <strong>Items:</strong> {order.attributes.item_count}
             </p>
           </div>
         )}
 
-        <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
+        <div className="my-8 rounded-lg glass-panel p-8 text-left shadow-md">
           <h3 className="mb-4 font-title text-title-sm">What happens next?</h3>
-          <p className="mb-2.5 font-body leading-relaxed text-foreground">
+          <p className="mb-2.5 font-body leading-relaxed text-white">
             You'll receive an email confirmation shortly with your order details
             and tracking information.
           </p>
-          <p className="mb-2.5 font-body leading-relaxed text-foreground">
+          <p className="mb-2.5 font-body leading-relaxed text-white">
             We'll notify you when your order ships, typically within 1-2
             business days.
           </p>
-          <p className="mb-2.5 font-body leading-relaxed text-foreground">
+          <p className="mb-2.5 font-body leading-relaxed text-white">
             Track your shipment using the tracking number in your confirmation
             email.
           </p>
         </div>
 
-        <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
+        <div className="my-8 rounded-lg glass-panel p-8 text-left shadow-md">
           <h3 className="mb-4 font-title text-title-sm">Need Help?</h3>
-          <p className="mb-2.5 font-body leading-relaxed text-foreground">
+          <p className="mb-2.5 font-body leading-relaxed text-white">
             If you have any questions about your order, please don't hesitate to
             contact our customer support team.
           </p>
-          <p className="mb-2.5 font-body leading-relaxed text-foreground">
+          <p className="mb-2.5 font-body leading-relaxed text-white">
             Email:{" "}
             {process.env.NEXT_PUBLIC_COMPANY_EMAIL || "hello@instinct.is"}
           </p>
-          <p className="mb-2.5 font-body leading-relaxed text-foreground">
+          <p className="mb-2.5 font-body leading-relaxed text-white">
             Phone: {process.env.NEXT_PUBLIC_COMPANY_PHONE || "1-800-000-0000"}
           </p>
         </div>

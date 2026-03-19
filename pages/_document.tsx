@@ -52,24 +52,22 @@ class MyDocument extends Document {
     return initialProps;
   }
   render() {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://instinct.is";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://beeper.buzz";
     const siteTitle =
       process.env.NEXT_PUBLIC_PAGE_TITLE ||
       process.env.NEXT_PUBLIC_SITE_TITLE ||
-      "Instinct";
+      "Beeper";
     const siteDesc =
       process.env.NEXT_PUBLIC_PAGE_DESC ||
       process.env.NEXT_PUBLIC_SITE_DESC ||
-      "Instinct is a digital agency that helps brands and businesses create meaningful relationships with their customers.";
+      "Play With Music";
     const sitePhone = process.env.NEXT_PUBLIC_PHONE || "+1-917-300-8103";
     const ogImgPath =
-      process.env.NEXT_PUBLIC_OG_IMG_PATH ||
-      "/images/open-graph-instinct-dna.png";
-    const ogImgWidth = process.env.NEXT_PUBLIC_OG_IMG_WIDTH || "600";
-    const ogImgHeight = process.env.NEXT_PUBLIC_OG_IMG_HEIGHT || "529";
-    const twitterSlug = process.env.NEXT_PUBLIC_TWITTER_SLUG || "aaronsmulktis";
-    const facebookSlug =
-      process.env.NEXT_PUBLIC_FACEBOOK_SLUG || "materialinstinct";
+      process.env.NEXT_PUBLIC_OG_IMG_PATH || "/images/beeper-og-image.png";
+    const ogImgWidth = process.env.NEXT_PUBLIC_OG_IMG_WIDTH || "512";
+    const ogImgHeight = process.env.NEXT_PUBLIC_OG_IMG_HEIGHT || "211";
+    const twitterSlug = process.env.NEXT_PUBLIC_TWITTER_SLUG || "beeper.buzz";
+    const facebookSlug = process.env.NEXT_PUBLIC_FACEBOOK_SLUG || "beeper.buzz";
 
     const OpenGraphObject = `
         "@context": "http://schema.org",
@@ -96,7 +94,7 @@ class MyDocument extends Document {
       `;
 
     return (
-      <Html>
+      <Html className="dark">
         <Head>
           <meta charSet="utf-8" />
           <meta name="description" content={siteDesc} />
@@ -117,13 +115,8 @@ class MyDocument extends Document {
             property="article:publisher"
             content={`https://www.facebook.com/${facebookSlug}`}
           />
-          <meta property="article:section" content="General" />
-          <meta
-            property="article:published_time"
-            content="2017-04-15T15:00:03-04:00"
-          />
 
-          <meta name="twitter:card" content="summary" />
+          <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:description" content={siteDesc} />
           <meta name="twitter:title" content={siteTitle} />
           <meta name="twitter:site" content={siteUrl} />

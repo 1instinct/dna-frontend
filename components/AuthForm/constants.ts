@@ -20,10 +20,7 @@ export const SignupSchema = Yup.object().shape({
         return this.parent.password === value;
       }
     )
-    .required("Required"),
-  phoneNumber: Yup.string()
-    .matches(/^\(\d{3}\) \d{3}-\d{4}$/, "Please enter a valid phone number")
-    .required("Phone number is required")
+    .required("Required")
 });
 
 export const LoginSchema = Yup.object().shape({
@@ -49,8 +46,7 @@ export const signupForm = {
   fields: {
     email: "",
     password: "",
-    passwordConfirm: "",
-    phoneNumber: ""
+    passwordConfirm: ""
   },
   validate: SignupSchema
 };

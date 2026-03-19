@@ -3,12 +3,13 @@ FROM node:18-bullseye
 # FROM node:alpine
 # FROM node:21-alpine3.18
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    python3 \
-    make \
-    g++ \
-    libvips-dev \
+RUN apt-get update \
+  && for i in 1 2 3; do \
+       apt-get install -y --no-install-recommends \
+         git python3 make g++ libvips-dev \
+       && break \
+       || { echo "apt-get attempt $i failed, retrying..."; apt-get update; }; \
+     done \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

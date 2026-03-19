@@ -76,7 +76,7 @@ export const Account = () => {
     return (
       <Layout>
         <div className="section-container py-10">
-          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
+          <div className="rounded-lg border border-neon-pink/30 bg-neon-pink/10 p-4 font-body text-sm text-neon-pink">
             Failed to load account information. Please try again.
           </div>
         </div>
@@ -92,12 +92,12 @@ export const Account = () => {
   };
 
   const inputClass =
-    "w-full rounded-lg border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
+    "neon-focus w-full rounded-lg border border-glass-border bg-surface-deep px-4 py-3 font-body text-sm text-white transition-colors placeholder:text-white/30 focus:outline-none";
 
   return (
     <Layout>
       <div className="section-container py-10">
-        <h1 className="mb-8 font-title text-3xl font-bold uppercase tracking-wider text-foreground">
+        <h1 className="mb-8 font-pressstart text-lg text-neon-cyan">
           My Account
         </h1>
 
@@ -109,15 +109,15 @@ export const Account = () => {
               <button
                 key={link.href}
                 onClick={() => router.push(link.href)}
-                className="group flex flex-col items-start rounded-xl border border-border/30 bg-card p-6 text-left transition-all hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-md cursor-pointer outline-none"
+                className="glass-panel glass-panel-hover group flex flex-col items-start p-6 text-left transition-all hover:-translate-y-0.5 cursor-pointer outline-none"
               >
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10 text-brand transition-colors group-hover:bg-brand group-hover:text-white">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-neon-cyan/10 text-neon-cyan transition-colors group-hover:bg-neon-cyan/20">
                   <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="mb-1 font-title text-sm font-semibold text-foreground">
+                <h3 className="mb-1 font-title text-sm font-semibold text-white">
                   {link.title}
                 </h3>
-                <p className="font-body text-xs text-muted-foreground">
+                <p className="font-body text-xs text-white/50">
                   {link.description}
                 </p>
               </button>
@@ -126,18 +126,18 @@ export const Account = () => {
         </div>
 
         {/* Account Details Form */}
-        <div className="max-w-lg rounded-xl border border-border/30 bg-card p-6">
-          <h2 className="mb-6 font-title text-lg font-semibold uppercase tracking-wider text-foreground">
+        <div className="glass-panel max-w-lg p-6">
+          <h2 className="mb-6 font-pressstart text-xs text-neon-cyan">
             Account Details
           </h2>
 
           {updateError && (
-            <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="mb-4 rounded-lg border border-neon-pink/30 bg-neon-pink/10 p-3 font-body text-sm text-neon-pink">
               {updateError}
             </div>
           )}
           {updateSuccess && (
-            <div className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700">
+            <div className="mb-4 rounded-lg border border-neon-lime/30 bg-neon-lime/10 p-3 font-body text-sm text-neon-lime">
               {updateSuccess}
             </div>
           )}
@@ -179,7 +179,7 @@ export const Account = () => {
             {({ handleSubmit, isSubmitting }) => (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="mb-1.5 block font-title text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <label className="mb-1.5 block font-mono-semibold text-xs uppercase tracking-wider text-white/50">
                     Email
                   </label>
                   <Field
@@ -191,7 +191,7 @@ export const Account = () => {
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block font-title text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <label className="mb-1.5 block font-mono-semibold text-xs uppercase tracking-wider text-white/50">
                     New Password
                   </label>
                   <Field
@@ -202,7 +202,7 @@ export const Account = () => {
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block font-title text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <label className="mb-1.5 block font-mono-semibold text-xs uppercase tracking-wider text-white/50">
                     Confirm Password
                   </label>
                   <Field
@@ -212,13 +212,14 @@ export const Account = () => {
                     label="Confirm Password"
                   />
                 </div>
-                <Button
+                <button
                   onClick={handleSubmit as any}
                   disabled={isSubmitting}
-                  className="mt-2"
+                  className="neon-btn mt-2"
+                  type="button"
                 >
                   {isSubmitting ? "Updating..." : "Update Account"}
-                </Button>
+                </button>
               </form>
             )}
           </Formik>

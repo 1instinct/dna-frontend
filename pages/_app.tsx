@@ -23,7 +23,16 @@ import "./app.css";
 const isDarkMode = (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false
+          }
+        }
+      })
+  );
   const [wholesale, setWholesale] = useState(false);
   const router = useRouter();
   const isMaint = process.env.NEXT_PUBLIC_IS_MAINT_MODE || "true";
@@ -76,7 +85,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0, minimal-ui"
             />
           </Head>
-          <div className="m-0 flex h-screen w-full flex-col overflow-visible bg-background p-0 font-body text-body-md text-foreground">
+          <div className="m-0 flex min-h-screen w-full flex-col bg-background p-0 font-body text-body-md text-foreground">
             <Header darkMode={isDarkMode} />
             <MainMenu
               showMenuHeader
@@ -89,7 +98,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               animationType={"slide"}
               right={false}
             />
-            <Component {...pageProps} wholesale={wholesale} />
+            <Component
+              {...pageProps}
+              key={router.asPath}
+              wholesale={wholesale}
+            />
           </div>
         </Hydrate>
       </AuthProvider>

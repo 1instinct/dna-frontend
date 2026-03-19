@@ -35,7 +35,7 @@ const SearchSuggestions = ({
   if (!isVisible) return null;
 
   const wrapperClass =
-    "absolute z-10 block w-full max-h-[245px] overflow-y-auto overflow-x-hidden rounded-b-xl bg-card shadow-lg";
+    "absolute z-10 block w-full max-h-[245px] overflow-y-auto overflow-x-hidden rounded-b-xl bg-surface-deep shadow-lg";
 
   if (isLoading) {
     setIsSearchLoading(true);
@@ -47,7 +47,7 @@ const SearchSuggestions = ({
         id={id}
       >
         <div className="flex items-center justify-center py-4">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground border-t-brand" />
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/50 border-t-neon-cyan" />
         </div>
       </div>
     );
