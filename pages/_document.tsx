@@ -134,29 +134,30 @@ class MyDocument extends Document {
           <link rel="icon" href="/img/favicon.ico" />
           <link rel="canonical" href={siteUrl} />
           <link rel="pingback" href={siteUrl} />
-          <link
-            href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css"
-            rel="stylesheet"
-            type="text/css"
-          />
-          <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-          ></link>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          {/* Non-critical CSS — loaded async after first paint */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function(){
+                  var sheets = [
+                    '//cdn-images.mailchimp.com/embedcode/classic-10_7.css',
+                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
+                    'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
+                  ];
+                  sheets.forEach(function(href){
+                    var l = document.createElement('link');
+                    l.rel = 'stylesheet';
+                    l.href = href;
+                    document.head.appendChild(l);
+                  });
+                })();
+              `
+            }}
           />
           <script type="application/ld+json">{OpenGraphObject}</script>
-          <script
-            src="https://js.stripe.com/v3/"
-            type="text/javascript"
-          ></script>
-          <script
-            async
-            type="text/javascript"
-            src="http://l2.io/ip.js?var=myip"
-          />
+          {/* Stripe — defer until needed (checkout page loads it) */}
+          <script src="https://js.stripe.com/v3/" defer></script>
+          {/* Analytics — all async/defer, non-blocking */}
           <script
             async
             src={
@@ -178,7 +179,9 @@ class MyDocument extends Document {
               `
             }}
           />
+          {/* Google Maps — defer, only needed on address forms */}
           <script
+            defer
             src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}
           />
           <script dangerouslySetInnerHTML={{ __html: FacebookPixelObject }} />
@@ -195,8 +198,10 @@ class MyDocument extends Document {
           <style
             dangerouslySetInnerHTML={{
               __html: `
-              #__next {
+              html, body, #__next {
                 min-height: 100vh;
+                background: #050012;
+                color: #fff;
               }
               #__next > div {
                 min-height: 100vh;
