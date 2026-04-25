@@ -26,8 +26,10 @@ const fetchMenuLocation = async (id: number = 1) => {
   return response;
 };
 const useMenuLocation = (id: number) => {
-  return useQuery<any>([QueryKeys.MENU_LOCATION, id], () =>
-    fetchMenuLocation(id)
+  return useQuery<any>(
+    [QueryKeys.MENU_LOCATION, id],
+    () => fetchMenuLocation(id),
+    { retry: false }
   );
 };
 

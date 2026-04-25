@@ -11,6 +11,7 @@ export * from "./useOrders";
 export * from "./useAccounts";
 export * from "./useFavorites";
 export * from "./useUserProfile";
+export * from "./useUtmParams";
 export * from "./useHomepage";
 export * from "./useStore";
 export * from "./useProductFeed";
