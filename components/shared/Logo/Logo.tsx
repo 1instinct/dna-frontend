@@ -1,34 +1,5 @@
 import React from "react";
-import { useTheme } from "@emotion/react";
-import styled from "@emotion/styled";
-
-const SvgLogo = styled.svg`
-  width: 141px;
-  height: 35px;
-
-  --glow-color: ${(props) => props.theme.colors.brand.primary};
-  filter: drop-shadow(0 0 0 var(--glow-color));
-
-  &:hover {
-    --glow-intensity: 11px;
-    filter: drop-shadow(0 0 var(--glow-intensity) var(--glow-color));
-    /* animation: glow 1.33s cubic-bezier(0.19, 1, 0.22, 1) infinite; */
-  }
-
-  transition: filter 1.33s cubic-bezier(0.19, 1, 0.22, 1);
-
-  @keyframes glow {
-    0%,
-    100% {
-      --glow-intensity: 11px;
-      transition: filter 1.33s cubic-bezier(0.19, 1, 0.22, 1);
-    }
-    50% {
-      --glow-intensity: 5px;
-      transition: filter 1.33s cubic-bezier(0.19, 1, 0.22, 1);
-    }
-  }
-`;
+import { cn } from "@lib/utils";
 
 interface LogoProps {
   url?: string;
@@ -36,17 +7,20 @@ interface LogoProps {
 }
 
 export const Logo = ({ url, svgProps }: LogoProps) => {
-  const theme = useTheme();
   return (
-    <SvgLogo
+    <svg
       viewBox="0 0 141 35"
       xmlns="http://www.w3.org/2000/svg"
+      className={cn(
+        "h-[35px] w-[141px] transition-[filter] duration-[1.33s] [transition-timing-function:cubic-bezier(0.19,1,0.22,1)]",
+        "drop-shadow-none hover:drop-shadow-[0_0_11px_#EB8B8B]"
+      )}
       {...svgProps}
     >
       <defs>
         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-          <feFlood floodColor={theme.colors.brand.primary} result="color" />
+          <feFlood floodColor="#EB8B8B" result="color" />
           <feComposite
             in="color"
             in2="coloredBlur"
@@ -61,28 +35,16 @@ export const Logo = ({ url, svgProps }: LogoProps) => {
       </defs>
       <path
         d="M126.133 25.7462V34.2341H100.218C99.0193 34.2341 98.0273 33.8299 97.242 33.0216C96.498 32.2132 96.126 31.2134 96.126 30.0221V28.4266C96.126 27.6608 96.188 26.895 96.312 26.1291C96.436 25.3633 96.7873 24.406 97.366 23.2573L105.922 5.45185C106.872 3.79257 107.864 2.60128 108.898 1.878C109.972 1.11218 111.006 0.729263 111.998 0.729263H136.239C137.644 0.729263 138.76 1.19727 139.587 2.13328C140.455 3.06929 140.889 4.17548 140.889 5.45185V34.2341H129.357V12.5996C129.357 12.0039 129.233 11.4934 128.985 11.0679C128.778 10.6425 128.489 10.3021 128.117 10.0468C127.786 9.74899 127.435 9.53626 127.063 9.40862C126.691 9.28098 126.36 9.21716 126.071 9.21716H118.941C118.611 9.21716 118.321 9.23844 118.073 9.28098C117.867 9.32353 117.639 9.45117 117.391 9.6639C117.143 9.83408 116.875 10.1106 116.585 10.4935C116.296 10.8765 115.945 11.387 115.531 12.0252L110.138 22.7468C110.138 23.938 110.282 24.7464 110.572 25.1719C110.902 25.5548 111.502 25.7462 112.37 25.7462H126.133Z"
-        fill={
-          theme.isDarkMode
-            ? theme.colors.white.primary
-            : theme.colors.black.primary
-        }
+        className="fill-foreground"
       />
       <path
         d="M80.4996 24.4699C80.4583 23.8317 80.3343 23.1722 80.1276 22.4915C79.9623 21.8107 79.797 21.1938 79.6316 20.6407L75.5397 12.0252C75.1264 11.387 74.7751 10.8765 74.4858 10.4935C74.1965 10.1106 73.9278 9.83408 73.6798 9.6639C73.4318 9.45117 73.1838 9.32353 72.9358 9.28098C72.7292 9.23844 72.4605 9.21716 72.1298 9.21716H64.4421C64.1528 9.21716 63.8221 9.28098 63.4501 9.40862C63.0781 9.49371 62.7268 9.6639 62.3961 9.91917C62.1068 10.1319 61.8382 10.451 61.5902 10.8765C61.3835 11.2594 61.2802 11.7274 61.2802 12.2805V34.2341H49.7485V5.45185C49.7485 4.17548 50.1618 3.06929 50.9885 2.13328C51.8565 1.19727 52.9931 0.729263 54.3984 0.729263H79.0736C80.0656 0.729263 81.1402 1.06963 82.2975 1.75037C83.4962 2.4311 84.4468 3.66493 85.1495 5.45185L91.4733 21.5342C91.5973 22.1298 91.7213 22.8744 91.8452 23.7679C91.9692 24.6613 92.0312 25.5335 92.0312 26.3844V34.2341H80.4996V24.4699Z"
-        fill={
-          theme.isDarkMode
-            ? theme.colors.white.primary
-            : theme.colors.black.primary
-        }
+        className="fill-foreground"
       />
       <path
         d="M29.4078 25.7462C30.2758 25.7462 30.8544 25.5548 31.1438 25.1719C31.4744 24.7464 31.6397 23.938 31.6397 22.7468L26.2459 12.0252C25.8326 11.387 25.4813 10.8765 25.1919 10.4935C24.9026 10.1106 24.634 9.83408 24.386 9.6639C24.138 9.45117 23.89 9.32353 23.642 9.28098C23.394 9.23844 23.1253 9.21716 22.836 9.21716H12.4203V34.2341H0.888672V0.729263H29.7798C30.7718 0.729263 31.7844 1.11218 32.8177 1.878C33.8923 2.60128 34.905 3.79257 35.8556 5.45185L44.4114 23.2573C44.99 24.406 45.3413 25.3633 45.4653 26.1291C45.5893 26.895 45.6513 27.6608 45.6513 28.4266V30.0221C45.6513 31.2134 45.2587 32.2132 44.4734 33.0216C43.7294 33.8299 42.7581 34.2341 41.5594 34.2341H15.6442V25.7462H29.4078Z"
-        fill={
-          theme.isDarkMode
-            ? theme.colors.white.primary
-            : theme.colors.black.primary
-        }
+        className="fill-foreground"
       />
-    </SvgLogo>
+    </svg>
   );
 };

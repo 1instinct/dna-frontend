@@ -376,3 +376,76 @@ yarn pre-commit         # Run all checks
 - Hardcode API URLs (use env vars)
 - Skip TypeScript types
 - Ignore existing component patterns
+
+## Spree Storefront API v2 SDK Integration
+
+### Overview
+
+- **SDK Location:** `contrib/spree-storefront-api-v2-sdk-4.5.1003.tgz` (do not upgrade).
+- **Purpose:** All Spree backend API calls must use this SDK.
+
+### Client Structure
+
+- Create the client with `makeClient`.
+- Main endpoint groups:
+  - `products`, `taxons`, `countries`, `cart`, `checkout`, `authentication`, `account`, `order`
+- Each group matches Spree API endpoints (e.g., `cart.addItem`, `checkout.orderUpdate`).
+
+### Authentication
+
+- Most methods require a token:
+  - **Bearer token** (logged-in user): `{ bearerToken }`
+  - **Order token** (guest cart): `{ orderToken }`
+
+### Response Handling
+
+- All SDK methods return a result object.
+- Use `.isSuccess()` and `.success()` to check and extract data.
+- Use `.isFail()` and `.fail()` to handle errors (`SpreeSDKError` or subclass).
+
+### Example Usage
+
+```typescript
+const response = await spreeClient.cart.addItem(
+  { orderToken },
+  { variant_id: "1", quantity: 2 }
+);
+if (response.isSuccess()) {
+  const cart = response.success();
+} else {
+  const error = response.fail();
+  // handle error
+}
+```
+
+### Endpoint Highlights
+
+- **Authentication:** `getToken`, `refreshToken`
+- **Account:** `create`, `update`, `accountInfo`, `addressesList`, `createAddress`, `removeAddress`
+- **Cart:** `create`, `show`, `addItem`, `setQuantity`, `removeItem`, `emptyCart`, `applyCouponCode`, `removeCouponCode`
+- **Checkout:** `orderUpdate`, `orderNext`, `advance`, `complete`, `addStoreCredits`, `removeStoreCredits`, `paymentMethods`, `shippingMethods`
+- **Products:** `list`, `show`
+- **Taxons:** `list`, `show`
+- **Order:** `status`
+
+### TypeScript Types
+
+- All responses and parameters are strongly typed.
+- Use provided interfaces (e.g., `IOrderResult`, `IProductResult`, `IAccountResult`).
+- Tokens: `{ bearerToken?: string; orderToken?: string }`.
+
+### Error Handling
+
+- Errors are never thrown; always check `.isFail()` and use `.fail()` for details.
+- Error types: `SpreeSDKError`, `MisconfigurationError`, `NoResponseError`, `SpreeError`, `BasicSpreeError`, `ExpandedSpreeError`.
+
+### Do Not
+
+- Do not upgrade or replace the SDK.
+- Do not bypass `.isSuccess()`/`.isFail()` pattern.
+- Do not use raw fetch or axios for Spree API calls—always use the SDK.
+
+### Store Info
+
+- The SDK does **not** provide a `/store` endpoint.
+- Use a custom fetch (see `hooks/useStore/useStore.ts`) for store info.

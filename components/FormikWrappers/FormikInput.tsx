@@ -1,6 +1,12 @@
 import React from "react";
+import { Field } from "formik";
+import { cn } from "@lib/utils";
 
-import { BasicField, Error } from "./FormikInput.styles";
+const inputClass =
+  "w-full rounded-lg border-2 border-dashed border-border bg-background px-3 py-2.5 font-body text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand";
+
+const errorClass =
+  "mt-1 text-left font-body text-xs font-bold text-destructive";
 
 export const FormikInput = ({
   field: { ...fields },
@@ -8,20 +14,19 @@ export const FormikInput = ({
   styles,
   ...props
 }: any) => {
+  const isInvalid = Boolean(touched[fields.name] && errors[fields.name]);
+
   return (
     <>
-      <BasicField
+      <Field
         {...props}
         {...fields}
         placeholder={props.label}
-        styles={errors.length > 0 && { border: "solid 1px red" }}
-        invalid={Boolean(touched[fields.name] && errors[fields.name])}
+        className={cn(inputClass, isInvalid && "border-destructive")}
       />
       {touched[fields.name] && errors[fields.name] ? (
-        <Error>{errors[fields.name]}</Error>
-      ) : (
-        ""
-      )}
+        <div className={errorClass}>{errors[fields.name]}</div>
+      ) : null}
     </>
   );
 };

@@ -11,7 +11,6 @@ import {
   MediaQueryAllQueryable
 } from "react-responsive";
 import * as React from "react";
-import { ServerStyleSheets } from "@material-ui/core/styles";
 import * as tracking from "../config/tracking";
 import * as constants from "../utilities/constants";
 
@@ -41,34 +40,16 @@ const withResponsiveContext = (App: any, req: any) => {
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
-    const sheet = new ServerStyleSheets();
     const originalRenderPage = ctx.renderPage;
-    try {
-      ctx.renderPage = () =>
-        originalRenderPage({
-          // useful for wrapping the whole react tree
-          enhanceApp: (App) =>
-            withResponsiveContext(
-              (props: any) => sheet.collect(<App {...props} />),
-              ctx.req
-            )
-        });
 
-      // Run the parent `getInitialProps`, it now includes the custom `renderPage`
-      const initialProps = await Document.getInitialProps(ctx);
+    ctx.renderPage = () =>
+      originalRenderPage({
+        enhanceApp: (App) => withResponsiveContext(App, ctx.req)
+      });
 
-      return {
-        ...initialProps,
-        styles: (
-          <>
-            {initialProps.styles}
-            {sheet.getStyleElement()}
-          </>
-        )
-      };
-    } finally {
-      Object.seal(sheet);
-    }
+    const initialProps = await Document.getInitialProps(ctx);
+
+    return initialProps;
   }
   render() {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://instinct.is";

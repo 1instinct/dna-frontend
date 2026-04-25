@@ -1,3 +1,3 @@
-import { StreamViewer } from "../../components";
+import { StreamViewer } from "../../components/StreamViewer";
 
 export default StreamViewer;

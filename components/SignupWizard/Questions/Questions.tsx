@@ -232,9 +232,14 @@ export const Questions: QuestionsType[] = [
     validationSchema: object().shape({
       phoneNumber: string()
         .defined(Static.errors.isRequired)
-        .min(constants.PHONE_LENGTH, Static.errors.phoneNumberValid)
-        .max(constants.PHONE_LENGTH, Static.errors.phoneNumberValid)
-        .matches(constants.PHONE_REGEX, Static.errors.phoneNumberValid),
+        .min(14, Static.errors.phoneNumberValid)
+        .max(14, Static.errors.phoneNumberValid)
+        .test("phone-format", Static.errors.phoneNumberValid, (value) => {
+          if (!value) return false;
+          // Remove formatting and check if we have 10 digits
+          const digitsOnly = value.replace(/\D/g, "");
+          return digitsOnly.length === 10;
+        }),
       email: string().defined(Static.errors.isRequired),
       password: string()
         .defined(Static.errors.isRequired)

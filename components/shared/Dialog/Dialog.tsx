@@ -1,12 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  DialogOverlay,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-  DialogBody
-} from "./Dialog.styles";
+import { cn } from "@lib/utils";
 
 export interface DialogProps {
   isOpen: boolean;
@@ -23,7 +16,6 @@ export const Dialog: React.FC<DialogProps> = ({
   children,
   showCloseButton = true
 }) => {
-  // Handle ESC key to close dialog
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
@@ -35,7 +27,6 @@ export const Dialog: React.FC<DialogProps> = ({
     return () => window.removeEventListener("keydown", handleEsc);
   }, [isOpen, onClose]);
 
-  // Prevent body scroll when dialog is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -54,17 +45,33 @@ export const Dialog: React.FC<DialogProps> = ({
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <DialogOverlay isOpen={isOpen} onClick={handleOverlayClick}>
-      <DialogContent>
+    <div
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/75 animate-fade-in"
+      onClick={handleOverlayClick}
+    >
+      <div className="relative mx-4 max-h-[90vh] w-full max-w-[500px] overflow-y-auto rounded-xl border border-border/30 bg-card shadow-2xl animate-fade-up">
         {(title || showCloseButton) && (
-          <DialogHeader>
-            {title && <DialogTitle>{title}</DialogTitle>}
-            {showCloseButton && <DialogClose onClick={onClose}>×</DialogClose>}
-          </DialogHeader>
+          <div className="flex items-center justify-between border-b border-border/30 px-6 py-4">
+            {title && (
+              <h2 className="font-title text-lg font-semibold text-foreground">
+                {title}
+              </h2>
+            )}
+            {showCloseButton && (
+              <button
+                onClick={onClose}
+                className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-2xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                &times;
+              </button>
+            )}
+          </div>
         )}
-        <DialogBody>{children}</DialogBody>
-      </DialogContent>
-    </DialogOverlay>
+        <div className="p-6">{children}</div>
+      </div>
+    </div>
   );
 };

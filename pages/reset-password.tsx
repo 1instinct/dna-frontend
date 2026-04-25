@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useRouter } from "next/router";
-import { Layout } from "../components";
+import { Layout } from "../components/Layout";
 import { AuthFormType } from "../components/AuthForm/constants";
 import { AuthForm } from "../components/AuthForm";
 

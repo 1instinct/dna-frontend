@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
-import { ArrowBack, ArrowForward } from "@material-ui/icons";
+import { Heart } from "lucide-react";
+import { cn } from "@lib/utils";
 import {
   fetchStreams,
   fetchProducts,
@@ -14,7 +15,8 @@ import {
 } from "../../hooks";
 import { useToggleFavorite, useCheckFavorite } from "../../hooks/useFavorites";
 import { useAuth } from "../../config/auth";
-import { Layout, LoadingWrapper, Loading } from "../components";
+import { Layout } from "../Layout";
+import { Loading } from "../Loading";
 import { useProduct, fetchProduct } from "../../hooks/useProduct";
 import { useMutation, useQueryClient } from "react-query";
 import { addItemToCart } from "../../hooks/useCart";
@@ -25,65 +27,17 @@ import { ProductList } from "../ProductList";
 import { FourOhFour } from "../404/FourOhFour";
 import { useMediaQuery } from "react-responsive";
 import homeData from "../Home/home.json";
-import { CarouselProvider, Slider } from "pure-react-carousel";
-import "pure-react-carousel/dist/react-carousel.es.css";
-// import ProductCard from "../components";
-
+import { useProductFeed } from "../../hooks/useProductFeed";
+import { useRecentlyViewed } from "../../hooks/useRecentlyViewed";
+import { RecentlyViewed } from "../RecentlyViewed";
 import {
-  ProductContainer,
-  ProductImageCarousel,
-  ProductInfoBox,
-  ProductDescription,
-  StyledSlider,
-  StyledSlide,
-  StyledImageWithZoom,
-  CarouselNav,
-  CarouselBackButton,
-  CarouselNextButton,
-  Detail,
-  Price,
-  VariantSwatchList,
-  VariantSwatch,
-  SizesTitle,
-  SizesPerPack,
-  Size,
-  SizeQty,
-  SizeTitle,
-  ColorsTable,
-  ColorsHead,
-  ColorsTH,
-  ColorsBody,
-  ColorsRow,
-  ColorsCell,
-  BuyButton,
-  PropertyName,
-  FavoriteButton
-} from "./ProductDetails.styles";
-import { boolean } from "yup";
-import { size } from "polished";
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext
+} from "@components/ui";
 import constants from "../../utilities/constants";
-
-const settings = {
-  speed: 500,
-  dots: false,
-  Infinite: false
-};
-
-interface ColorOptionType {
-  name: string;
-  quantity: number;
-}
-
-const productColors: ColorOptionType[] = [
-  {
-    name: "Yellow Rod",
-    quantity: 2
-  },
-  {
-    name: "Carnelian",
-    quantity: 2
-  }
-];
 
 interface RetailProductDetailsProps {
   wholesale?: boolean;
@@ -153,9 +107,26 @@ export const RetailProductDetails = ({
     thisProduct &&
     thisProduct?.included?.filter((e: any) => e["type"] === "product_property");
   const thisProductId = thisProduct?.data?.id || "";
+
+  // Extract taxon name from current product for "similar" filtering
+  const currentTaxon = thisProduct?.included?.find(
+    (item: any) => item.type === "taxon"
+  )?.attributes?.name;
+
+  // Fetch similar products by same taxon (falls back to latest if no taxon)
   const {
-    error: productsError,
-    status: productsStatus,
+    data: similarData,
+    isLoading: similarLoading
+  } = useProductFeed("similar", currentTaxon ? { filter: { taxons: currentTaxon } } : {});
+
+  // Fetch recommended products (generic latest, distinct from similar)
+  const {
+    data: recommendedData,
+    isLoading: recommendedLoading
+  } = useProductFeed("latest");
+
+  // Legacy products query for arrow key navigation
+  const {
     data: productsData,
     isLoading: productsAreLoading,
     isSuccess: productsAreSuccess
@@ -164,6 +135,10 @@ export const RetailProductDetails = ({
     ? productsData?.data[Math.floor(Math.random() * productsData?.data?.length)]
         .id
     : "";
+
+  // Track recently viewed products
+  const currentSlug = thisProduct?.data?.attributes?.slug;
+  const { addProduct: trackView } = useRecentlyViewed(currentSlug);
 
   const {
     error: variantsError,
@@ -175,98 +150,68 @@ export const RetailProductDetails = ({
 
   const queryClient = useQueryClient();
   const [packSizeQtys, setPackSizeQtys] = useState([
-    {
-      name: "XS",
-      qty: 2
-    },
-    {
-      name: "S",
-      qty: 2
-    },
-    {
-      name: "M",
-      qty: 2
-    },
-    {
-      name: "L",
-      qty: 2
-    },
-    {
-      name: "XL",
-      qty: 2
-    }
+    { name: "XS", qty: 2 },
+    { name: "S", qty: 2 },
+    { name: "M", qty: 2 },
+    { name: "L", qty: 2 },
+    { name: "XL", qty: 2 }
   ]);
 
   const foundVariants = thisProduct?.included?.filter(
     (elem) => elem.type === "variant"
   );
-  // const [colorOptions, setColorOptions] = useState<any>(productColors);
   const [chosenVariants, setChosenVariants] = useState<any[]>([]);
   const [chosenVariantQty, setChosenVariantQty] = useState(0);
   const [addItem, setAddItem] = useState<any>(null);
-  // console.log("colors: ", productColors);
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string>("");
 
   const renderSimilarProducts = () => {
-    if (productsAreLoading) return <Loading />;
+    if (similarLoading) return <Loading />;
+    if (!similarData?.data?.length) return null;
     return (
-      !isMobile && (
-        <ProductList products={productsData} title={"Similar Products"} />
-      )
+      <ProductList
+        products={similarData}
+        title="Similar Products"
+        layout="scroll"
+        excludeProductId={thisProductId}
+      />
     );
   };
 
-  const recommendedProducts = () => {
-    if (productsAreLoading) return <Loading />;
+  const renderRecommendedProducts = () => {
+    if (recommendedLoading) return <Loading />;
+    if (!recommendedData?.data?.length) return null;
     return (
-      !isMobile && (
-        <ProductList products={productsData} title={"Recommended For You"} />
-      )
+      <ProductList
+        products={recommendedData}
+        title="Recommended For You"
+        layout="scroll"
+        excludeProductId={thisProductId}
+      />
     );
   };
-  // const latestProducts = isMobile ? null : (
-  //   <Featured data={homeData.latestProducts} title="" />
-  // );
+
   const addToCart = useMutation(addItemToCart, {
     onSuccess: () => {
       queryClient.invalidateQueries(QueryKeys.CART);
     }
   });
 
-  const findVariantsWithOptionId = (optionId: number) => {
-    debugger;
-    let foundVariants: any = [];
-    foundVariants =
-      variantsData && variantsData?.relationships?.option_value?.data;
-    const foundVariant = foundVariants?.filter((i: any) => i.id === optionId);
-    if (foundVariant) {
-      return foundVariant;
-    }
-    return null;
-  };
-
-  // const setColorQtys = (arr: any) => {
-  //   return arr.map(({ item, index }: any) => {
-  //     return setColorOptions([...colorOptions]);
-  //   });
-  // };
-
   const handleKeyPress = (event: KeyboardEvent) => {
     const thisProductId = thisProduct?.data?.id;
-    // console.log(thisProductId);
     const productId: number = parseInt(`${thisProductId}`);
     const { key } = event;
 
     switch (key) {
       case "ArrowLeft":
         const prevProductId = productId - 1;
-
         if (randomNextProductId) {
           fetchProduct(`${prevProductId}`)
             .then((nextProduct) => {
               router.push(`/${nextProduct?.data?.attributes?.slug}`);
             })
             .catch(() => {
-              /* product not found */
               fetchProduct(randomNextProductId).then((nextProduct) => {
                 router.push(`/${nextProduct?.data?.attributes?.slug}`);
               });
@@ -275,14 +220,12 @@ export const RetailProductDetails = ({
         break;
       case "ArrowRight":
         const nextProductId = productId + 1;
-
         if (randomNextProductId) {
           fetchProduct(`${nextProductId}`)
             .then((nextProduct) => {
               router.push(`/${nextProduct?.data?.attributes?.slug}`);
             })
             .catch(() => {
-              /* product not found */
               fetchProduct(randomNextProductId).then((nextProduct) => {
                 router.push(`/${nextProduct?.data?.attributes?.slug}`);
               });
@@ -298,15 +241,6 @@ export const RetailProductDetails = ({
     setAddItem({
       variant_id: foundVariants ? foundVariants[0].id : "",
       quantity: 1
-      // public_metadata: {
-      //   first_item_order: true
-      // },
-      // private_metadata: {
-      //   recommended_by_us: false
-      // }
-      // options?: {
-      //     [key: string]: string;
-      // };
     });
     if (constants.IS_DEBUG) {
       const foundVariants = thisProduct?.included?.filter(
@@ -316,126 +250,6 @@ export const RetailProductDetails = ({
       console.log("PRODUCT ID: ", thisProduct?.data?.id);
     }
   }, [thisProduct]);
-
-  const renderWholesaleOptions = () => {
-    const handleUpdatePackSelections = (e: any, variantId: any) => {
-      // logic to update the chosenVariantQty state
-      setChosenVariantQty(e.target.value);
-    };
-
-    const handleIncrementVariantQty = (variantId: any) => {
-      // logic to increment the chosenVariantQty state
-      setChosenVariantQty(chosenVariantQty + 1);
-    };
-
-    if (variantsAreLoading) {
-      return <Loading />;
-    }
-
-    return productColors?.map((item, index) => {
-      return (
-        <ColorsRow key={`${index}-row`}>
-          <ColorsCell>
-            <VariantSwatch color={item.attributes.presentation} />
-          </ColorsCell>
-          <ColorsCell>
-            <button>-</button>
-          </ColorsCell>
-          <ColorsCell>
-            <input
-              value={chosenVariantQty}
-              type="number"
-              min="0"
-              max="999"
-              onChange={(e) => handleUpdatePackSelections(e, parseInt(item.id))}
-            />
-          </ColorsCell>
-          <ColorsCell>
-            <button
-              onClick={() => handleIncrementVariantQty(parseInt(item.id))}
-            >
-              +
-            </button>
-          </ColorsCell>
-          <ColorsCell>{chosenVariantQty}</ColorsCell>
-          <ColorsCell>${item.attributes.price}</ColorsCell>
-        </ColorsRow>
-      );
-    });
-  };
-
-  const renderProductImgs = useCallback(() => {
-    const productImgs =
-      thisProduct &&
-      thisProduct?.included?.filter((e: any) => e["type"] === "image");
-    const primaryImg =
-      productImgs && productImgs[0]?.attributes?.styles[9]?.url;
-    const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${primaryImg}`;
-    if (productImgs && productImgs.length < 1) {
-      return <Loading />;
-    }
-    if (productImgs && productImgs.length == 1) {
-      return (
-        <StyledSlide index={0}>
-          <StyledImageWithZoom src={imgSrc} />
-        </StyledSlide>
-      );
-    }
-    return (
-      productImgs &&
-      productImgs.map((image, index) => {
-        // const img600 = image.attributes.styles.filter((e: any) => e['width'] == '600').url;
-        const imgUrl = image.attributes.styles[9].url;
-        const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`;
-        // console.log(imgSrc);
-        return (
-          <StyledSlide key={`image-${index}`} index={index}>
-            <StyledImageWithZoom src={imgSrc} />
-          </StyledSlide>
-        );
-      })
-    );
-  }, [thisProduct]);
-
-  const renderVariantSwatches = useCallback(() => {
-    return (
-      <VariantSwatchList>
-        {productColors?.map((option: any, index: any) => {
-          const optionColor = option.attributes.presentation;
-          // console.log("Option: ", optionColor);
-          return <VariantSwatch key={`variant-${index}`} color={optionColor} />;
-        })}
-      </VariantSwatchList>
-    );
-  }, [productColors]);
-
-  const renderProperties = useCallback(() => {
-    return (
-      <>
-        {productProperties?.map((property: any, index: any) => {
-          return (
-            <div key={`property-${index}`}>
-              <PropertyName>{property.attributes.name}</PropertyName>: &nbsp;
-              {property.attributes.value}
-            </div>
-          );
-        })}
-      </>
-    );
-  }, [productProperties]);
-
-  const renderSizeQtys = useCallback(() => {
-    if (productSizes && productSizes.length > 0) {
-      return productSizes?.map((i, index) => {
-        return (
-          <Size>
-            <SizeQty>2</SizeQty>
-            <SizeTitle>{i.attributes.presentation}</SizeTitle>
-          </Size>
-        );
-      });
-    }
-  }, [packSizeQtys]);
 
   const handleAddToCart = (i: any) => {
     console.log("ITEM: ", i);
@@ -454,19 +268,24 @@ export const RetailProductDetails = ({
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      // // On page load, set focus on the product contaniner, because otherwise the arrow keys (left/right) won't work
-      // const productContainer = Array.from(
-      //   document.getElementsByClassName("product-container")
-      // ).shift();
-
-      // if (productContainer) {
-      //   (productContainer as HTMLElement).focus();
-      // }
+    if (isSuccess && thisProduct?.data) {
       tracking.trackEvent({
         action: tracking.Action.VIEW_PRODUCT,
         category: tracking.Category.PRODUCT_DETAIL,
         label: thisProduct?.data?.attributes?.name
+      });
+
+      // Track this product as recently viewed
+      const firstImg = productImgs?.[0];
+      const imgUrl = firstImg?.attributes?.styles?.filter(
+        (e: any) => e["width"] == "600"
+      )[0]?.url;
+      trackView({
+        slug: thisProduct.data.attributes.slug,
+        name: thisProduct.data.attributes.name,
+        imgSrc: imgUrl
+          ? `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`
+          : ""
       });
     }
     window.addEventListener("keydown", handleKeyPress);
@@ -488,11 +307,7 @@ export const RetailProductDetails = ({
   }
 
   if (isSuccess) {
-    // const variants = thisProduct?.data.relationships.variants.data;
-    // {
-    //   variant_id: Array.isArray(variants) ? variants[0].id : "",
-    //   quantity: 1
-    // }
+    const isFavorited = favoriteCheck?.is_favorited;
 
     return (
       <Layout>
@@ -502,90 +317,186 @@ export const RetailProductDetails = ({
             {process.env.NEXT_PUBLIC_SITE_TITLE}
           </title>
         </Head>
-        <ProductContainer className="product-container">
-          <ProductImageCarousel>
-            <CarouselProvider
-              naturalSlideWidth={600}
-              naturalSlideHeight={600}
-              totalSlides={productImgs ? productImgs.length : 1}
-              // totalSlides={3}
-              isIntrinsicHeight
-              touchEnabled
-              infinite={productImgs ? true : false}
-            >
-              <StyledSlider className="slider">
-                {/* <Slide index={1} style={{ height: "500px" }}>
-                  <ImageWithZoom src={source} />
-                </Slide>
-                <Slide index={2} style={{ height: "500px" }}>
-                  <ImageWithZoom src={source} />
-                </Slide> */}
-                {renderProductImgs()}
-              </StyledSlider>
 
-              <CarouselNav>
-                <CarouselBackButton>
-                  <ArrowBack />
-                </CarouselBackButton>
-                <CarouselNextButton>
-                  <ArrowForward />
-                </CarouselNextButton>
-              </CarouselNav>
-            </CarouselProvider>
-          </ProductImageCarousel>
+        <div className="section-container py-8">
+          {/* Product Layout */}
+          <div className="flex flex-col gap-8 md:flex-row md:gap-12">
+            {/* Image Carousel */}
+            <div className="w-full md:w-1/2">
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {productImgs && productImgs.length > 0 ? (
+                    productImgs.map((image: any, index: number) => {
+                      const imgUrl = image.attributes.styles?.filter(
+                        (e: any) => e["width"] == "600"
+                      )[0]?.url;
+                      const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`;
+                      return (
+                        <CarouselItem key={`image-${index}`}>
+                          <div className="aspect-square overflow-hidden rounded-xl bg-muted">
+                            <img
+                              src={imgSrc}
+                              alt={`${
+                                thisProduct?.data?.attributes?.name
+                              } - Image ${index + 1}`}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        </CarouselItem>
+                      );
+                    })
+                  ) : (
+                    <CarouselItem>
+                      <div className="flex aspect-square items-center justify-center rounded-xl bg-muted">
+                        <Loading />
+                      </div>
+                    </CarouselItem>
+                  )}
+                </CarouselContent>
+                {productImgs && productImgs.length > 1 && (
+                  <>
+                    <CarouselPrevious className="left-3" />
+                    <CarouselNext className="right-3" />
+                  </>
+                )}
+              </Carousel>
+            </div>
 
-          <ProductInfoBox>
-            <ProductDescription>
-              <h2>{thisProduct?.data?.attributes?.name}</h2>
-              <FavoriteButton
-                onClick={handleToggleFavorite}
-                isFavorited={favoriteCheck?.is_favorited}
-              >
-                {favoriteCheck?.is_favorited
-                  ? "❤️ Remove from Favorites"
-                  : "🤍 Add to Favorites"}
-              </FavoriteButton>
-              {renderVariantSwatches()}
-              <p>{thisProduct?.data?.attributes?.description}</p>
-              <hr />
-              <Price>${thisProduct?.data?.attributes?.price}</Price>
+            {/* Product Info */}
+            <div className="w-full md:w-1/2">
+              <div className="max-w-lg">
+                <h2 className="font-title text-2xl font-semibold text-foreground md:text-3xl">
+                  {thisProduct?.data?.attributes?.name}
+                </h2>
 
-              {/* RETAIL COLOR */}
-              {productColors && productColors.length > 0 && (
-                <select>
-                  <option selected>Color</option>
-                  {productColors.map((color: any, index: number) => (
-                    <option key={`color-${index}`} value={color.id}>
-                      {color.attributes.name}
-                    </option>
-                  ))}
-                </select>
-              )}
+                {/* Favorite Button */}
+                <button
+                  onClick={handleToggleFavorite}
+                  className={cn(
+                    "mt-4 flex items-center gap-2 rounded-lg border px-5 py-2.5 font-body text-sm transition-all hover:-translate-y-px active:translate-y-0",
+                    isFavorited
+                      ? "border-brand bg-brand text-white hover:bg-brand/90"
+                      : "border-border bg-transparent text-foreground hover:border-brand hover:text-brand"
+                  )}
+                >
+                  <Heart
+                    className={cn("h-4 w-4", isFavorited && "fill-current")}
+                  />
+                  {isFavorited ? "Remove from Favorites" : "Add to Favorites"}
+                </button>
 
-              {/* RETAIL SIZE */}
-              {productSizes && productSizes.length > 0 && (
-                <div className="size-selection">
-                  {productSizes.map((size: any, index: number) => (
-                    <button key={`size-${index}`} className="">
-                      {size.attributes.presentation}
-                    </button>
-                  ))}
+                {/* Color Swatches */}
+                {productColors && productColors.length > 0 && (
+                  <div className="mt-6 flex items-center gap-2">
+                    {productColors.map((option: any, index: number) => (
+                      <button
+                        key={`variant-${index}`}
+                        onClick={() => setSelectedColor(option.id)}
+                        className={cn(
+                          "h-8 w-8 rounded-full border-2 transition-all",
+                          selectedColor === option.id
+                            ? "border-brand scale-110"
+                            : "border-border hover:border-foreground"
+                        )}
+                        style={{
+                          backgroundColor: option.attributes.presentation
+                        }}
+                        aria-label={option.attributes.name}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Description */}
+                <p className="mt-6 font-body text-sm leading-relaxed text-muted-foreground">
+                  {thisProduct?.data?.attributes?.description}
+                </p>
+
+                <hr className="my-6 border-border/30" />
+
+                {/* Price */}
+                <div className="font-title text-3xl font-bold text-foreground">
+                  ${thisProduct?.data?.attributes?.price}
                 </div>
-              )}
 
-              <BuyButton className="" onClick={() => handleAddToCart(addItem)}>
-                {/* <BuyButton className="" onClick={addAllToCart}> */}
-                add to cart
-              </BuyButton>
-              <div style={{ textAlign: "left" }}>
-                <Detail>Product Info</Detail>
-                {renderProperties()}
+                {/* Color Select */}
+                {productColors && productColors.length > 0 && (
+                  <select
+                    value={selectedColor}
+                    onChange={(e) => setSelectedColor(e.target.value)}
+                    className="mt-4 w-full cursor-pointer rounded-lg border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                  >
+                    <option value="">Color</option>
+                    {productColors.map((color: any, index: number) => (
+                      <option key={`color-${index}`} value={color.id}>
+                        {color.attributes.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
+                {/* Size Selection */}
+                {productSizes && productSizes.length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {productSizes.map((size: any, index: number) => (
+                      <button
+                        key={`size-${index}`}
+                        onClick={() =>
+                          setSelectedSize(size.attributes.presentation)
+                        }
+                        className={cn(
+                          "rounded-lg border px-5 py-2.5 font-title text-sm transition-all",
+                          selectedSize === size.attributes.presentation
+                            ? "border-brand bg-brand text-white"
+                            : "border-border bg-transparent text-foreground hover:border-brand"
+                        )}
+                      >
+                        {size.attributes.presentation}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add to Cart */}
+                <button
+                  onClick={() => handleAddToCart(addItem)}
+                  className="mt-6 w-full rounded-xl bg-brand px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px hover:shadow-lg active:translate-y-0"
+                >
+                  Add to Cart
+                </button>
+
+                {/* Product Properties */}
+                {productProperties && productProperties.length > 0 && (
+                  <div className="mt-8 text-left">
+                    <h3 className="mb-3 font-title text-base font-semibold text-foreground">
+                      Product Info
+                    </h3>
+                    <div className="space-y-1.5">
+                      {productProperties.map((property: any, index: number) => (
+                        <div
+                          key={`property-${index}`}
+                          className="font-body text-sm text-muted-foreground"
+                        >
+                          <span className="font-medium text-foreground">
+                            {property.attributes.name}
+                          </span>
+                          : {property.attributes.value}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            </ProductDescription>
-          </ProductInfoBox>
-          {renderSimilarProducts()}
-          {recommendedProducts()}
-        </ProductContainer>
+            </div>
+          </div>
+
+          {/* Similar / Recommended / Recently Viewed */}
+          <div className="mt-12 space-y-8">
+            {renderSimilarProducts()}
+            {renderRecommendedProducts()}
+            <RecentlyViewed excludeSlug={currentSlug} />
+          </div>
+        </div>
       </Layout>
     );
   }
@@ -595,8 +506,6 @@ export const RetailProductDetails = ({
 
 export async function getServerSideProps() {
   const queryClient = new QueryClient();
-
-  // await queryClient.prefetchQuery(["posts", 1], () => fetchPosts(1));
   await queryClient.prefetchQuery(["streams", 1], () => fetchStreams(1));
   await queryClient.prefetchQuery(["products", 1], () => fetchProducts(1));
 

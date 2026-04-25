@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import {
   useUserProfile,
@@ -8,28 +7,6 @@ import {
 } from "@hooks/useUserProfile";
 import { Loading } from "@components/Loading";
 import { UserProfileProps } from "./types";
-import {
-  ProfileWrapper,
-  ProfileHeader,
-  Avatar,
-  ProfileInfo,
-  Username,
-  Bio,
-  Stats,
-  Stat,
-  StatValue,
-  StatLabel,
-  ContentSection,
-  SectionTitle,
-  StreamGrid,
-  StreamCard,
-  StreamThumbnail,
-  LiveBadge,
-  StreamInfo,
-  StreamTitle,
-  StreamMeta,
-  EmptyState
-} from "./UserProfile.styles";
 
 export const UserProfile: React.FC<UserProfileProps> = ({ username }) => {
   const router = useRouter();
@@ -49,17 +26,19 @@ export const UserProfile: React.FC<UserProfileProps> = ({ username }) => {
 
   if (isLoading) {
     return (
-      <ProfileWrapper>
+      <div className="section-container py-10">
         <Loading />
-      </ProfileWrapper>
+      </div>
     );
   }
 
   if (error || !userData) {
     return (
-      <ProfileWrapper>
-        <EmptyState>User not found</EmptyState>
-      </ProfileWrapper>
+      <div className="section-container py-10">
+        <div className="flex flex-col items-center justify-center rounded-xl bg-card px-5 py-20 text-center text-muted-foreground">
+          User not found
+        </div>
+      </div>
     );
   }
 
@@ -78,50 +57,71 @@ export const UserProfile: React.FC<UserProfileProps> = ({ username }) => {
   };
 
   return (
-    <ProfileWrapper>
-      <ProfileHeader>
-        <Avatar>{getInitials(displayName)}</Avatar>
-        <ProfileInfo>
-          <Username>{displayName}</Username>
-          <Bio>{userData.email}</Bio>
-          <Stats>
-            <Stat>
-              <StatValue>
+    <div className="section-container py-10">
+      {/* Profile Header */}
+      <div className="mb-8 flex items-center gap-6 rounded-xl border border-border/30 bg-card p-6">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-brand/10 font-title text-2xl font-bold text-brand">
+          {getInitials(displayName)}
+        </div>
+        <div>
+          <h1 className="font-title text-xl font-bold text-foreground">
+            {displayName}
+          </h1>
+          <p className="mt-0.5 font-body text-sm text-muted-foreground">
+            {userData.email}
+          </p>
+          <div className="mt-3 flex items-center gap-6">
+            <div className="text-center">
+              <span className="block font-title text-lg font-bold text-foreground">
                 {userData.followers_count?.toLocaleString()}
-              </StatValue>
-              <StatLabel>Followers</StatLabel>
-            </Stat>
-            <Stat>
-              <StatValue>
+              </span>
+              <span className="font-body text-xs text-muted-foreground">
+                Followers
+              </span>
+            </div>
+            <div className="text-center">
+              <span className="block font-title text-lg font-bold text-foreground">
                 {userData.following_count?.toLocaleString()}
-              </StatValue>
-              <StatLabel>Following</StatLabel>
-            </Stat>
-          </Stats>
-        </ProfileInfo>
-      </ProfileHeader>
+              </span>
+              <span className="font-body text-xs text-muted-foreground">
+                Following
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <ContentSection>
-        <SectionTitle>Public Favorites</SectionTitle>
+      {/* Public Favorites */}
+      <div>
+        <h2 className="mb-4 font-title text-lg font-semibold uppercase tracking-wider text-foreground">
+          Public Favorites
+        </h2>
         {userData.public_favorites && userData.public_favorites.length > 0 ? (
-          <StreamGrid>
-            {userData.public_favorites.map((favorite) => (
-              <StreamCard
+          <div className="product-grid-comfortable">
+            {userData.public_favorites.map((favorite: any) => (
+              <div
                 key={favorite.id}
                 onClick={() => router.push(`/${favorite.slug}`)}
+                className="group cursor-pointer overflow-hidden rounded-xl border border-border/30 bg-card transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                <StreamThumbnail />
-                <StreamInfo>
-                  <StreamTitle>{favorite.name}</StreamTitle>
-                  <StreamMeta>${favorite.price}</StreamMeta>
-                </StreamInfo>
-              </StreamCard>
+                <div className="aspect-square bg-muted" />
+                <div className="p-4">
+                  <h3 className="font-title text-sm font-semibold text-foreground">
+                    {favorite.name}
+                  </h3>
+                  <p className="mt-1 font-body text-sm text-muted-foreground">
+                    ${favorite.price}
+                  </p>
+                </div>
+              </div>
             ))}
-          </StreamGrid>
+          </div>
         ) : (
-          <EmptyState>No public favorites</EmptyState>
+          <div className="flex flex-col items-center justify-center rounded-xl bg-card px-5 py-20 text-center text-muted-foreground">
+            No public favorites
+          </div>
         )}
-      </ContentSection>
-    </ProfileWrapper>
+      </div>
+    </div>
   );
 };

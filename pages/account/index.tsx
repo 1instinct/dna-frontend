@@ -1,2 +1,2 @@
-import { Account } from "../../components";
+import { Account } from "../../components/Account";
 export default Account;

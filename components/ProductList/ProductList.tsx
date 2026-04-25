@@ -1,39 +1,43 @@
 import React from "react";
-// import Link from "next/link";
-import { useRouter } from "next/router";
-// import { useProducts } from "../../hooks/useProducts";
-import { ProductListProps } from "./types";
-import styled from "@emotion/styled";
 import { ProductCard } from "@components/ProductCard/ProductCard";
-
-import {
-  ProductsRow,
-  ProductContainer,
-  MyImg,
-  MyH1,
-  MySection,
-  MyLi,
-  MyDiv
-} from "./ProductList.styles";
 import { Loading } from "@components/Loading";
 
-export const ProductList: React.FC<ProductListProps> = (props: any) => {
-  const router = useRouter();
-  const { products, title } = props;
-  // const { data: products, isLoading, isSuccess } = useProducts(1);
-  // if (isLoading) return <MyDiv>Loading</MyDiv>;
+interface ProductListProps {
+  products: any;
+  title?: string;
+  layout?: "grid" | "scroll";
+  excludeProductId?: string;
+}
 
-  // if (!isSuccess) {
-  //   return <MyDiv>Could not load products</MyDiv>;
-  // }
-
+export const ProductList: React.FC<ProductListProps> = ({
+  products,
+  title,
+  layout = "grid",
+  excludeProductId
+}) => {
   if (!products) return <Loading />;
 
+  const filteredData = excludeProductId
+    ? products?.data?.filter((p: any) => p.id !== excludeProductId)
+    : products?.data;
+
+  if (!filteredData || filteredData.length === 0) return null;
+
+  const isScroll = layout === "scroll";
+
   return (
-    <MySection>
-      <MyH1>{title}</MyH1>
-      <ProductsRow>
-        {products?.data?.map((product: any) => {
+    <section className="w-full pb-5">
+      {title && (
+        <h2 className="font-title text-xl text-foreground">{title}</h2>
+      )}
+      <div
+        className={
+          isScroll
+            ? "mt-3 flex gap-4 overflow-x-auto pb-4 scrollbar-hide md:grid md:grid-cols-4 md:overflow-visible lg:grid-cols-5"
+            : "product-grid-dense"
+        }
+      >
+        {filteredData.map((product: any) => {
           const defaultImg =
             "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
           const productImg = product.relationships?.images?.data[0]?.id;
@@ -55,13 +59,11 @@ export const ProductList: React.FC<ProductListProps> = (props: any) => {
           const variantIds =
             product.relationships?.variants?.data?.map((v: any) => v.id) || [];
 
-          // Find variant objects in included array
           const productVariants = products?.included?.filter(
             (item: any) =>
               item.type === "variant" && variantIds.includes(item.id)
           );
 
-          // Get all option_value IDs from these variants
           const variantOptionValueIds =
             productVariants?.flatMap(
               (variant: any) =>
@@ -70,7 +72,6 @@ export const ProductList: React.FC<ProductListProps> = (props: any) => {
                 ) || []
             ) || [];
 
-          // Find the actual option_value objects that are colors
           const allOptions = products?.included?.filter(
             (e: any) => e.type === "option_value"
           );
@@ -83,15 +84,19 @@ export const ProductList: React.FC<ProductListProps> = (props: any) => {
             ) || [];
 
           return (
-            <ProductCard
+            <div
               key={product.id}
-              item={product}
-              imgSrc={imgSrc}
-              opts={foundOptions}
-            />
+              className={isScroll ? "w-40 flex-shrink-0 md:w-auto" : undefined}
+            >
+              <ProductCard
+                item={product}
+                imgSrc={imgSrc}
+                opts={foundOptions}
+              />
+            </div>
           );
         })}
-      </ProductsRow>
-    </MySection>
+      </div>
+    </section>
   );
 };

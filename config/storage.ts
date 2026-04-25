@@ -55,7 +55,7 @@ const storage = {
     // Also set cookie for middleware access
     const isSecure = window.location.protocol === "https:";
     const tokenStr = JSON.stringify(token);
-    const cookieString = `token=${encodeURIComponent(
+    const cookieString = `storefront_token=${encodeURIComponent(
       tokenStr
     )}; path=/; max-age=${token.expires_in}; SameSite=Lax${
       isSecure ? "; Secure" : ""
@@ -75,7 +75,7 @@ const storage = {
     constants.IS_DEBUG &&
       console.log(
         "[Storage] Cookie after set:",
-        document.cookie.includes("token") ? "SUCCESS" : "FAILED"
+        document.cookie.includes("storefront_token") ? "SUCCESS" : "FAILED"
       );
   },
   getGuestOrderToken: async (): Promise<string | undefined> => {
