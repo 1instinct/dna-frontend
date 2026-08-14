@@ -102,6 +102,26 @@ export const RetailProductDetails = ({
   const productProperties =
     thisProduct &&
     thisProduct?.included?.filter((e: any) => e["type"] === "product_property");
+
+  // Spree images can't hold a video, so an optional "hero_video" product
+  // property (value = mp4 URL) drives an autoplay video slide at the front of
+  // the gallery. Keep it out of the visible Specs list.
+  const HERO_VIDEO_KEY = "hero_video";
+  const normalizeKey = (s?: string) =>
+    (s || "").trim().toLowerCase().replace(/\s+/g, "_");
+  const heroVideoValue: string | undefined = productProperties?.find(
+    (p: any) => normalizeKey(p?.attributes?.name) === HERO_VIDEO_KEY
+  )?.attributes?.value;
+  const heroVideoUrl = heroVideoValue
+    ? heroVideoValue.startsWith("http") || heroVideoValue.startsWith("/")
+      ? heroVideoValue
+      : `/${heroVideoValue}`
+    : undefined;
+  const displaySpecs =
+    (productProperties || []).filter(
+      (p: any) => normalizeKey(p?.attributes?.name) !== HERO_VIDEO_KEY
+    ) || [];
+
   const thisProductId = thisProduct?.data?.id || "";
 
   // Extract taxon name from current product for "similar" filtering
@@ -344,7 +364,9 @@ export const RetailProductDetails = ({
         styles[styles.length - 1]?.url;
       const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL || "";
       const trackImgSrc = trackImgUrl
-        ? trackImgUrl.startsWith("http") ? trackImgUrl : `${apiUrl}${trackImgUrl}`
+        ? trackImgUrl.startsWith("http")
+          ? trackImgUrl
+          : `${apiUrl}${trackImgUrl}`
         : "";
       trackView({
         slug: thisProduct.data.attributes.slug,
@@ -400,25 +422,39 @@ export const RetailProductDetails = ({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
               >
-                {productImgs && productImgs.length > 0 ? (
+                {(productImgs && productImgs.length > 0) || heroVideoUrl ? (
                   <ProductGallery
-                    images={productImgs.map((image: any, index: number) => {
-                      // Prefer transformed_url (aspect-ratio-preserving), fall back to 600px style
-                      const transformedUrl = image.attributes?.transformed_url;
-                      const styleUrl = image.attributes.styles?.filter(
-                        (e: any) => e["width"] == "600"
-                      )[0]?.url;
-                      const rawUrl = transformedUrl || styleUrl;
-                      const src = rawUrl?.startsWith("http")
-                        ? rawUrl
-                        : `${process.env.NEXT_PUBLIC_SPREE_API_URL}${rawUrl}`;
-                      return {
-                        src,
-                        alt: `${thisProduct?.data?.attributes?.name} - Image ${
-                          index + 1
-                        }`
-                      };
-                    })}
+                    images={[
+                      ...(heroVideoUrl
+                        ? [
+                            {
+                              src: heroVideoUrl,
+                              alt: `${thisProduct?.data?.attributes?.name} teaser`,
+                              type: "video" as const
+                            }
+                          ]
+                        : []),
+                      ...(productImgs || []).map(
+                        (image: any, index: number) => {
+                          // Prefer transformed_url (aspect-ratio-preserving), fall back to 600px style
+                          const transformedUrl =
+                            image.attributes?.transformed_url;
+                          const styleUrl = image.attributes.styles?.filter(
+                            (e: any) => e["width"] == "600"
+                          )[0]?.url;
+                          const rawUrl = transformedUrl || styleUrl;
+                          const src = rawUrl?.startsWith("http")
+                            ? rawUrl
+                            : `${process.env.NEXT_PUBLIC_SPREE_API_URL}${rawUrl}`;
+                          return {
+                            src,
+                            alt: `${
+                              thisProduct?.data?.attributes?.name
+                            } - Image ${index + 1}`
+                          };
+                        }
+                      )
+                    ]}
                   />
                 ) : (
                   <div className="flex aspect-square items-center justify-center rounded-xl bg-surface-deep">
@@ -616,7 +652,7 @@ export const RetailProductDetails = ({
                 </div>
 
                 {/* Product Properties / Specs — Glass Panel */}
-                {productProperties && productProperties.length > 0 && (
+                {displaySpecs.length > 0 && (
                   <motion.div
                     className="glass-panel mt-6 p-6"
                     initial={{ opacity: 0, y: 20 }}
@@ -627,7 +663,7 @@ export const RetailProductDetails = ({
                       Specs
                     </h3>
                     <div className="divide-y divide-glass-border">
-                      {productProperties.map((property: any, index: number) => (
+                      {displaySpecs.map((property: any, index: number) => (
                         <div
                           key={`property-${index}`}
                           className={cn(

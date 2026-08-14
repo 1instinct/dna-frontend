@@ -1,13 +1,18 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ZoomIn, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { cn } from "@lib/utils";
 
 interface ProductImage {
   src: string;
   alt: string;
+  type?: "image" | "video";
 }
+
+const VIDEO_EXT = /\.(mp4|webm|mov|m4v|ogv)(\?|$)/i;
+const isVideoMedia = (media: ProductImage) =>
+  media.type === "video" || VIDEO_EXT.test(media.src);
 
 interface ProductGalleryProps {
   images: ProductImage[];
@@ -121,22 +126,34 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
             <div className="flex">
               {images.map((image, index) => (
                 <div key={index} className="min-w-0 shrink-0 grow-0 basis-full">
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className="relative z-10 w-full object-contain"
-                    style={{
-                      transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                      transform:
-                        isZoomed && index === selectedIndex
-                          ? "scale(2)"
-                          : "scale(1)",
-                      transition: isZoomed
-                        ? "transform 0.1s ease-out"
-                        : "transform 0.3s ease-out"
-                    }}
-                    draggable={false}
-                  />
+                  {isVideoMedia(image) ? (
+                    <video
+                      src={image.src}
+                      className="relative z-10 w-full object-contain"
+                      muted
+                      autoPlay
+                      loop
+                      playsInline
+                      preload="auto"
+                    />
+                  ) : (
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="relative z-10 w-full object-contain"
+                      style={{
+                        transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                        transform:
+                          isZoomed && index === selectedIndex
+                            ? "scale(2)"
+                            : "scale(1)",
+                        transition: isZoomed
+                          ? "transform 0.1s ease-out"
+                          : "transform 0.3s ease-out"
+                      }}
+                      draggable={false}
+                    />
+                  )}
                 </div>
               ))}
             </div>
@@ -187,12 +204,27 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
                     : "border-glass-border opacity-50 hover:opacity-80 hover:border-white/30"
                 )}
               >
-                <img
-                  src={image.src}
-                  alt={`Thumbnail ${index + 1}`}
-                  className="h-full w-full object-cover"
-                  draggable={false}
-                />
+                {isVideoMedia(image) ? (
+                  <>
+                    <video
+                      src={image.src}
+                      className="h-full w-full object-cover"
+                      muted
+                      playsInline
+                      preload="metadata"
+                    />
+                    <span className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+                      <Play className="h-4 w-4 fill-white text-white drop-shadow" />
+                    </span>
+                  </>
+                ) : (
+                  <img
+                    src={image.src}
+                    alt={`Thumbnail ${index + 1}`}
+                    className="h-full w-full object-cover"
+                    draggable={false}
+                  />
+                )}
               </button>
             ))}
           </div>
@@ -240,12 +272,24 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
                       key={index}
                       className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center"
                     >
-                      <img
-                        src={image.src}
-                        alt={image.alt}
-                        className="max-h-[85vh] max-w-full rounded-xl object-contain"
-                        draggable={false}
-                      />
+                      {isVideoMedia(image) ? (
+                        <video
+                          src={image.src}
+                          className="max-h-[85vh] max-w-full rounded-xl object-contain"
+                          muted
+                          autoPlay
+                          loop
+                          playsInline
+                          controls
+                        />
+                      ) : (
+                        <img
+                          src={image.src}
+                          alt={image.alt}
+                          className="max-h-[85vh] max-w-full rounded-xl object-contain"
+                          draggable={false}
+                        />
+                      )}
                     </div>
                   ))}
                 </div>
@@ -284,18 +328,33 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
                       lightboxApi?.scrollTo(index);
                     }}
                     className={cn(
-                      "h-14 w-14 overflow-hidden rounded-lg border-2 transition-all duration-300",
+                      "relative h-14 w-14 overflow-hidden rounded-lg border-2 transition-all duration-300",
                       selectedIndex === index
                         ? "border-neon-cyan shadow-[0_0_12px_rgba(0,255,255,0.4)]"
                         : "border-white/10 opacity-40 hover:opacity-70"
                     )}
                   >
-                    <img
-                      src={image.src}
-                      alt={`Thumbnail ${index + 1}`}
-                      className="h-full w-full object-cover"
-                      draggable={false}
-                    />
+                    {isVideoMedia(image) ? (
+                      <>
+                        <video
+                          src={image.src}
+                          className="h-full w-full object-cover"
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
+                        <span className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+                          <Play className="h-4 w-4 fill-white text-white drop-shadow" />
+                        </span>
+                      </>
+                    ) : (
+                      <img
+                        src={image.src}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="h-full w-full object-cover"
+                        draggable={false}
+                      />
+                    )}
                   </button>
                 ))}
               </div>
