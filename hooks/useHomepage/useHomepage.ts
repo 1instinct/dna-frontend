@@ -2,8 +2,11 @@ import { useQuery } from "react-query";
 import { QueryKeys } from "@hooks/queryKeys";
 import constants from "@utilities/constants";
 
+// Server-side: use internal Spree URL directly. Client-side: use public URL.
 const API_BASE =
-  process.env.NEXT_PUBLIC_SPREE_API_URL || "http://localhost:3001";
+  typeof window === "undefined"
+    ? process.env.SPREE_API_URL || process.env.NEXT_PUBLIC_SPREE_API_URL || "http://localhost:3001"
+    : process.env.NEXT_PUBLIC_SPREE_API_URL || "";
 
 export interface HomepageSection {
   id: number;
@@ -84,9 +87,10 @@ export const fetchHomepage = async (): Promise<HomepageData> => {
   return data.response_data;
 };
 
-export const useHomepage = () => {
+export const useHomepage = (initialData?: HomepageData | null) => {
   return useQuery<HomepageData, Error>([QueryKeys.HOMEPAGE], fetchHomepage, {
-    staleTime: 60000, // 1 minute
+    staleTime: 5 * 60 * 1000, // 5 minutes (ISR revalidates every 60s)
+    initialData: initialData || undefined,
     onError: (error) => {
       console.error("Failed to fetch homepage:", error.message);
     },

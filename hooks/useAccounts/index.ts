@@ -29,6 +29,8 @@ export const fetchAccountInfo = async () => {
 // Update account info
 export const updateAccountInfo = async (params: {
   email?: string;
+  first_name?: string;
+  last_name?: string;
   password?: string;
   password_confirmation?: string;
 }) => {

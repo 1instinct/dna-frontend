@@ -9,7 +9,7 @@ export const ProductTeaser: React.FC<ProductTeaserProps> = (props: any) => {
 
   return (
     <section className="w-full pb-5">
-      {title && <p className="font-body text-sm text-foreground">{title}</p>}
+      {title && <p className="font-body text-sm text-white">{title}</p>}
       <div className="product-grid-dense">
         {products?.data?.map((product: any) => {
           const defaultImg =
@@ -37,7 +37,7 @@ export const ProductTeaser: React.FC<ProductTeaserProps> = (props: any) => {
                   alt={product.attributes.name}
                   className="h-[300px] w-[240px] cursor-pointer object-contain transition-transform duration-300 hover:scale-105"
                 />
-                <p className="mt-2 font-body text-sm text-foreground">
+                <p className="mt-2 font-body text-sm text-white">
                   {product.attributes.name}
                 </p>
               </div>

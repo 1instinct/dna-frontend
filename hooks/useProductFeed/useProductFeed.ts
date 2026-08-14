@@ -117,13 +117,13 @@ export const fetchProductFeed = async (params: ProductFeedParams) => {
 
   const response = await spreeClient.products.list(tokenParam, queryParams);
 
-  console.log("Product feed response:", response);
-  console.log("Is success:", response.isSuccess());
+  constants.IS_DEBUG && console.log("Product feed response:", response);
+  constants.IS_DEBUG && console.log("Is success:", response.isSuccess());
 
   if (response.isSuccess()) {
     const data = response.success();
-    console.log("Product feed success data:", data);
-    console.log("Products count:", data?.data?.length);
+    constants.IS_DEBUG && console.log("Product feed success data:", data);
+    constants.IS_DEBUG && console.log("Products count:", data?.data?.length);
     return data;
   } else {
     const error = response.fail();
@@ -135,7 +135,8 @@ export const fetchProductFeed = async (params: ProductFeedParams) => {
 export const useProductFeed = (
   feedType: FeedType,
   customParams?: Partial<ProductFeedParams>,
-  enabled: boolean = true
+  enabled: boolean = true,
+  initialData?: any
 ) => {
   // Merge feed config with custom params
   const feedConfig = FEED_CONFIGS[feedType] || {};
@@ -152,7 +153,8 @@ export const useProductFeed = (
 
   return useQuery(queryKey, () => fetchProductFeed(mergedParams), {
     enabled,
-    staleTime: 60000, // 1 minute
+    staleTime: 5 * 60 * 1000, // 5 minutes — prevents refetch on route changes
+    initialData,
     onError: (error: any) => {
       console.error(`Failed to fetch ${feedType} feed:`, error.message);
     },

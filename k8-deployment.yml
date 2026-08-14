@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dna-frontend
+  name: beeper-frontend
   namespace: default
   labels:
-    app: dna-frontend
+    app: beeper-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dna-frontend
+      app: beeper-frontend
   template:
     metadata:
       labels:
-        app: dna-frontend
+        app: beeper-frontend
     spec:
       containers:
-        - name: dna-frontend
-          image: localhost:32000/dna-frontend:latest
+        - name: beeper-frontend
+          image: localhost:32000/beeper-frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
@@ -30,4 +30,4 @@ spec:
               value: "3000"
           envFrom:
             - secretRef:
-                name: dna-frontend-secrets
+                name: beeper-frontend-secrets

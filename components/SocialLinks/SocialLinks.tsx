@@ -37,7 +37,7 @@ export const SocialLinks = ({ darkMode }: any) => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={social.label}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-brand"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-white/70 transition-all hover:text-neon-cyan hover:drop-shadow-[0_0_8px_rgba(0,255,255,0.6)]"
           >
             <Icon className="h-5 w-5" />
           </a>

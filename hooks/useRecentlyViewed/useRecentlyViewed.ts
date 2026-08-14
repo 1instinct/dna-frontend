@@ -35,20 +35,17 @@ export const useRecentlyViewed = (excludeSlug?: string) => {
     setProducts(loadProducts());
   }, []);
 
-  const addProduct = useCallback(
-    (product: Omit<RecentProduct, "viewedAt">) => {
-      setProducts((prev) => {
-        const filtered = prev.filter((p) => p.slug !== product.slug);
-        const updated = [
-          { ...product, viewedAt: Date.now() },
-          ...filtered
-        ].slice(0, MAX_ITEMS);
-        saveProducts(updated);
-        return updated;
-      });
-    },
-    []
-  );
+  const addProduct = useCallback((product: Omit<RecentProduct, "viewedAt">) => {
+    setProducts((prev) => {
+      const filtered = prev.filter((p) => p.slug !== product.slug);
+      const updated = [{ ...product, viewedAt: Date.now() }, ...filtered].slice(
+        0,
+        MAX_ITEMS
+      );
+      saveProducts(updated);
+      return updated;
+    });
+  }, []);
 
   const clearHistory = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);

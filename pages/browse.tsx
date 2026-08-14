@@ -1,3 +1,4 @@
-import { Browse } from "../components/Browse";
+import { Browse, getStaticProps } from "../components/Browse/Browse";
 
+export { getStaticProps };
 export default Browse;

@@ -48,7 +48,7 @@ const Suggestion = ({
     return (
       <div
         onClick={handleSelection}
-        className="flex cursor-pointer items-center justify-between bg-card px-8 py-3 font-title text-sm font-bold text-foreground transition-colors hover:bg-muted"
+        className="flex cursor-pointer items-center justify-between glass-panel px-8 py-3 font-title text-sm font-bold text-white transition-colors hover:bg-white/[0.08]"
       >
         <div className="overflow-hidden text-ellipsis whitespace-nowrap">
           {formatWithHighlight(suggestion.attributes.name, query)}

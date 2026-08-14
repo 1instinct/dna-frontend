@@ -22,7 +22,7 @@ export const StreamCard = ({ isPast, item }: any) => {
         <img src="/3.png" alt="" className="h-full w-full object-cover" />
       </div>
 
-      <h2 className="mt-10 text-center font-title text-base text-foreground">
+      <h2 className="mt-10 text-center font-title text-base text-white">
         {item.title}
       </h2>
     </div>

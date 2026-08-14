@@ -133,7 +133,7 @@ export const ComingSoon = () => {
 
   return (
     <>
-      <div className="relative flex min-h-screen flex-col bg-background">
+      <div className="relative flex min-h-screen flex-col bg-surface-deep">
         {logoPath ? (
           <img
             src={logoPath}
@@ -141,12 +141,12 @@ export const ComingSoon = () => {
             alt="Logo"
           />
         ) : siteTitle ? (
-          <div className="mx-0 my-10 font-title text-4xl font-bold text-foreground">
+          <div className="mx-0 my-10 font-title text-4xl font-bold text-white">
             {siteTitle}
           </div>
         ) : null}
         {siteDesc && (
-          <div className="w-[425px] text-center font-title text-base text-foreground">
+          <div className="w-[425px] text-center font-title text-base text-white">
             {siteDesc}
           </div>
         )}
@@ -161,7 +161,7 @@ export const ComingSoon = () => {
           </div>
         )}
         {comingSoonText !== "" && (
-          <div className="w-[425px] text-center font-title text-base text-foreground">
+          <div className="w-[425px] text-center font-title text-base text-white">
             {comingSoonText}
           </div>
         )}

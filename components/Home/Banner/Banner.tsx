@@ -16,8 +16,8 @@ const Banner: React.FC<BannerProps> = ({ data }) => {
     >
       <ShimmerButton
         className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2"
-        shimmerColor="#EB8B8B"
-        background="rgba(235, 139, 139, 0.9)"
+        shimmerColor="#00ffff"
+        background="rgba(0, 255, 255, 0.15)"
         onClick={() => router.push("/browse")}
       >
         SHOP NOW

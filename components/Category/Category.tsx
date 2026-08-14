@@ -152,18 +152,18 @@ export const Category = () => {
 
           {/* Product Info */}
           <div className="m-[2%] w-full md:w-auto">
-            <div className="max-w-[400px] text-center text-foreground">
+            <div className="max-w-[400px] text-center text-white">
               <h2 className="font-title text-2xl font-semibold">
                 {data?.data?.attributes?.name}
               </h2>
-              <p className="mt-3 font-body text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-3 font-body text-sm leading-relaxed text-white/50">
                 {data?.data?.attributes?.description}
               </p>
               <h3 className="mt-4 font-title text-2xl font-bold">
                 ${data?.data?.attributes?.price}
               </h3>
 
-              <select className="mt-4 w-full cursor-pointer rounded-lg border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors focus:border-brand focus:outline-none">
+              <select className="mt-4 w-full cursor-pointer rounded-lg border border-glass-border bg-surface-deep px-4 py-3 font-body text-sm text-white transition-colors focus:border-neon-cyan focus:outline-none">
                 <option>Color</option>
                 <option>Blue</option>
                 <option>Beige</option>
@@ -174,7 +174,7 @@ export const Category = () => {
                 {["XS", "S", "M", "L", "XL"].map((size) => (
                   <button
                     key={size}
-                    className="rounded-lg border border-border px-5 py-2.5 font-title text-sm text-foreground transition-all hover:border-brand"
+                    className="rounded-lg border border-glass-border px-5 py-2.5 font-title text-sm text-white transition-all hover:border-neon-cyan"
                   >
                     {size}
                   </button>
@@ -183,23 +183,23 @@ export const Category = () => {
 
               <button
                 onClick={handleAddToCart}
-                className="mt-6 w-full rounded-xl bg-brand px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px hover:shadow-lg active:translate-y-0"
+                className="mt-6 w-full rounded-xl bg-neon-cyan px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-black transition-all hover:bg-neon-cyan/90 hover:-translate-y-px hover:shadow-[0_0_20px_rgba(0,255,255,0.3)] active:translate-y-0"
               >
                 Add to Cart
               </button>
             </div>
 
             <div className="mt-8 text-left">
-              <h3 className="mb-2 font-title text-base font-semibold text-foreground md:text-sm md:text-center">
+              <h3 className="mb-2 font-title text-base font-semibold text-white md:text-sm md:text-center">
                 Product Details
               </h3>
-              <p className="font-body text-sm text-muted-foreground">
+              <p className="font-body text-sm text-white/50">
                 FABRIC : 100% POLYESTER BUST : 29&quot;LENGTH : 25 1/2&quot;
               </p>
-              <h3 className="mb-2 mt-4 font-title text-base font-semibold text-foreground md:text-sm md:text-center">
+              <h3 className="mb-2 mt-4 font-title text-base font-semibold text-white md:text-sm md:text-center">
                 Model Info
               </h3>
-              <p className="font-body text-sm text-muted-foreground">
+              <p className="font-body text-sm text-white/50">
                 Model info goes here:
                 <br />
                 Height: 5&apos;8&apos;&apos;
@@ -217,7 +217,7 @@ export const Category = () => {
         </div>
 
         <div className="section-container pb-8">
-          <h3 className="mb-4 font-title text-lg text-foreground">
+          <h3 className="mb-4 font-title text-lg text-white">
             You may also like:
           </h3>
           {polProductList}
@@ -228,7 +228,7 @@ export const Category = () => {
 
   return (
     <Layout>
-      <div className="flex min-h-[400px] items-center justify-center font-title text-foreground">
+      <div className="flex min-h-[400px] items-center justify-center font-title text-white">
         PRODUCT NOT FOUND
       </div>
     </Layout>

@@ -57,8 +57,8 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ menuItems, loading }) => {
             onMouseEnter={() => hasChildren && handleSubmenuEnter(item.id)}
             onClick={() => handleItemClick(item.url, hasChildren || false)}
             className={cn(
-              "flex cursor-pointer items-center justify-between rounded px-3 py-2 text-sm text-foreground transition-all duration-200 ease-expo-out",
-              "hover:translate-x-1 hover:bg-accent hover:text-brand",
+              "flex cursor-pointer items-center justify-between rounded px-3 py-2 text-sm text-white transition-all duration-200 ease-expo-out",
+              "hover:translate-x-1 hover:bg-white/[0.06] hover:text-neon-cyan",
               level > 0 && "text-[13px]"
             )}
             style={{
@@ -108,9 +108,9 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ menuItems, loading }) => {
               onMouseLeave={handleMouseLeave}
               onClick={() => handleItemClick(item.url, hasChildren || false)}
               className={cn(
-                "relative cursor-pointer px-1 py-2 text-sm font-medium tracking-[0.5px] text-foreground transition-colors duration-200",
-                "hover:text-brand",
-                "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-left after:bg-brand after:transition-transform after:duration-300",
+                "relative cursor-pointer px-1 py-2 text-sm font-medium tracking-[0.5px] text-white transition-colors duration-200",
+                "hover:text-neon-cyan",
+                "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-left after:bg-neon-cyan after:transition-transform after:duration-300",
                 isActive ? "after:scale-x-100" : "after:scale-x-0"
               )}
             >
@@ -141,7 +141,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ menuItems, loading }) => {
             onMouseEnter={() => handleMouseEnter(item.id)}
             onMouseLeave={handleMouseLeave}
             className={cn(
-              "absolute left-0 top-full z-[1000] w-full overflow-y-auto border-t border-border/30 bg-background shadow-lg transition-all duration-300 ease-expo-out",
+              "absolute left-0 top-full z-[1000] w-full overflow-y-auto border-t border-glass-border bg-surface-deep shadow-lg transition-all duration-300 ease-expo-out",
               isActive
                 ? "visible translate-y-0 opacity-100"
                 : "invisible -translate-y-2.5 opacity-0",
@@ -159,7 +159,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ menuItems, loading }) => {
             >
               {columns.map((columnItems, colIdx) => (
                 <div key={`col-${colIdx}`} className="flex flex-col gap-2">
-                  <h4 className="mb-3 border-b border-border/30 pb-2 text-xs font-bold uppercase tracking-[1px] text-brand">
+                  <h4 className="mb-3 border-b border-glass-border pb-2 text-xs font-bold uppercase tracking-[1px] text-neon-cyan">
                     {colIdx === 0 ? item.name : "\u00A0"}
                   </h4>
                   <div className="flex flex-col gap-1">
@@ -169,11 +169,11 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ menuItems, loading }) => {
               ))}
               {/* Featured highlight */}
               {columns.length < 4 && (
-                <div className="rounded-lg border border-brand/40 bg-gradient-to-br from-brand/[0.08] to-brand-secondary/[0.08] p-5">
-                  <h3 className="mb-2 text-base font-bold text-brand">
+                <div className="rounded-lg border border-neon-cyan/40 bg-gradient-to-br from-neon-cyan/[0.08] to-neon-magenta/[0.08] p-5">
+                  <h3 className="mb-2 text-base font-bold text-neon-cyan">
                     Featured
                   </h3>
-                  <p className="m-0 text-[13px] text-muted-foreground">
+                  <p className="m-0 text-[13px] text-white/50">
                     New arrivals &amp; trending items
                   </p>
                 </div>

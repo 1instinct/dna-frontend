@@ -18,6 +18,7 @@
     "lint-check": "tsc --noEmit && eslint .",
     "pre-commit": "yarn format && yarn prettier && yarn lint-check",
     "postinstall": "husky install",
+    "seed": "ts-node --compiler-options '{\"module\":\"commonjs\"}' scripts/seed-spree.ts",
     "generate-models": "kontent-generate --projectId=a6ea1f57-de4c-0045-8bc3-5fe838b10480 --apiKey=ew0KICAiYWxnIjogIkhTMjU2IiwNCiAgInR5cCI6ICJKV1QiDQp9.ew0KICAianRpIjogImM0ZWQ0MmNiMDc4MTQzNzNiMzJhOTdiYmVkNjQyZWNlIiwNCiAgImlhdCI6ICIxNjY1NzU3MjY4IiwNCiAgImV4cCI6ICIyMDExMzU3MjY4IiwNCiAgInZlciI6ICIyLjEuMCIsDQogICJ1aWQiOiAiNjM0OTZlNjNjNDQxNDgwZDM5YmIwZjJkIiwNCiAgInByb2plY3RfaWQiOiAiYTZlYTFmNTdkZTRjMDA0NThiYzM1ZmU4MzhiMTA0ODAiLA0KICAiYXVkIjogIm1hbmFnZS5rZW50aWNvY2xvdWQuY29tIg0KfQ.Qw9TB2Wqudz4XOp3ys5BBcZjzNNVYl4cp3dO9i60oEA --addTimestamp=true --elementResolver=camelCase"
   },
   "husky": {
@@ -167,6 +168,7 @@
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0",
+    "ts-node": "^10.9.2",
     "typescript": "4.9.4"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"

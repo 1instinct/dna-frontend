@@ -53,7 +53,7 @@ export const ShimmerButton = React.forwardRef<
         <div
           className={cn(
             "-z-30 blur-[2px]",
-            "[container-type:size] absolute inset-0 overflow-visible"
+            "[container-type:size] absolute inset-0 overflow-hidden"
           )}
         >
           {/* spark */}

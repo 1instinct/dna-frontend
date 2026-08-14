@@ -13,14 +13,14 @@ export const Logo = ({ url, svgProps }: LogoProps) => {
       xmlns="http://www.w3.org/2000/svg"
       className={cn(
         "h-[35px] w-[141px] transition-[filter] duration-[1.33s] [transition-timing-function:cubic-bezier(0.19,1,0.22,1)]",
-        "drop-shadow-none hover:drop-shadow-[0_0_11px_#EB8B8B]"
+        "drop-shadow-none hover:drop-shadow-[0_0_11px_#00ffff]"
       )}
       {...svgProps}
     >
       <defs>
         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-          <feFlood floodColor="#EB8B8B" result="color" />
+          <feFlood floodColor="#00ffff" result="color" />
           <feComposite
             in="color"
             in2="coloredBlur"

@@ -17,14 +17,12 @@ const AccountPageLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Layout>
       <div className="section-container min-h-[calc(100vh-400px)] py-10">
-        <h1 className="mb-8 font-title text-3xl font-bold uppercase tracking-wider text-foreground">
-          Account
-        </h1>
+        <h1 className="mb-8 font-pressstart text-lg text-neon-cyan">Account</h1>
 
         <div className="flex flex-col gap-8 md:flex-row">
           {/* Sidebar */}
           <aside className="w-full shrink-0 md:w-56">
-            <nav className="flex flex-row gap-1 overflow-x-auto md:flex-col md:overflow-x-visible">
+            <nav className="glass-panel flex flex-row gap-1 overflow-x-auto p-2 md:flex-col md:overflow-x-visible">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = router.pathname === item.href;
@@ -33,11 +31,11 @@ const AccountPageLayout = ({ children }: { children: React.ReactNode }) => {
                     key={item.href}
                     onClick={() => router.push(item.href)}
                     className={cn(
-                      "flex items-center gap-2.5 whitespace-nowrap rounded-lg border-none px-4 py-2.5 text-left font-body text-sm transition-colors",
+                      "flex items-center gap-2.5 whitespace-nowrap rounded-lg border-none px-4 py-2.5 text-left font-body text-sm transition-all",
                       "cursor-pointer outline-none",
                       isActive
-                        ? "bg-brand/10 font-semibold text-brand"
-                        : "bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+                        ? "bg-neon-cyan/10 font-semibold text-neon-cyan"
+                        : "bg-transparent text-white/60 hover:bg-white/[0.05] hover:text-white"
                     )}
                   >
                     <Icon className="h-4 w-4 shrink-0" />

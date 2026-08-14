@@ -1,0 +1,56 @@
+{
+  "name": "@spree/storefront-api-v2-sdk",
+  "version": "4.5.1003",
+  "description": "Node module to easily integrate your JavaScript or TypeScript application with Spree API V2. You can create an entirely custom Storefront in JS/TS with this package including one page checkout, Single Page Apps, PWAs and so on",
+  "engines": {
+    "node": ">=14.15.4"
+  },
+  "main": "dist/server/index.js",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "webpack",
+    "build:server": "webpack --config-name server",
+    "build:client": "webpack --config-name client",
+    "watch": "webpack --watch",
+    "watch:server": "webpack --watch --config-name server",
+    "watch:client": "webpack --watch --config-name client",
+    "lint": "eslint --ext .ts .",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "test": "docker-compose down && docker-compose up --exit-code-from cypress"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spark-solutions/spree-storefront-api-v2-js-sdk.git"
+  },
+  "author": "Spark Solutions <we@sparksolutions.co> (https://sparksolutions.co)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spark-solutions/spree-storefront-api-v2-js-sdk/issues"
+  },
+  "homepage": "https://guides.spreecommerce.org/api/v2",
+  "devDependencies": {
+    "@types/node": "^14.14.37",
+    "@types/qs": "^6.9.6",
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
+    "del": "^6.0.0",
+    "eslint": "^7.23.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "prettier": "^2.2.1",
+    "progress-bar-webpack-plugin": "^2.1.0",
+    "source-map-loader": "^2.0.1",
+    "ts-loader": "^8.1.0",
+    "typescript": "^4.2.3",
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.6.0",
+    "webpack-merge": "^5.7.3",
+    "webpack-node-externals": "^2.5.2"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "lodash": "^4.17.21",
+    "qs": "^6.10.1"
+  }
+}

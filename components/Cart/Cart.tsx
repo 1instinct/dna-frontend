@@ -66,7 +66,9 @@ export const Cart = () => {
     }
   );
 
-  const foundProduct = (productId: string, productsData: IProducts) => {
+  const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL || "";
+
+  const foundProduct = (variantId: string, productsData: IProducts) => {
     if (!productsData || !Array.isArray(productsData.data)) return null;
     for (const product of productsData.data) {
       if (
@@ -74,12 +76,27 @@ export const Cart = () => {
         Array.isArray(product.relationships.variants.data)
       ) {
         const variant = product.relationships.variants.data.find(
-          (variant) => variant.id === productId
+          (variant) => variant.id === variantId
         );
         if (variant) return product;
       }
     }
     return null;
+  };
+
+  const getProductImage = (product: any) => {
+    if (!product || !productsData?.included) return null;
+    const imgId = product.relationships?.images?.data?.[0]?.id;
+    if (!imgId) return null;
+    const imgRecord = productsData.included.find(
+      (inc: any) => inc.type === "image" && inc.id === imgId
+    );
+    const imgUrl =
+      imgRecord?.attributes?.styles?.[3]?.url ||
+      imgRecord?.attributes?.styles?.[2]?.url ||
+      imgRecord?.attributes?.styles?.[0]?.url;
+    if (!imgUrl) return null;
+    return imgUrl.startsWith("http") ? imgUrl : `${apiUrl}${imgUrl}`;
   };
 
   const handleRemoveItem = (itemId: string) => {
@@ -115,41 +132,79 @@ export const Cart = () => {
           const quantity =
             quantities[lineItemId] || lineItem.attributes.quantity;
 
+          const imageUrl = getProductImage(product);
+          const optionsText = lineItem.attributes?.options_text;
+          const displayPrice = lineItem.attributes?.display_total || `$${(parseFloat(product?.attributes?.price || "0") * quantity).toFixed(2)}`;
+
           return (
             <div
               key={`cart-item-${lineItemId}`}
-              className="flex items-center justify-between border-b border-border/30 py-4"
+              className="glass-panel mb-3 px-4 py-4"
             >
-              <span className="flex-1 font-body text-sm text-foreground">
-                {product?.attributes?.name} - ${product?.attributes?.price}
-              </span>
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() =>
-                    handleUpdateItemQuantity(lineItemId, quantity - 1)
-                  }
-                  className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
-                >
-                  <Minus className="h-3.5 w-3.5" />
-                </button>
-                <span className="w-8 text-center font-body text-sm text-foreground">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() =>
-                    handleUpdateItemQuantity(lineItemId, quantity + 1)
-                  }
-                  className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  onClick={() => handleRemoveItem(lineItemId)}
-                  className="ml-2 flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent text-destructive transition-colors hover:bg-destructive/10"
-                  title="Remove item"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+              <div className="flex gap-4">
+                {/* Product Image */}
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-surface-deep">
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={product?.attributes?.name || "Product"}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="font-micro5-charted text-2xl text-neon-cyan/30">
+                      ?
+                    </span>
+                  )}
+                </div>
+
+                {/* Product Info */}
+                <div className="flex min-w-0 flex-1 flex-col justify-between">
+                  <div>
+                    <h3 className="font-title text-sm leading-tight text-white">
+                      {product?.attributes?.name}
+                    </h3>
+                    {optionsText && (
+                      <p className="mt-0.5 font-title text-xs text-white/50">
+                        {optionsText}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mt-2 flex items-center justify-between">
+                    {/* Quantity controls */}
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleUpdateItemQuantity(lineItemId, quantity - 1)}
+                        className="glass-panel flex h-7 w-7 items-center justify-center !rounded-md text-white transition-colors hover:text-neon-cyan"
+                      >
+                        <Minus className="h-3 w-3" />
+                      </button>
+                      <span className="w-8 text-center font-digital7 text-base text-white">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => handleUpdateItemQuantity(lineItemId, quantity + 1)}
+                        className="glass-panel flex h-7 w-7 items-center justify-center !rounded-md text-white transition-colors hover:text-neon-cyan"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    </div>
+
+                    {/* Price + Remove */}
+                    <div className="flex items-center gap-2">
+                      <span className="font-ds-digital text-base tracking-wider text-neon-cyan">
+                        {displayPrice}
+                      </span>
+                      <button
+                        onClick={() => handleRemoveItem(lineItemId)}
+                        className="flex h-7 w-7 items-center justify-center rounded-md border-none bg-transparent text-white/40 transition-colors hover:text-neon-pink"
+                        title="Remove item"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           );
@@ -173,60 +228,105 @@ export const Cart = () => {
     display_total
   } = cartData?.data?.attributes || {};
 
+  if (item_count === 0 && cartData !== undefined) {
+    return (
+      <div
+        className="flex min-h-[60vh] items-center justify-center"
+        style={{
+          background:
+            "linear-gradient(180deg, #0A0020 0%, #1a0040 50%, #0A0020 100%)"
+        }}
+      >
+        <p className="font-pressstart text-xs leading-relaxed text-white/40">
+          Your cart is empty
+        </p>
+      </div>
+    );
+  }
+
   if (cartData !== undefined) {
     return (
-      <div className="section-container py-8 font-title">
-        <h2 className="mb-6 text-2xl font-semibold text-foreground">Cart</h2>
+      <div
+        className="min-h-screen py-12"
+        style={{
+          background:
+            "linear-gradient(180deg, #0A0020 0%, #1a0040 50%, #0A0020 100%)"
+        }}
+      >
+        <div className="section-container">
+          <h2 className="neon-text-cyan mb-8 font-pressstart text-lg">Cart</h2>
 
-        <div className="mb-4 flex items-center justify-between">
-          <span className="font-body text-sm text-muted-foreground">
-            {item_count} {item_count > 1 ? "items" : "item"} in your cart
-          </span>
-          {item_count > 0 && (
-            <Button variant="outline" size="sm" onClick={handleEmptyCart}>
-              <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-              Empty Cart
-            </Button>
-          )}
-        </div>
-
-        <div>{renderCartItems()}</div>
-
-        {/* Totals */}
-        <div className="mt-6 space-y-2 border-t border-border/30 pt-6">
-          <div className="flex justify-between font-body text-sm">
-            <span className="text-muted-foreground">Subtotal:</span>
-            <span className="font-semibold text-foreground">
-              {display_item_total}
+          <div className="mb-6 flex items-center justify-between">
+            <span className="font-micro5 text-sm text-white/60">
+              {item_count} {item_count > 1 ? "items" : "item"} in your cart
             </span>
+            {item_count > 0 && (
+              <button
+                onClick={handleEmptyCart}
+                className="glass-panel flex items-center gap-1.5 !rounded-lg px-3 py-1.5 font-title text-xs text-neon-pink transition-colors hover:text-neon-pink"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Empty Cart
+              </button>
+            )}
           </div>
-          <div className="flex justify-between font-body text-sm">
-            <span className="text-muted-foreground">Tax:</span>
-            <span className="text-foreground">{included_tax_total}</span>
-          </div>
-          <div className="flex justify-between font-title text-lg font-bold text-foreground">
-            <span>Total:</span>
-            <span>{display_total}</span>
-          </div>
-        </div>
 
-        {/* Actions */}
-        <div className="mt-8 flex flex-wrap gap-3">
-          {user ? (
-            <Button onClick={() => router.push("/checkout")}>Checkout</Button>
-          ) : (
-            <>
-              <Button onClick={() => router.push("/checkout")}>
-                Checkout as Guest
-              </Button>
-              <Button variant="outline" onClick={() => router.push("/login")}>
-                Login
-              </Button>
-              <Button variant="outline" onClick={() => router.push("/signup")}>
-                Sign Up
-              </Button>
-            </>
-          )}
+          <div>{renderCartItems()}</div>
+
+          {/* Totals */}
+          <div className="glass-panel mt-8 space-y-3 p-6">
+            <div className="flex justify-between font-title text-sm">
+              <span className="text-white/60">Subtotal:</span>
+              <span className="font-ds-digital text-base tracking-wider text-white">
+                {display_item_total}
+              </span>
+            </div>
+            <div className="flex justify-between font-title text-sm">
+              <span className="text-white/60">Tax:</span>
+              <span className="font-ds-digital text-base tracking-wider text-white">
+                {included_tax_total}
+              </span>
+            </div>
+            <div className="flex justify-between border-t border-glass-border pt-3 font-title text-lg font-bold">
+              <span className="text-white">Total:</span>
+              <span className="font-ds-digital text-xl tracking-wider text-neon-cyan">
+                {display_total}
+              </span>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="mt-8 flex flex-wrap gap-3">
+            {user ? (
+              <button
+                onClick={() => router.push("/checkout")}
+                className="neon-btn"
+              >
+                Checkout
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => router.push("/checkout")}
+                  className="neon-btn"
+                >
+                  Checkout as Guest
+                </button>
+                <button
+                  onClick={() => router.push("/login")}
+                  className="neon-btn"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => router.push("/signup")}
+                  className="neon-btn"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     );

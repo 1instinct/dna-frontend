@@ -1,6 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import type { LottiePlayer } from "lottie-web";
+import React, { useEffect, useRef } from "react";
 
 export const Lottie = ({
   animationOptions = {
@@ -24,17 +23,18 @@ export const Lottie = ({
   };
 }) => {
   const animationRef = useRef<HTMLDivElement>(null);
-  const animationInstance = useRef<any>(null); // Use any to avoid TypeScript issues with AnimationItem
-
-  const [lottie, setLottie] = useState<LottiePlayer | null>(null);
+  const animationInstance = useRef<any>(null);
 
   useEffect(() => {
-    import("lottie-web").then((Lottie) => setLottie(Lottie.default || Lottie));
-  }, []);
+    if (typeof window === "undefined" || !animationRef.current) return;
 
-  useEffect(() => {
-    if (lottie && animationRef.current) {
-      const animation = lottie.loadAnimation({
+    let isMounted = true;
+
+    import("lottie-web").then((lottieModule) => {
+      if (!isMounted || !animationRef.current) return;
+
+      const lottie = lottieModule.default || lottieModule;
+      animationInstance.current = lottie.loadAnimation({
         container: animationRef.current,
         renderer: "svg",
         loop: animationOptions.loop,
@@ -45,15 +45,16 @@ export const Lottie = ({
           className: `lottie-animation ${animationOptions.className}`
         }
       });
+    });
 
-      return () => {
-        if (animationInstance.current) {
-          animationInstance.current.destroy();
-          animationInstance.current = null;
-        }
-      };
-    }
-  }, [lottie, animationOptions]);
+    return () => {
+      isMounted = false;
+      if (animationInstance.current) {
+        animationInstance.current.destroy();
+        animationInstance.current = null;
+      }
+    };
+  }, [animationOptions]);
 
   return (
     <div
