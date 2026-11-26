@@ -1,16 +1,20 @@
 /**
  * Hand-written types for dna-admin's product review, Q&A and store review
- * endpoints (`/api/v1/...`). Keep in sync with the swagger docs in
- * dna-admin's `ApidocsController`. See
- * docs/plans/2026-11-26-product-reviews-design.md ("API").
+ * endpoints (`/api/v1/...`). The read path (summary + list) follows
+ * docs/plans/2026-11-26-reviews-api-contract.md exactly; keep the rest in
+ * sync with the swagger docs in dna-admin's `ApidocsController`.
  */
 
 /* ------------------------------------------------------------------ */
 /* Shared                                                              */
 /* ------------------------------------------------------------------ */
 
-/** Which reviews a list or summary covers. `all`/`wholesale` need a wholesale or admin Bearer token. */
+/**
+ * Which reviews a list or summary covers (the `scope` query param).
+ * `all`/`wholesale` need a wholesale or admin Bearer token, else 403.
+ */
 export type ReviewChannelScope = "retail" | "all" | "wholesale";
+export type ReviewScope = ReviewChannelScope;
 
 /** The channel a single review was stamped with. */
 export type ReviewChannel = "retail" | "wholesale";
@@ -31,9 +35,9 @@ export interface PaginationMeta {
   total_pages: number;
 }
 
-export interface Paginated<T> {
+export interface Paginated<T, M extends PaginationMeta = PaginationMeta> {
   data: T[];
-  meta: PaginationMeta;
+  meta: M;
 }
 
 /* ------------------------------------------------------------------ */
@@ -97,7 +101,8 @@ export interface ReviewAttributeSummary {
   kind: ReviewAttributeKind;
   low_label: string | null;
   high_label: string | null;
-  average: number | null;
+  /** 1–5. For `bipolar`, 3 is the middle ("true to size" for fit). */
+  average: number;
   count: number;
 }
 
@@ -106,14 +111,22 @@ export interface AiSummaryPoint {
   mentions: number;
 }
 
+export type FitConsensus = "runs_small" | "true_to_size" | "runs_large";
+
+/**
+ * Always built from retail reviews (`source_scope: "retail"`). The summary
+ * endpoint returns it for `scope=retail` and `scope=all` (label it "from
+ * retail reviews" there) and `null` for `scope=wholesale`.
+ */
 export interface AiSummary {
   headline: string;
   summary: string;
   pros: AiSummaryPoint[];
   cons: AiSummaryPoint[];
-  fit_consensus: string | null;
+  fit_consensus: FitConsensus | null;
   review_count: number;
   generated_at: string;
+  source_scope: "retail";
 }
 
 /** A photo in the PDP media strip, linked back to its review. */
@@ -121,37 +134,69 @@ export interface ReviewSummaryPhoto extends ReviewPhoto {
   review_id: number;
 }
 
+/** `GET /products/:product_id/review_summary?scope=`. Zeros when there are no reviews. */
 export interface ReviewSummary {
+  /** The scope actually served. */
   scope: ReviewChannelScope;
-  average: number | null;
+  /** 0 when there are no ratings. */
+  average: number;
   /** All ratings, including star-only reviews. */
   ratings_count: number;
   /** Reviews with written text. */
   reviews_count: number;
-  histogram: RatingHistogram;
   photos_count: number;
+  /** All five keys are always present. */
+  histogram: RatingHistogram;
+  /** Active questions for this product in admin order, only those with `count > 0`. */
   attributes: ReviewAttributeSummary[];
-  /** Retail scope only; null until generated or when hidden by an admin. */
+  /** Null until generated (M7), when hidden by an admin, and for `scope=wholesale`. */
   ai_summary: AiSummary | null;
-  /** Up to 12, `card` variant. */
+  /** At most 12 photos from published reviews in the scope, newest first. */
   latest_photos: ReviewSummaryPhoto[];
 }
 
 export type ReviewSort = "helpful" | "recent" | "rating_desc" | "rating_asc";
 
-/** Query for `GET /products/:product_id/reviews`. */
-export interface ReviewListParams {
-  /** Product id or slug. */
-  productId: string | number;
-  channel?: ReviewChannelScope;
+/** Filters for `GET /products/:product_id/reviews` (everything but the page). */
+export interface ReviewListFilters {
+  /** Default `retail`. */
+  scope?: ReviewChannelScope;
+  /** Default `helpful`. Never default to `rating_desc`. */
   sort?: ReviewSort;
   /** Sent as `rating[]=5&rating[]=4`. */
   rating?: StarRating[];
+  /** Sent as `with_photos=1`. */
   with_photos?: boolean;
-  /** Toolbar "Verified" filter; confirm the param name with M1.1. */
-  verified?: boolean;
-  page?: number;
+  /** Reviews with text only; sent as `written=1`. */
+  written?: boolean;
+  /** 1–50, default 10 on the server. */
   per_page?: number;
+}
+
+/** Query for `GET /products/:product_id/reviews`. */
+export interface ReviewListParams extends ReviewListFilters {
+  /** Product id or slug. */
+  productId: string | number;
+  page?: number;
+}
+
+export interface ReviewListMeta extends PaginationMeta {
+  scope: ReviewChannelScope;
+}
+
+/** `GET /products/:product_id/reviews` response. */
+export type ReviewListResponse = Paginated<Review, ReviewListMeta>;
+
+/**
+ * Rating attributes on the storefront v2 product payload
+ * (`data.attributes`). Averages are decimal strings, e.g. `"4.6"`.
+ * Use the `all_*` pair in wholesale mode.
+ */
+export interface ProductRatingAttributes {
+  avg_rating?: string | number | null;
+  reviews_count?: number | null;
+  all_avg_rating?: string | number | null;
+  all_reviews_count?: number | null;
 }
 
 export interface ReviewVoteInput {

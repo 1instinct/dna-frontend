@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { AppProps } from "next/app";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
-import { AuthProvider, useAuth } from "../config/auth";
+import { AuthProvider } from "../config/auth";
 import { MainMenu } from "../components/MainMenu";
 import { Header } from "../components/Header";
 import { ComingSoon } from "../components/ComingSoon";
@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import * as tracking from "../config/tracking";
 import { captureUtmParams } from "../hooks/useUtmParams";
+import { useWholesaleMode } from "../hooks/useWholesaleMode";
 
 // Styles
 import "../styles/globals.css";
@@ -22,16 +23,6 @@ import "../components/Terms/FinancialPrivacyModal.css";
 import "./app.css";
 
 const isDarkMode = (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
-
-// The v2 account payload carries `is_wholesale` (Spree fork UserSerializer) for users
-// with the `wholesale` Spree role. Read it defensively; anything else is retail.
-const useWholesaleMode = (): boolean => {
-  const { user } = useAuth();
-  const attributes = user?.data?.attributes as
-    | Record<string, unknown>
-    | undefined;
-  return attributes?.is_wholesale === true;
-};
 
 // Rendered inside AuthProvider so it can read the signed-in user.
 const PageWithMode = ({ Component, pageProps }: AppProps) => {
@@ -83,10 +74,12 @@ export default function MyApp(appProps: AppProps): JSX.Element {
     );
   }
 
+  // Hydrate wraps AuthProvider so SSR pages can seed the "auth-user" query
+  // (see pages/[productSlug].tsx) before AuthProvider decides to render.
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Hydrate state={pageProps.dehydratedState}>
+      <Hydrate state={pageProps.dehydratedState}>
+        <AuthProvider>
           <Head>
             <title>{process.env.NEXT_PUBLIC_PAGE_TITLE}</title>
             <meta
@@ -109,8 +102,8 @@ export default function MyApp(appProps: AppProps): JSX.Element {
             />
             <PageWithMode {...appProps} />
           </div>
-        </Hydrate>
-      </AuthProvider>
+        </AuthProvider>
+      </Hydrate>
     </QueryClientProvider>
   );
 }

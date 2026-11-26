@@ -106,9 +106,9 @@ Recomputed in `after_commit` of Review publish/unpublish/channel change: three c
 
 `Reviews::Channel.for(order)` returns `wholesale` when `order.channel == "wholesale"` (Spree's existing `spree_orders.channel` column, default `"spree"`) **or** the order's user has the `wholesale` Spree role. Otherwise it returns `retail`.
 
-**Both signals are used (decided 26 Nov 2026).** The 1instinct Spree fork already has most of the wholesale plumbing: the `wholesale` role switches cart and product prices to `wholesale_price`, wholesale users get `WholesaleProductSerializer`, and the v2 account payload has `is_wholesale`. What was missing: nothing marked orders as wholesale, the role only existed where Spree's sample seeds ran, and dna-frontend's `wholesale` flag in `pages/_app.tsx` was hard-coded `false`. This work wires both signals:
+**Both signals are used (decided 26 Nov 2026).** The 1instinct Spree fork's branch has wholesale plumbing in its `api` and `core` folders: role-based `wholesale_price` in cart and product endpoints, `WholesaleProductSerializer`, and `is_wholesale` on the account. **dna-admin doesn't load any of it.** Only the fork's `spree` meta-gem comes from GitHub; `spree_api`, `spree_core` and `spree_backend` resolve to the stock 4.2.5 gems (see `Gemfile.lock`). So nothing marked orders as wholesale, the role only existed where Spree's sample seeds ran, the account payload had no wholesale flag, and dna-frontend's `wholesale` flag in `pages/_app.tsx` was hard-coded `false`. This work wires both signals:
 
-1. **Account role.** A migration makes sure the `wholesale` Spree role exists. Admins grant it on the user's edit page in Spree admin (Spree's stock role checkboxes). The storefront reads the fork's existing `is_wholesale` account attribute.
+1. **Account role.** A migration makes sure the `wholesale` Spree role exists. Admins grant it on the user's edit page in Spree admin (Spree's stock role checkboxes). A dna-admin serializer decorator adds `is_wholesale` to the storefront account payload, using the same name as the fork.
 2. **Order channel.** `spree_orders.channel` becomes `"wholesale"`:
    - automatically, in an `Order` decorator before `complete`, when the order's user has the `wholesale` role;
    - manually, from a **Channel** select (Retail · Wholesale) that a Deface override adds to the admin order's customer details page. This covers phone, email and invoice orders, including trade buyers without a storefront account.
@@ -193,7 +193,7 @@ Custom endpoints follow the house style: `Spree::Api::V1::*` controllers, Bearer
 - `PUT  /api/v1/admin/review_summaries/:product_id`
 
 **Storefront v2**
-- `product_serializer_decorator.rb`: add `avg_rating`, `reviews_count` (retail), `all_avg_rating`, `all_reviews_count` to both `ProductSerializer` and the fork's `WholesaleProductSerializer` (what wholesale accounts receive). ProductCard and PDP get stars with zero extra requests.
+- `product_serializer_decorator.rb`: add `avg_rating`, `reviews_count` (retail), `all_avg_rating`, `all_reviews_count` to `ProductSerializer` (wholesale accounts get the same serializer, since the fork's api isn't loaded). ProductCard and PDP get stars with zero extra requests.
 
 **Feeds**
 - `GET /feeds/google/product_reviews.xml` (Rails builder, Google Product Review Feed **schema v2.4**): every published **retail** review with text, including `is_verified_purchase`, `is_incentivized_review` and `collection_method` (`post_fulfillment` for email, `unsolicited` for web). Product identifiers: SKU and brand (plus GTIN/MPN if we add them). Register in Merchant Center once we have **≥ 50 reviews**.

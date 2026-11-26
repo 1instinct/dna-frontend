@@ -1,13 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { QueryClient } from "react-query";
-import { dehydrate } from "react-query/hydration";
 import { Heart } from "lucide-react";
 import { cn } from "@lib/utils";
 import {
-  fetchStreams,
-  fetchProducts,
   fetchVariants,
   useProducts,
   useStreams,
@@ -17,7 +13,11 @@ import { useToggleFavorite, useCheckFavorite } from "../../hooks/useFavorites";
 import { useAuth } from "../../config/auth";
 import { Layout } from "../Layout";
 import { Loading } from "../Loading";
-import { useProduct, fetchProduct } from "../../hooks/useProduct";
+import {
+  useProduct,
+  fetchProduct,
+  productQueryId
+} from "../../hooks/useProduct";
 import { useMutation, useQueryClient } from "react-query";
 import { addItemToCart } from "../../hooks/useCart";
 import { QueryKeys } from "../../hooks/queryKeys";
@@ -38,27 +38,31 @@ import {
   CarouselNext
 } from "@components/ui";
 import constants from "../../utilities/constants";
+import { ProductJsonLd, RatingSummary, ReviewsSection } from "../Reviews";
 
 interface RetailProductDetailsProps {
   wholesale?: boolean;
+  /** Set by pages/[productSlug].tsx getServerSideProps (matches the SSR cache keys). */
+  productSlug?: string;
   [key: string]: any;
 }
 
 export const RetailProductDetails = ({
   wholesale,
+  productSlug: ssrProductSlug,
   ...props
 }: RetailProductDetailsProps) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const { user } = useAuth();
-  const { asPath: productSlug } = router;
+  const productSlug = ssrProductSlug || productQueryId(router.asPath);
   const {
     data: thisProduct,
     isLoading,
     isSuccess,
     isError,
     error: productError
-  } = useProduct(`${productSlug.toLowerCase().replace("/", "")}`);
+  } = useProduct(productSlug);
 
   const defaultVariantData =
     thisProduct?.data?.relationships?.default_variant?.data;
@@ -114,16 +118,14 @@ export const RetailProductDetails = ({
   )?.attributes?.name;
 
   // Fetch similar products by same taxon (falls back to latest if no taxon)
-  const {
-    data: similarData,
-    isLoading: similarLoading
-  } = useProductFeed("similar", currentTaxon ? { filter: { taxons: currentTaxon } } : {});
+  const { data: similarData, isLoading: similarLoading } = useProductFeed(
+    "similar",
+    currentTaxon ? { filter: { taxons: currentTaxon } } : {}
+  );
 
   // Fetch recommended products (generic latest, distinct from similar)
-  const {
-    data: recommendedData,
-    isLoading: recommendedLoading
-  } = useProductFeed("latest");
+  const { data: recommendedData, isLoading: recommendedLoading } =
+    useProductFeed("latest");
 
   // Legacy products query for arrow key navigation
   const {
@@ -288,11 +290,17 @@ export const RetailProductDetails = ({
           : ""
       });
     }
+    // Once per product. This used to share the keydown effect below, whose
+    // handler changes every render, so it re-tracked and re-set the
+    // recently-viewed state on every render ("Maximum update depth exceeded").
+  }, [isSuccess, thisProduct?.data?.id]);
+
+  useEffect(() => {
     window.addEventListener("keydown", handleKeyPress);
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [isSuccess, handleKeyPress]);
+  }, [handleKeyPress]);
 
   if (isLoading) {
     return (
@@ -317,6 +325,7 @@ export const RetailProductDetails = ({
             {process.env.NEXT_PUBLIC_SITE_TITLE}
           </title>
         </Head>
+        <ProductJsonLd product={thisProduct as any} productId={productSlug} />
 
         <div className="section-container py-8">
           {/* Product Layout */}
@@ -368,6 +377,7 @@ export const RetailProductDetails = ({
                 <h2 className="font-title text-2xl font-semibold text-foreground md:text-3xl">
                   {thisProduct?.data?.attributes?.name}
                 </h2>
+                <RatingSummary attributes={thisProduct?.data?.attributes} />
 
                 {/* Favorite Button */}
                 <button
@@ -490,6 +500,12 @@ export const RetailProductDetails = ({
             </div>
           </div>
 
+          {/* Reviews */}
+          <ReviewsSection
+            productId={productSlug}
+            productName={thisProduct?.data?.attributes?.name}
+          />
+
           {/* Similar / Recommended / Recently Viewed */}
           <div className="mt-12 space-y-8">
             {renderSimilarProducts()}
@@ -503,15 +519,3 @@ export const RetailProductDetails = ({
 
   return <Loading />;
 };
-
-export async function getServerSideProps() {
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(["streams", 1], () => fetchStreams(1));
-  await queryClient.prefetchQuery(["products", 1], () => fetchProducts(1));
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
-  };
-}

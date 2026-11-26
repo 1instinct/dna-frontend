@@ -49,7 +49,7 @@
 - Migration seeding the `wholesale` Spree role.
 - `app/models/spree/order_wholesale_channel_decorator.rb`: before `complete`, set `channel = "wholesale"` when the user has the role. Never downgrade a channel an admin already set.
 - Deface override on the admin order customer-details page adding a Channel select (Retail · Wholesale); permit `channel` in the admin orders controller only.
-- Tests: role → wholesale on completion; no role → stays `"spree"`; the storefront checkout API ignores a `channel` param; admin can set it. (The fork's v2 account payload already exposes `is_wholesale`.)
+- Tests: role → wholesale on completion; no role → stays `"spree"`; the storefront checkout API ignores a `channel` param; admin can set it; the account payload exposes `is_wholesale` (a dna-admin decorator, because the fork's api isn't loaded).
 
 **M0.4 [F] Primitives + API client**
 - `components/ui/textarea.tsx` (shadcn) and `components/ui/rating-input.tsx` (radiogroup, arrows, 44 px targets, labels "Hated it…Loved it").
@@ -69,7 +69,7 @@
 - Integration tests: unpublished never leak; **wholesale reviews never appear without the role, whatever the params**; sort orders; slug lookup; hidden products respected (mirror the `hidden_products_*_test.rb` cases).
 
 **M1.2 [A] Storefront v2 attributes**
-- `app/serializers/spree/v2/storefront/product_serializer_decorator.rb`: add `avg_rating`, `reviews_count`, `all_avg_rating`, `all_reviews_count` to `ProductSerializer` and `WholesaleProductSerializer`.
+- `app/serializers/spree/v2/storefront/product_serializer_decorator.rb`: add `avg_rating`, `reviews_count`, `all_avg_rating`, `all_reviews_count` to `ProductSerializer`.
 - Fix `components/ProductDetails/ProductDetails.tsx` [F]: it always passes `wholesale` (true) to `RetailProductDetails` and spreads an undefined `props`. Harmless while the flag was always false, wrong now that wholesale accounts turn it on.
 - Test in the `hidden_products_storefront_test.rb` style.
 

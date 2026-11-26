@@ -1,12 +1,19 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { useQueryClient, useMutation } from "react-query";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart, Star } from "lucide-react";
 import { QueryKeys } from "@hooks/queryKeys";
 import { AddItem } from "@spree/storefront-api-v2-sdk/types/interfaces/endpoints/CartClass";
 import { addItemToCart } from "@hooks/useCart";
 import { useToggleFavorite, useCheckFavorite } from "@hooks/useFavorites";
 import { useAuth } from "@config/auth";
+import { useWholesaleMode } from "@hooks/useWholesaleMode";
+import {
+  formatAverage,
+  getProductRating,
+  pluralize,
+  REVIEWS_ENABLED
+} from "@lib/reviews";
 import { cn } from "@lib/utils";
 import constants from "@utilities/constants";
 
@@ -14,6 +21,10 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const wholesale = useWholesaleMode();
+  const rating = REVIEWS_ENABLED
+    ? getProductRating(item.attributes, wholesale)
+    : null;
   const variantId = item.relationships.default_variant.data.id;
 
   const { data: favoriteCheck } = useCheckFavorite(variantId, !!user);
@@ -114,6 +125,23 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
           <span className="font-title text-sm font-semibold text-foreground">
             ${item.attributes.price}
           </span>
+          {rating && (
+            <span
+              role="img"
+              className="mt-1 inline-flex items-center gap-1 whitespace-nowrap font-title text-xs tabular-nums text-gray"
+              aria-label={`Rated ${formatAverage(
+                rating.average
+              )} out of 5 from ${pluralize(rating.count, "review")}`}
+            >
+              <Star
+                className="h-3 w-3 fill-brand text-brand"
+                aria-hidden="true"
+              />
+              <span aria-hidden="true">
+                {formatAverage(rating.average)} ({rating.count})
+              </span>
+            </span>
+          )}
         </div>
       </div>
     </div>

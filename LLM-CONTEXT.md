@@ -70,9 +70,17 @@ import { dnaFetch, DnaApiError } from "@lib/api/dnaFetch";
 // Base URL, X-Spree-Token, optional Bearer, envelope unwrap, typed errors
 const summary = await dnaFetch<ReviewSummary>(
   `/products/${slug}/review_summary`,
-  { query: { channel: "retail" }, auth: "optional" }
+  { query: { scope: "retail" }, auth: "optional" }
 );
 ```
+
+### Product reviews (read path)
+
+- Contract: `docs/plans/2026-11-26-reviews-api-contract.md`. Types in `types/reviews.ts`, helpers in `lib/reviews.ts`, hooks in `hooks/useReviews` (`useReviewSummary`, `useProductReviews`), UI in `components/Reviews/`.
+- **`NEXT_PUBLIC_REVIEWS_ENABLED=true`** turns it on. Anything else ships dark: no stars on cards or the PDP, no reviews section, no product JSON-LD, no SSR review fetches.
+- `scope` is `retail` for shoppers and `all` for wholesale accounts (`useWholesaleMode()`), `wholesale` under the "Wholesale only" chip. A 403 falls back to retail.
+- `pages/[productSlug].tsx` has `getServerSideProps`: it prefetches the product, the retail summary and the first 5 retail reviews into the React Query cache (dehydrated). Each fetch is best-effort with a 2.5 s timeout; failures fall back to client fetching.
+- Compliance: default sort is "Most helpful"; never hide or down-rank low ratings.
 
 ### Mutations with Cache Invalidation
 

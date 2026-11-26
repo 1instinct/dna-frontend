@@ -71,16 +71,19 @@ class MyDocument extends Document {
     const facebookSlug =
       process.env.NEXT_PUBLIC_FACEBOOK_SLUG || "materialinstinct";
 
-    const OpenGraphObject = `
-        "@context": "http://schema.org",
-        "@type": "Organization",
-        "url": "${siteUrl}",
-        "contactPoint": [{
+    // Built as an object and serialized so the JSON-LD is always valid.
+    const OpenGraphObject = JSON.stringify({
+      "@context": "http://schema.org",
+      "@type": "Organization",
+      url: siteUrl,
+      contactPoint: [
+        {
           "@type": "ContactPoint",
-          "telephone": "${sitePhone}",
-          "contactType": "General Inquiry"
-        }]
-      `;
+          telephone: sitePhone,
+          contactType: "General Inquiry"
+        }
+      ]
+    }).replace(/</g, "\\u003c");
 
     const FacebookPixelObject = `
         !function(f,b,e,v,n,t,s)
@@ -147,7 +150,10 @@ class MyDocument extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
-          <script type="application/ld+json">{OpenGraphObject}</script>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: OpenGraphObject }}
+          />
           <script
             src="https://js.stripe.com/v3/"
             type="text/javascript"
