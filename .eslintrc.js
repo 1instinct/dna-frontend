@@ -8,7 +8,7 @@ module.exports = {
       jsx: true // Enable JSX since we're using React
     }
   },
-  plugins: ["simple-import-sort"],
+  plugins: ["simple-import-sort", "react-hooks"],
 
   settings: {
     react: {
@@ -33,6 +33,8 @@ module.exports = {
   rules: {
     "prettier/prettier": ["error", {}, { usePrettierrc: true }], // Use our .prettierrc file as source
     "react/react-in-jsx-scope": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     // TypeScript types the props; prop-types would duplicate them.
     "react/prop-types": "off",
     // Inference is enough for module boundaries; this rule only adds noise here.

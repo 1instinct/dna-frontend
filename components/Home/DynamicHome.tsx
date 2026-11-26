@@ -48,7 +48,7 @@ const SectionRenderers: Record<
   // in pages/_app.tsx, not in the homepage flow.
   announcement_bar: () => null,
 
-  live_streams: ({ section }) => {
+  live_streams: function LiveStreamsSection({ section }) {
     const { data: streamsData } = useStreams(1);
     if (!streamsData?.response_data || streamsData.response_data.length === 0)
       return null;
@@ -60,7 +60,7 @@ const SectionRenderers: Record<
     );
   },
 
-  products: ({ section }) => {
+  products: function ProductsSection({ section }) {
     const sectionSettings =
       parseSettings(section.settings?.settings) ||
       parseSettings(section.settings) ||
