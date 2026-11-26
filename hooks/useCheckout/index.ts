@@ -3,7 +3,9 @@ import { spreeClient } from "@config/spree";
 import { QueryKeys } from "@hooks/queryKeys";
 import constants from "@utilities/constants";
 import { IOrderResult } from "@spree/storefront-api-v2-sdk/types/interfaces/Order";
-import { spreeErrorText } from "../../lib/cartAvailability";
+import { cartLineSlugs } from "../../lib/cartAvailability";
+import { checkoutFailure } from "../../lib/digitalCheckout";
+import { lookupProduct } from "../../lib/slugRoute";
 
 interface CheckoutAddress {
   firstname: string;
@@ -76,9 +78,7 @@ export const updateCheckout = async (data: CheckoutData) => {
   } else {
     constants.IS_DEBUG &&
       console.error("Checkout update failed:", response.fail());
-    throw new Error(
-      spreeErrorText(response.fail()) || "Checkout update failed"
-    );
+    throw checkoutFailure(response.fail(), "Checkout update failed");
   }
 };
 
@@ -97,9 +97,7 @@ export const advanceCheckout = async () => {
   } else {
     constants.IS_DEBUG &&
       console.error("Checkout advance failed:", response.fail());
-    throw new Error(
-      spreeErrorText(response.fail()) || "Failed to advance checkout"
-    );
+    throw checkoutFailure(response.fail(), "Failed to advance checkout");
   }
 };
 
@@ -122,9 +120,7 @@ export const completeCheckout = async () => {
   } else {
     constants.IS_DEBUG &&
       console.error("Checkout completion failed:", response.fail());
-    throw new Error(
-      spreeErrorText(response.fail()) || "Failed to complete checkout"
-    );
+    throw checkoutFailure(response.fail(), "Failed to complete checkout");
   }
 };
 
@@ -283,4 +279,31 @@ export const useRemoveCoupon = () => {
       queryClient.invalidateQueries(QueryKeys.CART);
     }
   });
+};
+
+/**
+ * Slugs of the cart's lines whose product is digital (`digital_kind` set),
+ * from the same product endpoint the product page reads. Undefined until
+ * known; a failed lookup counts as not digital (so delivery stays).
+ */
+export const useCartDigitalSlugs = (
+  cart: Parameters<typeof cartLineSlugs>[0]
+): string[] | undefined => {
+  const slugs = cartLineSlugs(cart);
+  const { data } = useQuery(
+    [QueryKeys.CART, QueryKeys.CART_DIGITAL, slugs.join(",")],
+    async () => {
+      const found = await Promise.all(
+        slugs.map(async (slug) => {
+          const r = await lookupProduct(slug, { baseUrl: "" });
+          return r.status === "visible" && r.attributes?.digital_kind
+            ? slug
+            : null;
+        })
+      );
+      return found.filter((s): s is string => !!s);
+    },
+    { enabled: slugs.length > 0, staleTime: 60_000, retry: false }
+  );
+  return slugs.length === 0 ? [] : data;
 };

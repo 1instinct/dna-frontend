@@ -227,6 +227,8 @@ drop the prefix and are read only in `pages/api/*` or `lib/server/*`:
 - `NEXT_PUBLIC_LOGO_PATH` - Logo image path
 - `NEXT_PUBLIC_FEATURED_TAXON` - Spree taxon permalink for the `/browse` Featured shelf (default `collections/featured`)
 - `NEXT_PUBLIC_SENTRY_DSN` - Sentry error reporting; empty disables it (the other `SENTRY_*` vars are in `.env.example`)
+- `NEXT_PUBLIC_DIGITAL_KINDS` - digital product kinds and their labels (`kind:Label:Plural`, comma separated); empty shows any kind the backend sends, labelled from its name
+- `NEXT_PUBLIC_APP_LIBRARY_URL` - optional app link (e.g. `exampleapp://library`); library items then offer "Open in app" at `<url>/<variant id>`
 
 ## Common Tasks
 

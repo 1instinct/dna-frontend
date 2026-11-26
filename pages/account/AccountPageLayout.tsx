@@ -1,11 +1,13 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { Search, Package, Palette, CreditCard, User } from "lucide-react";
+import { Library } from "lucide-react";
 import { cn } from "@lib/utils";
 import { Layout } from "../../components/Layout";
 
 const navItems = [
   { label: "Order History", href: "/account/orders", icon: Package },
+  { label: "Library", href: "/account/library", icon: Library },
   { label: "My Style", href: "/account/mystyle", icon: Palette },
   { label: "Payment Methods", href: "/account/payment", icon: CreditCard },
   { label: "Account Details", href: "/account", icon: User }
