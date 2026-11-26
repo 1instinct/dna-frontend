@@ -255,6 +255,8 @@ drop the prefix and are read only in `pages/api/*` or `lib/server/*`:
 - `NEXT_PUBLIC_DARK_MODE` - Dark mode toggle
 - `NEXT_PUBLIC_IS_MAINT_MODE` - Maintenance mode
 - `NEXT_PUBLIC_LOGO_PATH` - Logo image path
+- `NEXT_PUBLIC_FEATURED_TAXON` - Spree taxon permalink for the `/browse` Featured shelf (default `collections/featured`)
+- `NEXT_PUBLIC_SENTRY_DSN` - Sentry error reporting; empty disables it (the other `SENTRY_*` vars are in `.env.example`)
 
 ## Common Tasks
 

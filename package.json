@@ -57,6 +57,7 @@
     "@react-three/drei": "^9.109.5",
     "@react-three/fiber": "^8.16.8",
     "@react-three/postprocessing": "^2.16.2",
+    "@sentry/nextjs": "7.120.3",
     "@spree/storefront-api-v2-sdk": "file:contrib/spree-storefront-api-v2-sdk-4.5.1003.tgz",
     "@stripe/react-stripe-js": "5.4.1",
     "@stripe/stripe-js": "8.6.0",
