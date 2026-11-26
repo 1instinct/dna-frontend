@@ -226,3 +226,83 @@ Body: `{ "target": { "type": "review", "id": 77 }, "reason": "spam", "details": 
 - `reason` is one of `spam harassment hate sexual violence impersonation self_harm other`.
 - Response: **201** `{ id }`. **404** for an unknown or unpublished review. **422** for reporting your own review.
 - Three open reports send a review back to moderation (`pending`). It reappears only if an admin publishes it again.
+
+---
+
+# M4 email flow
+
+The "How's your order?" email links to the storefront page `/review/[token]`. The token is the customer's proof of purchase, so guest checkouts can review without an account. dna-admin stores only its SHA256. Each email (the request, then one reminder) issues a new token, and only the latest link works.
+
+## Email links
+
+- Star: `{SITE_URL}/review/{token}?item={line_item_id}&rating={1-5}`. Preselect that item and rating.
+- Page: `{SITE_URL}/review/{token}`.
+- Opt-out: `{SITE_URL}/review/{token}?opt_out=1`. Call `POST …/opt_out` (below) and show a confirmation. Don't open the composer.
+- The email lists only items that haven't been reviewed yet. The page lists every item.
+
+## Link lifecycle
+
+| status | `GET` | review with `X-Review-Token` |
+|---|---|---|
+| `sent`, `reminded` (before `expires_at`) | 200 | yes |
+| `completed` (before `expires_at`) | 200; every item has `existing_review` | yes (edits) |
+| unknown token, `expired`, past `expires_at`, `opted_out`, `cancelled` | 404 | 404 `invalid_token` |
+
+- `expires_at` is `send_after` plus `request_expiry_days` (60 by default).
+- A request becomes `completed` once every item on the order has a review. There is no server-side "skip": a request with skipped items stays `sent` or `reminded` until it expires.
+- **Decision:** a completed link keeps working until it expires. The customer can come back from the email to see and edit what they sent.
+
+## GET `/api/v1/review_requests/:token`
+
+```json
+{
+  "order_number": "R123456789",
+  "display_name": "Maya R.",
+  "items": [
+    { "line_item_id": 53, "product_id": 1, "slug": "rib-knit-wrap-top", "name": "Rib-Knit Wrap Top",
+      "image_url": "https://…", "variant_label": "Rose · M",
+      "questions": [ { "key": "fit", "label": "Fit", "kind": "bipolar", "low_label": "Runs small", "high_label": "Runs large" } ],
+      "existing_review": null }
+  ],
+  "store_review": { "enabled": true, "existing_review": null },
+  "points": { "per_review": 50, "photo_bonus": 50 },
+  "has_account": false,
+  "limits": { "max_photos": 5, "max_photo_mb": 10, "title_max": 120, "body_max": 5000,
+              "photo_types": ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"] }
+}
+```
+
+- No auth beyond `X-Spree-Token`.
+- The first successful GET sets the request's `opened_at`. Later GETs don't change it.
+- `items` holds the order's shipped products, one entry per product. `existing_review` uses the "own review" shape (M2) or is `null`.
+- `display_name` is the default name for new reviews, for example "Maya R.".
+- `store_review.enabled` mirrors the store-reviews setting. `existing_review` is this order's store review, if there is one. Store reviews are written in M5 (`/api/v1/store_reviews`), which will take the same header.
+- `has_account` is `true` when the order belongs to an account. Points go to that account. With `false`, show "Create an account to collect points" rather than a points total. Points are only paid to accounts.
+- **404** `{ "error": "not found" }` for any link that isn't usable (see the table above).
+- **503** `{ "code": "not_enabled" }` while reviews are switched off.
+
+## POST `/api/v1/review_requests/:token/opt_out`
+
+**200** `{ "status": "opted_out" }`. This works for any request the token belongs to, whatever its status, and calling it again is fine. **404** for an unknown token.
+
+Opting out covers the email address, not just this order. Other requests for that address get no further emails: each is cancelled when its next email would go out. Future orders to the address are never scheduled.
+
+## `X-Review-Token` on POST / PATCH `/api/v1/reviews`
+
+Send `X-Review-Token: <token>` instead of `Authorization: Bearer`. The fields and responses are the same as in M2, with these differences:
+
+- **Scope:** only that order's items. Another product, or a `line_item_id` from another order, gets **403** `not_eligible`. PATCH reaches only reviews from that order or request. Any other id gets **404**.
+- **Source:** the review is stamped `source: "email"`.
+- **Owner:** the review belongs to the order's account, or to no account for a guest checkout.
+  - If a Bearer is sent along, the review still goes on the token's order. A signed-in user who isn't the buyer is never attached to it.
+  - A Bearer that doesn't resolve to a user is still **401**.
+- **Completion:** after a successful submit, the request is marked `completed` once every item has a review.
+- **Invalid link:** an unknown, expired, opted-out or cancelled token returns **404** `{ "error": "This review link isn't valid any more", "code": "invalid_token" }`. Show the expired-link state.
+- **Rate limit:** 20 submissions an hour per link, counting every attempt. After that, **429**.
+- **DELETE:** still needs a Bearer. It returns **401** with only the token.
+
+## Scheduling (for reference)
+
+- **Delay:** the email is due `request_delay_days` (7) after the last shipment ships, or `international_request_delay_days` (10) when the ship-address country isn't the store's home country.
+- **Reminder:** one, `reminder_delay_days` (7) after the first email, and only when nothing has been reviewed yet.
+- **Dispatch:** `rake reviews:dispatch` sends both, hourly. It doesn't send while reviews are switched off.
