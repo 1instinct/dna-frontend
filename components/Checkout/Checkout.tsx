@@ -34,6 +34,14 @@ import {
   getShippingMethods,
   getPaymentMethods
 } from "../../hooks/useCheckout";
+import { useCartDigitalSlugs } from "../../hooks/useCheckout";
+import {
+  cartHasDigital,
+  cartNeedsDelivery,
+  DIGITAL_ACCOUNT_MESSAGE,
+  isDigitalRequiresAccountError,
+  loginRedirectFor
+} from "../../lib/digitalCheckout";
 import { IProducts } from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
 
 const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -55,6 +63,11 @@ const CheckoutForm = () => {
   const { data: productsData } = useProducts(1);
   const unavailableLines = useUnavailableCartLines(cartData);
   const hasUnavailable = unavailableLines.length > 0;
+  // Digital lines: an all-digital cart skips delivery (no shipping address,
+  // rate or cost), and a guest must sign in before buying any of them.
+  const digitalSlugs = useCartDigitalSlugs(cartData);
+  const needsDelivery = cartNeedsDelivery(cartData, digitalSlugs);
+  const guestNeedsAccount = !user && cartHasDigital(cartData, digitalSlugs);
   const queryClient = useQueryClient();
   const removeLineMutation = useMutation(
     (itemId: string) => removeItemFromCart(itemId),
@@ -134,6 +147,12 @@ const CheckoutForm = () => {
   }, []);
 
   useEffect(() => {
+    if (!needsDelivery) {
+      // A digital-only order has no shipping to estimate.
+      setEstimatedShipping(null);
+      setSelectedShippingRate(null);
+      return;
+    }
     if (
       formData.country &&
       formData.state &&
@@ -160,7 +179,13 @@ const CheckoutForm = () => {
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [formData.country, formData.state, formData.city, formData.zipcode]);
+  }, [
+    needsDelivery,
+    formData.country,
+    formData.state,
+    formData.city,
+    formData.zipcode
+  ]);
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -278,47 +303,46 @@ const CheckoutForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (hasUnavailable) return;
+    if (guestNeedsAccount) {
+      router.push(loginRedirectFor("/checkout"));
+      return;
+    }
     setProcessing(true);
     setError("");
+
+    const shipAddress = {
+      firstname: formData.firstName,
+      lastname: formData.lastName,
+      address1: formData.address1,
+      address2: formData.address2,
+      city: formData.city,
+      phone: formData.phone,
+      zipcode: formData.zipcode,
+      state_name: formData.state,
+      country_iso: formData.country
+    };
+    // A digital-only order has no shipping address: the billing one is all.
+    const billAddress =
+      needsDelivery && formData.sameAsShipping
+        ? shipAddress
+        : {
+            firstname: formData.billFirstName,
+            lastname: formData.billLastName,
+            address1: formData.billAddress1,
+            address2: formData.billAddress2,
+            city: formData.billCity,
+            phone: formData.billPhone,
+            zipcode: formData.billZipcode,
+            state_name: formData.billState,
+            country_iso: formData.billCountry
+          };
 
     try {
       await updateCheckoutMutation.mutateAsync({
         order: {
           email: formData.email,
-          ship_address_attributes: {
-            firstname: formData.firstName,
-            lastname: formData.lastName,
-            address1: formData.address1,
-            address2: formData.address2,
-            city: formData.city,
-            phone: formData.phone,
-            zipcode: formData.zipcode,
-            state_name: formData.state,
-            country_iso: formData.country
-          },
-          bill_address_attributes: formData.sameAsShipping
-            ? {
-                firstname: formData.firstName,
-                lastname: formData.lastName,
-                address1: formData.address1,
-                address2: formData.address2,
-                city: formData.city,
-                phone: formData.phone,
-                zipcode: formData.zipcode,
-                state_name: formData.state,
-                country_iso: formData.country
-              }
-            : {
-                firstname: formData.billFirstName,
-                lastname: formData.billLastName,
-                address1: formData.billAddress1,
-                address2: formData.billAddress2,
-                city: formData.billCity,
-                phone: formData.billPhone,
-                zipcode: formData.billZipcode,
-                state_name: formData.billState,
-                country_iso: formData.billCountry
-              }
+          ...(needsDelivery ? { ship_address_attributes: shipAddress } : {}),
+          bill_address_attributes: billAddress
         }
       });
 
@@ -350,7 +374,7 @@ const CheckoutForm = () => {
         if (!cardElement) throw new Error("Card element not found");
 
         const { token, error } = await stripe.createToken(cardElement, {
-          name: `${formData.firstName} ${formData.lastName}`,
+          name: `${billAddress.firstname} ${billAddress.lastname}`,
           address_line1: formData.billAddress1 || formData.address1,
           address_line2: formData.billAddress2 || formData.address2,
           address_city: formData.billCity || formData.city,
@@ -393,7 +417,11 @@ const CheckoutForm = () => {
       }
     } catch (err: any) {
       console.error("Checkout error:", err);
-      setError(checkoutErrorMessage(err));
+      setError(
+        isDigitalRequiresAccountError(err)
+          ? DIGITAL_ACCOUNT_MESSAGE
+          : checkoutErrorMessage(err)
+      );
       setProcessing(false);
     }
   };
@@ -437,6 +465,18 @@ const CheckoutForm = () => {
               Login
             </Link>{" "}
             to checkout faster.
+          </p>
+        )}
+
+        {guestNeedsAccount && (
+          <p className="mb-6 rounded-lg border border-border/30 bg-card px-4 py-3 font-body text-sm text-foreground">
+            {DIGITAL_ACCOUNT_MESSAGE}{" "}
+            <Link
+              href={loginRedirectFor("/checkout")}
+              className="font-semibold text-brand underline transition-colors hover:text-brand/80"
+            >
+              Sign in
+            </Link>
           </p>
         )}
 
@@ -528,8 +568,12 @@ const CheckoutForm = () => {
               </div>
             </section>
 
-            {/* Shipping Address */}
-            <section className="space-y-4 rounded-xl border border-border/30 bg-card p-6">
+            {/* Shipping Address (hidden and not required for a digital-only order) */}
+            <fieldset
+              hidden={!needsDelivery}
+              disabled={!needsDelivery}
+              className="min-w-0 space-y-4 rounded-xl border border-border/30 bg-card p-6"
+            >
               <h2 className="font-title text-base font-semibold text-foreground">
                 Shipping Address
               </h2>
@@ -668,7 +712,7 @@ const CheckoutForm = () => {
                   className={inputClass}
                 />
               </div>
-            </section>
+            </fieldset>
 
             {/* Shipping Rates */}
             {estimatedShipping?.data && estimatedShipping.data.length > 0 && (
@@ -718,16 +762,18 @@ const CheckoutForm = () => {
               <h2 className="font-title text-base font-semibold text-foreground">
                 Billing Address
               </h2>
-              <label className="flex cursor-pointer items-center gap-2 font-body text-sm text-foreground">
-                <input
-                  type="checkbox"
-                  checked={formData.sameAsShipping}
-                  onChange={handleCheckboxChange}
-                  className="h-4 w-4 rounded accent-brand"
-                />
-                Same as shipping address
-              </label>
-              {!formData.sameAsShipping && (
+              {needsDelivery && (
+                <label className="flex cursor-pointer items-center gap-2 font-body text-sm text-foreground">
+                  <input
+                    type="checkbox"
+                    checked={formData.sameAsShipping}
+                    onChange={handleCheckboxChange}
+                    className="h-4 w-4 rounded accent-brand"
+                  />
+                  Same as shipping address
+                </label>
+              )}
+              {(!needsDelivery || !formData.sameAsShipping) && (
                 <>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
@@ -870,6 +916,17 @@ const CheckoutForm = () => {
             {error && (
               <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 font-body text-sm text-destructive">
                 {error}
+                {error === DIGITAL_ACCOUNT_MESSAGE && (
+                  <>
+                    {" "}
+                    <Link
+                      href={loginRedirectFor("/checkout")}
+                      className="underline"
+                    >
+                      Sign in
+                    </Link>
+                  </>
+                )}
                 {error === LINE_NOT_BUYABLE_MESSAGE && (
                   <>
                     {" "}
@@ -944,14 +1001,16 @@ const CheckoutForm = () => {
                   <span className="text-muted-foreground">Subtotal:</span>
                   <span className="text-foreground">{display_item_total}</span>
                 </div>
-                <div className="flex justify-between font-body text-sm">
-                  <span className="text-muted-foreground">Shipping:</span>
-                  <span className="text-foreground">
-                    {estimateShippingMutation.isLoading
-                      ? "Calculating..."
-                      : shippingCost}
-                  </span>
-                </div>
+                {needsDelivery && (
+                  <div className="flex justify-between font-body text-sm">
+                    <span className="text-muted-foreground">Shipping:</span>
+                    <span className="text-foreground">
+                      {estimateShippingMutation.isLoading
+                        ? "Calculating..."
+                        : shippingCost}
+                    </span>
+                  </div>
+                )}
                 {promo_total && (
                   <div className="flex justify-between font-body text-sm">
                     <span className="text-muted-foreground">Discount:</span>

@@ -1,12 +1,19 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { Search, Package, Palette, CreditCard, User } from "lucide-react";
+import { Library } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { marketplaceEnabled } from "../../lib/marketplace";
 import { cn } from "@lib/utils";
 import { Layout } from "../../components/Layout";
 import { BadgePercent } from "lucide-react";
 
 const navItems = [
   { label: "Order History", href: "/account/orders", icon: Package },
+  { label: "Library", href: "/account/library", icon: Library },
+  ...(marketplaceEnabled()
+    ? [{ label: "Creator", href: "/account/creator", icon: Sparkles }]
+    : []),
   { label: "My Style", href: "/account/mystyle", icon: Palette },
   { label: "Payment Methods", href: "/account/payment", icon: CreditCard },
   { label: "Affiliate", href: "/account/affiliate", icon: BadgePercent },

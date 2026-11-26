@@ -13,6 +13,8 @@ import { fetchProducts } from "@hooks/useProducts";
 import { QueryKeys } from "@hooks/queryKeys";
 import { useFeaturedProducts } from "@hooks/useFeaturedProducts";
 import { FeaturedShelf } from "./FeaturedShelf";
+import { ModeToggle } from "./ModeToggle";
+import { marketplaceEnabled } from "../../lib/marketplace";
 
 interface FiltersState {
   categories: string[];
@@ -349,6 +351,10 @@ export const Browse: React.FC = () => {
 
           {/* Products Area */}
           <main className="min-h-[400px]">
+            {marketplaceEnabled() && (
+              <ModeToggle mode="shop" className="mb-6" />
+            )}
+
             {showFeatured && featuredData && (
               <FeaturedShelf featured={featuredData} />
             )}
