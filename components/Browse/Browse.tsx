@@ -11,6 +11,8 @@ import { Loading } from "@components/Loading";
 import { useProducts } from "@hooks/useProducts";
 import { fetchProducts } from "@hooks/useProducts";
 import { QueryKeys } from "@hooks/queryKeys";
+import { useFeaturedProducts } from "@hooks/useFeaturedProducts";
+import { FeaturedShelf } from "./FeaturedShelf";
 
 interface FiltersState {
   categories: string[];
@@ -37,6 +39,9 @@ export const Browse: React.FC = () => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const { data: productsData, isLoading } = useProducts(1);
+
+  // Featured taxon (null when missing, empty or failing: no shelf)
+  const { data: featuredData } = useFeaturedProducts();
 
   // Update URL when filters change
   useEffect(() => {
@@ -190,6 +195,17 @@ export const Browse: React.FC = () => {
     filters.priceMax ||
     filters.search;
 
+  // Featured shelf: only when nothing is filtered or searched. While it shows,
+  // its products are left out of the grid so nothing appears twice.
+  const showFeatured = !hasActiveFilters && !!featuredData?.data?.length;
+  const featuredIds = useMemo(
+    () => new Set((featuredData?.data || []).map((p: any) => String(p.id))),
+    [featuredData]
+  );
+  const gridProducts = showFeatured
+    ? filteredProducts.filter((p: any) => !featuredIds.has(String(p.id)))
+    : filteredProducts;
+
   if (isLoading) {
     return (
       <Layout>
@@ -333,6 +349,10 @@ export const Browse: React.FC = () => {
 
           {/* Products Area */}
           <main className="min-h-[400px]">
+            {showFeatured && featuredData && (
+              <FeaturedShelf featured={featuredData} />
+            )}
+
             {/* Sort Bar */}
             <div className="mb-6 flex flex-col items-start justify-between gap-3 rounded-xl border border-border/30 bg-card px-5 py-4 shadow-sm sm:flex-row sm:items-center">
               <span className="font-title text-sm font-semibold text-foreground">
@@ -359,15 +379,15 @@ export const Browse: React.FC = () => {
               </div>
             </div>
 
-            {filteredProducts.length > 0 ? (
+            {gridProducts.length > 0 ? (
               <ProductList
                 products={{
-                  data: filteredProducts,
+                  data: gridProducts,
                   included: productsData?.included
                 }}
                 title=""
               />
-            ) : (
+            ) : showFeatured ? null : (
               <div className="flex flex-col items-center justify-center rounded-xl bg-card px-5 py-20 text-center">
                 <h2 className="mb-3 font-title text-lg text-foreground">
                   No products found

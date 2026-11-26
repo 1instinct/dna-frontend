@@ -2,6 +2,13 @@ import { useQuery } from "react-query";
 import { spreeClient } from "@config/spree";
 import { QueryKeys } from "@hooks/queryKeys";
 import constants from "@utilities/constants";
+import {
+  describeRequestError,
+  requestWithVideosFallback
+} from "@lib/spreeInclude";
+
+// `videos` is appended (and dropped again if the backend lacks it).
+const FEED_INCLUDE = "images,variants,option_types,variants.option_values";
 
 export interface ProductFeedParams {
   page?: number;
@@ -102,12 +109,6 @@ export const fetchProductFeed = async (params: ProductFeedParams) => {
       queryParams.filter.show_discontinued = params.filter.show_discontinued;
   }
 
-  // Add include parameter if specified
-  // if (params.include) {
-  //   queryParams.include = params.include;
-  // }
-  queryParams.include = "images,variants,option_types,variants.option_values";
-
   constants.IS_DEBUG &&
     console.log("Fetching product feed with params:", queryParams);
 
@@ -115,21 +116,31 @@ export const fetchProductFeed = async (params: ProductFeedParams) => {
     ? { bearerToken: token.access_token }
     : { bearerToken: undefined };
 
-  const response = await spreeClient.products.list(tokenParam, queryParams);
+  return requestWithVideosFallback(
+    FEED_INCLUDE,
+    async (include) => {
+      const response = await spreeClient.products.list(tokenParam, {
+        ...queryParams,
+        include
+      });
 
-  console.log("Product feed response:", response);
-  console.log("Is success:", response.isSuccess());
+      constants.IS_DEBUG && console.log("Product feed response:", response);
+      constants.IS_DEBUG && console.log("Is success:", response.isSuccess());
 
-  if (response.isSuccess()) {
-    const data = response.success();
-    console.log("Product feed success data:", data);
-    console.log("Products count:", data?.data?.length);
-    return data;
-  } else {
-    const error = response.fail();
+      if (response.isSuccess()) {
+        const data = response.success();
+        constants.IS_DEBUG && console.log("Product feed success data:", data);
+        constants.IS_DEBUG &&
+          console.log("Products count:", data?.data?.length);
+        return data;
+      }
+      throw response.fail();
+    },
+    describeRequestError
+  ).catch((error: any) => {
     console.error("Product feed error:", error);
-    throw new Error(error.message || "Failed to fetch products");
-  }
+    throw new Error(error?.message || "Failed to fetch products");
+  });
 };
 
 export const useProductFeed = (

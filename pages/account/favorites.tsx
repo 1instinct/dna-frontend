@@ -13,7 +13,11 @@ const Favorites = () => {
   const router = useRouter();
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: favoritesData, isLoading, error } = useFavorites(currentPage);
+  const {
+    data: favoritesData,
+    isLoading,
+    error
+  } = useFavorites(currentPage, !!user);
   const removeFavorite = useRemoveFavorite();
 
   if (!user) {

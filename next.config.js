@@ -2,6 +2,9 @@ const Module = require("module");
 const path = require("path");
 const resolveFrom = require("resolve-from");
 const Dotenv = require("dotenv-webpack");
+// Required before the Module.prototype.require patch below, so Sentry's own
+// module resolution is not routed through the react/react-dom redirect.
+const { withSentryConfig } = require("@sentry/nextjs");
 const node_modules = path.resolve(__dirname, "node_modules");
 
 const originalRequire = Module.prototype.require;
@@ -38,8 +41,14 @@ const DEPLOY_ENV_MAPPING = {
 const envFile = path.join(__dirname, `.env.${DEPLOY_ENV_MAPPING[DEPLOY_ENV]}`);
 loadEnvVariables();
 const isLocalDevEnvironment = !process.env.DEPLOY_ENV;
-module.exports = {
+const moduleExports = {
   swcMinify: true,
+  sentry: {
+    // Upload source maps to Sentry but do not serve them to browsers, so the
+    // storefront's original source is not readable from production devtools.
+    // Default in @sentry/nextjs 8+, opt-in on the 7.x line this app is pinned to.
+    hideSourceMaps: true
+  },
   webpack: (config, { webpack }) => {
     config.resolve.alias["@components"] = path.join(__dirname, "components");
     config.resolve.alias["@config"] = path.join(__dirname, "config");
@@ -76,6 +85,24 @@ module.exports = {
     return config;
   }
 };
+
+// Source maps are uploaded only when SENTRY_AUTH_TOKEN, SENTRY_ORG and
+// SENTRY_PROJECT are all set. Without this guard the plugin fails the build in
+// environments that have no token, such as the Docker image build and a local
+// `yarn build`.
+const sentryWebpackPluginOptions = {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  silent: true,
+  dryRun: !(
+    process.env.SENTRY_AUTH_TOKEN &&
+    process.env.SENTRY_ORG &&
+    process.env.SENTRY_PROJECT
+  )
+};
+
+module.exports = withSentryConfig(moduleExports, sentryWebpackPluginOptions);
+
 function loadEnvVariables() {
   // eslint-disable-next-line global-require
   require("dotenv").config({

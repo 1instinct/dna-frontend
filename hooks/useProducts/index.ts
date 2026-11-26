@@ -3,6 +3,14 @@ import { IProducts } from "@spree/storefront-api-v2-sdk/types/interfaces/Product
 import { spreeClient } from "../../config/spree";
 import { QueryKeys } from "../queryKeys";
 import { useEffect, useState } from "react";
+import {
+  describeRequestError,
+  requestWithVideosFallback
+} from "../../lib/spreeInclude";
+
+// `videos` is appended (and dropped again if the backend lacks it).
+export const PRODUCTS_INCLUDE =
+  "images,variants,option_types,variants.option_values";
 
 const fetchProducts = async (
   page: number = 1,
@@ -14,7 +22,6 @@ const fetchProducts = async (
   const token = await storage.getToken();
   const params: any = {
     sort,
-    include: "images,variants,option_types,variants.option_values",
     filter: {}
   };
 
@@ -26,16 +33,22 @@ const fetchProducts = async (
     params.filter.taxons = taxons;
   }
 
-  const response = await spreeClient.products.list(
-    {
-      bearerToken: token ? token.access_token : undefined
-    },
-    params
-  );
-
-  if (response.isSuccess()) {
-    return response.success();
-  } else {
+  try {
+    return await requestWithVideosFallback(
+      PRODUCTS_INCLUDE,
+      async (include) => {
+        const response = await spreeClient.products.list(
+          {
+            bearerToken: token ? token.access_token : undefined
+          },
+          { ...params, include }
+        );
+        if (response.isSuccess()) return response.success();
+        throw response.fail();
+      },
+      describeRequestError
+    );
+  } catch {
     throw new Error("Products request failed");
   }
 };

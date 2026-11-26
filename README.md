@@ -13,6 +13,10 @@ _Gotchas:_
 
 - Does the backend (`dna-admin`) have menus, products, live streams
 - Do you have the backend url & api key in `.env`?
+- The Spree storefront key is `SPREE_ACCESS_TOKEN`, server-only: the browser calls
+  `/api/public/<route>` (`pages/api/public/[...path].ts`), which adds the key and forwards
+  read-only public requests (menus, live streams, the default store) to Spree. Never name it
+  `NEXT_PUBLIC_SPREE_ACCESS_TOKEN`: `NEXT_PUBLIC_*` values are inlined into the browser bundle.
 
 ## Styles
 

@@ -13,6 +13,7 @@ import {
 import * as React from "react";
 import * as tracking from "../config/tracking";
 import * as constants from "../utilities/constants";
+import { robotsContent } from "../lib/productVisibility";
 
 const withResponsiveContext = (App: any, req: any) => {
   const contextValue = (() => {
@@ -52,6 +53,8 @@ class MyDocument extends Document {
     return initialProps;
   }
   render() {
+    const { page, props: nextProps } = this.props.__NEXT_DATA__;
+    const robots = robotsContent(page, nextProps?.pageProps);
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://instinct.is";
     const siteTitle =
       process.env.NEXT_PUBLIC_PAGE_TITLE ||
@@ -101,7 +104,7 @@ class MyDocument extends Document {
           <meta charSet="utf-8" />
           <meta name="description" content={siteDesc} />
           <meta name="keywords" content="" />
-          <meta name="robots" content="noodp" />
+          <meta name="robots" content={robots} />
           <meta property="og:locale" content="en_US" />
           <meta property="og:type" content="website" />
           <meta property="og:title" content={siteTitle} />
