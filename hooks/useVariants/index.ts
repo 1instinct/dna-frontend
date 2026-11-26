@@ -9,21 +9,18 @@ const fetchVariants = async (
 ): Promise<any> => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
+  // Only the signed-in user's own token is ever sent; there is no shared-key
+  // fallback for signed-out visitors.
   const spreeUrl = `${
     process.env.NEXT_PUBLIC_SPREE_API_URL
-  }/api/v2/variants?filter[product_id_eq]=${productId}&token=${
-    token ? token.access_token : process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN
+  }/api/v2/variants?filter[product_id_eq]=${productId}${
+    token?.access_token ? `&token=${token.access_token}` : ""
   }`;
   // const spreeUrl = `http://pol-admin-staging.instinct.is/api/v2/variants?filter[product_id_eq]=${productId}`;
   const strictUrl = encodeURI(spreeUrl);
   const myHeaders = new Headers();
 
   myHeaders.append("Content-Type", "application/json");
-  // myHeaders.append(
-  //   "Authorization",
-  //   `Bearer ${token ? token.access_token : process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN}`
-  //   // `Bearer ${token ? token.access_token : ""}`
-  // );
   const response = await fetch(strictUrl, {
     method: "GET",
     headers: myHeaders

@@ -247,10 +247,11 @@ const orderToken = await storage.getOrderToken();
 
 ### Environment Variables
 
-Access via `process.env.NEXT_PUBLIC_*`:
+Access via `process.env.*`. `NEXT_PUBLIC_*` values are inlined into the browser bundle, so secrets
+drop the prefix and are read only in `pages/api/*` or `lib/server/*`:
 
 - `NEXT_PUBLIC_SPREE_API_URL` - Backend API URL
-- `NEXT_PUBLIC_SPREE_ACCESS_TOKEN` - API token
+- `SPREE_ACCESS_TOKEN` - Spree storefront key, server-only (used by `pages/api/public/[...path].ts`; never `NEXT_PUBLIC_`)
 - `NEXT_PUBLIC_DARK_MODE` - Dark mode toggle
 - `NEXT_PUBLIC_IS_MAINT_MODE` - Maintenance mode
 - `NEXT_PUBLIC_LOGO_PATH` - Logo image path

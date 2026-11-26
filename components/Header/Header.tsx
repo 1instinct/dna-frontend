@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
     isError: cartHasError
   } = useCart();
 
-  const { data: favoritesData } = useFavorites(1);
+  const { data: favoritesData } = useFavorites(1, !!user);
 
   const cartItemCount = cartData ? cartData?.data?.attributes?.item_count : 0;
   const favoritesCount = favoritesData?.meta?.total_count || 0;
