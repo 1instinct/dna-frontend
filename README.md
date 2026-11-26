@@ -114,6 +114,7 @@ make deploy-frontend
 ### Update Environment Variables
 
 The source of truth for env vars is **`.env.development`** (gitignored). The K8s cluster reads from `secrets.yml` (base64-encoded version of the same values).
+`secrets.yml` is gitignored and generated locally; never commit it (base64 is an encoding, not encryption).
 
 **Recommended workflow — use the sync script:**
 
