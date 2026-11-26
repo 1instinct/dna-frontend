@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { NotifyForm } from "../NotifyForm";
 import { ProductTeaser } from "../ProductTeaser";
 import { SocialLinks } from "../SocialLinks";
+import { AppCallout } from "../AppCallout";
 import { LegalLinks } from "../LegalLinks";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
@@ -166,6 +167,7 @@ export const ComingSoon = () => {
           </div>
         )}
         <NotifyForm />
+        <AppCallout variant="section" />
         <SocialLinks />
         {isSlideshow && (
           <div className="fixed inset-0 h-full w-full">
