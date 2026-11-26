@@ -23,13 +23,16 @@ const MyStyle = () => {
             </div>
             <div className="flex items-start justify-between gap-3 p-4">
               <div className="min-w-0">
-                <h3 className="font-title text-base font-semibold uppercase text-foreground">
+                <h2 className="font-title text-base font-semibold uppercase text-foreground">
                   {item.title}
-                </h3>
+                </h2>
                 <p className="mt-0.5 font-body text-sm text-muted-foreground">
                   {item.desc}
                 </p>
-                <div className="mt-2 flex items-center gap-1.5">
+                <div
+                  className="mt-2 flex items-center gap-1.5"
+                  aria-hidden="true"
+                >
                   <span
                     className="h-3 w-3 rounded-full border border-border"
                     style={{ background: "#cbc8bf" }}

@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@lib/utils";
@@ -26,6 +27,7 @@ export const OrderDetail = () => {
   if (isLoading) {
     return (
       <Layout>
+        <h1 className="sr-only">Order Details</h1>
         <Loading />
       </Layout>
     );
@@ -35,18 +37,16 @@ export const OrderDetail = () => {
     return (
       <Layout>
         <div className="section-container py-10">
-          <Button
-            variant="outline"
-            onClick={() => router.push("/account/orders")}
-            className="mb-6"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Orders
+          <Button variant="outline" asChild className="mb-6">
+            <Link href="/account/orders">
+              <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+              Back to Orders
+            </Link>
           </Button>
           <div className="flex flex-col items-center justify-center rounded-xl bg-card px-5 py-20 text-center">
-            <h3 className="mb-3 font-title text-lg text-foreground">
+            <h1 className="mb-3 font-title text-lg text-foreground">
               Order not found
-            </h3>
+            </h1>
             <p className="font-body text-sm text-muted-foreground">
               We couldn&apos;t find this order. Please check the order number
               and try again.
@@ -89,9 +89,9 @@ export const OrderDetail = () => {
 
   const renderAddress = (address: any, title: string) => (
     <div className="mb-5 last:mb-0">
-      <h4 className="mb-2 font-title text-sm font-semibold text-foreground">
+      <h3 className="mb-2 font-title text-sm font-semibold text-foreground">
         {title}
-      </h4>
+      </h3>
       <div className="space-y-0.5 font-body text-sm leading-relaxed text-muted-foreground">
         <p>
           {address.attributes.firstname} {address.attributes.lastname}
@@ -110,13 +110,11 @@ export const OrderDetail = () => {
   return (
     <Layout>
       <div className="section-container py-10">
-        <Button
-          variant="outline"
-          onClick={() => router.push("/account/orders")}
-          className="mb-6"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Orders
+        <Button variant="outline" asChild className="mb-6">
+          <Link href="/account/orders">
+            <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+            Back to Orders
+          </Link>
         </Button>
 
         <h1 className="mb-1 font-title text-3xl font-bold uppercase tracking-wider text-foreground">
@@ -144,9 +142,10 @@ export const OrderDetail = () => {
                       key={item.id}
                       className="flex gap-4 py-4 first:pt-0 last:pb-0"
                     >
+                      {/* Decorative: the name is printed next to it. */}
                       <img
                         src="/placeholder.png"
-                        alt={item.attributes.name}
+                        alt=""
                         className="h-20 w-20 rounded-lg bg-muted object-cover"
                       />
                       <div className="flex flex-1 flex-col gap-1">

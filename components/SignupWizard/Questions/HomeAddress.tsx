@@ -48,6 +48,7 @@ export const HomeAddress = () => {
             id="unitNumber"
             component={FormikInput}
             label="Apt / Unit"
+            autoComplete="address-line2"
           />
         </InputWrapper>
       </InputGroupWrapper>

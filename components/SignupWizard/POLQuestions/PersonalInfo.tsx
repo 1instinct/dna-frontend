@@ -30,6 +30,8 @@ export const PersonalInfo = () => {
             id="firstName"
             component={FormikInput}
             label="First Name"
+            autoComplete="given-name"
+            aria-required="true"
           />
         </InputWrapper>
         {/* <InputWrapper>
@@ -46,6 +48,8 @@ export const PersonalInfo = () => {
             id="lastName"
             component={FormikInput}
             label="Last Name"
+            autoComplete="family-name"
+            aria-required="true"
           />
         </InputWrapper>
         {/* <InputWrapper>

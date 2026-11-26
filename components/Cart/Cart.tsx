@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { IProducts } from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useMutation, useQueryClient } from "react-query";
 import { Minus, Plus, X, Trash2 } from "lucide-react";
 import { Button } from "@components/ui";
@@ -116,6 +117,7 @@ export const Cart = () => {
           );
 
           const lineItemId = lineItem.id;
+          const itemName = product?.attributes?.name || "item";
           const quantity =
             quantities[lineItemId] || lineItem.attributes.quantity;
 
@@ -138,31 +140,42 @@ export const Cart = () => {
                   }`}
                 >
                   <button
+                    type="button"
+                    aria-label={`Decrease quantity of ${itemName}`}
                     onClick={() =>
                       handleUpdateItemQuantity(lineItemId, quantity - 1)
                     }
-                    className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
+                    className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    <Minus className="h-3.5 w-3.5" />
+                    <Minus className="h-3.5 w-3.5" aria-hidden="true" />
                   </button>
-                  <span className="w-8 text-center font-body text-sm text-foreground">
+                  <span
+                    aria-live="polite"
+                    aria-atomic="true"
+                    className="w-8 text-center font-body text-sm text-foreground"
+                  >
+                    <span className="sr-only">Quantity of {itemName}: </span>
                     {quantity}
                   </span>
                   <button
+                    type="button"
+                    aria-label={`Increase quantity of ${itemName}`}
                     onClick={() =>
                       handleUpdateItemQuantity(lineItemId, quantity + 1)
                     }
-                    className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
+                    className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                   </button>
                 </div>
                 <button
+                  type="button"
                   onClick={() => handleRemoveItem(lineItemId)}
-                  className="ml-2 flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent text-destructive transition-colors hover:bg-destructive/10"
+                  className="ml-2 flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent text-destructive transition-colors hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   title="Remove item"
+                  aria-label={`Remove ${itemName} from cart`}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -172,12 +185,21 @@ export const Cart = () => {
     return null;
   };
 
-  if (isLoading) return <Loading />;
+  if (isLoading)
+    return (
+      <>
+        <h1 className="sr-only">Cart</h1>
+        <Loading />
+      </>
+    );
   if (isError)
     return (
-      <p className="p-8 text-center text-destructive">
-        Error: {(error as any).message}
-      </p>
+      <>
+        <h1 className="sr-only">Cart</h1>
+        <p role="alert" className="p-8 text-center text-destructive">
+          Error: {(error as any).message}
+        </p>
+      </>
     );
 
   const {
@@ -190,7 +212,7 @@ export const Cart = () => {
   if (cartData !== undefined) {
     return (
       <div className="section-container py-8 font-title">
-        <h2 className="mb-6 text-2xl font-semibold text-foreground">Cart</h2>
+        <h1 className="mb-6 text-2xl font-semibold text-foreground">Cart</h1>
 
         <div className="mb-4 flex items-center justify-between">
           <span className="font-body text-sm text-muted-foreground">
@@ -198,7 +220,7 @@ export const Cart = () => {
           </span>
           {item_count > 0 && (
             <Button variant="outline" size="sm" onClick={handleEmptyCart}>
-              <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+              <Trash2 className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
               Empty Cart
             </Button>
           )}
@@ -247,11 +269,11 @@ export const Cart = () => {
               >
                 Checkout as Guest
               </Button>
-              <Button variant="outline" onClick={() => router.push("/login")}>
-                Login
+              <Button variant="outline" asChild>
+                <Link href="/login">Login</Link>
               </Button>
-              <Button variant="outline" onClick={() => router.push("/signup")}>
-                Sign Up
+              <Button variant="outline" asChild>
+                <Link href="/signup">Sign Up</Link>
               </Button>
             </>
           )}

@@ -7,9 +7,10 @@ import { resetPasswordForm } from "../AuthForm/constants";
 
 export const ResetPassword = () => {
   const SubmitButton = () => {
-    const { submitForm, isSubmitting } = useFormikContext();
+    // A plain submit button: the form's onSubmit runs Formik once.
+    const { isSubmitting } = useFormikContext();
     return (
-      <Button onClick={submitForm} disabled={isSubmitting} className="w-full">
+      <Button type="submit" disabled={isSubmitting} className="w-full">
         Reset Password
       </Button>
     );
@@ -39,10 +40,13 @@ export const ResetPassword = () => {
             <div>
               <Field
                 type="email"
-                name="username"
+                name="email"
+                id="reset-password-email"
                 component={FormikInput}
                 label="Email"
                 placeholder="Email"
+                autoComplete="email"
+                aria-required="true"
               />
             </div>
             <SubmitButton />

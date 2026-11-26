@@ -278,9 +278,10 @@ const CheckoutForm = () => {
             className="flex items-center gap-3 border-b border-border/20 py-3"
           >
             {imageUrl && (
+              // Decorative: the product name is printed next to it.
               <img
                 src={imageUrl}
-                alt={product?.attributes?.name}
+                alt=""
                 className="h-14 w-14 rounded-md object-cover"
               />
             )}
@@ -429,6 +430,7 @@ const CheckoutForm = () => {
   if (cartLoading) {
     return (
       <Layout>
+        <h1 className="sr-only">Checkout</h1>
         <Loading />
       </Layout>
     );
@@ -501,6 +503,7 @@ const CheckoutForm = () => {
                 <input
                   type="email"
                   id="email"
+                  autoComplete="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
@@ -513,11 +516,18 @@ const CheckoutForm = () => {
 
             {/* Payment Method */}
             <section className="rounded-xl border border-border/30 bg-card p-6">
-              <h2 className="mb-4 font-title text-base font-semibold text-foreground">
+              <h2
+                id="payment-method-heading"
+                className="mb-4 font-title text-base font-semibold text-foreground"
+              >
                 Payment Method
               </h2>
               {paymentMethods?.data?.length > 0 ? (
-                <div className="space-y-2">
+                <div
+                  role="radiogroup"
+                  aria-labelledby="payment-method-heading"
+                  className="space-y-2"
+                >
                   {paymentMethods.data.map((method: any) => (
                     <label
                       key={method.id}
@@ -550,9 +560,13 @@ const CheckoutForm = () => {
                 Card Details
               </h2>
               <div>
-                <label className={labelClass}>Card Information *</label>
+                {/* Stripe focuses the card field when its label is clicked. */}
+                <label htmlFor="card-element" className={labelClass}>
+                  Card Information *
+                </label>
                 <div className="rounded-lg border border-border bg-background p-3">
                   <CardElement
+                    id="card-element"
                     options={{
                       style: {
                         base: {
@@ -572,9 +586,13 @@ const CheckoutForm = () => {
             <fieldset
               hidden={!needsDelivery}
               disabled={!needsDelivery}
+              aria-labelledby="shipping-address-heading"
               className="min-w-0 space-y-4 rounded-xl border border-border/30 bg-card p-6"
             >
-              <h2 className="font-title text-base font-semibold text-foreground">
+              <h2
+                id="shipping-address-heading"
+                className="font-title text-base font-semibold text-foreground"
+              >
                 Shipping Address
               </h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -585,6 +603,7 @@ const CheckoutForm = () => {
                   <input
                     type="text"
                     id="firstName"
+                    autoComplete="shipping given-name"
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleInputChange}
@@ -599,6 +618,7 @@ const CheckoutForm = () => {
                   <input
                     type="text"
                     id="lastName"
+                    autoComplete="shipping family-name"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
@@ -614,6 +634,7 @@ const CheckoutForm = () => {
                 <input
                   type="text"
                   id="address1"
+                  autoComplete="shipping address-line1"
                   name="address1"
                   value={formData.address1}
                   onChange={handleInputChange}
@@ -629,6 +650,7 @@ const CheckoutForm = () => {
                 <input
                   type="text"
                   id="address2"
+                  autoComplete="shipping address-line2"
                   name="address2"
                   value={formData.address2}
                   onChange={handleInputChange}
@@ -643,6 +665,7 @@ const CheckoutForm = () => {
                   <input
                     type="text"
                     id="city"
+                    autoComplete="shipping address-level2"
                     name="city"
                     value={formData.city}
                     onChange={handleInputChange}
@@ -657,6 +680,7 @@ const CheckoutForm = () => {
                   <input
                     type="text"
                     id="state"
+                    autoComplete="shipping address-level1"
                     name="state"
                     value={formData.state}
                     onChange={handleInputChange}
@@ -674,6 +698,7 @@ const CheckoutForm = () => {
                   <input
                     type="text"
                     id="zipcode"
+                    autoComplete="shipping postal-code"
                     name="zipcode"
                     value={formData.zipcode}
                     onChange={handleInputChange}
@@ -687,6 +712,7 @@ const CheckoutForm = () => {
                   </label>
                   <select
                     id="country"
+                    autoComplete="shipping country"
                     name="country"
                     value={formData.country}
                     onChange={handleInputChange}
@@ -705,6 +731,7 @@ const CheckoutForm = () => {
                 <input
                   type="tel"
                   id="phone"
+                  autoComplete="shipping tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
@@ -717,10 +744,17 @@ const CheckoutForm = () => {
             {/* Shipping Rates */}
             {estimatedShipping?.data && estimatedShipping.data.length > 0 && (
               <section className="rounded-xl border border-border/30 bg-card p-6">
-                <h2 className="mb-4 font-title text-base font-semibold text-foreground">
+                <h2
+                  id="shipping-method-heading"
+                  className="mb-4 font-title text-base font-semibold text-foreground"
+                >
                   Shipping Method
                 </h2>
-                <div className="space-y-2">
+                <div
+                  role="radiogroup"
+                  aria-labelledby="shipping-method-heading"
+                  className="space-y-2"
+                >
                   {estimatedShipping.data.map((rate: any) => (
                     <label
                       key={rate.attributes.shipping_method_id}
@@ -783,6 +817,7 @@ const CheckoutForm = () => {
                       <input
                         type="text"
                         id="billFirstName"
+                        autoComplete="billing given-name"
                         name="billFirstName"
                         value={formData.billFirstName}
                         onChange={handleInputChange}
@@ -797,6 +832,7 @@ const CheckoutForm = () => {
                       <input
                         type="text"
                         id="billLastName"
+                        autoComplete="billing family-name"
                         name="billLastName"
                         value={formData.billLastName}
                         onChange={handleInputChange}
@@ -812,6 +848,7 @@ const CheckoutForm = () => {
                     <input
                       type="text"
                       id="billAddress1"
+                      autoComplete="billing address-line1"
                       name="billAddress1"
                       value={formData.billAddress1}
                       onChange={handleInputChange}
@@ -826,6 +863,7 @@ const CheckoutForm = () => {
                     <input
                       type="text"
                       id="billAddress2"
+                      autoComplete="billing address-line2"
                       name="billAddress2"
                       value={formData.billAddress2}
                       onChange={handleInputChange}
@@ -840,6 +878,7 @@ const CheckoutForm = () => {
                       <input
                         type="text"
                         id="billCity"
+                        autoComplete="billing address-level2"
                         name="billCity"
                         value={formData.billCity}
                         onChange={handleInputChange}
@@ -854,6 +893,7 @@ const CheckoutForm = () => {
                       <input
                         type="text"
                         id="billState"
+                        autoComplete="billing address-level1"
                         name="billState"
                         value={formData.billState}
                         onChange={handleInputChange}
@@ -870,6 +910,7 @@ const CheckoutForm = () => {
                       <input
                         type="text"
                         id="billZipcode"
+                        autoComplete="billing postal-code"
                         name="billZipcode"
                         value={formData.billZipcode}
                         onChange={handleInputChange}
@@ -883,6 +924,7 @@ const CheckoutForm = () => {
                       </label>
                       <select
                         id="billCountry"
+                        autoComplete="billing country"
                         name="billCountry"
                         value={formData.billCountry}
                         onChange={handleInputChange}
@@ -901,6 +943,7 @@ const CheckoutForm = () => {
                     <input
                       type="tel"
                       id="billPhone"
+                      autoComplete="billing tel"
                       name="billPhone"
                       value={formData.billPhone}
                       onChange={handleInputChange}
@@ -914,7 +957,10 @@ const CheckoutForm = () => {
 
             {/* Error */}
             {error && (
-              <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 font-body text-sm text-destructive">
+              <div
+                role="alert"
+                className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 font-body text-sm text-destructive"
+              >
                 {error}
                 {error === DIGITAL_ACCOUNT_MESSAGE && (
                   <>
@@ -969,6 +1015,7 @@ const CheckoutForm = () => {
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
                     placeholder="Enter code"
+                    autoComplete="off"
                     className={`${inputClass} flex-1`}
                   />
                   <button
@@ -986,6 +1033,7 @@ const CheckoutForm = () => {
                   <div className="mt-2 flex items-center gap-2 font-body text-xs text-green-600">
                     Coupon applied! Discount: {promo_total}
                     <button
+                      type="button"
                       onClick={handleRemoveCoupon}
                       className="border-none bg-transparent text-xs text-destructive underline"
                     >

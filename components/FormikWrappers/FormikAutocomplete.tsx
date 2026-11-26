@@ -15,6 +15,7 @@ import {
   SuggestionLoader,
   SuggestionItem
 } from "./FormikInput.styles";
+import { fieldA11y, FieldLabel } from "./fieldA11y";
 
 // interface FormikAutocompleteType {
 //   name: string;
@@ -25,7 +26,6 @@ import {
 
 export const FormikAutocomplete = ({
   field,
-  fields: { ...fields },
   form: { setFieldValue, touched, errors },
   form,
   addressType,
@@ -54,9 +54,14 @@ export const FormikAutocomplete = ({
   };
 
   const addressTitle = addressType ? addressType + " " : null;
+  const labelText = addressTitle ? addressTitle + "Address" : "Address";
+  const a11y = fieldA11y({ name: field.name, id: props.id, touched, errors });
+  const listboxId = `${a11y.inputId}-suggestions`;
+  const showSuggestions = !addressSelected && homeAddress !== "";
 
   return (
     <>
+      <FieldLabel htmlFor={a11y.inputId}>{props.label || labelText}</FieldLabel>
       <PlacesAutocomplete
         value={homeAddress || field.value}
         onChange={handleChange}
@@ -66,16 +71,21 @@ export const FormikAutocomplete = ({
           <>
             <BasicField
               {...getInputProps({
-                label: addressTitle ? addressTitle + "Address" : "Address",
-                className: "location-search-input"
+                className: "location-search-input",
+                ...a11y.inputProps,
+                "aria-controls": showSuggestions ? listboxId : undefined
               })}
               type="text"
-              placeholder={addressTitle ? addressTitle + "Address" : "Address"}
+              placeholder={labelText}
               // selectedTheme="dark"
               // invalid={Boolean(touched[fields.name] && errors[fields.name])}
             />
-            {!addressSelected && homeAddress !== "" && (
-              <SuggestionWrapper>
+            {showSuggestions && (
+              <SuggestionWrapper
+                id={listboxId}
+                role="listbox"
+                aria-label={`${props.label || labelText} suggestions`}
+              >
                 {loading && <SuggestionLoader>Loader...</SuggestionLoader>}
                 {suggestions.map((suggestion) => {
                   const className = suggestion.active

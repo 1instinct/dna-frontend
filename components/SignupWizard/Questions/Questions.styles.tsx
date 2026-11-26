@@ -132,13 +132,16 @@ export const Term = ({
   </div>
 );
 
+/** The text of a terms checkbox, as its label (`htmlFor` is the checkbox id). */
 export const TermsStatement = ({
   children,
   className,
   accepted,
+  htmlFor,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement> & { accepted?: boolean }) => (
-  <p
+}: React.LabelHTMLAttributes<HTMLLabelElement> & { accepted?: boolean }) => (
+  <label
+    htmlFor={htmlFor}
     className={cn(
       "m-0 max-w-[420px] basis-full overflow-y-scroll text-left text-[0.7rem]",
       accepted ? "text-brand" : "text-destructive",
@@ -150,7 +153,7 @@ export const TermsStatement = ({
     {...props}
   >
     {children}
-  </p>
+  </label>
 );
 
 export const StyledModalContent = ({

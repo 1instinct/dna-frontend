@@ -22,9 +22,11 @@ export const Login = () => {
   const redirectUrl = safeRedirect(router.query.redirect);
 
   const SubmitButton = () => {
-    const { submitForm, isSubmitting } = useFormikContext();
+    // A plain submit button: the form's onSubmit runs Formik once. Calling submitForm on click
+    // as well submitted twice.
+    const { isSubmitting } = useFormikContext();
     return (
-      <Button onClick={submitForm} disabled={isSubmitting} className="w-full">
+      <Button type="submit" disabled={isSubmitting} className="w-full">
         {isSubmitting ? "Logging in..." : "Submit"}
       </Button>
     );
@@ -82,7 +84,10 @@ export const Login = () => {
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit} className="space-y-4">
             {loginError && (
-              <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              <div
+                role="alert"
+                className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+              >
                 {loginError}
               </div>
             )}
@@ -90,17 +95,23 @@ export const Login = () => {
               <Field
                 type="email"
                 name="username"
+                id="login-email"
                 placeholder="Email"
                 component={FormikInput}
                 label="Email"
+                autoComplete="email"
+                aria-required="true"
               />
             </div>
             <div>
               <Field
                 name="password"
+                id="login-password"
                 placeholder="Password"
                 component={FormikPassword}
                 label="Password"
+                autoComplete="current-password"
+                aria-required="true"
               />
             </div>
             <SubmitButton />

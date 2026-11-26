@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { Layout } from "../Layout";
 import { useOrder } from "../../hooks";
 import { useAuth } from "../../config/auth";
@@ -25,7 +26,9 @@ export const ThankYou = () => {
   return (
     <Layout>
       <div className="mx-auto mt-20 max-w-[800px] px-5 py-10 text-center">
-        <div className="mb-5 text-[80px] text-green-DEFAULT">✓</div>
+        <div aria-hidden="true" className="mb-5 text-[80px] text-green-DEFAULT">
+          ✓
+        </div>
         <h1 className="mb-5 font-title text-title-lg">
           Thank You for Your Order!
         </h1>
@@ -44,7 +47,7 @@ export const ThankYou = () => {
 
         {!isLoading && order && (
           <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
-            <h3 className="mb-4 font-title text-title-sm">Order Summary</h3>
+            <h2 className="mb-4 font-title text-title-sm">Order Summary</h2>
             <p className="mb-2.5 font-body leading-relaxed text-foreground">
               <strong>Email:</strong> {order.attributes.email}
             </p>
@@ -58,7 +61,7 @@ export const ThankYou = () => {
         )}
 
         <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
-          <h3 className="mb-4 font-title text-title-sm">What happens next?</h3>
+          <h2 className="mb-4 font-title text-title-sm">What happens next?</h2>
           <p className="mb-2.5 font-body leading-relaxed text-foreground">
             You&apos;ll receive an email confirmation shortly with your order
             details and tracking information.
@@ -74,7 +77,7 @@ export const ThankYou = () => {
         </div>
 
         <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
-          <h3 className="mb-4 font-title text-title-sm">Need Help?</h3>
+          <h2 className="mb-4 font-title text-title-sm">Need Help?</h2>
           <p className="mb-2.5 font-body leading-relaxed text-foreground">
             If you have any questions about your order, please don&apos;t
             hesitate to contact our customer support team.
@@ -89,20 +92,18 @@ export const ThankYou = () => {
         </div>
 
         <div className="mt-10 flex justify-center gap-5 max-sm:flex-col max-sm:items-stretch">
-          <Button onClick={() => router.push("/")}>Continue Shopping</Button>
+          <Button asChild>
+            <Link href="/">Continue Shopping</Link>
+          </Button>
           {user ? (
-            <Button
-              variant="outline"
-              onClick={() => router.push("/account/orders")}
-            >
-              View Order History
+            <Button variant="outline" asChild>
+              <Link href="/account/orders">View Order History</Link>
             </Button>
           ) : (
-            <Button
-              variant="outline"
-              onClick={() => router.push(`/account/orders/${orderNumber}`)}
-            >
-              View Order Details
+            <Button variant="outline" asChild>
+              <Link href={`/account/orders/${orderNumber}`}>
+                View Order Details
+              </Link>
             </Button>
           )}
         </div>

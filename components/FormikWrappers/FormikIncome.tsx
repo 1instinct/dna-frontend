@@ -2,7 +2,8 @@ import React from "react";
 import MaskedInput from "react-text-mask";
 import createNumberMask from "text-mask-addons/dist/createNumberMask";
 
-import { BasicField, Error } from "./FormikInput.styles";
+import { BasicField } from "./FormikInput.styles";
+import { fieldA11y, FieldLabel, FieldError } from "./fieldA11y";
 
 const currencyMask = createNumberMask({
   prefix: "$",
@@ -22,27 +23,31 @@ export const FormikIncome = ({
   field: { ...fields },
   form: { touched, errors, name },
   ...props
-}: any) => (
-  <>
-    <MaskedInput
-      placeholder="Yearly Income"
-      mask={currencyMask}
-      id="yearly-income"
-      {...fields}
-      render={(ref: any, inputProps: any) => (
-        <BasicField
-          {...inputProps}
-          innerRef={ref}
-          id="income"
-          placeholder="Yearly Income"
-          invalid={touched[fields.name] && errors[fields.name] ? 1 : 0}
-        />
-      )}
-    />
-    {touched[fields.name] && errors[fields.name] ? (
-      <Error>{errors[fields.name]}</Error>
-    ) : (
-      ""
-    )}
-  </>
-);
+}: any) => {
+  const a11y = fieldA11y({ name: fields.name, id: "income", touched, errors });
+
+  return (
+    <>
+      <FieldLabel htmlFor={a11y.inputId}>
+        {props.label || "Yearly Income"}
+      </FieldLabel>
+      <MaskedInput
+        placeholder="Yearly Income"
+        mask={currencyMask}
+        id="yearly-income"
+        {...fields}
+        render={(ref: any, inputProps: any) => (
+          <BasicField
+            {...inputProps}
+            {...a11y.inputProps}
+            innerRef={ref}
+            placeholder="Yearly Income"
+            inputMode="numeric"
+            invalid={a11y.isInvalid ? 1 : 0}
+          />
+        )}
+      />
+      <FieldError id={a11y.errorId}>{a11y.error}</FieldError>
+    </>
+  );
+};

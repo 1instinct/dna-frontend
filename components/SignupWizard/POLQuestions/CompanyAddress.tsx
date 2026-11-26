@@ -49,6 +49,7 @@ export const CompanyAddress = () => {
             id="unitNumber"
             component={FormikInput}
             label="Suite / Floor / Unit"
+            autoComplete="address-line2"
           />
         </InputWrapper>
       </InputGroupWrapper>
