@@ -42,7 +42,7 @@ This is a **production Next.js 13 e-commerce application** using the **Pages Rou
 - **shadcn/ui on Radix UI**: primitives in `components/ui/`, exported from `components/ui/index.ts`
 - **lucide-react** for icons
 - Compose classes with `cn()` from `lib/utils.ts`
-- **Emotion and Material-UI were removed.** The legacy `components/Quiz` still imports them and is unused; do not copy its patterns.
+- **Emotion and Material-UI were removed.** The last legacy user (`components/Quiz`, unused) was deleted; do not reintroduce them.
 
 ### State Management
 

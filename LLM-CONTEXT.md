@@ -35,7 +35,7 @@ Next.js-based e-commerce frontend for DNA, integrated with a **custom Spree 4.2 
 - **shadcn/ui on Radix UI**: primitives in `components/ui/` (Button, Input, Textarea, Dialog, Sheet, Tabs, Select, Rating, RatingInput, ...), exported from `components/ui/index.ts`
 - **lucide-react**: icons
 - **`cn()`** from `lib/utils.ts` (clsx + tailwind-merge) to compose class names
-- **Emotion and Material-UI were removed** (commits `bb2906b`, `fc65618`, `f11f2f2`). The legacy `components/Quiz` still imports them and is unused; do not copy its patterns.
+- **Emotion and Material-UI were removed** (commits `bb2906b`, `fc65618`, `f11f2f2`). The last legacy user (`components/Quiz`, unused) was deleted; do not reintroduce them.
 
 ### State & Data
 
