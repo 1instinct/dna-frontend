@@ -194,7 +194,7 @@ export const NotifyForm = () => {
         href={`mailto:${process.env.NEXT_PUBLIC_COMPANY_EMAIL}`}
         className="mt-6 block text-center font-body text-sm text-brand transition-colors hover:underline"
       >
-        Got Questions? We'd love to hear from you.
+        Got Questions? We&apos;d love to hear from you.
       </a>
     </div>
   );

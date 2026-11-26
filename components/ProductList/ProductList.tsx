@@ -28,9 +28,7 @@ export const ProductList: React.FC<ProductListProps> = ({
 
   return (
     <section className="w-full pb-5">
-      {title && (
-        <h2 className="font-title text-xl text-foreground">{title}</h2>
-      )}
+      {title && <h2 className="font-title text-xl text-foreground">{title}</h2>}
       <div
         className={
           isScroll

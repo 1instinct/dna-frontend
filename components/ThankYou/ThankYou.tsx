@@ -60,11 +60,11 @@ export const ThankYou = () => {
         <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
           <h3 className="mb-4 font-title text-title-sm">What happens next?</h3>
           <p className="mb-2.5 font-body leading-relaxed text-foreground">
-            You'll receive an email confirmation shortly with your order details
-            and tracking information.
+            You&apos;ll receive an email confirmation shortly with your order
+            details and tracking information.
           </p>
           <p className="mb-2.5 font-body leading-relaxed text-foreground">
-            We'll notify you when your order ships, typically within 1-2
+            We&apos;ll notify you when your order ships, typically within 1-2
             business days.
           </p>
           <p className="mb-2.5 font-body leading-relaxed text-foreground">
@@ -76,8 +76,8 @@ export const ThankYou = () => {
         <div className="my-8 rounded-lg bg-card p-8 text-left shadow-md">
           <h3 className="mb-4 font-title text-title-sm">Need Help?</h3>
           <p className="mb-2.5 font-body leading-relaxed text-foreground">
-            If you have any questions about your order, please don't hesitate to
-            contact our customer support team.
+            If you have any questions about your order, please don&apos;t
+            hesitate to contact our customer support team.
           </p>
           <p className="mb-2.5 font-body leading-relaxed text-foreground">
             Email:{" "}

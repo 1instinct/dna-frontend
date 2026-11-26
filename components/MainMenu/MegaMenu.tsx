@@ -46,7 +46,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ menuItems, loading }) => {
     }
   };
 
-  const renderNestedMenu = (items: MenuItem[], level: number = 0) => {
+  const renderNestedMenu = (items: MenuItem[], level = 0) => {
     return items.map((item) => {
       const hasChildren = item.childrens && item.childrens.length > 0;
       const isActive = activeSubmenu === item.id;

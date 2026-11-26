@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { QueryKeys } from "../queryKeys";
 
-const fetchMenuItems = async (id: number = 1) => {
+const fetchMenuItems = async (id = 1) => {
   // The storefront key is added server-side by pages/api/public/[...path].ts.
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("Content-Type", "application/json;charset=UTF-8");

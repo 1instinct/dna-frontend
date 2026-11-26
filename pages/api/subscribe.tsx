@@ -108,17 +108,14 @@ async function handleGoHighLevel({
       }
     } else {
       // Create a new contact if not found
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append("first_name", firstName);
       formData.append("last_name", lastName);
       formData.append("phone", phone);
       formData.append("email", email);
       formData.append("formId", ghlForm);
       formData.append("location_id", ghlLocation);
-      formData.append(
-        "eventData[source]",
-        utmParams?.utm_source || "direct"
-      );
+      formData.append("eventData[source]", utmParams?.utm_source || "direct");
       if (utmParams?.utm_medium)
         formData.append("eventData[medium]", utmParams.utm_medium);
       if (utmParams?.utm_campaign)
@@ -132,8 +129,7 @@ async function handleGoHighLevel({
       if (utmParams?.ad_name) formData.append("ad_name", utmParams.ad_name);
       if (utmParams?.adset_name)
         formData.append("adset_name", utmParams.adset_name);
-      if (utmParams?.adset_id)
-        formData.append("adset_id", utmParams.adset_id);
+      if (utmParams?.adset_id) formData.append("adset_id", utmParams.adset_id);
       if (utmParams?.campaign_id)
         formData.append("campaign_id", utmParams.campaign_id);
       if (utmParams?.campaign_name)
@@ -166,8 +162,7 @@ async function handleGoHighLevel({
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { email, firstName, lastName, phone, newContact, utmParams } =
-    req.body;
+  const { email, firstName, lastName, phone, newContact, utmParams } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: "Email is required" });
@@ -215,7 +210,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (mailerService === "gohighlevel") {
-    return handleGoHighLevel({ email, firstName, lastName, phone, utmParams, res });
+    return handleGoHighLevel({
+      email,
+      firstName,
+      lastName,
+      phone,
+      utmParams,
+      res
+    });
   }
 
   return res.status(500).json({ error: "Invalid mailer service" });

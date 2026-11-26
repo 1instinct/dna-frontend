@@ -3,7 +3,7 @@ import { IStream } from "../../typings/stream";
 import { QueryKeys } from "../queryKeys";
 import constants from "../../utilities/constants";
 
-const fetchStreams = async (page: number = 1) => {
+const fetchStreams = async (page = 1) => {
   // The storefront key is added server-side by pages/api/public/[...path].ts.
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("Content-Type", "application/json");

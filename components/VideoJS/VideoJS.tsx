@@ -5,7 +5,7 @@ import "video.js/dist/video-js.css";
 export const VideoJS = ({ options, onReady }: any) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   // let playerRef = createRef<videojs.Player>();
-  let playerRef = useRef<any>(null);
+  const playerRef = useRef<any>(null);
 
   useEffect(() => {
     // make sure Video.js player is only initialized once
@@ -39,7 +39,13 @@ export const VideoJS = ({ options, onReady }: any) => {
 
   return (
     <div data-vjs-player>
-      <video ref={videoRef} className="video-js vjs-big-play-centered" playsInline />
+      {/* video.js adds the caption tracks from the player options. */}
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <video
+        ref={videoRef}
+        className="video-js vjs-big-play-centered"
+        playsInline
+      />
     </div>
   );
 };

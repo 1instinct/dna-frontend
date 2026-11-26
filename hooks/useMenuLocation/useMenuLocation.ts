@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { IStream } from "../../typings/stream";
 import { QueryKeys } from "../queryKeys";
 
-const fetchMenuLocation = async (id: number = 1) => {
+const fetchMenuLocation = async (id = 1) => {
   // The storefront key is added server-side by pages/api/public/[...path].ts.
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("Content-Type", "application/json;charset=UTF-8");

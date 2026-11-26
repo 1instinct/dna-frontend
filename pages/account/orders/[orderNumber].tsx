@@ -48,8 +48,8 @@ export const OrderDetail = () => {
               Order not found
             </h3>
             <p className="font-body text-sm text-muted-foreground">
-              We couldn't find this order. Please check the order number and try
-              again.
+              We couldn&apos;t find this order. Please check the order number
+              and try again.
             </p>
           </div>
         </div>

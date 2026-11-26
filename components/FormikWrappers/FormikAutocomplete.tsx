@@ -83,6 +83,7 @@ export const FormikAutocomplete = ({
                     : "suggestion-item";
                   return (
                     <SuggestionItem
+                      key={suggestion.placeId}
                       {...getSuggestionItemProps(suggestion, {
                         className
                       })}

@@ -562,7 +562,6 @@ const WizardBody: React.FC<{ product: CreatorProduct | null }> = ({
                   Cover image
                 </div>
                 {product?.preview?.image_url && !image.jobs.length && (
-                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={product.preview.image_url}
                     alt="Current cover"

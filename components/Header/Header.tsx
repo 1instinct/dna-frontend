@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -56,10 +56,6 @@ export const Header: React.FC<HeaderProps> = ({ darkMode }) => {
   if (isMaint && isMaint === "true") {
     return null;
   }
-
-  useEffect(() => {
-    console.log(user && user.data.attributes);
-  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">

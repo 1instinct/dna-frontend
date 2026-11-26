@@ -6,7 +6,7 @@ const formatWithHighlight = (text: string, query: string | undefined) => {
   if (!query) return text;
 
   const sanitizeString = (str: any) => {
-    str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, "");
+    str = str.replace(/[^a-z0-9áéíóúñü .,_-]/gim, "");
     return str.trim();
   };
 

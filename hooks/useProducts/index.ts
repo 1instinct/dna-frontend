@@ -13,10 +13,10 @@ export const PRODUCTS_INCLUDE =
   "images,variants,option_types,variants.option_values";
 
 const fetchProducts = async (
-  page: number = 1,
+  page = 1,
   search?: string,
   taxons?: string,
-  sort: string = "created_at"
+  sort = "created_at"
 ) => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
@@ -57,7 +57,7 @@ const useProducts = (
   page: number,
   search?: string,
   taxons?: string,
-  sort: string = "created_at"
+  sort = "created_at"
 ) => {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 

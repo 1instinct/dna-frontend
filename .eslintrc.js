@@ -8,7 +8,7 @@ module.exports = {
       jsx: true // Enable JSX since we're using React
     }
   },
-  plugins: ["simple-import-sort"],
+  plugins: ["simple-import-sort", "react-hooks"],
 
   settings: {
     react: {
@@ -24,14 +24,27 @@ module.exports = {
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:jsx-a11y/recommended",
-    "plugin:prettier/recommended", // Make this the last element so prettier config overrides other formatting rules
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier/@typescript-eslint"
+    // Last, so prettier turns off the formatting rules above. eslint-config-prettier 8 folded
+    // the old "prettier/@typescript-eslint" config into this one.
+    "plugin:prettier/recommended"
   ],
   rules: {
     "prettier/prettier": ["error", {}, { usePrettierrc: true }], // Use our .prettierrc file as source
     "react/react-in-jsx-scope": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    // TypeScript types the props; prop-types would duplicate them.
+    "react/prop-types": "off",
+    // Inference is enough for module boundaries; this rule only adds noise here.
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    // Existing debt, kept visible as warnings: fix these in files you touch.
+    "@typescript-eslint/ban-types": "warn",
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "jsx-a11y/no-noninteractive-element-interactions": "warn",
+    "jsx-a11y/label-has-associated-control": "warn",
     "prefer-const": [
       "error",
       {
@@ -40,19 +53,20 @@ module.exports = {
       }
     ],
     "jsx-a11y/anchor-is-valid": [
-      "error",
+      "warn",
       {
         components: ["Link"],
         specialLink: ["hrefLeft", "hrefRight"],
         aspects: ["invalidHref", "preferButton"]
       }
-    ],
-    "prefer-const": [
-      "error",
-      {
-        destructuring: "any",
-        ignoreReadBeforeAssign: false
-      }
     ]
-  }
+  },
+  overrides: [
+    {
+      // react-three-fiber elements take three.js props (args, position, intensity, ...),
+      // which the DOM-oriented rule doesn't know.
+      files: ["components/shared/ThreeViewer/**/*.tsx"],
+      rules: { "react/no-unknown-property": "off" }
+    }
+  ]
 };

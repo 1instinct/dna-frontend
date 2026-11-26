@@ -7,7 +7,7 @@ import constants from "@utilities/constants";
 // get no network request (the UI sends them to /login instead).
 
 // Fetch user's favorites
-export const fetchFavorites = async (page: number = 1) => {
+export const fetchFavorites = async (page = 1) => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
 
@@ -115,7 +115,7 @@ export const checkFavorite = async (variantId: string) => {
 };
 
 // Hook to fetch favorites
-export const useFavorites = (page: number = 1, enabled: boolean = true) => {
+export const useFavorites = (page = 1, enabled = true) => {
   return useQuery([QueryKeys.FAVORITES, page], () => fetchFavorites(page), {
     enabled,
     staleTime: 30000,
@@ -148,10 +148,7 @@ export const useRemoveFavorite = () => {
 };
 
 // Hook to check if variant is favorited
-export const useCheckFavorite = (
-  variantId: string,
-  enabled: boolean = true
-) => {
+export const useCheckFavorite = (variantId: string, enabled = true) => {
   return useQuery(
     [QueryKeys.FAVORITE_CHECK, variantId],
     () => checkFavorite(variantId),
