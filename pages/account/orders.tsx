@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import { Package, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@lib/utils";
 import { Layout } from "../../components/Layout";
@@ -19,7 +19,6 @@ const getStatusClass = (status: string) =>
   statusStyles[status] || "bg-muted text-muted-foreground";
 
 export const Account = () => {
-  const router = useRouter();
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const { data: ordersData, isLoading, error } = useOrders(currentPage);
@@ -35,7 +34,9 @@ export const Account = () => {
             <p className="mb-6 font-body text-sm text-muted-foreground">
               Please log in to view your order history.
             </p>
-            <Button onClick={() => router.push("/login")}>Log In</Button>
+            <Button asChild>
+              <Link href="/login">Log In</Link>
+            </Button>
           </div>
         </div>
       </Layout>
@@ -45,6 +46,7 @@ export const Account = () => {
   if (isLoading) {
     return (
       <Layout>
+        <h1 className="sr-only">My Orders</h1>
         <Loading />
       </Layout>
     );
@@ -90,14 +92,19 @@ export const Account = () => {
 
         {orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl bg-card px-5 py-20 text-center">
-            <Package className="mb-4 h-12 w-12 text-muted-foreground/40" />
+            <Package
+              className="mb-4 h-12 w-12 text-muted-foreground/40"
+              aria-hidden="true"
+            />
             <h2 className="mb-3 font-title text-lg text-foreground">
               No orders yet
             </h2>
             <p className="mb-6 font-body text-sm text-muted-foreground">
               Start shopping to see your orders here!
             </p>
-            <Button onClick={() => router.push("/")}>Start Shopping</Button>
+            <Button asChild>
+              <Link href="/">Start Shopping</Link>
+            </Button>
           </div>
         ) : (
           <>
@@ -161,16 +168,14 @@ export const Account = () => {
                     {order.attributes.display_total}
                   </div>
                   <div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        router.push(
-                          `/account/orders/${order.attributes.number}`
-                        )
-                      }
-                    >
-                      View
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/account/orders/${order.attributes.number}`}>
+                        View
+                        <span className="sr-only">
+                          {" "}
+                          order {order.attributes.number}
+                        </span>
+                      </Link>
                     </Button>
                   </div>
                 </div>
@@ -178,18 +183,26 @@ export const Account = () => {
             </div>
 
             {totalPages > 1 && (
-              <div className="mt-8 flex items-center justify-center gap-2">
+              <nav
+                aria-label="Order pages"
+                className="mt-8 flex items-center justify-center gap-2"
+              >
                 <button
+                  type="button"
+                  aria-label="Previous page"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
                   className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4" aria-hidden="true" />
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (page) => (
                     <button
+                      type="button"
                       key={page}
+                      aria-label={`Page ${page}`}
+                      aria-current={page === currentPage ? "page" : undefined}
                       onClick={() => setCurrentPage(page)}
                       className={cn(
                         "flex h-9 min-w-[36px] cursor-pointer items-center justify-center rounded-lg border px-3 font-body text-sm transition-colors",
@@ -203,15 +216,17 @@ export const Account = () => {
                   )
                 )}
                 <button
+                  type="button"
+                  aria-label="Next page"
                   onClick={() =>
                     setCurrentPage((p) => Math.min(totalPages, p + 1))
                   }
                   disabled={currentPage === totalPages}
                   className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
                 </button>
-              </div>
+              </nav>
             )}
           </>
         )}

@@ -1,8 +1,9 @@
 // Vendor
-import React, { useState, useCallback, createRef } from "react";
+import React, { useState, useCallback, createRef, useRef } from "react";
 import { Carousel } from "react-responsive-carousel";
 import { Field, useFormikContext } from "formik";
 import parse from "html-react-parser";
+import { Dialog, DialogContent, DialogTitle } from "@components/ui";
 // Local
 import TipBot from "../../TipBot";
 import Static from "../../../utilities/staticData";
@@ -42,11 +43,24 @@ export const Account = () => {
   const [reportingTerms, setReportingCheckbox] = useState(false);
   const [authorizeTerms, setAuthorizeCheckbox] = useState(false);
 
+  // The terms dialogs open from buttons outside a DialogTrigger, so focus is
+  // returned to the opening button by hand when they close.
+  const modalOpener = useRef<HTMLElement | null>(null);
+  const rememberOpener = () => {
+    modalOpener.current = document.activeElement as HTMLElement | null;
+  };
+  const restoreFocus = (e: Event) => {
+    e.preventDefault();
+    modalOpener.current?.focus();
+  };
+
   const toggleSignatureModal = () => {
+    rememberOpener();
     setOpenSignatureModal(!openSignatureModal);
   };
 
   const togglePrivacyModal = () => {
+    rememberOpener();
     setOpenPrivacyModal(!openPrivacyModal);
   };
 
@@ -103,6 +117,7 @@ export const Account = () => {
             id="phoneNumber"
             component={FormikPhone}
             label="Phone"
+            aria-required="true"
           />
         </InputWrapper>
 
@@ -112,6 +127,9 @@ export const Account = () => {
             id="email"
             component={FormikInput}
             label="Email"
+            type="email"
+            autoComplete="email"
+            aria-required="true"
           />
         </InputWrapper>
 
@@ -121,6 +139,8 @@ export const Account = () => {
             id="password"
             component={FormikPassword}
             label="Password"
+            autoComplete="new-password"
+            aria-required="true"
           />
         </InputWrapper>
 
@@ -130,6 +150,8 @@ export const Account = () => {
             id="passwordConfirm"
             component={FormikPassword}
             label="Re-type Password"
+            autoComplete="new-password"
+            aria-required="true"
           />
         </InputWrapper>
 
@@ -154,7 +176,7 @@ export const Account = () => {
                   />
                 )}
               </Field>
-              <TermsStatement accepted={signatureTerms}>
+              <TermsStatement htmlFor="acceptSignatureTerms" accepted={signatureTerms}>
                 I have read and agree to the{" "}
                 <button type="button" onClick={toggleSignatureModal}>
                   E-SIGN Consent
@@ -173,7 +195,10 @@ export const Account = () => {
                   />
                 )}
               </Field>
-              <TermsStatement accepted={privacyTerms}>
+              <TermsStatement
+                htmlFor="acceptPrivacyTerms"
+                accepted={privacyTerms}
+              >
                 I have received and read the&nbsp;
                 <button type="button" onClick={togglePrivacyModal}>
                   Privacy Policy
@@ -192,7 +217,10 @@ export const Account = () => {
                   />
                 )}
               </Field>
-              <TermsStatement accepted={reportingTerms}>
+              <TermsStatement
+                htmlFor="acceptReportingTerms"
+                accepted={reportingTerms}
+              >
                 By clicking &quot;Signup&quot; I agree to the&nbsp;
                 <button type="button" onClick={toggleSignatureModal}>
                   Terms &amp; Conditions
@@ -210,7 +238,7 @@ export const Account = () => {
                   />
                 )}
               </Field>
-              <TermsStatement accepted={authorizeTerms}>
+              <TermsStatement htmlFor="acceptAuthorizeTerms" accepted={authorizeTerms}>
                 That by providing my phone number, {process.env.NEXT_PUBLIC_SITE_TITLE}, or{" "}
                 {process.env.NEXT_PUBLIC_SITE_TITLE}&apos;s authorized representatives*, may call and/or send
                 text messages (including by using equipment to automatically dial telephone numbers)
@@ -227,45 +255,38 @@ export const Account = () => {
             {/* Below term appears below current Softpull form submit buttons */}
             {/* <Term>
               <Field type="checkbox" name="acceptConstentTerms" component={FormikCheckbox} className={'form-check-input ' + (errors.acceptTerms && touched.acceptTerms ? ' is-invalid' : '')} />
-              <TermsStatement accepted={Terms}>
+              <TermsStatement htmlFor="acceptConstentTerms" accepted={Terms}>
                 Consumer Report: By clicking &quot;GET TERMS&quot;, I give {process.env.NEXT_PUBLIC_SITE_TITLE} written consent to obtain consumer reports from one or more consumer reporting agencies to show me credit options I prequalify for when financing with {process.env.NEXT_PUBLIC_SITE_TITLE}. Retrieving my pre-qualification credit terms generates a soft credit inquiry, which is visible only to me and does not affect my credit score.
               </TermsStatement>
             </Term> */}
           </Carousel>
 
-          {openSignatureModal && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-              onClick={toggleSignatureModal}
-              onKeyDown={(e) => e.key === "Escape" && toggleSignatureModal()}
-              role="dialog"
-              aria-modal="true"
+          <Dialog
+            open={openSignatureModal}
+            onOpenChange={setOpenSignatureModal}
+          >
+            <DialogContent
+              aria-describedby={undefined}
+              onCloseAutoFocus={restoreFocus}
+              className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-lg p-6"
             >
-              <div
-                className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-background p-6 shadow-xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <ElectronicSignaturesModal />
-              </div>
-            </div>
-          )}
+              <DialogTitle className="sr-only">
+                Terms &amp; Conditions
+              </DialogTitle>
+              <ElectronicSignaturesModal />
+            </DialogContent>
+          </Dialog>
 
-          {openPrivacyModal && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-              onClick={togglePrivacyModal}
-              onKeyDown={(e) => e.key === "Escape" && togglePrivacyModal()}
-              role="dialog"
-              aria-modal="true"
+          <Dialog open={openPrivacyModal} onOpenChange={setOpenPrivacyModal}>
+            <DialogContent
+              aria-describedby={undefined}
+              onCloseAutoFocus={restoreFocus}
+              className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-lg p-6"
             >
-              <div
-                className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-background p-6 shadow-xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <FinancialPrivacyModal />
-              </div>
-            </div>
-          )}
+              <DialogTitle className="sr-only">Privacy Policy</DialogTitle>
+              <FinancialPrivacyModal />
+            </DialogContent>
+          </Dialog>
         </TermsWrapper>
       </InputGroupWrapper>
     </QuestionWrapper>

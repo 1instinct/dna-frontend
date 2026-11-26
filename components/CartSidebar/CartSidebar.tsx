@@ -164,6 +164,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
 
         const quantity = quantities[lineItemRef.id] || 1;
         const product = foundProduct(variantRef.id, productsData);
+        const itemName = product?.attributes?.name || "item";
 
         return (
           <div
@@ -178,15 +179,20 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
               {!unavailableLines.some((l) => l.id === lineItemRef.id) && (
                 <>
                   <button
+                    type="button"
+                    aria-label={`Decrease quantity of ${itemName}`}
                     onClick={() =>
                       handleUpdateItemQuantity(lineItemRef.id, quantity - 1)
                     }
-                    className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
+                    className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    <Minus className="h-3 w-3" />
+                    <Minus className="h-3 w-3" aria-hidden="true" />
                   </button>
                   <input
                     type="number"
+                    min={1}
+                    inputMode="numeric"
+                    aria-label={`Quantity of ${itemName}`}
                     value={quantity}
                     onChange={(e: any) => {
                       const newQty = parseInt(e.target.value) || 1;
@@ -194,24 +200,28 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                         handleUpdateItemQuantity(lineItemRef.id, newQty);
                       }
                     }}
-                    className="w-10 border-none bg-transparent text-center font-body text-sm text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    className="w-10 rounded border-none bg-transparent text-center font-body text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   />
                   <button
+                    type="button"
+                    aria-label={`Increase quantity of ${itemName}`}
                     onClick={() =>
                       handleUpdateItemQuantity(lineItemRef.id, quantity + 1)
                     }
-                    className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
+                    className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    <Plus className="h-3 w-3" />
+                    <Plus className="h-3 w-3" aria-hidden="true" />
                   </button>
                 </>
               )}
               <button
+                type="button"
                 onClick={() => handleRemoveItem(lineItemRef.id)}
-                className="ml-1 flex h-7 w-7 items-center justify-center rounded border-none bg-transparent text-destructive transition-colors hover:bg-destructive/10"
+                className="ml-1 flex h-7 w-7 items-center justify-center rounded border-none bg-transparent text-destructive transition-colors hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 title="Remove item"
+                aria-label={`Remove ${itemName} from cart`}
               >
-                <X className="h-3 w-3" />
+                <X className="h-3 w-3" aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -232,10 +242,11 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
     <Sheet open={isVisible} onOpenChange={toggle}>
       <SheetTrigger asChild>
         <button
-          className="cursor-pointer border-none bg-transparent p-1 text-foreground transition-colors hover:text-brand outline-none"
+          type="button"
+          className="cursor-pointer rounded border-none bg-transparent p-1 text-foreground transition-colors hover:text-brand outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           aria-label="Open cart"
         >
-          <ShoppingCart className="h-5 w-5" />
+          <ShoppingCart className="h-5 w-5" aria-hidden="true" />
         </button>
       </SheetTrigger>
       <SheetContent side="right" className="w-[360px] max-w-[90vw] p-0">
@@ -263,11 +274,12 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                   </span>
                   {item_count > 0 && (
                     <button
+                      type="button"
                       onClick={handleEmptyCart}
-                      className="flex items-center gap-1 rounded border border-destructive/30 bg-transparent px-2.5 py-1 font-body text-xs text-destructive transition-colors hover:bg-destructive/10"
+                      className="flex items-center gap-1 rounded border border-destructive/30 bg-transparent px-2.5 py-1 font-body text-xs text-destructive transition-colors hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     >
-                      <Trash2 className="h-3 w-3" />
-                      Empty
+                      <Trash2 className="h-3 w-3" aria-hidden="true" />
+                      Empty<span className="sr-only"> cart</span>
                     </button>
                   )}
                 </div>

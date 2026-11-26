@@ -90,8 +90,9 @@ const FormWrapper: React.FC<any> = ({
                 onClick={goToPreviousStep}
                 disabled={!canGoBack}
                 className="flex-[0.3] flex-grow"
+                aria-label="Back"
               >
-                <i className="bts bt-angles-left" />
+                <i className="bts bt-angles-left" aria-hidden="true" />
               </Button>
             )}
             {isLastStep ? (

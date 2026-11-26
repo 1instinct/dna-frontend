@@ -1,4 +1,4 @@
-import React, { useState, useCallback, createRef } from "react";
+import React, { useState, useCallback, createRef, useRef } from "react";
 import { useRouter } from "next/router";
 import { Carousel } from "react-responsive-carousel";
 import { Formik, Form, Field, useFormikContext } from "formik";
@@ -14,7 +14,13 @@ import {
   FormikPassword,
   FormikCheckbox
 } from "@components/FormikWrappers";
-import { Button } from "@components/ui";
+import {
+  Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle
+} from "@components/ui";
 import { ElectronicSignaturesModal } from "@components/Terms/ElectronicSignaturesModal";
 import { FinancialPrivacyModal } from "@components/Terms/FinancialPrivacyModal";
 
@@ -31,11 +37,24 @@ export const SignupForm = () => {
   const [reportingTerms, setReportingCheckbox] = useState(false);
   const [authorizeTerms, setAuthorizeCheckbox] = useState(false);
 
+  // The terms dialogs open from buttons outside a DialogTrigger, so focus is
+  // returned to the opening button by hand when they close.
+  const modalOpener = useRef<HTMLElement | null>(null);
+  const rememberOpener = () => {
+    modalOpener.current = document.activeElement as HTMLElement | null;
+  };
+  const restoreFocus = (e: Event) => {
+    e.preventDefault();
+    modalOpener.current?.focus();
+  };
+
   const toggleSignatureModal = () => {
+    rememberOpener();
     setOpenSignatureModal(!openSignatureModal);
   };
 
   const togglePrivacyModal = () => {
+    rememberOpener();
     setOpenPrivacyModal(!openPrivacyModal);
   };
 
@@ -93,8 +112,11 @@ export const SignupForm = () => {
                     <Field
                       name="email"
                       id="email"
+                      type="email"
                       component={FormikInput}
                       label="Email"
+                      autoComplete="email"
+                      aria-required="true"
                     />
                   </div>
 
@@ -104,6 +126,8 @@ export const SignupForm = () => {
                       id="password"
                       component={FormikPassword}
                       label="Password"
+                      autoComplete="new-password"
+                      aria-required="true"
                     />
                   </div>
 
@@ -113,6 +137,8 @@ export const SignupForm = () => {
                       id="passwordConfirm"
                       component={FormikPassword}
                       label="Re-type Password"
+                      autoComplete="new-password"
+                      aria-required="true"
                     />
                   </div>
                 </div>
@@ -125,6 +151,22 @@ export const SignupForm = () => {
                     showThumbs={false}
                     selectedItem={currentSlide}
                     onChange={setCurrentSlide}
+                    // The library's dots are <li role="button">, which is not
+                    // allowed in a list; a real button inside each dot is.
+                    renderIndicator={(onClick, isSelected, index, label) => (
+                      <li
+                        key={index}
+                        className={`dot${isSelected ? " selected" : ""}`}
+                      >
+                        <button
+                          type="button"
+                          onClick={onClick}
+                          aria-label={`${label} ${index + 1}`}
+                          aria-current={isSelected ? "true" : undefined}
+                          className="block h-full w-full cursor-pointer rounded-full border-0 bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        />
+                      </li>
+                    )}
                   >
                     <div className="flex items-start gap-3 text-left">
                       <Field type="checkbox" name="acceptPrivacyTerms">
@@ -137,7 +179,8 @@ export const SignupForm = () => {
                           />
                         )}
                       </Field>
-                      <span
+                      <label
+                        htmlFor="acceptPrivacyTerms"
                         className={`font-body text-sm ${
                           privacyTerms
                             ? "text-foreground"
@@ -148,12 +191,12 @@ export const SignupForm = () => {
                         <button
                           type="button"
                           onClick={togglePrivacyModal}
-                          className="cursor-pointer border-none bg-transparent p-0 font-semibold text-brand underline"
+                          className="cursor-pointer rounded-sm border-none bg-transparent p-0 font-semibold text-brand underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                         >
                           Privacy Policy
                         </button>
                         .
-                      </span>
+                      </label>
                     </div>
                     <div className="flex items-start gap-3 text-left">
                       <Field type="checkbox" name="acceptReportingTerms">
@@ -166,7 +209,8 @@ export const SignupForm = () => {
                           />
                         )}
                       </Field>
-                      <span
+                      <label
+                        htmlFor="acceptReportingTerms"
                         className={`font-body text-sm ${
                           reportingTerms
                             ? "text-foreground"
@@ -177,11 +221,11 @@ export const SignupForm = () => {
                         <button
                           type="button"
                           onClick={toggleSignatureModal}
-                          className="cursor-pointer border-none bg-transparent p-0 font-semibold text-brand underline"
+                          className="cursor-pointer rounded-sm border-none bg-transparent p-0 font-semibold text-brand underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                         >
                           Terms &amp; Conditions
                         </button>
-                      </span>
+                      </label>
                     </div>
                   </Carousel>
                 </div>
@@ -202,46 +246,45 @@ export const SignupForm = () => {
         </Formik>
       </div>
 
-      {/* Modals */}
-      {openSignatureModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-          onClick={toggleSignatureModal}
+      {/* Modals: the Dialog primitive traps focus, closes on Escape and
+          returns focus to the button that opened it. */}
+      <Dialog open={openSignatureModal} onOpenChange={setOpenSignatureModal}>
+        <DialogContent
+          aria-describedby={undefined}
+          onCloseAutoFocus={restoreFocus}
+          className="max-h-[80vh] max-w-2xl overflow-y-auto bg-card p-6"
         >
-          <div
-            className="max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-card p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <ElectronicSignaturesModal />
+          <DialogTitle className="sr-only">Terms &amp; Conditions</DialogTitle>
+          <ElectronicSignaturesModal />
+          <DialogClose asChild>
             <button
-              onClick={toggleSignatureModal}
-              className="mt-4 w-full cursor-pointer rounded-lg border-none bg-brand px-4 py-2 font-title text-sm text-white"
+              type="button"
+              className="mt-4 w-full cursor-pointer rounded-lg border-none bg-brand px-4 py-2 font-title text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Close
             </button>
-          </div>
-        </div>
-      )}
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
 
-      {openPrivacyModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-          onClick={togglePrivacyModal}
+      <Dialog open={openPrivacyModal} onOpenChange={setOpenPrivacyModal}>
+        <DialogContent
+          aria-describedby={undefined}
+          onCloseAutoFocus={restoreFocus}
+          className="max-h-[80vh] max-w-2xl overflow-y-auto bg-card p-6"
         >
-          <div
-            className="max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-card p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <FinancialPrivacyModal />
+          <DialogTitle className="sr-only">Privacy Policy</DialogTitle>
+          <FinancialPrivacyModal />
+          <DialogClose asChild>
             <button
-              onClick={togglePrivacyModal}
-              className="mt-4 w-full cursor-pointer rounded-lg border-none bg-brand px-4 py-2 font-title text-sm text-white"
+              type="button"
+              className="mt-4 w-full cursor-pointer rounded-lg border-none bg-brand px-4 py-2 font-title text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Close
             </button>
-          </div>
-        </div>
-      )}
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

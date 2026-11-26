@@ -28,6 +28,7 @@ export const CompanyDetails = () => {
             component={FormikInput}
             label="Company Name"
             required
+            autoComplete="organization"
           />
         </InputWrapper>
         <InputWrapper>

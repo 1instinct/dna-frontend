@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import { Formik, Field } from "formik";
 import * as Yup from "yup";
 import {
@@ -28,6 +28,9 @@ const validationSchema = Yup.object({
     "Passwords must match"
   )
 });
+
+const labelClass =
+  "mb-1.5 block font-title text-xs font-semibold uppercase tracking-wider text-muted-foreground";
 
 const quickLinks = [
   {
@@ -58,7 +61,6 @@ const quickLinks = [
 ];
 
 export const Account = () => {
-  const router = useRouter();
   const { data: accountData, isLoading, error } = useAccountInfo();
   const updateAccount = useUpdateAccount();
   const [updateError, setUpdateError] = useState<string | null>(null);
@@ -67,6 +69,7 @@ export const Account = () => {
   if (isLoading) {
     return (
       <Layout>
+        <h1 className="sr-only">My Account</h1>
         <Loading />
       </Layout>
     );
@@ -76,7 +79,11 @@ export const Account = () => {
     return (
       <Layout>
         <div className="section-container py-10">
-          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
+          <h1 className="sr-only">My Account</h1>
+          <div
+            role="alert"
+            className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
+          >
             Failed to load account information. Please try again.
           </div>
         </div>
@@ -106,21 +113,21 @@ export const Account = () => {
           {quickLinks.map((link) => {
             const Icon = link.icon;
             return (
-              <button
+              <Link
                 key={link.href}
-                onClick={() => router.push(link.href)}
-                className="group flex flex-col items-start rounded-xl border border-border/30 bg-card p-6 text-left transition-all hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-md cursor-pointer outline-none"
+                href={link.href}
+                className="group flex flex-col items-start rounded-xl border border-border/30 bg-card p-6 text-left transition-all hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-md cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10 text-brand transition-colors group-hover:bg-brand group-hover:text-white">
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" aria-hidden="true" />
                 </div>
-                <h3 className="mb-1 font-title text-sm font-semibold text-foreground">
+                <h2 className="mb-1 font-title text-sm font-semibold text-foreground">
                   {link.title}
-                </h3>
+                </h2>
                 <p className="font-body text-xs text-muted-foreground">
                   {link.description}
                 </p>
-              </button>
+              </Link>
             );
           })}
         </div>
@@ -132,12 +139,18 @@ export const Account = () => {
           </h2>
 
           {updateError && (
-            <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+            <div
+              role="alert"
+              className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+            >
               {updateError}
             </div>
           )}
           {updateSuccess && (
-            <div className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700">
+            <div
+              role="status"
+              className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700"
+            >
               {updateSuccess}
             </div>
           )}
@@ -179,37 +192,41 @@ export const Account = () => {
             {({ handleSubmit, isSubmitting }) => (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="mb-1.5 block font-title text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Email
-                  </label>
                   <Field
                     type="email"
                     name="email"
+                    id="account-email"
                     placeholder="Email"
                     component={FormikInput}
                     label="Email"
+                    showLabel
+                    labelClassName={labelClass}
+                    autoComplete="email"
+                    aria-required="true"
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block font-title text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    New Password
-                  </label>
                   <Field
                     name="password"
+                    id="account-password"
                     placeholder="New Password (leave blank to keep current)"
                     component={FormikPassword}
                     label="New Password"
+                    showLabel
+                    labelClassName={labelClass}
+                    autoComplete="new-password"
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block font-title text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Confirm Password
-                  </label>
                   <Field
                     name="password_confirmation"
+                    id="account-password-confirmation"
                     placeholder="Confirm New Password"
                     component={FormikPassword}
                     label="Confirm Password"
+                    showLabel
+                    labelClassName={labelClass}
+                    autoComplete="new-password"
                   />
                 </div>
                 <Button

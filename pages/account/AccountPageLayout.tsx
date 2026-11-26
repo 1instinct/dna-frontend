@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { Search, Package, Palette, CreditCard, User } from "lucide-react";
 import { Library } from "lucide-react";
@@ -33,32 +34,36 @@ const AccountPageLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex flex-col gap-8 md:flex-row">
           {/* Sidebar */}
           <aside className="w-full shrink-0 md:w-56">
-            <nav className="flex flex-row gap-1 overflow-x-auto md:flex-col md:overflow-x-visible">
+            <nav
+              aria-label="Account"
+              className="flex flex-row gap-1 overflow-x-auto md:flex-col md:overflow-x-visible"
+            >
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = router.pathname === item.href;
                 return (
-                  <button
+                  <Link
                     key={item.href}
-                    onClick={() => router.push(item.href)}
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
                       "flex items-center gap-2.5 whitespace-nowrap rounded-lg border-none px-4 py-2.5 text-left font-body text-sm transition-colors",
-                      "cursor-pointer outline-none",
+                      "cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                       isActive
                         ? "bg-brand/10 font-semibold text-brand"
                         : "bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
                     )}
                   >
-                    <Icon className="h-4 w-4 shrink-0" />
+                    <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
                     {item.label}
-                  </button>
+                  </Link>
                 );
               })}
             </nav>
           </aside>
 
-          {/* Content */}
-          <main className="min-w-0 flex-1">{children}</main>
+          {/* Content (Layout already provides the page's <main>) */}
+          <div className="min-w-0 flex-1">{children}</div>
         </div>
       </div>
     </Layout>

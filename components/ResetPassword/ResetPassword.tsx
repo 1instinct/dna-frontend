@@ -40,9 +40,12 @@ export const ResetPassword = () => {
               <Field
                 type="email"
                 name="username"
+                id="reset-password-email"
                 component={FormikInput}
                 label="Email"
                 placeholder="Email"
+                autoComplete="email"
+                aria-required="true"
               />
             </div>
             <SubmitButton />

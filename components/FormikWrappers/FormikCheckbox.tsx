@@ -2,13 +2,17 @@ import React from "react";
 
 import { TermsCheckbox } from "./FormikInput.styles";
 
+/**
+ * A terms checkbox. Its id is `id` or the field name; name it with a
+ * `<label htmlFor>` next to it.
+ */
 export const FormikCheckbox = ({
   field,
-  fields: { ...fields },
   form: { setFieldValue, touched, errors },
   accepted,
   handleTermCheckbox,
   nextTerm,
+  id,
   ...props
 }: any) => {
   const nextParent = () => {
@@ -22,8 +26,7 @@ export const FormikCheckbox = ({
     <>
       <TermsCheckbox
         {...props}
-        id={field.name}
-        label=""
+        id={id || field.name}
         accepted={accepted}
         // isAccepted={isAccepted}
         onChange={nextParent}

@@ -82,7 +82,10 @@ export const Login = () => {
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit} className="space-y-4">
             {loginError && (
-              <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              <div
+                role="alert"
+                className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+              >
                 {loginError}
               </div>
             )}
@@ -90,17 +93,23 @@ export const Login = () => {
               <Field
                 type="email"
                 name="username"
+                id="login-email"
                 placeholder="Email"
                 component={FormikInput}
                 label="Email"
+                autoComplete="email"
+                aria-required="true"
               />
             </div>
             <div>
               <Field
                 name="password"
+                id="login-password"
                 placeholder="Password"
                 component={FormikPassword}
                 label="Password"
+                autoComplete="current-password"
+                aria-required="true"
               />
             </div>
             <SubmitButton />
