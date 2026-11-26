@@ -1,10 +1,16 @@
-import { useEffect, useRef, createRef } from "react";
+import { useEffect, useRef } from "react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 
-export const VideoJS = ({ options, onReady }: any) => {
+interface VideoJSProps {
+  options: any;
+  onReady?: (player: any) => void;
+  /** Accessible name for the player region; video.js defaults to "Video Player". */
+  label?: string;
+}
+
+export const VideoJS = ({ options, onReady, label }: VideoJSProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  // let playerRef = createRef<videojs.Player>();
   const playerRef = useRef<any>(null);
 
   useEffect(() => {
@@ -24,6 +30,15 @@ export const VideoJS = ({ options, onReady }: any) => {
       // player.src(options.sources);
     }
   }, [options, videoRef]);
+
+  // video.js renders the player as role="region" named "Video Player"; name it after the
+  // content when the caller knows it.
+  useEffect(() => {
+    const player = playerRef.current;
+    if (player && label) {
+      player.el()?.setAttribute("aria-label", label);
+    }
+  }, [label, options]);
 
   // Dispose the Video.js player when the functional component unmounts
   useEffect(() => {
