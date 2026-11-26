@@ -27,7 +27,6 @@ This is a **production Next.js 13 e-commerce application** using the **Pages Rou
 - `@spree/storefront-api-v2-sdk` - Local package at `file:contrib/spree-storefront-api-v2-sdk-4.5.1003.tgz`
   - Custom build for Spree 4.2 backend compatibility
   - Newer versions break backend integration
-- `@material-ui/core@^4.12.3` - Legacy MUI v4 (not v5+)
 
 ## Tech Stack
 
@@ -39,9 +38,12 @@ This is a **production Next.js 13 e-commerce application** using the **Pages Rou
 
 ### Styling
 
-- **Emotion 11.13.3** for CSS-in-JS (`@emotion/styled`, `@emotion/react`)
-- **Material-UI v4.12.3** for UI components
-- Always use `shouldForwardProp` with `isPropValid` to filter custom props
+- **Tailwind CSS 3** utility classes, configured in `tailwind.config.ts` (custom breakpoints, `brand` and `gray` colours, `darkMode: "class"`)
+- **shadcn/ui** primitives (Radix UI underneath) in `components/ui/`, configured by `components.json`
+- Theme tokens are CSS variables (`--background`, `--primary`, ...) in `styles/globals.css`
+- `cn()` from `@lib/utils` (clsx + tailwind-merge) composes conditional classes
+- `lucide-react` for icons
+- Emotion and Material-UI were removed; do not reintroduce them
 
 ### State Management
 
@@ -51,7 +53,6 @@ This is a **production Next.js 13 e-commerce application** using the **Pages Rou
 
 ### Key Libraries
 
-- `react-burger-menu` - Mobile navigation
 - `pure-react-carousel` - Image carousels
 - `formik` + `yup` - Form handling and validation
 - `react-input-mask` - Masked inputs (phone, etc.)
@@ -64,8 +65,7 @@ components/          # React components
   shared/           # Reusable UI primitives (Button, Logo, etc.)
   ComponentName/
     index.ts                      # Barrel export
-    ComponentName.tsx             # Main component logic
-    ComponentName.styles.tsx      # Emotion styled components
+    ComponentName.tsx             # Component logic and Tailwind markup
     types/index.d.ts             # TypeScript interfaces
 
 hooks/              # React Query hooks
@@ -86,7 +86,9 @@ config/             # Configuration
   auth.ts           # Auth provider with react-query-auth
 
 typings/            # Custom TypeScript definitions
-styles/             # Global styles and theme
+components/ui/      # shadcn/ui primitives (Button, Dialog, Select, ...)
+lib/utils.ts        # cn() class helper
+styles/             # globals.css (Tailwind layers, theme CSS variables), fonts.css
 utilities/          # Helper functions and constants
 ```
 
@@ -97,44 +99,26 @@ utilities/          # Helper functions and constants
 ```typescript
 // ComponentName.tsx
 import React from "react";
-import { useTheme } from "@emotion/react";
+import { cn } from "@lib/utils";
+import { Button } from "@components/ui";
 import { ComponentNameProps } from "./types";
-import { Container, Title } from "./ComponentName.styles";
 
 export const ComponentName: React.FC<ComponentNameProps> = ({
   prop1,
-  prop2
-}) => {
-  const theme = useTheme();
-
-  return (
-    <Container>
-      <Title>{prop1}</Title>
-    </Container>
-  );
-};
-
-// ComponentName.styles.tsx
-import styled from "@emotion/styled";
-import isPropValid from "@emotion/is-prop-valid";
-
-export const Container = styled.div`
-  padding: 20px;
-  background: ${(p) => p.theme.colors.brand.primary};
-`;
-
-// For custom props, always filter them:
-export const Title = styled("h1", {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== "customProp"
-})<{ customProp?: boolean }>`
-  color: ${(p) =>
-    p.customProp ? p.theme.colors.white.primary : p.theme.colors.black.primary};
-`;
+  highlighted
+}) => (
+  <div className="p-5 bg-background sm:p-8">
+    <h1 className={cn("text-xl font-semibold", highlighted ? "text-brand" : "text-foreground")}>
+      {prop1}
+    </h1>
+    <Button variant="outline">Action</Button>
+  </div>
+);
 
 // types/index.d.ts
 export interface ComponentNameProps {
   prop1: string;
-  prop2?: number;
+  highlighted?: boolean;
 }
 
 // index.ts
@@ -187,19 +171,11 @@ export const useUpdateResource = () => {
 
 ### Theme Usage
 
-```typescript
-// Access theme in components
-const theme = useTheme();
-
-// Common theme values:
-theme.colors.brand.primary;
-theme.colors.white.primary;
-theme.colors.black.primary;
-theme.isDarkMode;
-theme.breakpoints.values.xs; // 375px
-theme.typography.titleLG.fontFamily;
-theme.typography.bodyMD.fontSize;
-```
+Use Tailwind's theme instead of hardcoded values: semantic colours from the CSS variables
+(`bg-background`, `text-foreground`, `bg-primary`, `text-muted-foreground`, `border-border`),
+brand colours (`text-brand`, `bg-brand-secondary`, `text-gray-dark`) and the custom breakpoints
+(`ss` 375, `xs` 414, `sm` 768, `md` 1024, `lg` 1280, `lgxl` 1440, `xl` 1800 px). Dark mode uses
+the `dark:` variant; `NEXT_PUBLIC_DARK_MODE` turns it on.
 
 ### Responsive Design
 
@@ -210,14 +186,8 @@ const isMobile = useMediaQuery({ maxWidth: 767 });
 const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1024 });
 const isDesktop = useMediaQuery({ minWidth: 1025 });
 
-// Or use CSS media queries in styled components:
-const Container = styled.div`
-  padding: 20px;
-
-  @media (max-width: ${(p) => p.theme.breakpoints.values.xs}px) {
-    padding: 10px;
-  }
-`;
+// Prefer Tailwind's responsive prefixes in markup:
+<div className="p-2.5 xs:p-5" />
 ```
 
 ### API Integration Patterns
@@ -350,19 +320,19 @@ yarn pre-commit         # Run all checks
 - **Menu system** uses `menu_location` API with ids (1=main menu, 2=footer)
 - **Authentication** uses OAuth bearer tokens stored in localStorage
 - **Guest carts** use order tokens for anonymous users
-- **Mobile menu** uses react-burger-menu with custom styling
-- **Theme** supports dark mode via `theme.isDarkMode`
+- **Theme** supports dark mode through Tailwind's `dark:` variant (`NEXT_PUBLIC_DARK_MODE`)
 
 ## When Suggesting Code
 
 ✅ **Do:**
 
 - Use existing patterns from the codebase
-- Filter custom props with `shouldForwardProp`
+- Style with Tailwind classes and compose them with `cn()`
+- Reach for a `components/ui` primitive before building a new one
 - Use React Query for data fetching
 - Follow the established folder structure
 - Use TypeScript with proper types
-- Check theme values before hardcoding colors
+- Use theme colours and breakpoints before hardcoding values
 - Consider mobile responsiveness
 - Handle loading and error states
 
@@ -370,9 +340,9 @@ yarn pre-commit         # Run all checks
 
 - Suggest upgrading locked dependencies
 - Use App Router patterns (this uses Pages Router)
-- Mix Material-UI v5 with v4
+- Add Emotion, Material-UI or another CSS-in-JS library back
 - Forget to invalidate queries after mutations
-- Use inline styles when Emotion is available
+- Use inline styles where a Tailwind class exists
 - Hardcode API URLs (use env vars)
 - Skip TypeScript types
 - Ignore existing component patterns

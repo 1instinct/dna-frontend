@@ -16,14 +16,13 @@ _Gotchas:_
 
 ## Styles
 
-Always use `@emotion/styled` wherever possible. If regular CSS is required, use one of the following style files.
-We manage our global styles in several files:
+Style components with Tailwind CSS utility classes and the shadcn/ui primitives in
+`components/ui/`. Compose conditional classes with `cn()` from `@lib/utils`.
 
-- `./styles/global-styles.tsx` (global stylesheet)
+- `./tailwind.config.ts` (breakpoints, brand colours, dark mode)
+- `./styles/globals.css` (Tailwind layers and the theme CSS variables)
 - `./styles/fonts.css` (global @font-face rules)
-- `./styles/all.css` (global styles injected in at app root)
-- `./styles/theme.tsx` (global theme variables)
-- `./emotion.d.ts` (theme typings)
+- `./components.json` (shadcn/ui configuration)
 
 ## Gotchas
 
@@ -256,7 +255,7 @@ ssh smokey01 sudo microk8s kubectl rollout undo deployment/dna-frontend -n defau
 - ~~Request Mgmt~~ (React Query)
 - ~~Search~~ (Fuse.js)
 - Pusher (real-time sockets)
-- ~~Styled Components~~ (@emotion/styled)
+- Tailwind CSS + shadcn/ui (replaced Styled Components and Emotion)
 - Moving Letters
 - UI Sounds (proprietary: "npm install beeper")
 - Maps
