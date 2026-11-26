@@ -39,12 +39,8 @@ module.exports = {
     "react/prop-types": "off",
     // Inference is enough for module boundaries; this rule only adds noise here.
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    // Existing debt, kept visible as warnings: fix these in files you touch.
+    // Existing debt, kept visible as a warning: fix it in files you touch.
     "@typescript-eslint/ban-types": "warn",
-    "jsx-a11y/click-events-have-key-events": "warn",
-    "jsx-a11y/no-static-element-interactions": "warn",
-    "jsx-a11y/no-noninteractive-element-interactions": "warn",
-    "jsx-a11y/label-has-associated-control": "warn",
     "prefer-const": [
       "error",
       {
@@ -53,7 +49,7 @@ module.exports = {
       }
     ],
     "jsx-a11y/anchor-is-valid": [
-      "warn",
+      "error",
       {
         components: ["Link"],
         specialLink: ["hrefLeft", "hrefRight"],
