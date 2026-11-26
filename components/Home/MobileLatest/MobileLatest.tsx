@@ -1,5 +1,6 @@
 import React from "react";
 import { ProductCard } from "../../ProductCard";
+import { pickGridMedia } from "@lib/productMedia";
 
 export interface MobileLatestProps {
   products: any;
@@ -14,16 +15,9 @@ const MobileLatest: React.FC<MobileLatestProps> = ({ title, products }) => {
       )}
       <div className="product-grid-dense">
         {products?.data?.map((item: any, index: number) => {
-          const defaultImg =
-            "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
-          const productImg = item.relationships?.images?.data[0]?.id;
-          const allImages =
-            products?.included?.filter((e: any) => e.type === "image") || [];
-          const foundImg = allImages.filter((e: any) => e.id === productImg);
-          const imgUrl = foundImg[0]?.attributes?.styles[4]?.url;
-          const imgSrc = productImg
-            ? `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`
-            : defaultImg;
+          const media = pickGridMedia(item, products?.included as any, {
+            baseUrl: process.env.NEXT_PUBLIC_SPREE_API_URL || ""
+          });
 
           const optionTypes = item.relationships?.option_types?.data || [];
           const productOptionIds = optionTypes.map((i: any) => i.id);
@@ -41,7 +35,7 @@ const MobileLatest: React.FC<MobileLatestProps> = ({ title, products }) => {
             <ProductCard
               key={item.id || `product-${index}`}
               item={item}
-              imgSrc={imgSrc}
+              media={media}
               opts={foundOptions}
             />
           );

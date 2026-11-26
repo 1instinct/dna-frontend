@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useMutation, useQueryClient } from "react-query";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -10,7 +11,17 @@ import {
 } from "@stripe/react-stripe-js";
 import { Layout } from "../Layout";
 import { Loading } from "../Loading";
-import { useCart } from "../../hooks/useCart";
+import {
+  useCart,
+  useUnavailableCartLines,
+  removeItemFromCart
+} from "../../hooks/useCart";
+import { QueryKeys } from "../../hooks/queryKeys";
+import { UnavailableCartLines } from "../Cart/UnavailableCartLines";
+import {
+  LINE_NOT_BUYABLE_MESSAGE,
+  checkoutErrorMessage
+} from "../../lib/cartAvailability";
 import { useProducts } from "../../hooks";
 import { useAuth } from "../../config/auth";
 import {
@@ -42,6 +53,21 @@ const CheckoutForm = () => {
   const { user } = useAuth();
   const { data: cartData, isLoading: cartLoading } = useCart();
   const { data: productsData } = useProducts(1);
+  const unavailableLines = useUnavailableCartLines(cartData);
+  const hasUnavailable = unavailableLines.length > 0;
+  const queryClient = useQueryClient();
+  const removeLineMutation = useMutation(
+    (itemId: string) => removeItemFromCart(itemId),
+    {
+      onSuccess: (cart) => {
+        setError("");
+        queryClient.invalidateQueries(QueryKeys.CART);
+        // Nothing left to check out; the cart page says so.
+        if (!cart?.data?.attributes?.item_count) router.push("/cart");
+      },
+      onError: () => setError("Couldn't remove that item. Please try again.")
+    }
+  );
 
   const updateCheckoutMutation = useUpdateCheckout();
   const advanceCheckoutMutation = useAdvanceCheckout();
@@ -251,6 +277,7 @@ const CheckoutForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (hasUnavailable) return;
     setProcessing(true);
     setError("");
 
@@ -366,7 +393,7 @@ const CheckoutForm = () => {
       }
     } catch (err: any) {
       console.error("Checkout error:", err);
-      setError(err.message || "Failed to complete checkout. Please try again.");
+      setError(checkoutErrorMessage(err));
       setProcessing(false);
     }
   };
@@ -412,6 +439,12 @@ const CheckoutForm = () => {
             to checkout faster.
           </p>
         )}
+
+        <UnavailableCartLines
+          lines={unavailableLines}
+          onRemove={(id) => removeLineMutation.mutate(id)}
+          disabled={removeLineMutation.isLoading}
+        />
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_380px]">
           {/* Checkout Form */}
@@ -837,13 +870,21 @@ const CheckoutForm = () => {
             {error && (
               <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 font-body text-sm text-destructive">
                 {error}
+                {error === LINE_NOT_BUYABLE_MESSAGE && (
+                  <>
+                    {" "}
+                    <Link href="/cart" className="underline">
+                      Go to cart
+                    </Link>
+                  </>
+                )}
               </div>
             )}
 
             {/* Submit */}
             <button
               type="submit"
-              disabled={processing}
+              disabled={processing || hasUnavailable}
               className="w-full rounded-xl bg-brand px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px hover:shadow-lg active:translate-y-0 disabled:pointer-events-none disabled:opacity-50"
             >
               {processing ? "Processing..." : "Complete Order"}

@@ -1,4 +1,5 @@
 import React from "react";
+import { pickGridMedia } from "@lib/productMedia";
 import { ProductCard } from "@components/ProductCard/ProductCard";
 import { Loading } from "@components/Loading";
 
@@ -27,9 +28,7 @@ export const ProductList: React.FC<ProductListProps> = ({
 
   return (
     <section className="w-full pb-5">
-      {title && (
-        <h2 className="font-title text-xl text-foreground">{title}</h2>
-      )}
+      {title && <h2 className="font-title text-xl text-foreground">{title}</h2>}
       <div
         className={
           isScroll
@@ -38,22 +37,10 @@ export const ProductList: React.FC<ProductListProps> = ({
         }
       >
         {filteredData.map((product: any) => {
-          const defaultImg =
-            "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
-          const productImg = product.relationships?.images?.data[0]?.id;
-          const allImages = products
-            ? products?.included?.filter((e: any) => e.type == "image")
-            : [];
-          const foundImg = allImages
-            ? allImages.filter((e: any) => e["id"] == productImg)
-            : undefined;
-          const imgUrl =
-            foundImg !== undefined
-              ? foundImg[0]?.attributes?.styles[4]?.url
-              : "";
-          const imgSrc = productImg
-            ? `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`
-            : defaultImg;
+          // First playable video, else first animated image, else first image.
+          const media = pickGridMedia(product, products?.included, {
+            baseUrl: process.env.NEXT_PUBLIC_SPREE_API_URL || ""
+          });
 
           // Get option values (colors) for this product's actual variants
           const variantIds =
@@ -88,11 +75,7 @@ export const ProductList: React.FC<ProductListProps> = ({
               key={product.id}
               className={isScroll ? "w-40 flex-shrink-0 md:w-auto" : undefined}
             >
-              <ProductCard
-                item={product}
-                imgSrc={imgSrc}
-                opts={foundOptions}
-              />
+              <ProductCard item={product} media={media} opts={foundOptions} />
             </div>
           );
         })}

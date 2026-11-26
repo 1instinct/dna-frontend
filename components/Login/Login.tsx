@@ -9,6 +9,7 @@ import { useAuth } from "@config/auth";
 import { FormikInput, FormikPassword } from "../FormikWrappers";
 import { Button } from "@components/ui";
 import constants from "@utilities/constants";
+import { safeRedirect } from "../../lib/safeRedirect";
 
 export const Login = () => {
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -16,7 +17,9 @@ export const Login = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const redirectUrl = (router.query.redirect as string) || "/";
+  // Only a path on this site: an open redirect would let a crafted login link
+  // send the shopper anywhere after signing in.
+  const redirectUrl = safeRedirect(router.query.redirect);
 
   const SubmitButton = () => {
     const { submitForm, isSubmitting } = useFormikContext();

@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { useQueryClient, useMutation } from "react-query";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart, ImageIcon, ShoppingCart } from "lucide-react";
 import { QueryKeys } from "@hooks/queryKeys";
 import { AddItem } from "@spree/storefront-api-v2-sdk/types/interfaces/endpoints/CartClass";
 import { addItemToCart } from "@hooks/useCart";
@@ -9,8 +9,31 @@ import { useToggleFavorite, useCheckFavorite } from "@hooks/useFavorites";
 import { useAuth } from "@config/auth";
 import { cn } from "@lib/utils";
 import constants from "@utilities/constants";
+import { MediaItem, staticMedia } from "@lib/productMedia";
+import { ProductMedia } from "@components/ProductMedia";
 
-export const ProductCard = ({ imgSrc, item, opts }: any) => {
+// Shown when a product has no media at all.
+export const CardMediaPlaceholder: React.FC = () => (
+  <div className="absolute inset-0 flex items-center justify-center bg-muted">
+    <ImageIcon className="h-8 w-8 text-muted-foreground/40" aria-hidden />
+  </div>
+);
+
+interface ProductCardProps {
+  item: any;
+  opts?: any[];
+  /** Grid media from pickGridMedia (lib/productMedia). */
+  media?: MediaItem | null;
+  /** Legacy: a plain image URL, used when `media` is not given. */
+  imgSrc?: string;
+}
+
+export const ProductCard = ({
+  imgSrc,
+  item,
+  opts,
+  media
+}: ProductCardProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -50,12 +73,22 @@ export const ProductCard = ({ imgSrc, item, opts }: any) => {
     <div className="group mt-4 cursor-pointer">
       {/* Image Container */}
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-muted">
-        <img
-          src={imgSrc}
-          onClick={() => router.push(`${item.attributes.slug}`)}
-          alt={item.attributes.name}
-          className="h-full w-full object-cover transition-transform duration-500 ease-expo-out group-hover:scale-105"
-        />
+        <div
+          className="h-full w-full"
+          onClick={() => router.push(`/${item.attributes.slug}`)}
+        >
+          <ProductMedia
+            media={
+              media !== undefined
+                ? media
+                : staticMedia(imgSrc, item.attributes.name)
+            }
+            surface="grid"
+            className="h-full w-full overflow-hidden"
+            mediaClassName="h-full w-full object-cover transition-transform duration-500 ease-expo-out group-hover:scale-105"
+            placeholder={<CardMediaPlaceholder />}
+          />
+        </div>
 
         {/* Favorite Button */}
         <button
