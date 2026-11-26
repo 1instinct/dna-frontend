@@ -60,10 +60,10 @@ export const fetchHomepage = async (): Promise<HomepageData> => {
       } catch {
         try {
           // Try to convert Ruby hash rocket to JSON colon, add quotes, and parse
-          let json = settings
+          const json = settings
             .replace(/"=>/g, '":')
             .replace(/([,{])\s*"([a-zA-Z0-9_]+)":/g, '$1"$2":') // ensure keys are quoted
-            .replace(/:([\s\d\w\[\{\"])/g, ": $1");
+            .replace(/:([\s\d\w[{"])/g, ": $1");
           return JSON.parse(json);
         } catch {
           return {};

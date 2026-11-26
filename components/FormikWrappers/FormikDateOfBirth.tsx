@@ -20,9 +20,7 @@ export const FormikDateOfBirth = ({
       {...fields}
       invalid={Boolean(touched[fields.name] && errors[fields.name]).toString()}
     >
-      {(inputProps: any) => (
-        <BasicField placeholder={props.label} {...props} />
-      )}
+      {(inputProps: any) => <BasicField placeholder={props.label} {...props} />}
     </InputMask>
     {touched[fields.name] && errors[fields.name] ? (
       <Error>{errors[fields.name]}</Error>

@@ -38,7 +38,7 @@ export const fetchOrder = async (orderNumber: string, orderToken?: string) => {
 };
 
 // Fetch all orders for authenticated user
-export const fetchOrders = async (page: number = 1) => {
+export const fetchOrders = async (page = 1) => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
 
@@ -76,7 +76,7 @@ export const useOrder = (orderNumber: string, orderToken?: string) => {
 };
 
 // React Query hook for order list
-export const useOrders = (page: number = 1) => {
+export const useOrders = (page = 1) => {
   return useQuery([QueryKeys.ORDERS, page], () => fetchOrders(page), {
     retry: 1,
     staleTime: 30000 // 30 seconds

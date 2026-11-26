@@ -25,7 +25,7 @@ const withResponsiveContext = (App: any, req: any) => {
     const isMobile = device.type === "mobile";
     return { width: isMobile ? 767 : 768 };
   })();
-  return (props: any) =>
+  const WithResponsiveContext = (props: any) =>
     typeof window !== "undefined" ? (
       <App {...props} />
     ) : (
@@ -37,6 +37,8 @@ const withResponsiveContext = (App: any, req: any) => {
         </ResponsiveContext.Provider>
       ) as React.ReactElement)
     );
+  WithResponsiveContext.displayName = "WithResponsiveContext";
+  return WithResponsiveContext;
 };
 
 class MyDocument extends Document {
@@ -193,6 +195,7 @@ class MyDocument extends Document {
             <img
               height="1"
               width="1"
+              alt=""
               style={{ display: "none" }}
               src={`https://www.facebook.com/tr?id=${tracking.FB_PIXEL_ID}&ev=PageView&noscript=1`}
             />

@@ -69,7 +69,6 @@ const ItemRow: React.FC<{ item: LibraryItem }> = ({ item }) => {
       <div className="flex items-center gap-3 p-3">
         <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
           {item.product.image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={item.product.image_url}
               alt=""

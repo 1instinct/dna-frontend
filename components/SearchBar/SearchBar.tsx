@@ -117,6 +117,7 @@ const SearchBar = ({
       role="combobox"
       aria-haspopup="listbox"
       aria-owns="search"
+      aria-controls="search"
       aria-expanded={isAutoCompleteVisible}
       ref={dropdownRef}
       aria-labelledby={labelId}
@@ -151,7 +152,6 @@ const SearchBar = ({
               id="search"
               aria-controls={dropdownId}
               aria-labelledby={labelId}
-              role="textbox"
               autoComplete="off"
               className={cn(
                 "h-[42px] w-full border-0 bg-transparent font-title text-sm font-normal text-foreground caret-foreground outline-none transition-all duration-300 ease-in-out",

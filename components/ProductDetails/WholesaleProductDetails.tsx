@@ -116,16 +116,14 @@ export const WholesaleProductDetails = ({
   )?.attributes?.name;
 
   // Fetch similar products by same taxon
-  const {
-    data: similarData,
-    isLoading: similarLoading
-  } = useProductFeed("similar", currentTaxon ? { filter: { taxons: currentTaxon } } : {});
+  const { data: similarData, isLoading: similarLoading } = useProductFeed(
+    "similar",
+    currentTaxon ? { filter: { taxons: currentTaxon } } : {}
+  );
 
   // Fetch recommended products (generic latest)
-  const {
-    data: recommendedData,
-    isLoading: recommendedLoading
-  } = useProductFeed("latest");
+  const { data: recommendedData, isLoading: recommendedLoading } =
+    useProductFeed("latest");
 
   // Legacy products query for arrow key navigation
   const {
@@ -160,7 +158,7 @@ export const WholesaleProductDetails = ({
   ]);
 
   const variantsPerPack = (sizes: any) => {
-    let qty: number = 0;
+    let qty = 0;
     sizes.map((i: any) => {
       qty += i.qty;
     });
@@ -215,7 +213,7 @@ export const WholesaleProductDetails = ({
     const { key } = event;
 
     switch (key) {
-      case "ArrowLeft":
+      case "ArrowLeft": {
         const prevProductId = productId - 1;
         if (randomNextProductId) {
           fetchProduct(`${prevProductId}`)
@@ -229,7 +227,8 @@ export const WholesaleProductDetails = ({
             });
         }
         break;
-      case "ArrowRight":
+      }
+      case "ArrowRight": {
         const nextProductId = productId + 1;
         if (randomNextProductId) {
           fetchProduct(`${nextProductId}`)
@@ -243,6 +242,7 @@ export const WholesaleProductDetails = ({
             });
         }
         break;
+      }
       default:
         break;
     }

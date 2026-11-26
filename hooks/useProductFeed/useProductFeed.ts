@@ -146,7 +146,7 @@ export const fetchProductFeed = async (params: ProductFeedParams) => {
 export const useProductFeed = (
   feedType: FeedType,
   customParams?: Partial<ProductFeedParams>,
-  enabled: boolean = true
+  enabled = true
 ) => {
   // Merge feed config with custom params
   const feedConfig = FEED_CONFIGS[feedType] || {};

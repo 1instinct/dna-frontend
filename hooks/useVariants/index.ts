@@ -3,10 +3,7 @@ import { useQuery } from "react-query";
 import { spreeClient } from "../../config/spree";
 import { QueryKeys } from "../queryKeys";
 
-const fetchVariants = async (
-  page: number = 1,
-  productId: string
-): Promise<any> => {
+const fetchVariants = async (page = 1, productId: string): Promise<any> => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
   // Only the signed-in user's own token is ever sent; there is no shared-key

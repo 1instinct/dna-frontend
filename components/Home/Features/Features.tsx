@@ -39,9 +39,7 @@ const Features: React.FC<FeaturesProps> = ({ features, title, content }) => {
             key={index}
             className="rounded-lg bg-card px-5 py-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
           >
-            <div className="mb-4 text-5xl">
-              {iconMap[feature.icon] || "✨"}
-            </div>
+            <div className="mb-4 text-5xl">{iconMap[feature.icon] || "✨"}</div>
             <h3 className="mb-2 text-xl font-semibold text-foreground">
               {feature.title}
             </h3>

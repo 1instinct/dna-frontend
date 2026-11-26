@@ -100,7 +100,7 @@ export const Category = () => {
     const handleKeyPress = (event: React.KeyboardEvent) => {
       switch (event.key) {
         case "ArrowLeft":
-        case "ArrowRight":
+        case "ArrowRight": {
           let productId: number = parseInt(`${id}`);
           productId = event.key == "ArrowLeft" ? productId - 1 : productId + 1;
 
@@ -112,6 +112,7 @@ export const Category = () => {
               /* product not found */
             });
           break;
+        }
       }
     };
 

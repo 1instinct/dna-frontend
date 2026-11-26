@@ -61,7 +61,9 @@ export const resetPasswordForm = {
     email: ""
   },
   validate: ForgotPasswordSchema,
-  onSubmit: async (values: { email: string }) => {}
+  onSubmit: async (values: { email: string }) => {
+    // Placeholder: the form component supplies the real submit handler.
+  }
 };
 
 export const updatePasswordForm = {
@@ -70,7 +72,9 @@ export const updatePasswordForm = {
     email: ""
   },
   validate: ForgotPasswordSchema,
-  onSubmit: async () => {}
+  onSubmit: async () => {
+    // Placeholder: the form component supplies the real submit handler.
+  }
 };
 
 export const updateEmailForm = {
@@ -79,5 +83,7 @@ export const updateEmailForm = {
     email: ""
   },
   validate: ForgotPasswordSchema,
-  onSubmit: async () => {}
+  onSubmit: async () => {
+    // Placeholder: the form component supplies the real submit handler.
+  }
 };

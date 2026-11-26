@@ -67,7 +67,7 @@ export const trackPageview = (url: string): void => {
     return;
   }
 
-  for (let provider of trackingProviders) {
+  for (const provider of trackingProviders) {
     if (provider.isActive()) {
       if (TRACKING_VERBOSE) {
         console.log(provider.getName() + " - trackPageview", url);
@@ -87,7 +87,7 @@ export const trackEvent = ({
     return;
   }
 
-  for (let provider of trackingProviders) {
+  for (const provider of trackingProviders) {
     if (provider.isActive()) {
       if (TRACKING_VERBOSE) {
         console.log(provider.getName() + " - trackEvent", {

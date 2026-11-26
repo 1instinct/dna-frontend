@@ -19,10 +19,10 @@ import { useProductFeed, FeedType } from "@hooks/useProductFeed";
 function parseSettings(settings: any): any {
   if (typeof settings === "string") {
     try {
-      let json = settings
+      const json = settings
         .replace(/"=>/g, '":')
         .replace(/([,{])\s*"([a-zA-Z0-9_]+)":/g, '$1"$2":')
-        .replace(/:([\s\d\w\[\{\"])/g, ": $1");
+        .replace(/:([\s\d\w[{"])/g, ": $1");
       return JSON.parse(json);
     } catch {
       return {};
@@ -100,7 +100,7 @@ const SectionRenderers: Record<
         }
       ]
     };
-    return <VideoJS options={videoOptions} onReady={() => {}} />;
+    return <VideoJS options={videoOptions} onReady={() => undefined} />;
   },
 
   custom: ({ section }) => {
@@ -198,9 +198,7 @@ export const DynamicHome = () => {
           <h2 className="text-2xl font-bold text-foreground">
             Unable to load page
           </h2>
-          <p className="mt-2 text-muted-foreground">
-            Please try again later.
-          </p>
+          <p className="mt-2 text-muted-foreground">Please try again later.</p>
         </div>
       </Layout>
     );
@@ -230,9 +228,7 @@ export const DynamicHome = () => {
         {sections.length === 0 && (
           <div className="px-5 py-24 text-center">
             <h2 className="text-2xl font-bold text-foreground">Welcome</h2>
-            <p className="mt-2 text-muted-foreground">
-              Content coming soon...
-            </p>
+            <p className="mt-2 text-muted-foreground">Content coming soon...</p>
           </div>
         )}
       </div>

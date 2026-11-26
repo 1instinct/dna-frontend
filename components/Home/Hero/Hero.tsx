@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { AnimatedGradientText, ShimmerButton, Particles } from "@components/ui";
 
-export interface HeroProps {}
+export type HeroProps = Record<string, unknown>;
 
 const Hero: React.FC<HeroProps> = () => {
   const router = useRouter();

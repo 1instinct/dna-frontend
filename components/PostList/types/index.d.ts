@@ -1,1 +1,1 @@
-export interface PostListProps {}
+export type PostListProps = Record<string, unknown>;
