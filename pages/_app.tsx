@@ -30,11 +30,18 @@ const DEFAULT_TITLE =
   process.env.NEXT_PUBLIC_PAGE_TITLE ||
   process.env.NEXT_PUBLIC_SITE_TITLE ||
   "Store";
+// Routes whose page covers the whole screen (the live stream viewer). The site chrome under them
+// is made inert, so keyboard and screen reader users don't move through controls they can't see.
+const FULLSCREEN_ROUTES = ["/tv/[streamId]"];
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
   const [wholesale, setWholesale] = useState(false);
   const router = useRouter();
+  const chromeInert = FULLSCREEN_ROUTES.includes(router.pathname)
+    ? // React 18 has no typed `inert` prop; the empty string sets the attribute.
+      ({ inert: "" } as Record<string, string>)
+    : {};
   const isMaint = process.env.NEXT_PUBLIC_IS_MAINT_MODE || "true";
 
   useEffect(() => {
@@ -101,19 +108,21 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               >
                 Skip to content
               </a>
-              <AppCallout variant="bar" />
-              <Header darkMode={isDarkMode} />
-              <MainMenu
-                showMenuHeader
-                onMenuItemClick={(key: string) => router.push(key)}
-                customBurgerIcon={<i className="btb bt-bars" />}
-                pcMenuItemClassName={"pc-menu-item"}
-                pcWrapClassName={"pc-menu-wrap"}
-                outterContainerId={"outter-container"}
-                pageWrapId={"page-wrap"}
-                animationType={"slide"}
-                right={false}
-              />
+              <div className="contents" {...chromeInert}>
+                <AppCallout variant="bar" />
+                <Header darkMode={isDarkMode} />
+                <MainMenu
+                  showMenuHeader
+                  onMenuItemClick={(key: string) => router.push(key)}
+                  customBurgerIcon={<i className="btb bt-bars" />}
+                  pcMenuItemClassName={"pc-menu-item"}
+                  pcWrapClassName={"pc-menu-wrap"}
+                  outterContainerId={"outter-container"}
+                  pageWrapId={"page-wrap"}
+                  animationType={"slide"}
+                  right={false}
+                />
+              </div>
               <main
                 id="main-content"
                 tabIndex={-1}
