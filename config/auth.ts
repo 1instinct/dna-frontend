@@ -191,8 +191,14 @@ const authConfig = {
 
       return response.success();
     } else {
-      constants.IS_DEBUG && console.warn(response.fail());
-      return null;
+      // Throw, so the form shows why: returning null made a refused signup look like success.
+      const failure: any = response.fail();
+      constants.IS_DEBUG && console.warn(failure);
+      throw new Error(
+        failure?.summary ||
+          failure?.message ||
+          "We couldn't create your account. Try again."
+      );
     }
   },
   logoutFn: async () => {

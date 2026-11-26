@@ -229,11 +229,7 @@ export const Account = () => {
                     autoComplete="new-password"
                   />
                 </div>
-                <Button
-                  onClick={handleSubmit as any}
-                  disabled={isSubmitting}
-                  className="mt-2"
-                >
+                <Button type="submit" disabled={isSubmitting} className="mt-2">
                   {isSubmitting ? "Updating..." : "Update Account"}
                 </Button>
               </form>
