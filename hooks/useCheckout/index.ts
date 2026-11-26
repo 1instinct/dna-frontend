@@ -4,6 +4,7 @@ import { QueryKeys } from "@hooks/queryKeys";
 import constants from "@utilities/constants";
 import { IOrderResult } from "@spree/storefront-api-v2-sdk/types/interfaces/Order";
 import { spreeErrorText } from "../../lib/cartAvailability";
+import { attachRefToOrder } from "../../lib/affiliate/attach";
 
 interface CheckoutAddress {
   firstname: string;
@@ -72,7 +73,20 @@ export const updateCheckout = async (data: CheckoutData) => {
 
   if (response.isSuccess()) {
     constants.IS_DEBUG && console.log("Checkout updated:", response.success());
-    return response.success();
+    const order = response.success();
+    // Address step: make sure a referral code reached the order before payment.
+    // Fire-and-forget; attachRefToOrder never throws.
+    if (
+      data.order.ship_address_attributes ||
+      data.order.bill_address_attributes
+    ) {
+      void attachRefToOrder({
+        ...tokens,
+        orderToken: tokens.orderToken || order.data?.attributes?.token,
+        orderNumber: order.data?.attributes?.number
+      });
+    }
+    return order;
   } else {
     constants.IS_DEBUG &&
       console.error("Checkout update failed:", response.fail());

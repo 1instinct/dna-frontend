@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import { spreeClient } from "@config/spree";
 import { QueryKeys } from "@hooks/queryKeys";
 import constants from "@utilities/constants";
+import { attachRefToOrder } from "../../lib/affiliate/attach";
 import {
   cartLineSlugs,
   findUnavailableSlugs,
@@ -127,7 +128,14 @@ export const addItemToCart = async (item: AddItem) => {
 
     if (response.isSuccess()) {
       constants.IS_DEBUG && console.log("ADD ITEM SUCCESSFUL");
-      return response.success();
+      const cart = response.success();
+      // Fire-and-forget: a referral code must never hold up or fail the add.
+      void attachRefToOrder({
+        bearerToken: token.access_token,
+        orderToken: cart.data?.attributes?.token,
+        orderNumber: cart.data?.attributes?.number
+      });
+      return cart;
     } else {
       constants.IS_DEBUG && console.log("ADD ITEM FAILED");
       throw new Error(response.fail().message);
@@ -162,7 +170,12 @@ export const addItemToCart = async (item: AddItem) => {
 
   if (response.isSuccess()) {
     constants.IS_DEBUG && console.log("ADD ITEM SUCCESSFUL");
-    return response.success();
+    const cart = response.success();
+    void attachRefToOrder({
+      orderToken,
+      orderNumber: cart.data?.attributes?.number
+    });
+    return cart;
   } else {
     constants.IS_DEBUG && console.log("ADD ITEM FAILED");
     throw new Error(response.fail().message);
