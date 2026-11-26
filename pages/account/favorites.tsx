@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { Heart, ChevronLeft, ChevronRight } from "lucide-react";
@@ -57,17 +58,10 @@ const Favorites = () => {
   const meta = favoritesData?.meta || {};
   const totalPages = meta.total_pages || 1;
 
-  const handleRemove = (favoriteId: string, e: React.MouseEvent | null) => {
-    if (e) {
-      e.stopPropagation();
-    }
+  const handleRemove = (favoriteId: string) => {
     removeFavorite.mutateAsync(favoriteId).catch((error) => {
       console.error("Failed to remove favorite:", error);
     });
-  };
-
-  const handleCardClick = (productSlug: string) => {
-    router.push(`/${productSlug}`);
   };
 
   return (
@@ -104,26 +98,24 @@ const Favorites = () => {
                 const imageUrl =
                   variant?.images?.[0]?.url ||
                   variant?.attributes?.images?.[0]?.url;
+                const productName =
+                  product?.name ||
+                  product?.attributes?.name ||
+                  "Unknown Product";
+                const productSlug = product?.slug || product?.attributes?.slug;
 
+                // The name is the card's link and its ::after covers the card;
+                // the Remove button sits above it (relative z-10).
                 return (
                   <div
                     key={favorite.id}
-                    onClick={() =>
-                      handleCardClick(
-                        product?.slug || product?.attributes?.slug
-                      )
-                    }
-                    className="group cursor-pointer overflow-hidden rounded-xl border border-border/30 bg-card transition-all hover:-translate-y-1 hover:shadow-lg"
+                    className="group relative cursor-pointer overflow-hidden rounded-xl border border-border/30 bg-card ring-offset-background transition-all hover:-translate-y-1 hover:shadow-lg has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring has-[a:focus-visible]:ring-offset-2"
                   >
                     <div className="relative aspect-square bg-muted">
                       {imageUrl && (
                         <Image
                           src={`${process.env.NEXT_PUBLIC_SPREE_API_URL}${imageUrl}`}
-                          alt={
-                            product?.name ||
-                            product?.attributes?.name ||
-                            "Product"
-                          }
+                          alt={productName}
                           fill
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
@@ -131,9 +123,12 @@ const Favorites = () => {
                     </div>
                     <div className="p-4">
                       <h3 className="mb-1 font-title text-sm font-semibold text-foreground">
-                        {product?.name ||
-                          product?.attributes?.name ||
-                          "Unknown Product"}
+                        <Link
+                          href={`/${productSlug}`}
+                          className="text-inherit no-underline after:absolute after:inset-0 focus-visible:outline-none"
+                        >
+                          {productName}
+                        </Link>
                       </h3>
                       <p className="mb-3 font-title text-sm font-bold text-brand">
                         {variant?.display_price ||
@@ -141,14 +136,13 @@ const Favorites = () => {
                           "$0.00"}
                       </p>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemove(favorite.id, null as any);
-                        }}
+                        type="button"
+                        onClick={() => handleRemove(favorite.id)}
                         disabled={removeFavorite.isLoading}
-                        className="w-full cursor-pointer rounded-lg border-none bg-destructive/10 px-4 py-2.5 font-title text-xs font-semibold uppercase tracking-wider text-destructive transition-colors hover:bg-destructive hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        className="relative z-10 w-full cursor-pointer rounded-lg border-none bg-destructive/10 px-4 py-2.5 font-title text-xs font-semibold uppercase tracking-wider text-destructive transition-colors hover:bg-destructive hover:text-white disabled:cursor-not-allowed disabled:opacity-50 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       >
                         {removeFavorite.isLoading ? "Removing..." : "Remove"}
+                        <span className="sr-only"> {productName}</span>
                       </button>
                     </div>
                   </div>
@@ -157,11 +151,16 @@ const Favorites = () => {
             </div>
 
             {totalPages > 1 && (
-              <div className="mt-8 flex items-center justify-center gap-2">
+              <nav
+                aria-label="Favorites pages"
+                className="mt-8 flex items-center justify-center gap-2"
+              >
                 <button
+                  type="button"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-label="Previous page"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
@@ -169,9 +168,13 @@ const Favorites = () => {
                   (page) => (
                     <button
                       key={page}
+                      type="button"
                       onClick={() => setCurrentPage(page)}
+                      aria-label={`Page ${page}`}
+                      aria-current={page === currentPage ? "page" : undefined}
                       className={cn(
                         "flex h-9 min-w-[36px] cursor-pointer items-center justify-center rounded-lg border px-3 font-body text-sm transition-colors",
+                        "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                         page === currentPage
                           ? "border-brand bg-brand font-semibold text-white"
                           : "border-border bg-background text-foreground hover:bg-muted"
@@ -182,15 +185,17 @@ const Favorites = () => {
                   )
                 )}
                 <button
+                  type="button"
                   onClick={() =>
                     setCurrentPage((p) => Math.min(totalPages, p + 1))
                   }
                   disabled={currentPage === totalPages}
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-label="Next page"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
-              </div>
+              </nav>
             )}
           </>
         )}

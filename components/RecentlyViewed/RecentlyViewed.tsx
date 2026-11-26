@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import { useRecentlyViewed } from "@hooks/useRecentlyViewed";
 import { useProducts } from "@hooks/useProducts";
 import { visibleRecentProducts } from "@lib/productVisibility";
@@ -13,7 +13,6 @@ export const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
   excludeSlug,
   title = "Recently Viewed"
 }) => {
-  const router = useRouter();
   const { products: recent } = useRecentlyViewed(excludeSlug);
   const { data: listing, isLoading } = useProducts(1);
 
@@ -27,22 +26,23 @@ export const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
       <h2 className="font-title text-xl text-foreground">{title}</h2>
       <div className="mt-4 flex gap-4 overflow-x-auto pb-4 scrollbar-hide md:grid md:grid-cols-4 md:overflow-visible lg:grid-cols-6">
         {products.map((product) => (
-          <div
+          <Link
             key={product.slug}
-            onClick={() => router.push(`/${product.slug}`)}
-            className="w-36 flex-shrink-0 cursor-pointer md:w-auto"
+            href={`/${product.slug}`}
+            className="block w-36 flex-shrink-0 rounded-lg no-underline ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:w-auto"
           >
             <div className="aspect-[3/4] overflow-hidden rounded-lg bg-muted">
+              {/* The name below is the link's text: empty alt so it is not read twice. */}
               <img
                 src={product.imgSrc}
-                alt={product.name}
+                alt=""
                 className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
               />
             </div>
-            <h4 className="mt-2 truncate font-title text-sm text-foreground">
+            <h3 className="mt-2 truncate font-title text-sm text-foreground">
               {product.name}
-            </h4>
-          </div>
+            </h3>
+          </Link>
         ))}
       </div>
     </section>

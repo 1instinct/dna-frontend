@@ -30,12 +30,16 @@ export const MarketplaceCard: React.FC<{
   const creator = creatorOf(product);
 
   return (
-    <div className="group overflow-hidden rounded-xl border border-border/30 bg-card transition-all hover:-translate-y-0.5 hover:shadow-md">
-      <Link href={`/${attrs.slug}`} className="block no-underline">
+    <div className="group overflow-hidden rounded-xl border border-border/30 bg-card ring-offset-background transition-all hover:-translate-y-0.5 hover:shadow-md has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring has-[a:focus-visible]:ring-offset-2">
+      <Link
+        href={`/${attrs.slug}`}
+        className="block no-underline focus-visible:outline-none"
+      >
         <div className="relative aspect-video w-full overflow-hidden bg-muted">
           <ProductMedia
             media={media}
             surface="grid"
+            decorative
             className="absolute inset-0"
             mediaClassName="h-full w-full object-cover"
             placeholder={

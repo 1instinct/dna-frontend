@@ -26,12 +26,14 @@ import {
   CarouselNext
 } from "@components/ui";
 import { Loading } from "../Loading";
+import { productArrowDirection } from "../../lib/arrowKeyNav";
 
 export const Category = () => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const { id } = router.query;
   const { data, isLoading, isSuccess } = useProduct(`${id}`);
+  const productContainerRef = React.useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const addToCart = useMutation(addItemToCart, {
     onSuccess: () => {
@@ -60,15 +62,32 @@ export const Category = () => {
     <Featured data={homeData.latestProducts} title="" />
   );
 
+  // Left/Right arrows step to the previous/next product while focus is in
+  // the product area. A native listener on the container, not a JSX handler:
+  // the container is not a control, the buttons and select inside it are.
+  React.useEffect(() => {
+    const container = productContainerRef.current;
+    if (!isSuccess || !container) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      // Not while focus is in a field, the carousel or a dialog.
+      const direction = productArrowDirection(event, document);
+      if (!direction) return;
+      const productId = parseInt(`${id}`) + direction;
+      fetchProduct(`${productId}`)
+        .then((product) => {
+          router.push(`/${product?.data?.attributes?.slug}`);
+        })
+        .catch(() => {
+          /* product not found */
+        });
+    };
+    container.addEventListener("keydown", onKeyDown);
+    return () => container.removeEventListener("keydown", onKeyDown);
+  }, [isSuccess, id, router]);
+
   React.useEffect(() => {
     if (isSuccess) {
-      const productContainer = Array.from(
-        document.getElementsByClassName("product-container")
-      ).shift();
-
-      if (productContainer) {
-        (productContainer as HTMLElement).focus();
-      }
+      productContainerRef.current?.focus();
 
       tracking.trackEvent({
         action: tracking.Action.VIEW_PRODUCT,
@@ -97,25 +116,6 @@ export const Category = () => {
         quantity: 1
       });
 
-    const handleKeyPress = (event: React.KeyboardEvent) => {
-      switch (event.key) {
-        case "ArrowLeft":
-        case "ArrowRight": {
-          let productId: number = parseInt(`${id}`);
-          productId = event.key == "ArrowLeft" ? productId - 1 : productId + 1;
-
-          fetchProduct(`${productId}`)
-            .then((product) => {
-              router.push(`/${product?.data?.attributes?.slug}`);
-            })
-            .catch(() => {
-              /* product not found */
-            });
-          break;
-        }
-      }
-    };
-
     const imageSource =
       Array.isArray(data?.included) &&
       data?.included[0]?.attributes?.styles?.[2].url;
@@ -126,9 +126,9 @@ export const Category = () => {
     return (
       <Layout>
         <div
+          ref={productContainerRef}
           tabIndex={-1}
-          onKeyDown={handleKeyPress}
-          className="product-container section-container flex flex-wrap py-8 font-title"
+          className="product-container section-container flex flex-wrap py-8 font-title focus:outline-none"
         >
           {/* Image Carousel */}
           <div className="w-full md:w-2/5">
@@ -154,28 +154,36 @@ export const Category = () => {
           {/* Product Info */}
           <div className="m-[2%] w-full md:w-auto">
             <div className="max-w-[400px] text-center text-foreground">
-              <h2 className="font-title text-2xl font-semibold">
+              <h1 className="font-title text-2xl font-semibold">
                 {data?.data?.attributes?.name}
-              </h2>
+              </h1>
               <p className="mt-3 font-body text-sm leading-relaxed text-muted-foreground">
                 {data?.data?.attributes?.description}
               </p>
-              <h3 className="mt-4 font-title text-2xl font-bold">
+              <div className="mt-4 font-title text-2xl font-bold">
                 ${data?.data?.attributes?.price}
-              </h3>
+              </div>
 
-              <select className="mt-4 w-full cursor-pointer rounded-lg border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors focus:border-brand focus:outline-none">
+              <select
+                aria-label="Color"
+                className="mt-4 w-full cursor-pointer rounded-lg border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors focus:border-brand focus:outline-none"
+              >
                 <option>Color</option>
                 <option>Blue</option>
                 <option>Beige</option>
                 <option>Pink</option>
               </select>
 
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
+              <div
+                role="group"
+                aria-label="Size"
+                className="mt-4 flex flex-wrap justify-center gap-2"
+              >
                 {["XS", "S", "M", "L", "XL"].map((size) => (
                   <button
                     key={size}
-                    className="rounded-lg border border-border px-5 py-2.5 font-title text-sm text-foreground transition-all hover:border-brand"
+                    type="button"
+                    className="rounded-lg border border-border px-5 py-2.5 font-title text-sm text-foreground transition-all hover:border-brand ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
                     {size}
                   </button>
@@ -183,23 +191,24 @@ export const Category = () => {
               </div>
 
               <button
+                type="button"
                 onClick={handleAddToCart}
-                className="mt-6 w-full rounded-xl bg-brand px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px hover:shadow-lg active:translate-y-0"
+                className="mt-6 w-full rounded-xl bg-brand px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px hover:shadow-lg active:translate-y-0 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 Add to Cart
               </button>
             </div>
 
             <div className="mt-8 text-left">
-              <h3 className="mb-2 font-title text-base font-semibold text-foreground md:text-sm md:text-center">
+              <h2 className="mb-2 font-title text-base font-semibold text-foreground md:text-sm md:text-center">
                 Product Details
-              </h3>
+              </h2>
               <p className="font-body text-sm text-muted-foreground">
                 FABRIC : 100% POLYESTER BUST : 29&quot;LENGTH : 25 1/2&quot;
               </p>
-              <h3 className="mb-2 mt-4 font-title text-base font-semibold text-foreground md:text-sm md:text-center">
+              <h2 className="mb-2 mt-4 font-title text-base font-semibold text-foreground md:text-sm md:text-center">
                 Model Info
-              </h3>
+              </h2>
               <p className="font-body text-sm text-muted-foreground">
                 Model info goes here:
                 <br />
@@ -218,9 +227,9 @@ export const Category = () => {
         </div>
 
         <div className="section-container pb-8">
-          <h3 className="mb-4 font-title text-lg text-foreground">
+          <h2 className="mb-4 font-title text-lg text-foreground">
             You may also like:
-          </h3>
+          </h2>
           {polProductList}
         </div>
       </Layout>
@@ -229,9 +238,9 @@ export const Category = () => {
 
   return (
     <Layout>
-      <div className="flex min-h-[400px] items-center justify-center font-title text-foreground">
+      <h1 className="flex min-h-[400px] items-center justify-center font-title text-foreground">
         PRODUCT NOT FOUND
-      </div>
+      </h1>
     </Layout>
   );
 };

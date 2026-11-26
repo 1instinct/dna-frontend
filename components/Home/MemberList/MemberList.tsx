@@ -21,8 +21,12 @@ const MemberList: React.FC<MemberListProps> = ({ data }) => {
           <SwiperSlide key={index}>
             <div className="flex flex-col items-center">
               <Avatar className="h-20 w-20">
-                <AvatarImage src={item.avatar} alt={item.name} />
-                <AvatarFallback className="bg-brand/20 text-brand font-title">
+                {/* The name is printed below: avatar and initial are decorative. */}
+                <AvatarImage src={item.avatar} alt="" />
+                <AvatarFallback
+                  aria-hidden
+                  className="bg-brand/20 text-brand font-title"
+                >
                   {item.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>

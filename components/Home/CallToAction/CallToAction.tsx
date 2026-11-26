@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 
 export interface CallToActionProps {
   title?: string | null;
@@ -18,15 +18,9 @@ const CallToAction: React.FC<CallToActionProps> = ({
   buttonText = "Learn More",
   buttonLink = "#"
 }) => {
-  const router = useRouter();
-
-  const handleClick = () => {
-    if (buttonLink.startsWith("http")) {
-      window.location.href = buttonLink;
-    } else {
-      router.push(buttonLink);
-    }
-  };
+  // A link, not a button: it navigates (and can open in a new tab).
+  const linkClass =
+    "mt-4 inline-block rounded bg-white px-10 py-4 text-lg font-semibold text-brand no-underline transition-all hover:-translate-y-0.5 hover:shadow-lg ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:w-full sm:max-w-[300px]";
 
   return (
     <div
@@ -48,14 +42,16 @@ const CallToAction: React.FC<CallToActionProps> = ({
             dangerouslySetInnerHTML={{ __html: content }}
           />
         )}
-        {buttonText && (
-          <button
-            onClick={handleClick}
-            className="mt-4 rounded bg-white px-10 py-4 text-lg font-semibold text-brand transition-all hover:-translate-y-0.5 hover:shadow-lg sm:w-full sm:max-w-[300px]"
-          >
-            {buttonText}
-          </button>
-        )}
+        {buttonText &&
+          (buttonLink.startsWith("http") ? (
+            <a href={buttonLink} className={linkClass}>
+              {buttonText}
+            </a>
+          ) : (
+            <Link href={buttonLink} className={linkClass}>
+              {buttonText}
+            </Link>
+          ))}
       </div>
     </div>
   );
