@@ -13,10 +13,11 @@ export const FormikCheckbox = ({
   handleTermCheckbox,
   nextTerm,
   id,
+  // Formik's render props: not attributes for the <input>.
+  meta: _meta,
   ...props
 }: any) => {
   const nextParent = () => {
-    console.log("TERM CHECKED: ", field.name, field.value);
     handleTermCheckbox();
     setFieldValue(field.name, !accepted, false);
     setTimeout(() => nextTerm(), 333);
@@ -27,11 +28,12 @@ export const FormikCheckbox = ({
       <TermsCheckbox
         {...props}
         id={id || field.name}
+        name={field.name}
         accepted={accepted}
-        // isAccepted={isAccepted}
+        // Controlled by `accepted`, so the box shows the real state even when the slide
+        // re-renders (it was uncontrolled and could reset after nextTerm moved the carousel).
+        checked={Boolean(accepted)}
         onChange={nextParent}
-        boxClassName="checkbox-style"
-        labelClassName="checkbox-label"
       />
     </>
   );

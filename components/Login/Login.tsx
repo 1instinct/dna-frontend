@@ -22,9 +22,11 @@ export const Login = () => {
   const redirectUrl = safeRedirect(router.query.redirect);
 
   const SubmitButton = () => {
-    const { submitForm, isSubmitting } = useFormikContext();
+    // A plain submit button: the form's onSubmit runs Formik once. Calling submitForm on click
+    // as well submitted twice.
+    const { isSubmitting } = useFormikContext();
     return (
-      <Button onClick={submitForm} disabled={isSubmitting} className="w-full">
+      <Button type="submit" disabled={isSubmitting} className="w-full">
         {isSubmitting ? "Logging in..." : "Submit"}
       </Button>
     );

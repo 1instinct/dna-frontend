@@ -82,21 +82,31 @@ export const SignupForm = () => {
         <Formik
           initialValues={signupForm.fields}
           validationSchema={signupForm.validate}
-          onSubmit={(values, { setSubmitting }) => {
+          onSubmit={(values, { setSubmitting, setStatus }) => {
             setSubmitting(true);
-            register(values)
-              .then((res: any) => {
-                console.log("LOGIN SUCCESS: ", res);
+            setStatus(undefined);
+            // Spree's account endpoint takes { user: { email, password, password_confirmation } }.
+            register({
+              user: {
+                email: values.email,
+                password: values.password,
+                password_confirmation: values.passwordConfirm
+              }
+            })
+              .then(() => {
                 setSubmitting(false);
                 router.push("/");
               })
               .catch((e: any) => {
-                constants.IS_DEBUG && console.log("LOGIN FAIL: ", e);
+                constants.IS_DEBUG && console.log("SIGNUP FAIL: ", e);
+                setStatus(
+                  e?.message || "We couldn't create your account. Try again."
+                );
                 setSubmitting(false);
               });
           }}
         >
-          {({ isSubmitting, handleSubmit }) => (
+          {({ isSubmitting, handleSubmit, status }) => (
             <Form className="w-full rounded-xl border border-border/30 bg-card p-6 shadow-lg sm:p-8">
               <TipBot speech={speechMarkup()} />
               <div className="mt-4">
@@ -168,7 +178,7 @@ export const SignupForm = () => {
                       </li>
                     )}
                   >
-                    <div className="flex items-start gap-3 text-left">
+                    <div className="flex items-start gap-3 pb-8 text-left">
                       <Field type="checkbox" name="acceptPrivacyTerms">
                         {(formikProps: any) => (
                           <FormikCheckbox
@@ -198,7 +208,7 @@ export const SignupForm = () => {
                         .
                       </label>
                     </div>
-                    <div className="flex items-start gap-3 text-left">
+                    <div className="flex items-start gap-3 pb-8 text-left">
                       <Field type="checkbox" name="acceptReportingTerms">
                         {(formikProps: any) => (
                           <FormikCheckbox
@@ -231,11 +241,20 @@ export const SignupForm = () => {
                 </div>
               </div>
 
+              {status && (
+                <p
+                  role="alert"
+                  className="mt-6 rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-center text-sm text-destructive"
+                >
+                  {status}
+                </p>
+              )}
+
               {/* Submit */}
               <div className="mt-6 flex justify-center">
                 <Button
                   type="submit"
-                  disabled={!(privacyTerms || !reportingTerms)}
+                  disabled={!(privacyTerms && reportingTerms)}
                   className="w-full max-w-xs"
                 >
                   Submit
