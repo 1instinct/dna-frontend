@@ -14,6 +14,7 @@ import { Newsletter } from "./Newsletter";
 import { CallToAction } from "./CallToAction";
 import { useStreams } from "@hooks/useStreams";
 import { useProductFeed, FeedType } from "@hooks/useProductFeed";
+import { AppCallout } from "../AppCallout";
 
 // Utility to parse settings (handles Ruby hash string or object)
 function parseSettings(settings: any): any {
@@ -37,6 +38,15 @@ const SectionRenderers: Record<
   React.FC<{ section: HomepageSection; additionalData?: any }>
 > = {
   hero: () => <Hero />,
+
+  // The admin's store links, shown where the section sits in the admin's
+  // order. Renders nothing when no link resolves or the visitor came from the
+  // app. The links themselves come from useAppPresence, not from `section`.
+  app_links: () => <AppCallout variant="section" />,
+
+  // Rendered above the header on every page by <AppCallout variant="bar" />
+  // in pages/_app.tsx, not in the homepage flow.
+  announcement_bar: () => null,
 
   live_streams: ({ section }) => {
     const { data: streamsData } = useStreams(1);

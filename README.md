@@ -13,6 +13,10 @@ _Gotchas:_
 
 - Does the backend (`dna-admin`) have menus, products, live streams
 - Do you have the backend url & api key in `.env`?
+- "Get the app" callouts (`components/AppCallout`) and the announcement bar read the `app_links`
+  and `announcement_bar` homepage sections from `dna-admin`. `NEXT_PUBLIC_IOS_APP_URL` and
+  `NEXT_PUBLIC_ANDROID_APP_URL` are a build-time fallback for the links. With no link at all,
+  nothing renders. Visitors who arrive with `?from=app` never see the callouts.
 
 ## Styles
 

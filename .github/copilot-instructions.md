@@ -254,6 +254,7 @@ Access via `process.env.NEXT_PUBLIC_*`:
 - `NEXT_PUBLIC_DARK_MODE` - Dark mode toggle
 - `NEXT_PUBLIC_IS_MAINT_MODE` - Maintenance mode
 - `NEXT_PUBLIC_LOGO_PATH` - Logo image path
+- `NEXT_PUBLIC_IOS_APP_URL`, `NEXT_PUBLIC_ANDROID_APP_URL` - fallback store links for `components/AppCallout` (the admin's `app_links` homepage section overrides them)
 
 ## Common Tasks
 
