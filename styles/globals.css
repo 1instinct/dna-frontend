@@ -80,17 +80,18 @@
 
   ::selection {
     color: white;
-    background: #eb8b8b;
+    background: hsl(var(--brand));
   }
 
   ::-moz-selection {
     color: white;
-    background: #eb8b8b;
+    background: hsl(var(--brand));
   }
 
+  /* Links use the brand token, which passes WCAG AA on the page background. */
   a {
     cursor: pointer;
-    color: #eb8b8b;
+    color: hsl(var(--brand));
   }
 
   p {
