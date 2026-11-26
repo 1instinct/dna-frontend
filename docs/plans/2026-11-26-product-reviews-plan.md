@@ -17,13 +17,14 @@
 ## M0: Foundations
 
 **M0.1 [A] Schema + models**
-- Migrations: `spree_reviews`, `spree_review_votes`, `spree_review_requests`, `spree_review_stats`, `spree_review_attributes` (+ `spree_review_attributes_taxons`), `spree_product_questions`, `spree_product_answers`, `spree_review_settings`; add `avg_rating decimal(3,2) default 0` and `reviews_count int default 0` to `spree_products` (indexed).
+- Migrations: `spree_reviews`, `spree_review_votes`, `spree_review_requests`, `spree_review_stats`, `spree_review_attributes` (+ `spree_review_attributes_taxons`), `spree_product_questions`, `spree_product_answers`, `spree_review_settings`; add `avg_rating decimal(3,2) default 0`, `reviews_count int default 0`, `all_avg_rating`, `all_reviews_count` to `spree_products` (indexed). `spree_reviews.channel` (indexed) and `spree_review_stats.scope` (unique with reviewable).
 - Models: `Spree::Review`, `ReviewVote`, `ReviewRequest`, `ReviewStat`, `ReviewAttribute`, `ProductQuestion`, `ProductAnswer`, `ReviewSetting` (`.instance` singleton, like `AdminTheme`).
 - `app/models/spree/product_reviews_decorator.rb`: `has_many :reviews, as: :reviewable`, `has_one :review_stat, as: :reviewable`, `has_many :questions`. Same idea for `Spree::Store`.
 - Tests (`test/models/spree/review_test.rb` etc.): rating range; body length; ≤ 5 photos and content types; uniqueness per user/order; status transitions; `display_name` default from the bill address ("Maya R.").
 - Factories in `test/factories/reviews.rb`.
 
-**M0.2 [A] Eligibility**
+**M0.2 [A] Eligibility + channel**
+- `Reviews::Channel.for(order)`: `wholesale` when `order.channel == "wholesale"` or the user has the `wholesale` role, else `retail`. Seed the `wholesale` role in a migration. Tests for both triggers and the retail default.
 - `Reviews::Eligibility.for_user(user)` and `.for_order(order)` return `[{line_item, product, existing_review}]`. They use complete orders whose shipments are `shipped`, deduplicated by product, and exclude admins.
 - Tests cover: guest order via token, unshipped order (none), a product purchased twice (one entry), and an existing review (marked).
 
@@ -34,13 +35,14 @@
   - applies the pipeline from the design and sets `incentivized`
   - **never reads `rating` for status**
 - `Reviews::Publish` / `Reject(reason)` / `Hide`.
-- `Reviews::RefreshStats.call(reviewable)`: SQL aggregate into `ReviewStat`, then copies to `spree_products.avg_rating`/`reviews_count`.
+- `Reviews::RefreshStats.call(reviewable)`: SQL aggregates into the `retail`, `wholesale` and `all` `ReviewStat` rows, then copies retail to `spree_products.avg_rating`/`reviews_count` and all to `all_avg_rating`/`all_reviews_count`.
+- `AccountDeletion`: anonymize reviews and Q&A (null user, "Former customer", purge photos, delete votes). Test that stats are unchanged after deletion.
 - `Reviews::AwardPoints`: on first publish, if the user is present and `points_awarded_at` is nil, credit via `spree_loyalty_points` (check the gem's credit-transaction API in `1instinct/spree-loyalty-points`, and mirror `order_loyalty_points_decorator.rb`).
 - Tests:
   - a 1★ and a 5★ with identical text get identical status (**regression test for sentiment-blind moderation**)
   - blocked term → pending
   - photos + `photos_require_approval` → pending
-  - the stats math
+  - the stats math per scope (a wholesale review never moves retail stats)
   - points awarded once
 
 **M0.4 [F] Primitives + API client**
@@ -56,19 +58,21 @@
 - `#summary`: stat, attribute averages, AI summary (unless hidden), latest 12 photo URLs (`card` variant).
 - Serializers: `ReviewSerializer` (no email or user id; `display_name`, `variant_label`, `verified_purchase`, `incentivized`, photo URLs, reply).
 - Routes in `config/routes.rb`; swagger docs.
-- Integration tests: unpublished never leak; sort orders; slug lookup; hidden products respected (mirror the `hidden_products_*_test.rb` cases).
+- `channel` param (`retail` default; `all`/`wholesale` need a Bearer token with the `wholesale` or `admin` role, else 403).
+- Integration tests: unpublished never leak; **wholesale reviews never appear without the role, whatever the params**; sort orders; slug lookup; hidden products respected (mirror the `hidden_products_*_test.rb` cases).
 
 **M1.2 [A] Storefront v2 attributes**
-- `app/serializers/spree/v2/storefront/product_serializer_decorator.rb`: add `avg_rating` and `reviews_count`.
+- `app/serializers/spree/v2/storefront/product_serializer_decorator.rb`: add `avg_rating`, `reviews_count`, `all_avg_rating`, `all_reviews_count`.
 - Test in the `hidden_products_storefront_test.rb` style.
 
 **M1.3 [F] Stars on cards and PDP header**
 - `components/Reviews/RatingSummary.tsx`, used in `RetailProductDetails.tsx` and `WholesaleProductDetails.tsx` under the title.
-- `ProductCard.tsx` footer stars from `attributes.avg_rating`.
+- `ProductCard.tsx` footer stars from `attributes.avg_rating` (or `all_avg_rating` in wholesale mode).
 
 **M1.4 [F] Reviews section**
 - `ReviewsSection`, `ReviewsOverview`, `AiSummaryCard` (renders nothing until data exists), `ReviewMediaStrip`, `MediaLightbox`, `ReviewsToolbar`, `ReviewCard`.
-- `useReviewSummary` and `useProductReviews` (infinite).
+- `useReviewSummary` and `useProductReviews` (infinite), both keyed by `channel`.
+- `ReviewsSection channel="retail"` in `RetailProductDetails`; `channel="all"` in `WholesaleProductDetails`, plus the "Wholesale only" chip, a "Wholesale buyer" badge on wholesale reviews, and the AI summary labelled "from retail reviews" (hidden under the chip).
 - Lazy-load the list when `#reviews` nears the viewport.
 - Empty state: "No reviews yet. Bought this? Your review helps the next person."
 
@@ -111,7 +115,7 @@
 
 **M3.1 [A] Menu + Reviews queue**
 - A `_main_menu.html.erb` block.
-- `Spree::Admin::ReviewsController` (index with filters + bulk, show, update, reply).
+- `Spree::Admin::ReviewsController` (index with filters incl. channel + bulk, show, update, reply, change channel retail ↔ wholesale).
 - Views modelled on `app_feedbacks`.
 - Controller tests in `test/controllers/spree/admin/`.
 
@@ -126,7 +130,8 @@
 **M4.1 [A] Scheduling**
 - `app/models/spree/shipment_review_request_decorator.rb` (prepend `after_ship`) calls `ReviewRequests::Schedule`.
 - Raw token: `SecureRandom.urlsafe_base64(32)`, stored as a SHA256 digest. The raw token is generated at send time (re-issued on reminder) and never persisted.
-- Tests: idempotent per order; skipped when disabled or there is no email.
+- Delay: 10 days when the ship-address country differs from the store's default country, otherwise 7; scheduled from the last shipment to ship.
+- Tests: idempotent per order; skipped when disabled or there is no email; domestic 7 days vs international 10 days; multi-shipment uses the last `shipped_at`.
 
 **M4.2 [A] Mailer**
 - `ReviewRequestMailer#request` and `#reminder`: HTML + text, product image, five star links per item, opt-out link.
@@ -190,7 +195,7 @@
 
 **M8.1 [A]**
 - `Feeds::GoogleProductReviewsController` plus a builder view (schema v2.4), cached 1 h.
-- Every published review with text, flagged with `is_verified_purchase`, `is_incentivized_review` and `collection_method`.
+- Every published **retail** review with text, flagged with `is_verified_purchase`, `is_incentivized_review` and `collection_method`.
 - `review_url` is `#{SITE_URL}/#{slug}#review-#{id}`.
 - Validate the output against the XSD in tests (`test/fixtures/files/product_reviews.xsd`).
 - Submit in Merchant Center at ≥ 50 reviews.

@@ -21,6 +21,10 @@ Give DNA a review system in the class of Junip / Trustpilot that we own end to e
 | v1 scope | Product reviews + photos, request emails, store reviews, Q&A, AI summary | |
 | Phase 2 | **Ask AI** (shoppers ask questions answered from reviews, Q&A and product data), AI moderation assist, video reviews, verified-buyer answer requests | |
 | AI runtime | **Next.js server routes using `@anthropic-ai/sdk`** | dna-admin is pinned to Ruby 2.7.2 and the `anthropic` gem requires Ruby ≥ 3.2. dna-frontend already runs a Node server (Next.js API routes) and Phase 2 needs streaming to the browser anyway. |
+| Account deletion | **Anonymize** | Rating, title, body and attribute ratings stay. `user_id` → null, `display_name` → "Former customer", photos purged (they may show the person). Stats are unchanged. |
+| Request timing | **7 days after ship, 10 for international** | Spree 4.2 has no delivered state, so we count from `shipped_at`. International means the ship-address country differs from the store's default country. One reminder 7 days after the first email. |
+| Points | **50 per published review, +50 with a photo** | Same for every rating and both channels. |
+| Retail vs wholesale | **Separate by channel** | Every review is stamped `retail` or `wholesale` from its order. Retail PDPs and everything public (cards, JSON-LD, Google feed, AI summary) use retail reviews only. Wholesale PDPs show all reviews, with a "Wholesale only" filter. |
 
 ## Compliance guardrails (bake into code, not policy docs)
 
@@ -31,6 +35,7 @@ From the FTC Consumer Reviews and Testimonials rule (16 CFR 465, in force Oct 20
 - **No review suppression.** Low-star reviews show in the list, summary, histogram, JSON-LD and Google feed.
 - **Default sort is "Most helpful"** (helpful votes, then recency), never rating-descending.
 - **Staff reviews:** staff accounts can't submit product reviews (block `spree_role` admin) or, if we ever allow it, they are labelled.
+- **Channel separation is not suppression.** Retail and wholesale are different buyer populations, and the split is by who bought, never by rating. Retail stats and retail lists contain every retail review, at every star level.
 - **AI summaries** are labelled "AI summary of N reviews", must represent negatives proportionally, and can be hidden per product by admins (hiding is logged).
 
 ## Architecture
@@ -77,6 +82,7 @@ All tables `spree_`-prefixed, models under `Spree::`.
 | `incentivized` | bool | points offer was active |
 | `points_awarded_at` | datetime | idempotent award |
 | `source` | string | `email` · `web` · `account` · `app` · `import` |
+| `channel` | string, indexed | `retail` · `wholesale`, stamped from the order at submit by `Reviews::Channel` (see below); admins can correct it |
 | `display_name` | string | "Maya R." (first name + last initial), editable in form |
 | `locale` | string | |
 | `helpful_count`, `unhelpful_count`, `reports_count` | int | counters |
@@ -92,9 +98,26 @@ All tables `spree_`-prefixed, models under `Spree::`.
 ### `Spree::ReviewRequest`
 `order_id` (unique), `user_id`, `email`, `token_digest` (SHA256; raw token only in the email), `status` (`scheduled` · `sent` · `reminded` · `completed` · `opted_out` · `expired` · `cancelled`), `send_after`, `sent_at`, `reminded_at`, `opened_at`, `completed_at`, `expires_at`.
 
-### `Spree::ReviewStat` (denormalized, one row per reviewable)
-`reviewable_type/id` (unique), `average` decimal(3,2), `ratings_count` (all), `reviews_count` (with text), `histogram` jsonb `{"1":n,…,"5":n}`, `attribute_averages` jsonb, `photos_count`, `ai_summary` jsonb `{headline, summary, pros:[{label,mentions}], cons:[…]}`, `ai_summary_review_count`, `ai_summary_generated_at`, `ai_summary_hidden` bool.
-Recomputed in `after_commit` of Review publish/unpublish (cheap SQL aggregate). Also copied onto `spree_products.avg_rating` / `spree_products.reviews_count` so listings can sort and filter with ransack ("Top rated", "4★ & up").
+### `Spree::ReviewStat` (denormalized, one row per reviewable per scope)
+`reviewable_type/id` + `scope` (unique), where `scope` is `retail`, `wholesale` or `all`, `average` decimal(3,2), `ratings_count` (all), `reviews_count` (with text), `histogram` jsonb `{"1":n,…,"5":n}`, `attribute_averages` jsonb, `photos_count`, `ai_summary` jsonb `{headline, summary, pros:[{label,mentions}], cons:[…]}`, `ai_summary_review_count`, `ai_summary_generated_at`, `ai_summary_hidden` bool.
+Recomputed in `after_commit` of Review publish/unpublish/channel change: three cheap SQL aggregates, one per scope. The **retail** scope is copied onto `spree_products.avg_rating` / `spree_products.reviews_count` so listings can sort and filter with ransack ("Top rated", "4★ & up"). The `all` scope is copied onto `spree_products.all_avg_rating` / `all_reviews_count` for wholesale listings. The AI summary lives on the retail row only.
+
+### Retail vs wholesale channel
+
+`Reviews::Channel.for(order)` returns `wholesale` when `order.channel == "wholesale"` (Spree's existing `spree_orders.channel` column, default `"spree"`) **or** the order's user has the `wholesale` Spree role. Otherwise it returns `retail`.
+
+**Dependency:** wholesale ordering isn't wired up end to end today. dna-admin only has `spree_prices.wholesale_price`, and dna-frontend's `wholesale` flag in `pages/_app.tsx` is hard-coded `false`. Until wholesale checkout stamps `order.channel = "wholesale"` or wholesale accounts get the role, every review is `retail`. Admins can reclassify a review from the queue, which also covers backfilling.
+
+| | Retail PDP | Wholesale PDP |
+|---|---|---|
+| Default list and stats | Retail reviews only | All reviews (retail + wholesale) |
+| Filter | none | "Wholesale only" chip, which switches list, histogram and attribute bars to the `wholesale` scope |
+| Badge on card | "Verified buyer" | "Verified buyer" plus "Wholesale buyer" on wholesale reviews |
+| AI summary | Retail summary | Retail summary, labelled "from retail reviews"; hidden while "Wholesale only" is on |
+| Product cards | `avg_rating` (retail) | `all_avg_rating` |
+| JSON-LD, Google feed, store reviews | Retail only | n/a |
+
+**Access:** the API returns wholesale reviews only when the request asks for `channel=all` or `channel=wholesale` **and** carries a Bearer token for a user with the `wholesale` or `admin` role; otherwise it returns 403. Wholesale reviews can mention trade pricing or minimum order quantities, so the hiding is enforced on the server, not just in the UI.
 
 ### `Spree::ReviewAttribute` (flexible per-category questions)
 `key`, `label`, `kind` (`scale` 1–5, or `bipolar` with `low_label`/`high_label`, e.g. "Runs small" ↔ "Runs large"), `position`, `active`, `has_and_belongs_to_many :taxons` (none = all products). The form shows the attributes matching the product's taxons, and the PDP shows aggregated bars.
@@ -105,13 +128,13 @@ Answer: `question_id`, `user_id`, `body`, `official` bool (staff), `verified_buy
 **Only answered questions appear publicly**, so the PDP never shows a wall of unanswered questions. The asker is emailed when it's answered.
 
 ### `Spree::ReviewSetting` (singleton, like `AdminTheme`)
-`enabled`, `store_reviews_enabled`, `questions_enabled`, `auto_publish` (default true), `photos_require_approval` (default true), `request_delay_days` (7), `reminder_delay_days` (7), `request_expiry_days` (60), `points_per_review` (50), `points_photo_bonus` (50), `ai_summary_enabled`, `ai_summary_min_reviews` (5).
+`enabled`, `store_reviews_enabled`, `questions_enabled`, `auto_publish` (default true), `photos_require_approval` (default true), `request_delay_days` (7), `international_request_delay_days` (10), `reminder_delay_days` (7), `request_expiry_days` (60), `points_per_review` (50), `points_photo_bonus` (50), `ai_summary_enabled`, `ai_summary_min_reviews` (5).
 
 ### Reused, extended
 - `Spree::ContentReport`: add `review`, `question`, `answer` to `TARGET_TYPES`; increment `reports_count`; 3+ reports move a review back to `pending`.
 - `Profiles::ContentFilter` + `config/moderation/blocked_terms.yml`: text screening.
 - `Profiles::RateLimit` pattern: 10 reviews/hour/user, 60 votes/hour/voter, 5 questions/hour/user.
-- `AccountDeletion`: anonymize reviews (null `user_id`, `display_name` → "Former customer", purge photos). *Open question: legal may prefer delete.*
+- `AccountDeletion`: anonymize reviews and Q&A (null `user_id`, `display_name` → "Former customer", purge review photos). Votes by the user are deleted. Ratings and text stay, so stats don't shift.
 
 ## Moderation pipeline
 
@@ -136,8 +159,8 @@ submit ──► validations ──► ContentFilter (blocked terms, URLs, email
 Custom endpoints follow the house style: `Spree::Api::V1::*` controllers, Bearer token (or `X-Spree-Token`), the `Profiles::ApiResponses` envelope, documented with swagger-blocks in `ApidocsController`.
 
 **Public**
-- `GET  /api/v1/products/:product_id/reviews?sort=helpful|recent|rating_desc|rating_asc&rating[]=5&with_photos=1&page=&per_page=` (`product_id` accepts id or slug)
-- `GET  /api/v1/products/:product_id/review_summary` → stats + attribute averages + AI summary + 12 latest photos
+- `GET  /api/v1/products/:product_id/reviews?sort=helpful|recent|rating_desc|rating_asc&rating[]=5&with_photos=1&channel=retail|all|wholesale&page=&per_page=` (`product_id` accepts id or slug; `channel` defaults to `retail`, and `all`/`wholesale` need a wholesale or admin Bearer token)
+- `GET  /api/v1/products/:product_id/review_summary?channel=` → stats for that scope + attribute averages + AI summary + 12 latest photos
 - `POST /api/v1/reviews/:id/votes` `{helpful: true}`
 - `POST /api/v1/reports` (existing) `{target_type: "review", target_id}`
 - `GET  /api/v1/products/:product_id/questions?page=`
@@ -161,14 +184,14 @@ Custom endpoints follow the house style: `Spree::Api::V1::*` controllers, Bearer
 - `PUT  /api/v1/admin/review_summaries/:product_id`
 
 **Storefront v2**
-- `product_serializer_decorator.rb`: add `avg_rating` and `reviews_count` attributes. ProductCard and PDP get stars with zero extra requests.
+- `product_serializer_decorator.rb`: add `avg_rating`, `reviews_count` (retail), `all_avg_rating`, `all_reviews_count`. ProductCard and PDP get stars with zero extra requests.
 
 **Feeds**
-- `GET /feeds/google/product_reviews.xml` (Rails builder, Google Product Review Feed **schema v2.4**): every published review with text, including `is_verified_purchase`, `is_incentivized_review` and `collection_method` (`post_fulfillment` for email, `unsolicited` for web). Product identifiers: SKU and brand (plus GTIN/MPN if we add them). Register in Merchant Center once we have **≥ 50 reviews**.
+- `GET /feeds/google/product_reviews.xml` (Rails builder, Google Product Review Feed **schema v2.4**): every published **retail** review with text, including `is_verified_purchase`, `is_incentivized_review` and `collection_method` (`post_fulfillment` for email, `unsolicited` for web). Product identifiers: SKU and brand (plus GTIN/MPN if we add them). Register in Merchant Center once we have **≥ 50 reviews**.
 
 ## Review request email flow
 
-1. `Spree::Shipment` decorator, `after_ship`: `ReviewRequests::Schedule.call(order)` creates a `ReviewRequest` (idempotent on `order_id`) with `send_after = shipped_at + request_delay_days`. Skips orders with no email or all-wholesale lines (configurable).
+1. `Spree::Shipment` decorator, `after_ship`: `ReviewRequests::Schedule.call(order)` creates a `ReviewRequest` (idempotent on `order_id`) with `send_after = shipped_at + delay`, where delay is `international_request_delay_days` (10) when `order.ship_address.country_id != order.store.default_country_id` (falling back to `Spree::Config[:default_country_id]`), otherwise `request_delay_days` (7). Multi-shipment orders schedule from the **last** shipment to ship. Skips orders with no email. Wholesale orders get requests too, and their reviews are stamped `wholesale`.
 2. `rake reviews:dispatch` (hourly):
    - `scheduled` and due → `ReviewRequestMailer.request(req).deliver_now` → `sent`
    - `sent`, reminder due, nothing reviewed → one reminder → `reminded`
@@ -190,8 +213,8 @@ Stack reality check: the app is **Tailwind + shadcn/ui (Radix)**. Emotion/MUI we
 | Surface | Where | What |
 |---|---|---|
 | Star summary | `RetailProductDetails.tsx` under the `<h2>` title (and Wholesale) | `★★★★½ 4.6 · 128 reviews`, scrolls to `#reviews`. Hidden when 0 ratings. If the shopper is eligible: "Write a review". |
-| Reviews section | between the two-column block and "Similar / Recommended" | Tabs `Reviews (128)` / `Questions (14)`. Overview (big average, histogram bars that act as filters, attribute bars), AI summary card, photo strip, toolbar (sort, "With photos", "Verified", star chips), review cards, "Show more". |
-| Product card stars | `components/ProductCard/ProductCard.tsx` footer | `★ 4.6 (128)` in `text-gray` 12px mono; omitted at 0. |
+| Reviews section | between the two-column block and "Similar / Recommended" | Tabs `Reviews (128)` / `Questions (14)`. Overview (big average, histogram bars that act as filters, attribute bars), AI summary card, photo strip, toolbar (sort, "With photos", "Verified", star chips), review cards, "Show more". Takes a `channel` prop: `retail` from `RetailProductDetails`, `all` from `WholesaleProductDetails`, where the toolbar also shows a "Wholesale only" chip. |
+| Product card stars | `components/ProductCard/ProductCard.tsx` footer | `★ 4.6 (128)` in `text-gray` 12px mono; omitted at 0. Reads `all_avg_rating` when the app is in wholesale mode. |
 | Composer | `components/Reviews/ReviewComposer` in a shadcn `Sheet` (right on desktop, bottom on mobile) | Steps: Rating → Details (attributes, title, body, display name) → Photos → Done. Local draft autosave. |
 | Email landing | `pages/review/[token].tsx` | Composer in page mode, multi-item progress, store-review step. |
 | Order detail CTA | `pages/account/orders/[orderNumber].tsx` line items | "Write a review" / "Edit your review" / ★ shown, driven by `/account/reviewables`. |
@@ -252,7 +275,8 @@ All Claude calls run server-side in dna-frontend with `@anthropic-ai/sdk`, model
 
 - Sidebar: a new **Reviews** block in `app/views/spree/admin/shared/_main_menu.html.erb` with **Reviews · Questions · Store reviews · Requests · Settings**.
 - **Reviews queue** (model it on `app_feedbacks` + `content_reports`):
-  - filters: status (default `pending`), rating, verified, has photos, reported, product, date
+  - filters: status (default `pending`), rating, channel (retail · wholesale), verified, has photos, reported, product, date
+  - change a review's channel (retail ↔ wholesale), logged
   - bulk publish / reject (with reason) / hide
   - rows: stars, excerpt, product, customer, photo thumbnails, flags (auto-flag hit, report count)
 - **Review detail:** full text, photos (remove individually), public reply, status with reason, links to order and customer.
@@ -271,10 +295,14 @@ All Claude calls run server-side in dna-frontend with `@anthropic-ai/sdk`, model
 
 **Success metrics:** request → review conversion (target ≥ 8%), % of reviews with photos, % of PDP views with ≥ 1 review, PDP add-to-cart rate for products with vs without reviews.
 
+## Resolved (26 Nov 2026)
+
+1. Account deletion: **anonymize**.
+2. Request delay: **7 days** after `shipped_at`, **10 for international** orders.
+3. Points: **50 per review, +50 with a photo**.
+4. Wholesale PDPs show **all reviews** with a **"Wholesale only"** filter. Retail never shows wholesale reviews.
+
 ## Open questions
 
-1. Account deletion: anonymize (proposed) or hard-delete reviews?
-2. Request delay: 7 days after `shipped_at` (Spree 4.2 has no delivered state). Is that right for typical transit times?
-3. Point amounts: 50, +50 for a photo?
-4. Should wholesale PDPs show retail reviews? Proposed: yes, with the same data.
-5. Do we want a native-app surface? The API is client-agnostic, so the same endpoints work.
+1. How should a wholesale order be identified: `order.channel = "wholesale"` set at checkout, a `wholesale` Spree role on the account, or both? Neither is set anywhere today (see "Retail vs wholesale channel").
+2. Do we want a native-app surface? The API is client-agnostic, so the same endpoints work.
