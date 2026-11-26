@@ -111,3 +111,118 @@ Ordering:
 | `all_reviews_count` | all-channel ratings count |
 
 Use the `all_*` pair in wholesale mode. Hide the stars when the count is 0.
+
+---
+
+# M2 write path
+
+These endpoints need a signed-in customer: `Authorization: Bearer <token>`, otherwise **401**. The email-link flow (M4) will also accept `X-Review-Token` on the same endpoints. Errors use `{ "error", "fields"?, "code"? }`, where `code` is one of `not_eligible`, `forbidden`, `not_enabled` or `invalid`.
+
+## "Own review" shape
+
+This is the public review shape (see M1) plus these fields:
+
+```json
+{
+  "...public review fields...": "",
+  "status": "published",
+  "status_message": "Your review is live.",
+  "product": { "id": 1, "slug": "rib-knit-wrap-top", "name": "Rib-Knit Wrap Top", "image_url": "https://…" },
+  "points": { "awarded": 100, "pending": 0 }
+}
+```
+
+- `status` is `published`, `pending`, `rejected` or `hidden`.
+- `status_message` is written for the customer, and never names a moderation reason:
+  - `published`: "Your review is live."
+  - `pending`: "Thanks! We're checking it before it goes live."
+  - `rejected` or `hidden`: "This review isn't shown on the site."
+- `points.awarded` is what was already paid for this review. `points.pending` is what it will earn once published: 50, plus 50 with photos (from settings), or 0 when nothing more is due.
+- `published_at` is `null` until the review is published.
+
+## GET `/api/v1/products/:product_id/review_form`
+
+Use this before opening the composer from the product page.
+
+```json
+{
+  "eligible": true,
+  "reason": null,
+  "line_item_id": 53,
+  "variant_label": "Rose · M",
+  "existing_review": null,
+  "questions": [
+    { "key": "fit", "label": "Fit", "kind": "bipolar", "low_label": "Runs small", "high_label": "Runs large" }
+  ],
+  "display_name": "Maya R.",
+  "points": { "per_review": 50, "photo_bonus": 50 },
+  "limits": { "max_photos": 5, "max_photo_mb": 10, "title_max": 120, "body_max": 5000,
+              "photo_types": ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"] }
+}
+```
+
+- `existing_review` is the own-review shape when the customer has already reviewed the product.
+- When the customer can't review, the response is still **200**, with `eligible: false` and `reason` set to `"not_purchased"`, `"not_shipped"` or `"staff"`. Show no "Write a review" button in that case.
+
+## GET `/api/v1/account/reviewables`
+
+Products the customer has received, newest purchase first, one entry per product:
+
+```json
+{ "data": [ { "line_item_id": 53, "order_number": "R123", "product_id": 1, "slug": "rib-knit-wrap-top",
+              "name": "Rib-Knit Wrap Top", "image_url": "https://…", "variant_label": "Rose · M",
+              "purchased_at": "2026-11-12T…Z",
+              "existing_review": { "id": 77, "rating": 5, "status": "published" },
+              "questions": [ { "key": "fit", "label": "Fit", "kind": "bipolar", "low_label": "Runs small", "high_label": "Runs large" } ] } ],
+  "points": { "per_review": 50, "photo_bonus": 50 } }
+```
+
+`existing_review` is `null` when the product hasn't been reviewed yet.
+
+## GET `/api/v1/account/reviews?page=&per_page=`
+
+`{ "data": [own review], "meta": { page, per_page, total_count, total_pages } }`, newest first, any status.
+
+## POST `/api/v1/reviews` (multipart/form-data, or JSON without photos)
+
+| field | |
+|---|---|
+| `product_id` | slug or id, required |
+| `line_item_id` | optional; which purchase this review is for |
+| `rating` | 1–5, required |
+| `title`, `body`, `display_name` | optional |
+| `attribute_ratings[fit]` | 1–5 per question key |
+| `photos[]` | files, up to 5 |
+
+- Responses:
+  - **201** `{ "review": own review }` for a new review.
+  - **200** when the customer already reviewed the product. Posting again edits that review.
+  - **403** `code: not_eligible` (not bought, or not shipped yet) or `code: forbidden` (staff account).
+  - **422** `{ error, fields }`, for example `fields.photos`, `fields.rating`, or `fields.attribute_ratings` for an unknown question.
+  - **429** after 10 reviews in an hour.
+  - **503** `code: not_enabled` while reviews are switched off in admin.
+- An edit goes back through moderation. A previously rejected or hidden review always waits for a person.
+
+## PATCH `/api/v1/reviews/:id`
+
+Takes the same fields as POST, minus `product_id` and `line_item_id`, plus `remove_photo_ids[]` (attachment ids from `photos[].id`). Photos sent in `photos[]` are added to the existing ones, and the total must stay at 5 or fewer.
+- Only the review's own customer can edit it. Any other id returns **404**.
+- Success returns **200** `{ "review": own review }`.
+
+## DELETE `/api/v1/reviews/:id`
+
+**204**. Removes the customer's own review and its photos, and updates the stats. Points already earned stay.
+
+## POST `/api/v1/reviews/:id/votes` `{ "helpful": true | false }`
+
+- Signed in: the vote is counted per account. Anonymous: send an `X-Visitor-Id` header, a random id the storefront keeps in localStorage; without it the response is **422**.
+- Response: **200** `{ "helpful_count": 25, "unhelpful_count": 1, "your_vote": true }`.
+- The review must be published, otherwise **404**. Customers can't vote on their own review (**422**).
+- Rate limit: 60 votes an hour per account; **429** after that.
+
+## POST `/api/v1/reports` (existing endpoint)
+
+Body: `{ "target": { "type": "review", "id": 77 }, "reason": "spam", "details": "…" }`. Bearer required.
+- `reason` is one of `spam harassment hate sexual violence impersonation self_harm other`.
+- Response: **201** `{ id }`. **404** for an unknown or unpublished review. **422** for reporting your own review.
+- Three open reports send a review back to moderation (`pending`). It reappears only if an admin publishes it again.

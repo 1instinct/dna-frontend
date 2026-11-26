@@ -4,15 +4,19 @@ import { QueryKeys } from "../queryKeys";
 import constants from "../../utilities/constants";
 
 // Fetch a single order by number (for guest checkout)
+const ORDER_INCLUDES = "line_items,variants,billing_address,shipping_address";
+
 export const fetchOrder = async (orderNumber: string, orderToken?: string) => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
 
   // For authenticated users
   if (token?.access_token) {
+    // Without include, `included` comes back empty and the order page lists no items.
     const response = await spreeClient.account.completedOrder(
       { bearerToken: token.access_token },
-      orderNumber
+      orderNumber,
+      { include: ORDER_INCLUDES }
     );
     if (response.isSuccess()) {
       return response.success();
@@ -25,7 +29,8 @@ export const fetchOrder = async (orderNumber: string, orderToken?: string) => {
   if (orderToken) {
     const response = await spreeClient.order.status(
       { orderToken },
-      orderNumber
+      orderNumber,
+      { include: ORDER_INCLUDES }
     );
     if (response.isSuccess()) {
       return response.success();

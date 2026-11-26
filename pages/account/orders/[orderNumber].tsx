@@ -6,6 +6,7 @@ import { Layout } from "../../../components/Layout";
 import { Loading } from "../../../components/Loading";
 import { Button } from "@components/ui";
 import { useOrder } from "../../../hooks";
+import { OrderItemReview } from "../../../components/Reviews/OrderItemReview";
 
 const statusStyles: Record<string, string> = {
   complete: "bg-green-100 text-green-800",
@@ -161,6 +162,10 @@ export const OrderDetail = () => {
                             SKU: {variant.attributes.sku}
                           </span>
                         )}
+                        <OrderItemReview
+                          lineItemId={item.id}
+                          slug={item.attributes.slug}
+                        />
                       </div>
                       <span className="font-title text-sm font-semibold text-foreground">
                         {item.attributes.display_total}

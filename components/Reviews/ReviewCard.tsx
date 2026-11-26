@@ -7,6 +7,7 @@ import type {
   ReviewAttributeSummary,
   ReviewPhoto
 } from "../../types/reviews";
+import { ReviewActions } from "./ReviewActions";
 
 interface ReviewCardProps {
   review: Review;
@@ -14,6 +15,8 @@ interface ReviewCardProps {
   attributes: ReviewAttributeSummary[];
   productName?: string;
   onOpenPhoto: (photos: ReviewPhoto[], index: number) => void;
+  /** The signed-in viewer wrote this one: no vote or report buttons. */
+  isOwn?: boolean;
 }
 
 const STORE_NAME = process.env.NEXT_PUBLIC_SHORT_TITLE || "DNA";
@@ -41,7 +44,8 @@ export const ReviewCard = ({
   review,
   attributes,
   productName,
-  onOpenPhoto
+  onOpenPhoto,
+  isOwn = false
 }: ReviewCardProps) => {
   const date = formatReviewDate(review.published_at);
   const lines = attributeLines(review, attributes);
@@ -164,13 +168,19 @@ export const ReviewCard = ({
           </div>
         )}
 
-        {/* Read-only until voting ships in M2.5. */}
-        {review.helpful_count > 0 && (
+        {isOwn ? (
           <p className="m-0 inline-flex items-center gap-1.5 font-body text-xs text-muted-foreground">
             <ThumbsUp className="h-3.5 w-3.5" aria-hidden="true" />
-            {pluralize(review.helpful_count, "person", "people")} found this
-            helpful
+            Your review
+            {review.helpful_count > 0 &&
+              ` · ${pluralize(
+                review.helpful_count,
+                "person",
+                "people"
+              )} found it helpful`}
           </p>
+        ) : (
+          <ReviewActions review={review} />
         )}
       </div>
     </article>

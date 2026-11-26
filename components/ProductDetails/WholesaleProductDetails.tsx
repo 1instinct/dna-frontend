@@ -385,6 +385,9 @@ export const WholesaleProductDetails = ({
                 <RatingSummary
                   attributes={thisProduct?.data?.attributes}
                   wholesale
+                  productId={productSlug}
+                  productName={thisProduct?.data?.attributes?.name}
+                  align="center"
                 />
 
                 {/* Favorite Button */}

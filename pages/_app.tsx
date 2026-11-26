@@ -10,6 +10,7 @@ import Head from "next/head";
 import * as tracking from "../config/tracking";
 import { captureUtmParams } from "../hooks/useUtmParams";
 import { useWholesaleMode } from "../hooks/useWholesaleMode";
+import { Toaster } from "../components/ui/toaster";
 
 // Styles
 import "../styles/globals.css";
@@ -102,6 +103,7 @@ export default function MyApp(appProps: AppProps): JSX.Element {
             />
             <PageWithMode {...appProps} />
           </div>
+          <Toaster />
         </AuthProvider>
       </Hydrate>
     </QueryClientProvider>

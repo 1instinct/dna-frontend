@@ -1,11 +1,33 @@
-import { useInfiniteQuery, useQuery } from "react-query";
+import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient
+} from "react-query";
 import { dnaFetch, isDnaApiError, DnaAuthMode } from "@lib/api/dnaFetch";
-import { normalizeReviewFilters, NormalizedReviewFilters } from "@lib/reviews";
+import {
+  getVisitorId,
+  normalizeReviewFilters,
+  NormalizedReviewFilters
+} from "@lib/reviews";
+import { useAuth } from "../../config/auth";
 import type {
+  CreateReviewInput,
+  MyReviewsResponse,
+  OwnReview,
+  ReportReviewInput,
+  Review,
+  ReviewForm,
+  ReviewablesResponse,
   ReviewListFilters,
   ReviewListResponse,
+  ReviewMutationResponse,
   ReviewScope,
-  ReviewSummary
+  ReviewSummary,
+  ReviewVoteResult,
+  UpdateReviewInput
 } from "../../types/reviews";
 import { QueryKeys } from "../queryKeys";
 
@@ -159,3 +181,381 @@ export const useProductReviews = (
     }
   );
 };
+
+/* ------------------------------------------------------------------ */
+/* Write path (M2): composer data, own reviews, votes, reports          */
+/* ------------------------------------------------------------------ */
+
+/** The signed-in account id, or null. Part of every per-user query key. */
+export const useReviewUserId = (): string | null => {
+  const { user } = useAuth();
+  const id = (user as { data?: { id?: string | number } } | null | undefined)
+    ?.data?.id;
+  return user ? String(id ?? "me") : null;
+};
+
+export const reviewFormKey = (
+  productId: string | number,
+  userId: string | null
+) => [QueryKeys.REVIEW_FORM, String(productId), userId] as const;
+
+/**
+ * `GET /products/:id/review_form`: eligibility, the customer's existing
+ * review, questions, limits and points. Only runs when signed in; signed-out
+ * shoppers never see a "Write a review" button on the PDP.
+ */
+export const useReviewForm = (
+  productId: string | number | undefined,
+  { enabled = true }: ReviewQueryOptions = {}
+) => {
+  const userId = useReviewUserId();
+  return useQuery<ReviewForm, unknown>(
+    reviewFormKey(productId || "", userId),
+    ({ signal }) =>
+      dnaFetch<ReviewForm>(productPath(productId as string, "review_form"), {
+        auth: "required",
+        signal
+      }),
+    {
+      enabled: enabled && !!productId && !!userId,
+      staleTime: 60_000,
+      retry: retryReviews,
+      refetchOnWindowFocus: false
+    }
+  );
+};
+
+/** `GET /account/reviewables`: received products, newest purchase first. */
+export const useReviewables = ({ enabled = true }: ReviewQueryOptions = {}) => {
+  const userId = useReviewUserId();
+  return useQuery<ReviewablesResponse, unknown>(
+    [QueryKeys.REVIEWABLES, userId],
+    ({ signal }) =>
+      dnaFetch<ReviewablesResponse>("/account/reviewables", {
+        auth: "required",
+        signal
+      }),
+    {
+      enabled: enabled && !!userId,
+      staleTime: 60_000,
+      retry: retryReviews,
+      refetchOnWindowFocus: false
+    }
+  );
+};
+
+export const MY_REVIEWS_PER_PAGE = 10;
+
+/** `GET /account/reviews`: the customer's reviews, any status, newest first. */
+export const useMyReviews = ({ enabled = true }: ReviewQueryOptions = {}) => {
+  const userId = useReviewUserId();
+  return useInfiniteQuery<MyReviewsResponse, unknown>(
+    [QueryKeys.MY_REVIEWS, userId],
+    ({ pageParam = 1, signal }) =>
+      dnaFetch<MyReviewsResponse>("/account/reviews", {
+        query: { page: pageParam, per_page: MY_REVIEWS_PER_PAGE },
+        auth: "required",
+        signal
+      }),
+    {
+      enabled: enabled && !!userId,
+      getNextPageParam: (last) =>
+        last?.meta && last.meta.page < last.meta.total_pages
+          ? last.meta.page + 1
+          : undefined,
+      staleTime: 30_000,
+      retry: retryReviews,
+      refetchOnWindowFocus: false
+    }
+  );
+};
+
+const appendText = (
+  form: FormData,
+  key: string,
+  value: string | undefined,
+  keepEmpty: boolean
+) => {
+  if (value === undefined) return;
+  if (!keepEmpty && value.trim() === "") return;
+  form.append(key, value);
+};
+
+/** Shared multipart body for POST and PATCH. */
+const reviewFormData = (
+  input: Partial<CreateReviewInput> & UpdateFieldsOnly,
+  { keepEmpty }: { keepEmpty: boolean }
+): FormData => {
+  const form = new FormData();
+  if (input.product_id !== undefined) {
+    form.append("product_id", String(input.product_id));
+  }
+  if (input.line_item_id) {
+    form.append("line_item_id", String(input.line_item_id));
+  }
+  if (input.rating) form.append("rating", String(input.rating));
+  appendText(form, "title", input.title, keepEmpty);
+  appendText(form, "body", input.body, keepEmpty);
+  appendText(form, "display_name", input.display_name, false);
+  Object.keys(input.attribute_ratings || {}).forEach((key) => {
+    const value = input.attribute_ratings?.[key];
+    if (typeof value === "number" && value >= 1 && value <= 5) {
+      form.append(`attribute_ratings[${key}]`, String(value));
+    }
+  });
+  (input.photos || []).forEach((photo, index) => {
+    const name =
+      photo instanceof File && photo.name ? photo.name : `photo-${index}.jpg`;
+    form.append("photos[]", photo, name);
+  });
+  (input.remove_photo_ids || []).forEach((id) =>
+    form.append("remove_photo_ids[]", String(id))
+  );
+  return form;
+};
+
+interface UpdateFieldsOnly {
+  remove_photo_ids?: Array<number | string>;
+}
+
+/** Everything a write can change: stats, lists, eligibility, own reviews. */
+const invalidateAfterWrite = (queryClient: ReturnType<typeof useQueryClient>) =>
+  Promise.all([
+    queryClient.invalidateQueries(QueryKeys.REVIEW_SUMMARY),
+    queryClient.invalidateQueries(QueryKeys.PRODUCT_REVIEWS),
+    queryClient.invalidateQueries(QueryKeys.REVIEWABLES),
+    queryClient.invalidateQueries(QueryKeys.MY_REVIEWS),
+    queryClient.invalidateQueries(QueryKeys.REVIEW_FORM),
+    // The PDP star line reads avg_rating from the product payload.
+    queryClient.invalidateQueries(QueryKeys.PRODUCT)
+  ]);
+
+/**
+ * `POST /reviews` (multipart). Returns the own-review shape; posting for a
+ * product the customer already reviewed edits that review (200).
+ */
+export const useCreateReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation<OwnReview, unknown, CreateReviewInput>(
+    async (input) => {
+      const response = await dnaFetch<ReviewMutationResponse>("/reviews", {
+        method: "POST",
+        formData: reviewFormData(input, { keepEmpty: false }),
+        auth: "required"
+      });
+      return response.review;
+    },
+    { onSuccess: () => invalidateAfterWrite(queryClient) }
+  );
+};
+
+/** `PATCH /reviews/:id` (multipart). New photos add to the kept ones. */
+export const useUpdateReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation<OwnReview, unknown, UpdateReviewInput>(
+    async ({ id, ...input }) => {
+      const response = await dnaFetch<ReviewMutationResponse>(
+        `/reviews/${encodeURIComponent(String(id))}`,
+        {
+          method: "PATCH",
+          // Empty strings clear a title or body the customer deleted.
+          formData: reviewFormData(input, { keepEmpty: true }),
+          auth: "required"
+        }
+      );
+      return response.review;
+    },
+    { onSuccess: () => invalidateAfterWrite(queryClient) }
+  );
+};
+
+/** `DELETE /reviews/:id`. Points already earned stay. */
+export const useDeleteReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation<void, unknown, number>(
+    (id) =>
+      dnaFetch<void>(`/reviews/${encodeURIComponent(String(id))}`, {
+        method: "DELETE",
+        auth: "required"
+      }),
+    { onSuccess: () => invalidateAfterWrite(queryClient) }
+  );
+};
+
+/* Votes --------------------------------------------------------------- */
+
+/** localStorage key remembering this browser's helpful votes. */
+export const REVIEW_VOTES_STORAGE_KEY = "dna_review_votes";
+const MAX_STORED_VOTES = 300;
+
+type VoteMap = Record<string, boolean>;
+
+const readStoredVotes = (): VoteMap => {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.localStorage.getItem(REVIEW_VOTES_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+};
+
+const writeStoredVotes = (votes: VoteMap) => {
+  if (typeof window === "undefined") return;
+  try {
+    const keys = Object.keys(votes);
+    const trimmed: VoteMap = {};
+    keys.slice(Math.max(0, keys.length - MAX_STORED_VOTES)).forEach((key) => {
+      trimmed[key] = votes[key];
+    });
+    window.localStorage.setItem(
+      REVIEW_VOTES_STORAGE_KEY,
+      JSON.stringify(trimmed)
+    );
+  } catch {
+    // Storage full or blocked: the vote still counts on the server.
+  }
+};
+
+const votesKey = [QueryKeys.REVIEW_VOTES] as const;
+
+/** This browser's helpful votes, `{ [reviewId]: true | false }`. */
+export const useReviewVotes = () =>
+  useQuery<VoteMap>(votesKey, () => readStoredVotes(), {
+    staleTime: Infinity,
+    cacheTime: Infinity,
+    refetchOnWindowFocus: false,
+    // Server-rendered markup has no votes; the browser fills them in.
+    initialData: () => (typeof window === "undefined" ? {} : readStoredVotes())
+  });
+
+type ReviewPages = InfiniteData<ReviewListResponse>;
+
+const patchReviewInLists = (
+  queryClient: ReturnType<typeof useQueryClient>,
+  reviewId: number,
+  patch: (review: Review) => Review
+) =>
+  queryClient.setQueriesData<ReviewPages | undefined>(
+    QueryKeys.PRODUCT_REVIEWS,
+    (data) => {
+      if (!data?.pages) return data;
+      return {
+        ...data,
+        pages: data.pages.map((page) => ({
+          ...page,
+          data: (page.data || []).map((review) =>
+            review.id === reviewId ? patch(review) : review
+          )
+        }))
+      };
+    }
+  );
+
+export interface VoteReviewInput {
+  reviewId: number;
+  helpful: boolean;
+}
+
+interface VoteContext {
+  previousLists: Array<[QueryKey, unknown]>;
+  previousVotes: VoteMap;
+}
+
+/**
+ * `POST /reviews/:id/votes`, optimistic. Sends `X-Visitor-Id` (a random id
+ * kept in localStorage) and the Bearer token when signed in. Counts update
+ * in every cached list right away and settle to the server's numbers.
+ */
+export const useVoteReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation<ReviewVoteResult, unknown, VoteReviewInput, VoteContext>(
+    ({ reviewId, helpful }) => {
+      const visitorId = getVisitorId();
+      return dnaFetch<ReviewVoteResult>(
+        `/reviews/${encodeURIComponent(String(reviewId))}/votes`,
+        {
+          method: "POST",
+          body: { helpful },
+          auth: "optional",
+          headers: visitorId ? { "X-Visitor-Id": visitorId } : undefined
+        }
+      );
+    },
+    {
+      onMutate: async ({ reviewId, helpful }) => {
+        await queryClient.cancelQueries(QueryKeys.PRODUCT_REVIEWS);
+        const previousLists = queryClient.getQueriesData(
+          QueryKeys.PRODUCT_REVIEWS
+        );
+        const previousVotes =
+          queryClient.getQueryData<VoteMap>(votesKey) || readStoredVotes();
+        const before = previousVotes[String(reviewId)];
+        if (before !== helpful) {
+          patchReviewInLists(queryClient, reviewId, (review) => ({
+            ...review,
+            helpful_count: Math.max(
+              0,
+              review.helpful_count +
+                (helpful ? 1 : 0) -
+                (before === true ? 1 : 0)
+            ),
+            unhelpful_count: Math.max(
+              0,
+              review.unhelpful_count +
+                (helpful ? 0 : 1) -
+                (before === false ? 1 : 0)
+            )
+          }));
+        }
+        queryClient.setQueryData<VoteMap>(votesKey, {
+          ...previousVotes,
+          [String(reviewId)]: helpful
+        });
+        return { previousLists, previousVotes };
+      },
+      onError: (_error, _input, context) => {
+        if (!context) return;
+        context.previousLists.forEach(([key, data]) =>
+          queryClient.setQueryData(key, data)
+        );
+        queryClient.setQueryData(votesKey, context.previousVotes);
+      },
+      onSuccess: (result, { reviewId }) => {
+        patchReviewInLists(queryClient, reviewId, (review) => ({
+          ...review,
+          helpful_count: result.helpful_count,
+          unhelpful_count: result.unhelpful_count
+        }));
+        const votes = {
+          ...(queryClient.getQueryData<VoteMap>(votesKey) || {})
+        };
+        if (result.your_vote === null || result.your_vote === undefined) {
+          delete votes[String(reviewId)];
+        } else {
+          votes[String(reviewId)] = result.your_vote;
+        }
+        queryClient.setQueryData(votesKey, votes);
+        writeStoredVotes(votes);
+      }
+    }
+  );
+};
+
+/* Reports ------------------------------------------------------------- */
+
+/** `POST /reports` with a review target. Bearer required. */
+export const useReportReview = () =>
+  useMutation<{ id: number }, unknown, ReportReviewInput>(
+    ({ reviewId, reason, details }) =>
+      dnaFetch<{ id: number }>("/reports", {
+        method: "POST",
+        body: {
+          target: { type: "review", id: reviewId },
+          reason,
+          details: details?.trim() ? details.trim() : undefined
+        },
+        auth: "required"
+      })
+  );

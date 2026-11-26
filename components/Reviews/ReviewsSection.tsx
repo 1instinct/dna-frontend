@@ -7,7 +7,12 @@ import {
   REVIEWS_ENABLED,
   REVIEWS_PER_PAGE
 } from "@lib/reviews";
-import { useProductReviews, useReviewSummary } from "@hooks/useReviews";
+import {
+  useProductReviews,
+  useReviewForm,
+  useReviewSummary,
+  useReviewUserId
+} from "@hooks/useReviews";
 import type {
   ReviewPhoto,
   ReviewScope,
@@ -21,6 +26,7 @@ import { ReviewCard } from "./ReviewCard";
 import { ReviewMediaStrip } from "./ReviewMediaStrip";
 import { AttributeBars, RatingOverview } from "./ReviewsOverview";
 import { ReviewsToolbar } from "./ReviewsToolbar";
+import { WriteReviewButton } from "./WriteReviewButton";
 
 interface ReviewsSectionProps {
   /** Product slug (or id). Must match the SSR prefetch key. */
@@ -159,6 +165,10 @@ const ReviewsSectionInner = ({
   }, [wholesale]);
 
   const summaryQuery = useReviewSummary(productId, requestedScope);
+  // Signed-in only: tells us which review is the viewer's own (no voting on it).
+  const userId = useReviewUserId();
+  const formQuery = useReviewForm(productId, { enabled: !!userId });
+  const ownReviewId = formQuery.data?.existing_review?.id ?? null;
   const summary = summaryQuery.data;
   // The API answers 403 for non-wholesale tokens; the hook falls back to retail.
   const scope: ReviewScope = summary?.scope || requestedScope;
@@ -266,6 +276,7 @@ const ReviewsSectionInner = ({
             attributes={attributes}
             productName={productName}
             onOpenPhoto={openPhotos}
+            isOwn={ownReviewId === review.id}
           />
         ))}
       </div>
@@ -316,6 +327,12 @@ const ReviewsSectionInner = ({
                 ? "No wholesale reviews yet."
                 : "No reviews yet. Bought this? Your review helps the next person."}
             </p>
+            {!wholesaleOnly && (
+              <WriteReviewButton
+                productId={productId}
+                productName={productName}
+              />
+            )}
           </EmptyBox>
         </>
       );
@@ -395,7 +412,7 @@ const ReviewsSectionInner = ({
       aria-labelledby={headingId}
       className={cn("mt-12 grid scroll-mt-24 gap-7", className)}
     >
-      <div className="border-b border-border/60">
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-border/60">
         <h2
           id={headingId}
           tabIndex={-1}
@@ -407,6 +424,14 @@ const ReviewsSectionInner = ({
             <span className="tabular-nums"> ({summary?.ratings_count})</span>
           )}
         </h2>
+        {hasRatings && (
+          <WriteReviewButton
+            productId={productId}
+            productName={productName}
+            size="sm"
+            className="mb-2"
+          />
+        )}
       </div>
 
       {renderBody()}

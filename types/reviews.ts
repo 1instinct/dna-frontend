@@ -203,16 +203,88 @@ export interface ReviewVoteInput {
   helpful: boolean;
 }
 
+/** `POST /reviews/:id/votes` response. */
 export interface ReviewVoteResult {
   helpful_count: number;
   unhelpful_count: number;
   /** The caller's vote after this request. */
-  helpful: boolean | null;
+  your_vote: boolean | null;
 }
 
 /* ------------------------------------------------------------------ */
-/* Writing reviews                                                     */
+/* Writing reviews (M2, see "M2 write path" in the API contract)       */
 /* ------------------------------------------------------------------ */
+
+/** Error `code` on write endpoints (403/422/503). */
+export type ReviewErrorCode =
+  | "not_eligible"
+  | "forbidden"
+  | "not_enabled"
+  | "invalid";
+
+/** Points for one review. Same amounts for every rating (FTC: sentiment-blind). */
+export interface ReviewPoints {
+  /** Already paid for this review. */
+  awarded: number;
+  /** Still due once published (50, +50 with photos), or 0. */
+  pending: number;
+}
+
+/** Point settings shown before writing ("50 points, +50 with a photo"). */
+export interface ReviewPointSettings {
+  per_review: number;
+  photo_bonus: number;
+}
+
+export interface ReviewProductRef {
+  id: number;
+  slug: string;
+  name: string;
+  image_url: string | null;
+}
+
+/**
+ * A review as its author sees it: the public shape plus status, a
+ * customer-facing status message (never a moderation reason), the product
+ * and points. `published_at` is null until published.
+ */
+export interface OwnReview extends Review {
+  status: ReviewStatus;
+  status_message: string;
+  product: ReviewProductRef;
+  points: ReviewPoints;
+}
+
+/** Kept for older imports. */
+export type MyReview = OwnReview;
+
+/** Composer question; same shape as an attribute definition. */
+export type ReviewQuestion = ReviewAttributeDefinition;
+
+export interface ReviewFormLimits {
+  max_photos: number;
+  max_photo_mb: number;
+  title_max: number;
+  body_max: number;
+  /** MIME types the API accepts, e.g. image/jpeg, image/heic. */
+  photo_types: string[];
+}
+
+export type ReviewIneligibleReason = "not_purchased" | "not_shipped" | "staff";
+
+/** `GET /products/:product_id/review_form` (Bearer). Always 200. */
+export interface ReviewForm {
+  eligible: boolean;
+  reason: ReviewIneligibleReason | null;
+  line_item_id: number | null;
+  variant_label: string | null;
+  existing_review: OwnReview | null;
+  questions: ReviewQuestion[];
+  /** Suggested display name, e.g. "Maya R.". */
+  display_name: string | null;
+  points: ReviewPointSettings;
+  limits: ReviewFormLimits;
+}
 
 export interface ReviewableExistingReview {
   id: number;
@@ -220,7 +292,7 @@ export interface ReviewableExistingReview {
   status: ReviewStatus;
 }
 
-/** A purchased (and shipped) line item the customer can review. */
+/** A received product the customer can review (one entry per product). */
 export interface Reviewable {
   line_item_id: number;
   order_number: string;
@@ -229,47 +301,66 @@ export interface Reviewable {
   name: string;
   image_url: string | null;
   variant_label: string | null;
+  purchased_at?: string | null;
   existing_review: ReviewableExistingReview | null;
+  questions?: ReviewQuestion[];
 }
 
-export interface ReviewPhotoUpload {
-  file: File | Blob;
-  alt?: string;
+/** `GET /account/reviewables`, newest purchase first. */
+export interface ReviewablesResponse {
+  data: Reviewable[];
+  points?: ReviewPointSettings;
+}
+
+/** `GET /account/reviews`, newest first, any status. */
+export type MyReviewsResponse = Paginated<OwnReview>;
+
+/** `POST /reviews` and `PATCH /reviews/:id` response. */
+export interface ReviewMutationResponse {
+  review: OwnReview;
 }
 
 /**
- * Body for `POST /reviews` (sent as multipart). Either a Bearer token or an
- * `X-Review-Token` authorizes it.
+ * Body for `POST /reviews` (sent as multipart). A Bearer token (or, from
+ * M4, an `X-Review-Token`) authorizes it. Posting again for a product the
+ * customer already reviewed edits that review (200).
  */
 export interface CreateReviewInput {
   product_id: number | string;
-  line_item_id?: number;
+  line_item_id?: number | null;
   rating: StarRating;
   title?: string;
   body?: string;
+  /** Sent as `attribute_ratings[fit]=2`. */
   attribute_ratings?: AttributeRatings;
   display_name?: string;
-  photos?: ReviewPhotoUpload[];
+  /** Sent as `photos[]`; already resized by the composer. */
+  photos?: Array<File | Blob>;
 }
 
 /** Body for `PATCH /reviews/:id` (own review; goes back through moderation). */
 export interface UpdateReviewInput
   extends Partial<Omit<CreateReviewInput, "product_id" | "line_item_id">> {
   id: number;
-  /** Ids of existing photos to remove. */
+  /** Ids of existing photos to remove (`photos[].id`). */
   remove_photo_ids?: Array<number | string>;
 }
 
-/** A review as its author sees it on `/account/reviews`. */
-export interface MyReview extends Review {
-  status: ReviewStatus;
-  moderation_reason?: string | null;
-  product: {
-    id: number;
-    slug: string;
-    name: string;
-    image_url: string | null;
-  };
+export type ReportReason =
+  | "spam"
+  | "harassment"
+  | "hate"
+  | "sexual"
+  | "violence"
+  | "impersonation"
+  | "self_harm"
+  | "other";
+
+/** `POST /reports` body for a review. */
+export interface ReportReviewInput {
+  reviewId: number;
+  reason: ReportReason;
+  details?: string;
 }
 
 /* ------------------------------------------------------------------ */

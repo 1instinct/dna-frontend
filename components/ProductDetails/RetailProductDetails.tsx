@@ -377,7 +377,11 @@ export const RetailProductDetails = ({
                 <h2 className="font-title text-2xl font-semibold text-foreground md:text-3xl">
                   {thisProduct?.data?.attributes?.name}
                 </h2>
-                <RatingSummary attributes={thisProduct?.data?.attributes} />
+                <RatingSummary
+                  attributes={thisProduct?.data?.attributes}
+                  productId={productSlug}
+                  productName={thisProduct?.data?.attributes?.name}
+                />
 
                 {/* Favorite Button */}
                 <button

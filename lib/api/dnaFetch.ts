@@ -137,10 +137,19 @@ const extractFieldErrors = (body: unknown): DnaFieldErrors | undefined => {
     : undefined;
   if (!source) return undefined;
   const result: DnaFieldErrors = {};
-  Object.keys(source).forEach((key) => {
-    const messages = toStringArray(source[key]);
+  const collect = (key: string, value: unknown) => {
+    // Nested hashes (e.g. `attribute_ratings: { fit: [...] }`) become
+    // dotted keys: `attribute_ratings.fit`.
+    if (isRecord(value)) {
+      Object.keys(value).forEach((child) =>
+        collect(`${key}.${child}`, value[child])
+      );
+      return;
+    }
+    const messages = toStringArray(value);
     if (messages.length) result[key] = messages;
-  });
+  };
+  Object.keys(source).forEach((key) => collect(key, source[key]));
   return Object.keys(result).length ? result : undefined;
 };
 
