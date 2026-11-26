@@ -228,6 +228,10 @@ drop the prefix and are read only in `pages/api/*` or `lib/server/*`:
 - `NEXT_PUBLIC_IOS_APP_URL`, `NEXT_PUBLIC_ANDROID_APP_URL` - fallback store links for `components/AppCallout` (the admin's `app_links` homepage section overrides them)
 - `NEXT_PUBLIC_FEATURED_TAXON` - Spree taxon permalink for the `/browse` Featured shelf (default `collections/featured`)
 - `NEXT_PUBLIC_SENTRY_DSN` - Sentry error reporting; empty disables it (the other `SENTRY_*` vars are in `.env.example`)
+- `NEXT_PUBLIC_DIGITAL_KINDS` - digital product kinds and their labels (`kind:Label:Plural`, comma separated); empty shows any kind the backend sends, labelled from its name
+- `NEXT_PUBLIC_APP_LIBRARY_URL` - optional app link (e.g. `exampleapp://library`); library items then offer "Open in app" at `<url>/<variant id>`
+- `NEXT_PUBLIC_MARKETPLACE_TAXON` - the creator marketplace's Spree taxon (backend default `marketplace`); empty turns off the /browse marketplace switch and the account Creator entry
+- `NEXT_PUBLIC_CREATOR_SHARE_PERCENT` - optional creator share shown on /creators
 
 ## Common Tasks
 

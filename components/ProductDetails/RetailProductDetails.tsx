@@ -34,6 +34,8 @@ import { useRecentlyViewed } from "../../hooks/useRecentlyViewed";
 import { RecentlyViewed } from "../RecentlyViewed";
 import { ProductGallery } from "./ProductGallery";
 import { buildGallery } from "../../lib/productMedia";
+import { digitalKindOf } from "../../lib/digitalKinds";
+import { DigitalBlock } from "./DigitalBlock";
 import constants from "../../utilities/constants";
 
 interface RetailProductDetailsProps {
@@ -63,6 +65,8 @@ export const RetailProductDetails = ({
     ? defaultVariantData[0]?.id || ""
     : defaultVariantData?.id || "";
   const { data: favoriteCheck } = useCheckFavorite(defaultVariantId, !!user);
+  // Digital products carry `digital_kind`: the page adds a download block.
+  const digitalKind = digitalKindOf(thisProduct?.data);
   const toggleFavorite = useToggleFavorite();
   // Gallery: product videos first, then images in position order.
   const galleryItems = thisProduct?.data
@@ -398,6 +402,18 @@ export const RetailProductDetails = ({
                 <p className="mt-6 font-body text-sm leading-relaxed text-muted-foreground">
                   {thisProduct?.data?.attributes?.description}
                 </p>
+
+                {digitalKind && (
+                  <DigitalBlock
+                    slug={thisProduct?.data?.attributes?.slug || ""}
+                    kind={digitalKind}
+                    variantId={String(defaultVariantId)}
+                    free={
+                      parseFloat(thisProduct?.data?.attributes?.price) === 0
+                    }
+                    signedIn={!!user}
+                  />
+                )}
 
                 <hr className="my-6 border-border/30" />
 
