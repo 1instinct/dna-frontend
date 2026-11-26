@@ -1,8 +1,5 @@
 /* eslint-disable no-console */
 import React from "react";
-// import PropTypes from "prop-types";
-
-// import { Close } from '@material-ui/icons';
 
 export const ElectronicSignaturesModal = () => {
   return (
