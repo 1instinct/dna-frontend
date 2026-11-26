@@ -10,7 +10,10 @@
     --card-foreground: 0 0% 0%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
-    --primary: 0 72% 73%;
+    /* Brand colour: dark enough to pass WCAG AA (4.5:1) as text on white and behind white
+       text. Forks override --brand (and --primary/--ring) with their own colour. */
+    --brand: 0 55% 48%;
+    --primary: var(--brand);
     --primary-foreground: 0 0% 100%;
     --secondary: 18 49% 82%;
     --secondary-foreground: 0 0% 0%;
@@ -22,7 +25,7 @@
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 77%;
     --input: 0 0% 77%;
-    --ring: 0 72% 73%;
+    --ring: var(--brand);
     --radius: 0.5rem;
   }
 
@@ -33,7 +36,9 @@
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 7%;
     --popover-foreground: 0 0% 100%;
-    --primary: 0 72% 73%;
+    /* The lighter brand passes on dark backgrounds (8.6:1 on black). */
+    --brand: 0 72% 73%;
+    --primary: var(--brand);
     --primary-foreground: 0 0% 0%;
     --secondary: 0 0% 20%;
     --secondary-foreground: 0 0% 100%;
@@ -75,17 +80,18 @@
 
   ::selection {
     color: white;
-    background: #eb8b8b;
+    background: hsl(var(--brand));
   }
 
   ::-moz-selection {
     color: white;
-    background: #eb8b8b;
+    background: hsl(var(--brand));
   }
 
+  /* Links use the brand token, which passes WCAG AA on the page background. */
   a {
     cursor: pointer;
-    color: #eb8b8b;
+    color: hsl(var(--brand));
   }
 
   p {

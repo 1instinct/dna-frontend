@@ -28,9 +28,10 @@ const SearchSuggestions = ({
   const [page, setPage] = useState(1);
   const [suggestions, setSuggestions] = useState([]);
 
+  // The parent shows a spinner while suggestions load. Set it from an effect, not during render.
   useEffect(() => {
-    console.log("suggestions: ", suggestions);
-  }, [suggestions]);
+    setIsSearchLoading(isVisible && isLoading);
+  }, [isVisible, isLoading, setIsSearchLoading]);
 
   if (!isVisible) return null;
 
@@ -38,16 +39,14 @@ const SearchSuggestions = ({
     "absolute z-10 block w-full max-h-[245px] overflow-y-auto overflow-x-hidden rounded-b-xl bg-card shadow-lg";
 
   if (isLoading) {
-    setIsSearchLoading(true);
     return (
-      <div
-        className={wrapperClass}
-        role="listbox"
-        aria-labelledby={labelId}
-        id={id}
-      >
+      <div className={wrapperClass} role="status" id={id}>
+        <span className="sr-only">Loading suggestions</span>
         <div className="flex items-center justify-center py-4">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground border-t-brand" />
+          <div
+            className="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground border-t-brand"
+            aria-hidden="true"
+          />
         </div>
       </div>
     );
@@ -55,13 +54,10 @@ const SearchSuggestions = ({
 
   if (error) {
     return (
-      <div
-        className={wrapperClass}
-        role="listbox"
-        aria-labelledby={labelId}
-        id={id}
-      >
-        <p className="px-4 py-3 text-sm text-destructive">Error {status}</p>
+      <div className={wrapperClass} role="alert" id={id}>
+        <p className="px-4 py-3 text-sm text-destructive">
+          Suggestions couldn&apos;t load ({status}).
+        </p>
       </div>
     );
   }
@@ -69,25 +65,21 @@ const SearchSuggestions = ({
   if (!data || data.data.length === 0) return null;
 
   return (
-    <div
-      className={wrapperClass}
-      role="listbox"
-      aria-labelledby={labelId}
-      id={id}
-    >
+    <ul className={wrapperClass} aria-labelledby={labelId} id={id}>
       {isVisible &&
         data?.data?.map((item: any, index: any) => {
           return (
-            <Suggestion
-              suggestion={item}
-              key={`${item.id}-${index}`}
-              toggleVisibility={(e: any) => toggleVisibility(e)}
-              onChange={(e: any) => onSelect(e)}
-              query={query}
-            />
+            <li key={`${item.id}-${index}`}>
+              <Suggestion
+                suggestion={item}
+                toggleVisibility={(e: any) => toggleVisibility(e)}
+                onChange={(e: any) => onSelect(e)}
+                query={query}
+              />
+            </li>
           );
         })}
-    </div>
+    </ul>
   );
 };
 

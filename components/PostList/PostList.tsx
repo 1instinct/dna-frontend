@@ -6,7 +6,7 @@ export const PostList: React.FC<PostListProps> = () => {
   const [postCount, setPostCount] = useState(10);
   const { data, isLoading, isFetching } = usePosts(postCount);
 
-  if (isLoading) return <div>Loading</div>;
+  if (isLoading) return <div role="status">Loading</div>;
 
   return (
     <section className="pb-5">
@@ -15,15 +15,15 @@ export const PostList: React.FC<PostListProps> = () => {
           <li key={post.id} className="mb-2.5 block">
             <div className="flex items-center">
               <span className="mr-1.5 text-sm">{index + 1}. </span>
-              <a href="#" className="mr-2.5 border-0 pb-0 text-sm no-underline">
-                {post.title}
-              </a>
+              {/* Posts have no page yet, so the title is text, not a link to "#". */}
+              <span className="mr-2.5 border-0 pb-0 text-sm">{post.title}</span>
             </div>
           </li>
         ))}
       </ul>
       {postCount <= 90 && (
         <button
+          type="button"
           onClick={() => setPostCount(postCount + 10)}
           disabled={isFetching}
           className="before:mr-1.5 before:inline-block before:h-0 before:w-0 before:self-center before:border-x-[4px] before:border-t-[6px] before:border-x-transparent before:border-t-white before:content-['']"

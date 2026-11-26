@@ -101,7 +101,7 @@ class MyDocument extends Document {
       `;
 
     return (
-      <Html>
+      <Html lang={process.env.NEXT_PUBLIC_SITE_LANG || "en"}>
         <Head>
           <meta charSet="utf-8" />
           <meta name="description" content={siteDesc} />

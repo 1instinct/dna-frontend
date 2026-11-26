@@ -89,7 +89,8 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
       <div className="flex items-center justify-center">
         <Link
           href="/"
-          className="no-underline text-foreground hover:text-brand transition-colors"
+          aria-label={siteTitle ? `${siteTitle} home` : "Home"}
+          className="rounded-md no-underline text-foreground hover:text-brand transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {logoPath ? (
             <Image
@@ -98,7 +99,7 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
                   ? logoPath
                   : `/${logoPath}`
               }
-              alt={siteTitle}
+              alt=""
               width={0}
               height={0}
               sizes="(max-width: 768px) 100px, 141px"
@@ -106,7 +107,7 @@ export const Footer: React.FC<FootProps> = ({ classes, footerData }) => {
               priority
             />
           ) : (
-            FooterLogo
+            <span aria-hidden="true">{FooterLogo}</span>
           )}
         </Link>
       </div>

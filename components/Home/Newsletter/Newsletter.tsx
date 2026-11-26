@@ -9,6 +9,23 @@ export interface NewsletterProps {
   showSocialLinks?: boolean;
 }
 
+// Only networks with a configured URL are shown; a link to "#" goes nowhere.
+const socialLinks = [
+  { label: "Facebook", glyph: "f", href: process.env.NEXT_PUBLIC_FACEBOOK_URL },
+  {
+    label: "X (Twitter)",
+    glyph: "𝕏",
+    href: process.env.NEXT_PUBLIC_TWITTER_URL
+  },
+  {
+    label: "Instagram",
+    glyph: "📷",
+    href: process.env.NEXT_PUBLIC_INSTAGRAM_URL
+  }
+].filter((link): link is { label: string; glyph: string; href: string } =>
+  Boolean(link.href)
+);
+
 const Newsletter: React.FC<NewsletterProps> = ({
   title,
   content,
@@ -39,29 +56,20 @@ const Newsletter: React.FC<NewsletterProps> = ({
         <p className="mt-4 text-sm text-muted-foreground">{privacyText}</p>
       )}
 
-      {showSocialLinks && (
+      {showSocialLinks && socialLinks.length > 0 && (
         <div className="mt-8 flex justify-center gap-4">
-          <a
-            href="#"
-            aria-label="Facebook"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-brand font-bold text-white transition-colors hover:bg-brand/80"
-          >
-            f
-          </a>
-          <a
-            href="#"
-            aria-label="Twitter"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-brand font-bold text-white transition-colors hover:bg-brand/80"
-          >
-            𝕏
-          </a>
-          <a
-            href="#"
-            aria-label="Instagram"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-brand font-bold text-white transition-colors hover:bg-brand/80"
-          >
-            📷
-          </a>
+          {socialLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              aria-label={link.label}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-brand font-bold text-white transition-colors hover:bg-brand/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <span aria-hidden="true">{link.glyph}</span>
+            </a>
+          ))}
         </div>
       )}
     </div>
