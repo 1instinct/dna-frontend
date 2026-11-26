@@ -216,18 +216,38 @@ export const StatsChart: React.FC<{
     "orders",
     totals.orders
   )} orders, ${fmt("commission", totals.commission)} commission.`;
+  // What a screen reader hears for the day the playhead (arrow keys) is on.
+  const dayText =
+    active !== null && series[active]
+      ? `${longDay(series[active].date)}: ${fmt(
+          "clicks",
+          values.clicks[active]
+        )} clicks, ${fmt("orders", values.orders[active])} orders, ${fmt(
+          "commission",
+          values.commission[active]
+        )} commission.`
+      : n > 0
+      ? "No day selected"
+      : "No data";
 
   return (
     <div>
+      {/* A slider over the days: arrows, Home and End move the playhead, and
+          aria-valuetext reads that day's numbers. */}
       <div
         ref={wrapRef}
         className={cn(
-          "relative select-none outline-none transition-opacity focus-visible:ring-2 focus-visible:ring-brand/30",
+          "relative select-none outline-none ring-offset-background transition-opacity focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           loading && "opacity-60"
         )}
         style={{ height, touchAction: "pan-y" }}
         tabIndex={n > 0 ? 0 : -1}
-        role="group"
+        role="slider"
+        aria-orientation="horizontal"
+        aria-valuemin={0}
+        aria-valuemax={Math.max(0, n - 1)}
+        aria-valuenow={active ?? 0}
+        aria-valuetext={dayText}
         aria-label={`Daily clicks, orders and commission. ${summary} Use the arrow keys to read a day.`}
         onKeyDown={onKey}
         onPointerMove={(e) => pick(e.clientX)}
@@ -380,19 +400,6 @@ export const StatsChart: React.FC<{
           </p>
         )}
       </div>
-
-      {/* Screen readers hear the day the playhead (arrow keys) is on. */}
-      <p className="sr-only" aria-live="polite" aria-atomic="true">
-        {active !== null && series[active]
-          ? `${longDay(series[active].date)}: ${fmt(
-              "clicks",
-              values.clicks[active]
-            )} clicks, ${fmt("orders", values.orders[active])} orders, ${fmt(
-              "commission",
-              values.commission[active]
-            )} commission.`
-          : ""}
-      </p>
 
       {n > 0 && (
         <details className="mt-3">

@@ -35,6 +35,7 @@ import { RecentlyViewed } from "../RecentlyViewed";
 import { ProductGallery } from "./ProductGallery";
 import { buildGallery } from "../../lib/productMedia";
 import constants from "../../utilities/constants";
+import { productArrowDirection } from "../../lib/arrowKeyNav";
 
 interface WholesaleProductDetailsProps {
   wholesale?: boolean;
@@ -208,44 +209,20 @@ export const WholesaleProductDetails = ({
   });
 
   const handleKeyPress = (event: KeyboardEvent) => {
-    const thisProductId = thisProduct?.data?.id;
-    const productId: number = parseInt(`${thisProductId}`);
-    const { key } = event;
-
-    switch (key) {
-      case "ArrowLeft": {
-        const prevProductId = productId - 1;
-        if (randomNextProductId) {
-          fetchProduct(`${prevProductId}`)
-            .then((nextProduct) => {
-              router.push(`/${nextProduct?.data?.attributes?.slug}`);
-            })
-            .catch(() => {
-              fetchProduct(randomNextProductId).then((nextProduct) => {
-                router.push(`/${nextProduct?.data?.attributes?.slug}`);
-              });
-            });
-        }
-        break;
-      }
-      case "ArrowRight": {
-        const nextProductId = productId + 1;
-        if (randomNextProductId) {
-          fetchProduct(`${nextProductId}`)
-            .then((nextProduct) => {
-              router.push(`/${nextProduct?.data?.attributes?.slug}`);
-            })
-            .catch(() => {
-              fetchProduct(randomNextProductId).then((nextProduct) => {
-                router.push(`/${nextProduct?.data?.attributes?.slug}`);
-              });
-            });
-        }
-        break;
-      }
-      default:
-        break;
-    }
+    // Left / Right step through products, but not while focus is in a field,
+    // a slider or a carousel, or a dialog (the gallery lightbox) is open.
+    const direction = productArrowDirection(event, document);
+    if (!direction || !randomNextProductId) return;
+    const productId: number = parseInt(`${thisProduct?.data?.id}`);
+    fetchProduct(`${productId + direction}`)
+      .then((nextProduct) => {
+        router.push(`/${nextProduct?.data?.attributes?.slug}`);
+      })
+      .catch(() => {
+        fetchProduct(randomNextProductId).then((nextProduct) => {
+          router.push(`/${nextProduct?.data?.attributes?.slug}`);
+        });
+      });
   };
 
   useEffect(() => {
@@ -359,15 +336,17 @@ export const WholesaleProductDetails = ({
             {/* Product Info */}
             <div className="w-full md:w-3/5">
               <div className="max-w-lg text-center text-foreground">
-                <h2 className="font-title text-2xl font-semibold md:text-3xl">
+                <h1 className="font-title text-2xl font-semibold md:text-3xl">
                   {thisProduct?.data?.attributes?.name}
-                </h2>
+                </h1>
 
                 {/* Favorite Button */}
                 <button
+                  type="button"
                   onClick={handleToggleFavorite}
                   className={cn(
                     "mx-auto mt-4 flex items-center gap-2 rounded-lg border px-5 py-2.5 font-body text-sm transition-all hover:-translate-y-px active:translate-y-0",
+                    "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     isFavorited
                       ? "border-brand bg-brand text-white hover:bg-brand/90"
                       : "border-border bg-transparent text-foreground hover:border-brand hover:text-brand"
@@ -385,6 +364,8 @@ export const WholesaleProductDetails = ({
                     {productColors.map((option: any, index: number) => (
                       <div
                         key={`variant-${index}`}
+                        role="img"
+                        aria-label={option.attributes.name}
                         className="h-[30px] w-[30px] border border-border"
                         style={{
                           backgroundColor: option.attributes.presentation
@@ -463,6 +444,8 @@ export const WholesaleProductDetails = ({
                           >
                             <div className="flex items-center justify-center p-1">
                               <div
+                                role="img"
+                                aria-label={item.attributes.name}
                                 className="h-[30px] w-[30px] border border-border"
                                 style={{
                                   backgroundColor: item.attributes.presentation
@@ -470,12 +453,17 @@ export const WholesaleProductDetails = ({
                               />
                             </div>
                             <div className="flex items-center justify-center p-1">
-                              <button className="rounded border border-border px-2 py-1 text-sm hover:bg-muted">
+                              <button
+                                type="button"
+                                aria-label={`Decrease quantity of ${item.attributes.name}`}
+                                className="rounded border border-border px-2 py-1 text-sm hover:bg-muted ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                              >
                                 -
                               </button>
                             </div>
                             <div className="flex items-center justify-center p-1">
                               <input
+                                aria-label={`Quantity of ${item.attributes.name}`}
                                 value={chosenVariantQty}
                                 type="number"
                                 min="0"
@@ -488,10 +476,12 @@ export const WholesaleProductDetails = ({
                             </div>
                             <div className="flex items-center justify-center p-1">
                               <button
+                                type="button"
                                 onClick={() =>
                                   setChosenVariantQty(chosenVariantQty + 1)
                                 }
-                                className="rounded border border-border px-2 py-1 text-sm hover:bg-muted"
+                                aria-label={`Increase quantity of ${item.attributes.name}`}
+                                className="rounded border border-border px-2 py-1 text-sm hover:bg-muted ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                               >
                                 +
                               </button>
@@ -511,8 +501,9 @@ export const WholesaleProductDetails = ({
 
                 {/* Add to Cart */}
                 <button
+                  type="button"
                   onClick={() => handleAddToCart(addItem)}
-                  className="w-full rounded-xl bg-brand px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px hover:shadow-lg active:translate-y-0"
+                  className="w-full rounded-xl bg-brand px-8 py-4 font-title text-base font-semibold uppercase tracking-wider text-white transition-all hover:bg-brand/90 hover:-translate-y-px hover:shadow-lg active:translate-y-0 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   Add to Cart
                 </button>
@@ -520,9 +511,9 @@ export const WholesaleProductDetails = ({
                 {/* Product Properties */}
                 {productProperties && productProperties.length > 0 && (
                   <div className="mt-8 text-left">
-                    <h3 className="mb-3 font-title text-base font-semibold">
+                    <h2 className="mb-3 font-title text-base font-semibold">
                       Product Info
-                    </h3>
+                    </h2>
                     <div className="space-y-1.5">
                       {productProperties.map((property: any, index: number) => (
                         <div

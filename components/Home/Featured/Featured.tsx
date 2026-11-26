@@ -22,7 +22,7 @@ const Featured: React.FC<FeaturedProps> = ({ data, title }) => {
           >
             <div className="absolute inset-0 bg-black/10 transition-all duration-500 group-hover:bg-black/30" />
             <ShimmerButton
-              className="relative z-10 opacity-0 transition-all duration-300 ease-expo-out group-hover:opacity-100 group-hover:translate-y-0 translate-y-4"
+              className="relative z-10 translate-y-4 opacity-0 transition-all duration-300 ease-expo-out group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               shimmerColor="#EB8B8B"
               background="rgba(0,0,0,0.6)"
               onClick={() => router.push("/browse")}

@@ -211,6 +211,7 @@ export const Browse: React.FC = () => {
   if (isLoading) {
     return (
       <Layout>
+        <h1 className="sr-only">Browse products</h1>
         <div className="flex min-h-[400px] items-center justify-center">
           <Loading />
         </div>
@@ -218,7 +219,10 @@ export const Browse: React.FC = () => {
     );
   }
 
-  const FilterContent = () => (
+  // Called as a function, not rendered as <FilterContent />: a component
+  // defined during render is a new type each time, so React remounted the
+  // inputs on every keystroke and focus fell out of the search field.
+  const filterContent = () => (
     <>
       {/* Search */}
       <div className="mb-6 border-b border-border/30 pb-6">
@@ -229,6 +233,7 @@ export const Browse: React.FC = () => {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
+            aria-label="Search products"
             placeholder="Search products..."
             value={filters.search}
             onChange={(e) =>
@@ -272,6 +277,7 @@ export const Browse: React.FC = () => {
         <div className="mb-3 flex items-center gap-2">
           <input
             type="number"
+            aria-label="Minimum price"
             placeholder="Min"
             value={tempPriceMin}
             onChange={(e) => setTempPriceMin(e.target.value)}
@@ -279,9 +285,12 @@ export const Browse: React.FC = () => {
             step="0.01"
             className="w-full flex-1 rounded-lg border border-border bg-background px-3 py-2 font-body text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
-          <span className="text-muted-foreground">-</span>
+          <span className="text-muted-foreground" aria-hidden>
+            -
+          </span>
           <input
             type="number"
+            aria-label="Maximum price"
             placeholder="Max"
             value={tempPriceMax}
             onChange={(e) => setTempPriceMax(e.target.value)}
@@ -291,18 +300,20 @@ export const Browse: React.FC = () => {
           />
         </div>
         <button
+          type="button"
           onClick={handleApplyPrice}
-          className="w-full rounded-lg bg-brand px-4 py-2 font-title text-sm font-semibold text-white transition-all hover:bg-brand/90 hover:-translate-y-px active:translate-y-0"
+          className="w-full rounded-lg bg-brand px-4 py-2 font-title text-sm font-semibold text-white transition-all hover:bg-brand/90 hover:-translate-y-px active:translate-y-0 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          Apply
+          Apply<span className="sr-only"> price range</span>
         </button>
       </div>
 
       {/* Clear Filters */}
       {hasActiveFilters && (
         <button
+          type="button"
           onClick={handleClearFilters}
-          className="mt-2 w-full rounded-lg border border-brand bg-transparent px-4 py-2.5 font-title text-sm font-semibold text-brand transition-all hover:bg-brand hover:text-white hover:-translate-y-px active:translate-y-0"
+          className="mt-2 w-full rounded-lg border border-brand bg-transparent px-4 py-2.5 font-title text-sm font-semibold text-brand transition-all hover:bg-brand hover:text-white hover:-translate-y-px active:translate-y-0 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           Clear All Filters
         </button>
@@ -313,11 +324,16 @@ export const Browse: React.FC = () => {
   return (
     <Layout>
       <div className="min-h-screen w-full bg-background px-5 py-10 sm:px-5 md:px-10">
+        {/* No visible page title here: the heading is for screen readers. */}
+        <h1 className="sr-only">Browse products</h1>
         <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-8 md:grid-cols-[280px_1fr]">
           {/* Mobile Filter Toggle */}
           <button
+            type="button"
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 font-title text-sm text-foreground md:hidden"
+            aria-expanded={showMobileFilters}
+            aria-controls="browse-mobile-filters"
+            className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 font-title text-sm text-foreground md:hidden ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <SlidersHorizontal className="h-4 w-4" />
             Filters
@@ -327,30 +343,45 @@ export const Browse: React.FC = () => {
                   (filters.priceMin ? 1 : 0) +
                   (filters.priceMax ? 1 : 0) +
                   (filters.search ? 1 : 0)}
+                <span className="sr-only"> active</span>
               </span>
             )}
           </button>
 
           {/* Filter Sidebar - Desktop */}
-          <aside className="sticky top-24 hidden h-fit rounded-xl border border-border/30 bg-card p-6 shadow-sm md:block">
-            <FilterContent />
+          <aside
+            aria-labelledby="browse-filters-heading"
+            className="sticky top-24 hidden h-fit rounded-xl border border-border/30 bg-card p-6 shadow-sm md:block"
+          >
+            <h2 id="browse-filters-heading" className="sr-only">
+              Filters
+            </h2>
+            {filterContent()}
           </aside>
 
           {/* Filter Sidebar - Mobile */}
           {showMobileFilters && (
-            <div className="rounded-xl border border-border/30 bg-card p-6 shadow-sm md:hidden">
+            <div
+              id="browse-mobile-filters"
+              className="rounded-xl border border-border/30 bg-card p-6 shadow-sm md:hidden"
+            >
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="font-title text-base font-semibold">Filters</h2>
-                <button onClick={() => setShowMobileFilters(false)}>
+                <button
+                  type="button"
+                  onClick={() => setShowMobileFilters(false)}
+                  aria-label="Close filters"
+                  className="rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
                   <X className="h-5 w-5 text-muted-foreground" />
                 </button>
               </div>
-              <FilterContent />
+              {filterContent()}
             </div>
           )}
 
-          {/* Products Area */}
-          <main className="min-h-[400px]">
+          {/* Products Area (Layout already provides the page's <main>) */}
+          <div className="min-h-[400px]">
             {marketplaceEnabled() && (
               <ModeToggle mode="shop" className="mb-6" />
             )}
@@ -361,15 +392,23 @@ export const Browse: React.FC = () => {
 
             {/* Sort Bar */}
             <div className="mb-6 flex flex-col items-start justify-between gap-3 rounded-xl border border-border/30 bg-card px-5 py-4 shadow-sm sm:flex-row sm:items-center">
-              <span className="font-title text-sm font-semibold text-foreground">
+              {/* Heads the product grid; announced when filters change it. */}
+              <h2
+                aria-live="polite"
+                className="font-title text-sm font-semibold text-foreground"
+              >
                 {filteredProducts.length}{" "}
                 {filteredProducts.length === 1 ? "product" : "products"}
-              </span>
+              </h2>
               <div className="flex items-center gap-2.5">
-                <span className="font-body text-sm text-muted-foreground">
+                <label
+                  htmlFor="browse-sort"
+                  className="font-body text-sm text-muted-foreground"
+                >
                   Sort by:
-                </span>
+                </label>
                 <select
+                  id="browse-sort"
                   value={filters.sort}
                   onChange={(e) =>
                     setFilters((prev) => ({ ...prev, sort: e.target.value }))
@@ -403,15 +442,16 @@ export const Browse: React.FC = () => {
                 </p>
                 {hasActiveFilters && (
                   <button
+                    type="button"
                     onClick={handleClearFilters}
-                    className="rounded-lg border border-brand bg-transparent px-6 py-2.5 font-title text-sm font-semibold text-brand transition-all hover:bg-brand hover:text-white"
+                    className="rounded-lg border border-brand bg-transparent px-6 py-2.5 font-title text-sm font-semibold text-brand transition-all hover:bg-brand hover:text-white ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
                     Clear All Filters
                   </button>
                 )}
               </div>
             )}
-          </main>
+          </div>
         </div>
       </div>
     </Layout>

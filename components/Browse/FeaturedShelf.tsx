@@ -65,7 +65,7 @@ export const FeaturedShelf: React.FC<FeaturedShelfProps> = ({ featured }) => {
 
   return (
     <motion.section
-      aria-label="Featured"
+      aria-labelledby="featured-shelf-heading"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay: 0.15, ease: "easeOut" }}
@@ -73,11 +73,14 @@ export const FeaturedShelf: React.FC<FeaturedShelfProps> = ({ featured }) => {
     >
       {/* Section label */}
       <div className="mb-4 flex items-center gap-3">
-        <span className="font-title text-xs uppercase tracking-widest text-foreground">
+        <h2
+          id="featured-shelf-heading"
+          className="font-title text-xs uppercase tracking-widest text-foreground"
+        >
           Featured
-        </span>
-        <span className="h-px flex-1 bg-border" />
-        <span className="font-body text-sm text-muted-foreground">
+        </h2>
+        <span className="h-px flex-1 bg-border" aria-hidden />
+        <span className="font-body text-sm text-muted-foreground" aria-hidden>
           {String(featured.data.length).padStart(2, "0")}
         </span>
       </div>
@@ -85,7 +88,7 @@ export const FeaturedShelf: React.FC<FeaturedShelfProps> = ({ featured }) => {
       {/* Hero */}
       <Link
         href={heroHref}
-        className="group relative block overflow-hidden rounded-xl border border-border/30 bg-card no-underline shadow-sm transition-all duration-500 hover:shadow-md"
+        className="group relative block overflow-hidden rounded-xl border border-border/30 bg-card no-underline shadow-sm transition-all duration-500 hover:shadow-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <div className="grid grid-cols-1 md:grid-cols-12">
           {/* Media */}
@@ -109,9 +112,9 @@ export const FeaturedShelf: React.FC<FeaturedShelfProps> = ({ featured }) => {
 
           {/* Copy */}
           <div className="relative flex flex-col justify-center gap-5 border-t border-border/30 p-6 sm:p-8 md:col-span-5 md:border-l md:border-t-0 lg:p-10">
-            <h2 className="font-title text-xl leading-relaxed text-foreground sm:text-2xl">
+            <h3 className="font-title text-xl leading-relaxed text-foreground sm:text-2xl">
               {hero.attributes?.name}
-            </h2>
+            </h3>
 
             {blurb && (
               <p className="line-clamp-3 font-body text-sm leading-relaxed text-muted-foreground">
@@ -151,7 +154,8 @@ export const FeaturedShelf: React.FC<FeaturedShelfProps> = ({ featured }) => {
                 href={`/${p.attributes?.slug}`}
                 className={cn(
                   "group block w-[46%] flex-shrink-0 snap-start overflow-hidden rounded-xl border border-border/30 bg-card no-underline shadow-sm transition-all duration-500 sm:w-auto",
-                  "hover:-translate-y-0.5 hover:shadow-md"
+                  "hover:-translate-y-0.5 hover:shadow-md",
+                  "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 )}
               >
                 <div className="relative">

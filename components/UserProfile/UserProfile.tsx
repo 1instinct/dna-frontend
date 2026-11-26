@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import {
   useUserProfile,
   useFollowUser,
@@ -9,7 +9,6 @@ import { Loading } from "@components/Loading";
 import { UserProfileProps } from "./types";
 
 export const UserProfile: React.FC<UserProfileProps> = ({ username }) => {
-  const router = useRouter();
   const { data: userData, isLoading, error } = useUserProfile(username);
   const followMutation = useFollowUser();
   const unfollowMutation = useUnfollowUser();
@@ -35,9 +34,9 @@ export const UserProfile: React.FC<UserProfileProps> = ({ username }) => {
   if (error || !userData) {
     return (
       <div className="section-container py-10">
-        <div className="flex flex-col items-center justify-center rounded-xl bg-card px-5 py-20 text-center text-muted-foreground">
+        <h1 className="flex flex-col items-center justify-center rounded-xl bg-card px-5 py-20 text-center text-muted-foreground">
           User not found
-        </div>
+        </h1>
       </div>
     );
   }
@@ -60,7 +59,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({ username }) => {
     <div className="section-container py-10">
       {/* Profile Header */}
       <div className="mb-8 flex items-center gap-6 rounded-xl border border-border/30 bg-card p-6">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-brand/10 font-title text-2xl font-bold text-brand">
+        <div
+          aria-hidden
+          className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-brand/10 font-title text-2xl font-bold text-brand"
+        >
           {getInitials(displayName)}
         </div>
         <div>
@@ -99,10 +101,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({ username }) => {
         {userData.public_favorites && userData.public_favorites.length > 0 ? (
           <div className="product-grid-comfortable">
             {userData.public_favorites.map((favorite: any) => (
-              <div
+              <Link
                 key={favorite.id}
-                onClick={() => router.push(`/${favorite.slug}`)}
-                className="group cursor-pointer overflow-hidden rounded-xl border border-border/30 bg-card transition-all hover:-translate-y-0.5 hover:shadow-md"
+                href={`/${favorite.slug}`}
+                className="group block overflow-hidden rounded-xl border border-border/30 bg-card no-underline transition-all hover:-translate-y-0.5 hover:shadow-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <div className="aspect-square bg-muted" />
                 <div className="p-4">
@@ -113,7 +115,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ username }) => {
                     ${favorite.price}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

@@ -195,6 +195,9 @@ export const DynamicHome = () => {
   if (isLoading) {
     return (
       <Layout>
+        <h1 className="sr-only">
+          {process.env.NEXT_PUBLIC_SITE_TITLE || "Home"}
+        </h1>
         <Loading />
       </Layout>
     );
@@ -205,9 +208,9 @@ export const DynamicHome = () => {
     return (
       <Layout>
         <div className="px-5 py-24 text-center">
-          <h2 className="text-2xl font-bold text-foreground">
+          <h1 className="text-2xl font-bold text-foreground">
             Unable to load page
-          </h2>
+          </h1>
           <p className="mt-2 text-muted-foreground">Please try again later.</p>
         </div>
       </Layout>
@@ -216,10 +219,18 @@ export const DynamicHome = () => {
 
   const sections =
     homepageData?.homepage_sections?.filter((s) => s.is_visible) || [];
+  // The hero section carries the page's <h1>; without one the page still
+  // needs a top-level heading, so it gets a visually hidden one.
+  const hasHero = sections.some((s) => s.section_type === "hero");
 
   return (
     <Layout>
       <div className="space-y-8">
+        {sections.length > 0 && !hasHero && (
+          <h1 className="sr-only">
+            {process.env.NEXT_PUBLIC_SITE_TITLE || "Home"}
+          </h1>
+        )}
         {sections.map((section) => {
           const Renderer = SectionRenderers[section.section_type];
           if (!Renderer) {
@@ -237,7 +248,7 @@ export const DynamicHome = () => {
 
         {sections.length === 0 && (
           <div className="px-5 py-24 text-center">
-            <h2 className="text-2xl font-bold text-foreground">Welcome</h2>
+            <h1 className="text-2xl font-bold text-foreground">Welcome</h1>
             <p className="mt-2 text-muted-foreground">Content coming soon...</p>
           </div>
         )}

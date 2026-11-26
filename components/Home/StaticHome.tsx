@@ -61,8 +61,17 @@ export const StaticHome = (props: any) => {
     <MobileLatest products={productsData} title={""} />
   ) : null;
 
-  if (productsAreLoading || streamsAreLoading) return <Loading />;
-  if (productsError || streamsError) return <Loading />;
+  // Until the hero (and its <h1>) renders: the page frame, so the spinner
+  // sits in the main landmark, and a hidden top-level heading.
+  if (productsAreLoading || streamsAreLoading || productsError || streamsError)
+    return (
+      <Layout>
+        <h1 className="sr-only">
+          {process.env.NEXT_PUBLIC_SITE_TITLE || "Home"}
+        </h1>
+        <Loading />
+      </Layout>
+    );
 
   return (
     <Layout>

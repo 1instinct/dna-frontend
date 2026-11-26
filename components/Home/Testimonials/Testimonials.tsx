@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Autoplay } from "swiper/core";
+import SwiperCore, { Navigation, Autoplay, A11y } from "swiper/core";
 import { Rating } from "@components/ui";
 
-SwiperCore.use([Navigation, Autoplay]);
+// A11y makes the prev/next arrows keyboard buttons with labels.
+SwiperCore.use([Navigation, Autoplay, A11y]);
 
 interface Testimonial {
   name: string;
@@ -23,12 +24,13 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
   const defaultAvatar = "https://ui-avatars.com/api/?size=80&background=random";
   return (
     <div className="flex min-h-[280px] flex-col items-center justify-center rounded-lg bg-card p-8 text-center shadow-sm">
+      {/* The name is printed below: the avatar is decorative. */}
       <img
         src={
           testimonial.avatar ||
           `${defaultAvatar}&name=${encodeURIComponent(testimonial.name)}`
         }
-        alt={testimonial.name}
+        alt=""
         className="mb-4 h-20 w-20 rounded-full object-cover"
       />
       <Rating value={testimonial.rating} readOnly size="sm" />
@@ -48,6 +50,8 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   content,
   displayStyle = "carousel"
 }) => {
+  const swiperRef = useRef<SwiperCore | null>(null);
+
   if (displayStyle === "carousel") {
     return (
       <div className="mx-auto max-w-[1200px] px-5 py-16 text-center sm:py-10">
@@ -58,12 +62,28 @@ const Testimonials: React.FC<TestimonialsProps> = ({
         )}
         {content && <div dangerouslySetInnerHTML={{ __html: content }} />}
 
-        <div className="mt-10 px-10 sm:px-5 [&_.swiper-button-next]:text-brand [&_.swiper-button-prev]:text-brand">
+        {/* Autoplay pauses under the pointer and stops for good once keyboard
+            focus enters the carousel or someone pages it. */}
+        <div
+          className="mt-10 px-10 sm:px-5 [&_.swiper-button-next]:text-brand [&_.swiper-button-prev]:text-brand"
+          onFocus={() => swiperRef.current?.autoplay?.stop()}
+        >
           <Swiper
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
             loop={true}
             spaceBetween={30}
             slidesPerView={1}
-            autoplay={{ delay: 5000 }}
+            autoplay={{
+              delay: 5000,
+              pauseOnMouseEnter: true,
+              disableOnInteraction: true
+            }}
+            a11y={{
+              prevSlideMessage: "Previous testimonial",
+              nextSlideMessage: "Next testimonial"
+            }}
             navigation
             breakpoints={{
               768: { slidesPerView: 2 },
