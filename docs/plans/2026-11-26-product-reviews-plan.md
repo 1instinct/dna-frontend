@@ -14,7 +14,7 @@
 
 ---
 
-## M0: Foundations
+## M0: Foundations (built 26 Nov 2026)
 
 **M0.1 [A] Schema + models**
 - Migrations: `spree_reviews`, `spree_review_votes`, `spree_review_requests`, `spree_review_stats`, `spree_review_attributes` (+ `spree_review_attributes_taxons`), `spree_product_questions`, `spree_product_answers`, `spree_review_settings`; add `avg_rating decimal(3,2) default 0`, `reviews_count int default 0`, `all_avg_rating`, `all_reviews_count` to `spree_products` (indexed). `spree_reviews.channel` (indexed) and `spree_review_stats.scope` (unique with reviewable).
@@ -49,13 +49,12 @@
 - Migration seeding the `wholesale` Spree role.
 - `app/models/spree/order_wholesale_channel_decorator.rb`: before `complete`, set `channel = "wholesale"` when the user has the role. Never downgrade a channel an admin already set.
 - Deface override on the admin order customer-details page adding a Channel select (Retail · Wholesale); permit `channel` in the admin orders controller only.
-- v2 account serializer decorator: `wholesale` boolean attribute.
-- Tests: role → wholesale on completion; no role → stays `"spree"`; the storefront checkout API ignores a `channel` param; admin can set it; the account payload exposes the flag.
+- Tests: role → wholesale on completion; no role → stays `"spree"`; the storefront checkout API ignores a `channel` param; admin can set it. (The fork's v2 account payload already exposes `is_wholesale`.)
 
 **M0.4 [F] Primitives + API client**
 - `components/ui/textarea.tsx` (shadcn) and `components/ui/rating-input.tsx` (radiogroup, arrows, 44 px targets, labels "Hated it…Loved it").
 - `lib/api/dnaFetch.ts`, `types/reviews.ts`, and `QueryKeys` additions.
-- `pages/_app.tsx`: derive `wholesale` from `useAuth().user.wholesale` (from M0.3b) instead of hard-coded `false`.
+- `pages/_app.tsx`: derive `wholesale` from the account's `is_wholesale` attribute instead of hard-coded `false`.
 - Infra: bump `Dockerfile` to `node:22-bullseye`, then smoke-test `yarn build`.
 - Update `LLM-CONTEXT.md` and `.github/copilot-instructions.md`: the styling stack is now Tailwind + shadcn.
 
@@ -70,7 +69,8 @@
 - Integration tests: unpublished never leak; **wholesale reviews never appear without the role, whatever the params**; sort orders; slug lookup; hidden products respected (mirror the `hidden_products_*_test.rb` cases).
 
 **M1.2 [A] Storefront v2 attributes**
-- `app/serializers/spree/v2/storefront/product_serializer_decorator.rb`: add `avg_rating`, `reviews_count`, `all_avg_rating`, `all_reviews_count`.
+- `app/serializers/spree/v2/storefront/product_serializer_decorator.rb`: add `avg_rating`, `reviews_count`, `all_avg_rating`, `all_reviews_count` to `ProductSerializer` and `WholesaleProductSerializer`.
+- Fix `components/ProductDetails/ProductDetails.tsx` [F]: it always passes `wholesale` (true) to `RetailProductDetails` and spreads an undefined `props`. Harmless while the flag was always false, wrong now that wholesale accounts turn it on.
 - Test in the `hidden_products_storefront_test.rb` style.
 
 **M1.3 [F] Stars on cards and PDP header**

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { AppProps } from "next/app";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
-import { AuthProvider } from "../config/auth";
+import { AuthProvider, useAuth } from "../config/auth";
 import { MainMenu } from "../components/MainMenu";
 import { Header } from "../components/Header";
 import { ComingSoon } from "../components/ComingSoon";
@@ -23,9 +23,25 @@ import "./app.css";
 
 const isDarkMode = (process.env.NEXT_PUBLIC_DARK_MODE || "false") === "true";
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+// The v2 account payload carries `is_wholesale` (Spree fork UserSerializer) for users
+// with the `wholesale` Spree role. Read it defensively; anything else is retail.
+const useWholesaleMode = (): boolean => {
+  const { user } = useAuth();
+  const attributes = user?.data?.attributes as
+    | Record<string, unknown>
+    | undefined;
+  return attributes?.is_wholesale === true;
+};
+
+// Rendered inside AuthProvider so it can read the signed-in user.
+const PageWithMode = ({ Component, pageProps }: AppProps) => {
+  const wholesale = useWholesaleMode();
+  return <Component {...pageProps} wholesale={wholesale} />;
+};
+
+export default function MyApp(appProps: AppProps): JSX.Element {
+  const { pageProps } = appProps;
   const [queryClient] = useState(() => new QueryClient());
-  const [wholesale, setWholesale] = useState(false);
   const router = useRouter();
   const isMaint = process.env.NEXT_PUBLIC_IS_MAINT_MODE || "true";
 
@@ -91,7 +107,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               animationType={"slide"}
               right={false}
             />
-            <Component {...pageProps} wholesale={wholesale} />
+            <PageWithMode {...appProps} />
           </div>
         </Hydrate>
       </AuthProvider>

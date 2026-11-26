@@ -1,4 +1,4 @@
-FROM node:18-bullseye
+FROM node:22-bullseye
 # FROM node:16-alpine
 # FROM node:alpine
 # FROM node:21-alpine3.18

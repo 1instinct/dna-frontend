@@ -1,6 +1,8 @@
 export { Button, buttonVariants } from "./button";
 export type { ButtonProps } from "./button";
 export { Input } from "./input";
+export { Textarea } from "./textarea";
+export type { TextareaProps } from "./textarea";
 export { Label } from "./label";
 export {
   Card,
@@ -114,6 +116,8 @@ export {
   TooltipProvider
 } from "./tooltip";
 export { Rating } from "./rating";
+export { RatingInput, DEFAULT_RATING_LABELS } from "./rating-input";
+export type { RatingInputProps } from "./rating-input";
 
 // Magic UI components
 export { Marquee } from "./marquee";

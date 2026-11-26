@@ -106,14 +106,14 @@ Recomputed in `after_commit` of Review publish/unpublish/channel change: three c
 
 `Reviews::Channel.for(order)` returns `wholesale` when `order.channel == "wholesale"` (Spree's existing `spree_orders.channel` column, default `"spree"`) **or** the order's user has the `wholesale` Spree role. Otherwise it returns `retail`.
 
-**Both signals are used (decided 26 Nov 2026).** Wholesale ordering isn't wired up end to end today: dna-admin only has `spree_prices.wholesale_price`, and dna-frontend's `wholesale` flag in `pages/_app.tsx` is hard-coded `false`. This work wires both signals:
+**Both signals are used (decided 26 Nov 2026).** The 1instinct Spree fork already has most of the wholesale plumbing: the `wholesale` role switches cart and product prices to `wholesale_price`, wholesale users get `WholesaleProductSerializer`, and the v2 account payload has `is_wholesale`. What was missing: nothing marked orders as wholesale, the role only existed where Spree's sample seeds ran, and dna-frontend's `wholesale` flag in `pages/_app.tsx` was hard-coded `false`. This work wires both signals:
 
-1. **Account role.** A migration seeds the `wholesale` Spree role. Admins grant it on the user's edit page in Spree admin (Spree's stock role checkboxes). The storefront account payload (`spreeClient.account.accountInfo`, via a v2 account serializer decorator) gains `wholesale: true|false`.
+1. **Account role.** A migration makes sure the `wholesale` Spree role exists. Admins grant it on the user's edit page in Spree admin (Spree's stock role checkboxes). The storefront reads the fork's existing `is_wholesale` account attribute.
 2. **Order channel.** `spree_orders.channel` becomes `"wholesale"`:
    - automatically, in an `Order` decorator before `complete`, when the order's user has the `wholesale` role;
    - manually, from a **Channel** select (Retail · Wholesale) that a Deface override adds to the admin order's customer details page. This covers phone, email and invoice orders, including trade buyers without a storefront account.
    - The storefront can't set channel directly, so retail customers can't tag their own orders as wholesale.
-3. **Storefront mode.** `pages/_app.tsx` sets `wholesale` from `useAuth().user.wholesale` instead of hard-coded `false`, so wholesale accounts see `WholesaleProductDetails` and `channel=all` reviews.
+3. **Storefront mode.** `pages/_app.tsx` sets `wholesale` from `useAuth().user.data.attributes.is_wholesale` instead of hard-coded `false`, so wholesale accounts see `WholesaleProductDetails` and `channel=all` reviews.
 
 `Reviews::Channel.for(order)` checks both, so a wholesale-channel order from a guest and an order by a wholesale account each count as wholesale. Admins can still reclassify a single review from the queue, which also covers backfilling older reviews.
 
@@ -193,7 +193,7 @@ Custom endpoints follow the house style: `Spree::Api::V1::*` controllers, Bearer
 - `PUT  /api/v1/admin/review_summaries/:product_id`
 
 **Storefront v2**
-- `product_serializer_decorator.rb`: add `avg_rating`, `reviews_count` (retail), `all_avg_rating`, `all_reviews_count`. ProductCard and PDP get stars with zero extra requests.
+- `product_serializer_decorator.rb`: add `avg_rating`, `reviews_count` (retail), `all_avg_rating`, `all_reviews_count` to both `ProductSerializer` and the fork's `WholesaleProductSerializer` (what wholesale accounts receive). ProductCard and PDP get stars with zero extra requests.
 
 **Feeds**
 - `GET /feeds/google/product_reviews.xml` (Rails builder, Google Product Review Feed **schema v2.4**): every published **retail** review with text, including `is_verified_purchase`, `is_incentivized_review` and `collection_method` (`post_fulfillment` for email, `unsolicited` for web). Product identifiers: SKU and brand (plus GTIN/MPN if we add them). Register in Merchant Center once we have **≥ 50 reviews**.

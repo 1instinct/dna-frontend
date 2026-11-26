@@ -13,7 +13,6 @@ Next.js-based e-commerce frontend for DNA, integrated with a **custom Spree 4.2 
   - Breaking changes in newer versions are incompatible with backend
 - **Next.js 13.1.1**: Frozen version
 - **React 18.2.0**: Frozen version
-- **Material-UI v4.12.3**: Legacy version, not v5+
 
 ### Backend Integration
 
@@ -32,9 +31,11 @@ Next.js-based e-commerce frontend for DNA, integrated with a **custom Spree 4.2 
 
 ### Styling
 
-- **Emotion 11.13.3**: CSS-in-JS (`@emotion/styled`, `@emotion/react`)
-- **Material-UI v4.12.3**: Legacy UI components
-- **Styled Components pattern**: Use `shouldForwardProp` to filter props
+- **Tailwind CSS 3** (`tailwind.config.ts`, `styles/globals.css`): utility classes, brand tokens (`brand` #EB8B8B, `brand-secondary` #E6CDC0, `gray-*`), fonts `font-title` (IBM Plex Mono) and `font-body` (Anybody ExtraLight), sizes like `text-title-lg` / `text-body-sm`
+- **shadcn/ui on Radix UI**: primitives in `components/ui/` (Button, Input, Textarea, Dialog, Sheet, Tabs, Select, Rating, RatingInput, ...), exported from `components/ui/index.ts`
+- **lucide-react**: icons
+- **`cn()`** from `lib/utils.ts` (clsx + tailwind-merge) to compose class names
+- **Emotion and Material-UI were removed** (commits `bb2906b`, `fc65618`, `f11f2f2`). The legacy `components/Quiz` still imports them and is unused; do not copy its patterns.
 
 ### State & Data
 
@@ -61,6 +62,18 @@ import { useProducts } from "@hooks/useProducts";
 import { QueryKeys } from "@hooks/queryKeys";
 ```
 
+Custom dna-admin endpoints (`/api/v1/*`: reviews, profiles, favorites, ...) use the typed wrapper in `lib/api/dnaFetch.ts` instead of hand-built `fetch` headers:
+
+```typescript
+import { dnaFetch, DnaApiError } from "@lib/api/dnaFetch";
+
+// Base URL, X-Spree-Token, optional Bearer, envelope unwrap, typed errors
+const summary = await dnaFetch<ReviewSummary>(
+  `/products/${slug}/review_summary`,
+  { query: { channel: "retail" }, auth: "optional" }
+);
+```
+
 ### Mutations with Cache Invalidation
 
 ```typescript
@@ -71,18 +84,18 @@ const mutation = useMutation(apiFunction, {
 });
 ```
 
-### Emotion Styled Components
+### Tailwind + shadcn/ui Components
 
-```typescript
-import styled from "@emotion/styled";
-import isPropValid from "@emotion/is-prop-valid";
+```tsx
+import { Button, Card } from "@components/ui";
+import { cn } from "@lib/utils";
 
-// Filter custom props to prevent DOM warnings
-const StyledDiv = styled("div", {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== "customProp"
-})<{ customProp?: boolean }>`
-  // styles
-`;
+export const PromoCard = ({ active }: { active?: boolean }) => (
+  <Card className={cn("p-6 font-body", active && "border-brand")}>
+    <h3 className="font-title text-title-sm uppercase">Title</h3>
+    <Button>Shop now</Button>
+  </Card>
+);
 ```
 
 ## Spree API Structure
@@ -134,6 +147,7 @@ const StyledDiv = styled("div", {
 
 ```
 components/        # React components (atomic design approach)
+  ui/             # shadcn/ui primitives (Tailwind + Radix)
   shared/         # Reusable UI primitives
   CartSidebar/    # Cart slide-out panel
   Header/         # Main navigation
@@ -146,6 +160,10 @@ hooks/            # React Query hooks and custom hooks
 pages/            # Next.js pages (file-based routing)
   _app.tsx        # Global app wrapper
   _document.tsx   # Custom HTML document
+
+lib/              # Shared helpers
+  utils.ts        # cn() class-name helper
+  api/dnaFetch.ts # Typed fetch wrapper for custom /api/v1 endpoints
 
 config/           # Configuration modules
   spree.ts        # Spree client initialization
@@ -165,8 +183,7 @@ contrib/          # Local dependency packages
 ```
 ComponentName/
   index.ts              # Exports
-  ComponentName.tsx     # Main component
-  ComponentName.styles.tsx  # Emotion styled components
+  ComponentName.tsx     # Main component (Tailwind classes, components/ui primitives)
 ```
 
 ## Common Issues & Solutions
@@ -179,12 +196,7 @@ ComponentName/
 ### React Prop Warnings
 
 - **Problem**: `React does not recognize the customProp prop on a DOM element`
-- **Solution**: Add `shouldForwardProp` filter to styled components
-
-### Material-UI Deprecations
-
-- **Badge overlap**: Use `overlap="rectangular"` not `overlap={true}`
-- **Old API**: Stick to v4 patterns, do not use v5 documentation
+- **Solution**: Destructure custom props before spreading the rest onto DOM elements
 
 ### Cart State Issues
 
@@ -236,9 +248,9 @@ yarn start        # Production server
 
 ### Styling
 
-- Emotion styled components
-- Mobile-first responsive design
-- Consistent spacing using theme values
+- Tailwind utility classes and `components/ui` primitives; compose with `cn()`
+- Mobile-first responsive design (custom breakpoints in `tailwind.config.ts`)
+- Use the Tailwind theme tokens (colors, fonts, sizes) instead of hard-coded values
 - Filter custom props from DOM
 
 ### Error Handling
@@ -279,7 +291,7 @@ try {
 
 ## Deployment
 
-- Dockerfile included for containerization
+- Dockerfile included for containerization (`node:22-bullseye`)
 - Kubernetes configs: `k8-*.yml`
 - Heroku ready: `Procfile`
 - Environment-specific configs in `config/`
@@ -316,7 +328,8 @@ try {
 - Spree API Docs: https://api.spreecommerce.org/docs/api-v2/
 - Next.js 13 Docs: https://nextjs.org/docs (v13 specific)
 - React Query v3 Docs: https://react-query-v3.tanstack.com/
-- Emotion Docs: https://emotion.sh/docs/introduction
+- Tailwind CSS v3 Docs: https://v3.tailwindcss.com/docs
+- shadcn/ui Docs: https://ui.shadcn.com/docs
 
 ## Questions or Updates?
 

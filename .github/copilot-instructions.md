@@ -27,7 +27,6 @@ This is a **production Next.js 13 e-commerce application** using the **Pages Rou
 - `@spree/storefront-api-v2-sdk` - Local package at `file:contrib/spree-storefront-api-v2-sdk-4.5.1003.tgz`
   - Custom build for Spree 4.2 backend compatibility
   - Newer versions break backend integration
-- `@material-ui/core@^4.12.3` - Legacy MUI v4 (not v5+)
 
 ## Tech Stack
 
@@ -39,9 +38,11 @@ This is a **production Next.js 13 e-commerce application** using the **Pages Rou
 
 ### Styling
 
-- **Emotion 11.13.3** for CSS-in-JS (`@emotion/styled`, `@emotion/react`)
-- **Material-UI v4.12.3** for UI components
-- Always use `shouldForwardProp` with `isPropValid` to filter custom props
+- **Tailwind CSS 3** (`tailwind.config.ts`): brand tokens (`brand` #EB8B8B, `brand-secondary` #E6CDC0, `gray-*`), `font-title` (IBM Plex Mono, uppercase, wide tracking), `font-body` (Anybody ExtraLight), sizes like `text-title-lg` / `text-body-sm`
+- **shadcn/ui on Radix UI**: primitives in `components/ui/`, exported from `components/ui/index.ts`
+- **lucide-react** for icons
+- Compose classes with `cn()` from `lib/utils.ts`
+- **Emotion and Material-UI were removed.** The legacy `components/Quiz` still imports them and is unused; do not copy its patterns.
 
 ### State Management
 
@@ -62,10 +63,10 @@ This is a **production Next.js 13 e-commerce application** using the **Pages Rou
 ```
 components/          # React components
   shared/           # Reusable UI primitives (Button, Logo, etc.)
+  ui/               # shadcn/ui primitives (Tailwind + Radix)
   ComponentName/
     index.ts                      # Barrel export
-    ComponentName.tsx             # Main component logic
-    ComponentName.styles.tsx      # Emotion styled components
+    ComponentName.tsx             # Main component (Tailwind classes)
     types/index.d.ts             # TypeScript interfaces
 
 hooks/              # React Query hooks
@@ -85,8 +86,12 @@ config/             # Configuration
   storage.ts        # Token/localStorage utilities
   auth.ts           # Auth provider with react-query-auth
 
+lib/                # Shared helpers
+  utils.ts          # cn() class-name helper
+  api/dnaFetch.ts   # Typed fetch wrapper for custom /api/v1 endpoints
+types/              # Hand-written API types (e.g. reviews.ts)
 typings/            # Custom TypeScript definitions
-styles/             # Global styles and theme
+styles/             # Global styles (globals.css with Tailwind layers)
 utilities/          # Helper functions and constants
 ```
 
@@ -97,44 +102,30 @@ utilities/          # Helper functions and constants
 ```typescript
 // ComponentName.tsx
 import React from "react";
-import { useTheme } from "@emotion/react";
+import { Button } from "@components/ui";
+import { cn } from "@lib/utils";
 import { ComponentNameProps } from "./types";
-import { Container, Title } from "./ComponentName.styles";
 
 export const ComponentName: React.FC<ComponentNameProps> = ({
   prop1,
-  prop2
+  prop2,
+  highlighted
 }) => {
-  const theme = useTheme();
-
   return (
-    <Container>
-      <Title>{prop1}</Title>
-    </Container>
+    <div className={cn("bg-background p-5 sm:p-8", highlighted && "bg-brand")}>
+      <h1 className="font-title text-title-lg uppercase tracking-wide">
+        {prop1}
+      </h1>
+      {prop2 ? <Button>{prop2}</Button> : null}
+    </div>
   );
 };
-
-// ComponentName.styles.tsx
-import styled from "@emotion/styled";
-import isPropValid from "@emotion/is-prop-valid";
-
-export const Container = styled.div`
-  padding: 20px;
-  background: ${(p) => p.theme.colors.brand.primary};
-`;
-
-// For custom props, always filter them:
-export const Title = styled("h1", {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== "customProp"
-})<{ customProp?: boolean }>`
-  color: ${(p) =>
-    p.customProp ? p.theme.colors.white.primary : p.theme.colors.black.primary};
-`;
 
 // types/index.d.ts
 export interface ComponentNameProps {
   prop1: string;
   prop2?: number;
+  highlighted?: boolean;
 }
 
 // index.ts
@@ -173,6 +164,17 @@ export const useResource = (id: string) => {
   });
 };
 
+// Custom dna-admin endpoints (/api/v1/*) use lib/api/dnaFetch.ts, which adds
+// the base URL, X-Spree-Token, optional Bearer / X-Review-Token, unwraps the
+// { response_code, response_message, response_data } envelope and throws
+// DnaApiError (status, message, fieldErrors):
+//
+//   import { dnaFetch } from "@lib/api/dnaFetch";
+//   const reviews = await dnaFetch<Paginated<Review>>(
+//     `/products/${slug}/reviews`,
+//     { query: { channel: "retail", rating: [5, 4] }, auth: "optional" }
+//   );
+
 // Mutation hook with cache invalidation
 export const useUpdateResource = () => {
   const queryClient = useQueryClient();
@@ -187,18 +189,16 @@ export const useUpdateResource = () => {
 
 ### Theme Usage
 
-```typescript
-// Access theme in components
-const theme = useTheme();
+Theme values live in `tailwind.config.ts` and the CSS variables in `styles/globals.css`:
 
-// Common theme values:
-theme.colors.brand.primary;
-theme.colors.white.primary;
-theme.colors.black.primary;
-theme.isDarkMode;
-theme.breakpoints.values.xs; // 375px
-theme.typography.titleLG.fontFamily;
-theme.typography.bodyMD.fontSize;
+```tsx
+// Colors: bg-brand, text-brand, bg-brand-secondary, text-gray, bg-gray-bg,
+//         text-foreground, bg-background, text-muted-foreground
+// Fonts:  font-title, font-body, font-mono-bold
+// Sizes:  text-title-lg, text-title-sm, text-body-md, text-body-sm
+// Breakpoints: ss 375, xs 414, sm 768, md 1024, lg 1280, lgxl 1440, xl 1800
+// Dark mode: `dark:` variants (darkMode: "class")
+<p className="font-body text-body-sm text-muted-foreground">...</p>
 ```
 
 ### Responsive Design
@@ -210,14 +210,8 @@ const isMobile = useMediaQuery({ maxWidth: 767 });
 const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1024 });
 const isDesktop = useMediaQuery({ minWidth: 1025 });
 
-// Or use CSS media queries in styled components:
-const Container = styled.div`
-  padding: 20px;
-
-  @media (max-width: ${(p) => p.theme.breakpoints.values.xs}px) {
-    padding: 10px;
-  }
-`;
+// Or prefer Tailwind responsive prefixes (mobile-first):
+<div className="p-2.5 xs:p-5 md:p-8">...</div>;
 ```
 
 ### API Integration Patterns
@@ -260,7 +254,7 @@ Access via `process.env.NEXT_PUBLIC_*`:
 ### Adding a New Component
 
 1. Create folder: `components/ComponentName/`
-2. Add files: `ComponentName.tsx`, `ComponentName.styles.tsx`, `types/index.d.ts`, `index.ts`
+2. Add files: `ComponentName.tsx`, `types/index.d.ts`, `index.ts` (style with Tailwind classes and `components/ui` primitives)
 3. Export from `components/components.ts` or `components/index.ts`
 4. Use barrel exports for cleaner imports
 
@@ -351,18 +345,18 @@ yarn pre-commit         # Run all checks
 - **Authentication** uses OAuth bearer tokens stored in localStorage
 - **Guest carts** use order tokens for anonymous users
 - **Mobile menu** uses react-burger-menu with custom styling
-- **Theme** supports dark mode via `theme.isDarkMode`
+- **Dark mode** uses Tailwind `dark:` variants (`NEXT_PUBLIC_DARK_MODE`)
 
 ## When Suggesting Code
 
 ✅ **Do:**
 
 - Use existing patterns from the codebase
-- Filter custom props with `shouldForwardProp`
+- Build UI from `components/ui` primitives and Tailwind classes, composed with `cn()`
 - Use React Query for data fetching
 - Follow the established folder structure
 - Use TypeScript with proper types
-- Check theme values before hardcoding colors
+- Use Tailwind theme tokens before hardcoding colors
 - Consider mobile responsiveness
 - Handle loading and error states
 
@@ -370,9 +364,9 @@ yarn pre-commit         # Run all checks
 
 - Suggest upgrading locked dependencies
 - Use App Router patterns (this uses Pages Router)
-- Mix Material-UI v5 with v4
+- Reintroduce Emotion, Material-UI or other CSS-in-JS libraries
 - Forget to invalidate queries after mutations
-- Use inline styles when Emotion is available
+- Use inline styles when a Tailwind class exists
 - Hardcode API URLs (use env vars)
 - Skip TypeScript types
 - Ignore existing component patterns
@@ -443,7 +437,8 @@ if (response.isSuccess()) {
 
 - Do not upgrade or replace the SDK.
 - Do not bypass `.isSuccess()`/`.isFail()` pattern.
-- Do not use raw fetch or axios for Spree API calls—always use the SDK.
+- Do not use raw fetch or axios for Spree storefront API calls—always use the SDK.
+- For dna-admin's custom `/api/v1/*` endpoints (not covered by the SDK), use `lib/api/dnaFetch.ts` rather than hand-built `fetch` headers.
 
 ### Store Info
 
