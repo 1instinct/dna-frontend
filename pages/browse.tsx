@@ -1,3 +1,3 @@
-import { Browse } from "../components/Browse";
+import { BrowseModes } from "../components/Browse";
 
-export default Browse;
+export default BrowseModes;
