@@ -225,6 +225,7 @@ drop the prefix and are read only in `pages/api/*` or `lib/server/*`:
 - `NEXT_PUBLIC_DARK_MODE` - Dark mode toggle
 - `NEXT_PUBLIC_IS_MAINT_MODE` - Maintenance mode
 - `NEXT_PUBLIC_LOGO_PATH` - Logo image path
+- `NEXT_PUBLIC_AFFILIATE_COMMISSION_BPS`, `NEXT_PUBLIC_AFFILIATE_COOKIE_DAYS`, `NEXT_PUBLIC_AFFILIATE_HOLD_DAYS` - affiliate terms stated on /affiliates when the backend's Affiliates.config differs from its defaults (10%, 30 days, 30 days)
 - `NEXT_PUBLIC_IOS_APP_URL`, `NEXT_PUBLIC_ANDROID_APP_URL` - fallback store links for `components/AppCallout` (the admin's `app_links` homepage section overrides them)
 - `NEXT_PUBLIC_FEATURED_TAXON` - Spree taxon permalink for the `/browse` Featured shelf (default `collections/featured`)
 - `NEXT_PUBLIC_SENTRY_DSN` - Sentry error reporting; empty disables it (the other `SENTRY_*` vars are in `.env.example`)

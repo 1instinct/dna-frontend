@@ -6,6 +6,7 @@ import { Sparkles } from "lucide-react";
 import { marketplaceEnabled } from "../../lib/marketplace";
 import { cn } from "@lib/utils";
 import { Layout } from "../../components/Layout";
+import { BadgePercent } from "lucide-react";
 
 const navItems = [
   { label: "Order History", href: "/account/orders", icon: Package },
@@ -15,6 +16,7 @@ const navItems = [
     : []),
   { label: "My Style", href: "/account/mystyle", icon: Palette },
   { label: "Payment Methods", href: "/account/payment", icon: CreditCard },
+  { label: "Affiliate", href: "/account/affiliate", icon: BadgePercent },
   { label: "Account Details", href: "/account", icon: User }
 ];
 
