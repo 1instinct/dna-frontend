@@ -1,6 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { useRecentlyViewed } from "@hooks/useRecentlyViewed";
+import { useProducts } from "@hooks/useProducts";
+import { visibleRecentProducts } from "@lib/productVisibility";
 
 interface RecentlyViewedProps {
   excludeSlug?: string;
@@ -12,8 +14,12 @@ export const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
   title = "Recently Viewed"
 }) => {
   const router = useRouter();
-  const { products } = useRecentlyViewed(excludeSlug);
+  const { products: recent } = useRecentlyViewed(excludeSlug);
+  const { data: listing, isLoading } = useProducts(1);
 
+  if (isLoading) return null;
+  // Drop entries for products hidden since they were viewed.
+  const products = visibleRecentProducts(recent, listing);
   if (products.length === 0) return null;
 
   return (

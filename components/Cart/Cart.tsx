@@ -6,6 +6,7 @@ import { Minus, Plus, X, Trash2 } from "lucide-react";
 import { Button } from "@components/ui";
 import {
   useCart,
+  useUnavailableCartLines,
   updateItemQuantity,
   removeItemFromCart
 } from "../../hooks/useCart";
@@ -14,6 +15,7 @@ import { Layout } from "../Layout";
 import { Loading } from "../Loading";
 import { QueryKeys } from "../../hooks/queryKeys";
 import { useAuth } from "../../config/auth";
+import { UnavailableCartLines } from "./UnavailableCartLines";
 
 export const Cart = () => {
   const router = useRouter();
@@ -23,6 +25,8 @@ export const Cart = () => {
 
   const { data: cartData, isLoading, isError, error } = useCart();
   const { data: productsData } = useProducts(1);
+  const unavailableLines = useUnavailableCartLines(cartData);
+  const hasUnavailable = unavailableLines.length > 0;
 
   useEffect(() => {
     if (Array.isArray(cartData?.included)) {
@@ -124,25 +128,35 @@ export const Cart = () => {
                 {product?.attributes?.name} - ${product?.attributes?.price}
               </span>
               <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() =>
-                    handleUpdateItemQuantity(lineItemId, quantity - 1)
-                  }
-                  className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
+                {/* Quantity controls: the backend refuses them on a line that
+                    can't be bought, so only removing it is offered. */}
+                <div
+                  className={`flex items-center gap-1.5 ${
+                    unavailableLines.some((l) => l.id === lineItemId)
+                      ? "invisible"
+                      : ""
+                  }`}
                 >
-                  <Minus className="h-3.5 w-3.5" />
-                </button>
-                <span className="w-8 text-center font-body text-sm text-foreground">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() =>
-                    handleUpdateItemQuantity(lineItemId, quantity + 1)
-                  }
-                  className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                </button>
+                  <button
+                    onClick={() =>
+                      handleUpdateItemQuantity(lineItemId, quantity - 1)
+                    }
+                    className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
+                  >
+                    <Minus className="h-3.5 w-3.5" />
+                  </button>
+                  <span className="w-8 text-center font-body text-sm text-foreground">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() =>
+                      handleUpdateItemQuantity(lineItemId, quantity + 1)
+                    }
+                    className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
                 <button
                   onClick={() => handleRemoveItem(lineItemId)}
                   className="ml-2 flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent text-destructive transition-colors hover:bg-destructive/10"
@@ -190,6 +204,12 @@ export const Cart = () => {
           )}
         </div>
 
+        <UnavailableCartLines
+          lines={unavailableLines}
+          onRemove={handleRemoveItem}
+          disabled={removeFromCartMutation.isLoading}
+        />
+
         <div>{renderCartItems()}</div>
 
         {/* Totals */}
@@ -213,10 +233,18 @@ export const Cart = () => {
         {/* Actions */}
         <div className="mt-8 flex flex-wrap gap-3">
           {user ? (
-            <Button onClick={() => router.push("/checkout")}>Checkout</Button>
+            <Button
+              onClick={() => router.push("/checkout")}
+              disabled={hasUnavailable}
+            >
+              Checkout
+            </Button>
           ) : (
             <>
-              <Button onClick={() => router.push("/checkout")}>
+              <Button
+                onClick={() => router.push("/checkout")}
+                disabled={hasUnavailable}
+              >
                 Checkout as Guest
               </Button>
               <Button variant="outline" onClick={() => router.push("/login")}>

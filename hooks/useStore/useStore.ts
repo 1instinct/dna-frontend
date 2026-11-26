@@ -2,9 +2,6 @@ import { useQuery } from "react-query";
 import { QueryKeys } from "@hooks/queryKeys";
 import constants from "@utilities/constants";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_SPREE_API_URL || "http://localhost:3001";
-
 export interface StoreAttributes {
   name: string;
   url: string;
@@ -46,13 +43,11 @@ export interface StoreResponse {
 }
 
 export const fetchStore = async (): Promise<StoreData> => {
-  const apiToken = process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN;
-
+  // The storefront key is added server-side by pages/api/public/[...path].ts.
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("Content-Type", "application/json;charset=UTF-8");
-  requestHeaders.set("X-Spree-Token", `${apiToken}`);
 
-  const response = await fetch(`${API_BASE}/api/v2/storefront/default_store`, {
+  const response = await fetch("/api/public/default_store", {
     method: "GET",
     headers: requestHeaders
   });

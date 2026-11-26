@@ -17,3 +17,4 @@ export * from "./useStore";
 export * from "./useProductFeed";
 export * from "./useRecentlyViewed";
 export * from "./useAppPresence";
+export * from "./useFeaturedProducts";

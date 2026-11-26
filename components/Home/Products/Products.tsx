@@ -5,6 +5,7 @@ import SwiperCore, { Navigation, Thumbs } from "swiper/core";
 import { useMediaQuery } from "react-responsive";
 import { IProducts } from "@spree/storefront-api-v2-sdk/types/interfaces/Product";
 import Link from "next/link";
+import { pickGridMedia } from "@lib/productMedia";
 
 export interface ProductsProps {
   products: IProducts;
@@ -45,16 +46,9 @@ const Products: React.FC<ProductsProps> = ({ products, title }) => {
         watchSlidesProgress={true}
       >
         {products?.data?.map((item: any, index: any) => {
-          const defaultImg =
-            "https://static-assets.strikinglycdn.com/images/ecommerce/ecommerce-default-image.png";
-          const productImg = item.relationships?.images?.data[0]?.id;
-          const allImages =
-            products?.included?.filter((e: any) => e.type === "image") || [];
-          const foundImg = allImages.filter((e: any) => e.id === productImg);
-          const imgUrl = foundImg[0]?.attributes?.styles[4]?.url;
-          const imgSrc = productImg
-            ? `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`
-            : defaultImg;
+          const media = pickGridMedia(item, products?.included as any, {
+            baseUrl: process.env.NEXT_PUBLIC_SPREE_API_URL || ""
+          });
 
           const optionTypes = item.relationships?.option_types?.data || [];
           const productOptions = optionTypes
@@ -63,7 +57,7 @@ const Products: React.FC<ProductsProps> = ({ products, title }) => {
 
           return (
             <SwiperSlide key={index}>
-              <ProductCard item={item} imgSrc={imgSrc} opts={productOptions} />
+              <ProductCard item={item} media={media} opts={productOptions} />
             </SwiperSlide>
           );
         })}

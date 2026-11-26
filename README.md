@@ -17,17 +17,20 @@ _Gotchas:_
   and `announcement_bar` homepage sections from `dna-admin`. `NEXT_PUBLIC_IOS_APP_URL` and
   `NEXT_PUBLIC_ANDROID_APP_URL` are a build-time fallback for the links. With no link at all,
   nothing renders. Visitors who arrive with `?from=app` never see the callouts.
+- The Spree storefront key is `SPREE_ACCESS_TOKEN`, server-only: the browser calls
+  `/api/public/<route>` (`pages/api/public/[...path].ts`), which adds the key and forwards
+  read-only public requests (menus, live streams, the default store) to Spree. Never name it
+  `NEXT_PUBLIC_SPREE_ACCESS_TOKEN`: `NEXT_PUBLIC_*` values are inlined into the browser bundle.
 
 ## Styles
 
-Always use `@emotion/styled` wherever possible. If regular CSS is required, use one of the following style files.
-We manage our global styles in several files:
+Style components with Tailwind CSS utility classes and the shadcn/ui primitives in
+`components/ui/`. Compose conditional classes with `cn()` from `@lib/utils`.
 
-- `./styles/global-styles.tsx` (global stylesheet)
+- `./tailwind.config.ts` (breakpoints, brand colours, dark mode)
+- `./styles/globals.css` (Tailwind layers and the theme CSS variables)
 - `./styles/fonts.css` (global @font-face rules)
-- `./styles/all.css` (global styles injected in at app root)
-- `./styles/theme.tsx` (global theme variables)
-- `./emotion.d.ts` (theme typings)
+- `./components.json` (shadcn/ui configuration)
 
 ## Gotchas
 
@@ -119,6 +122,7 @@ make deploy-frontend
 ### Update Environment Variables
 
 The source of truth for env vars is **`.env.development`** (gitignored). The K8s cluster reads from `secrets.yml` (base64-encoded version of the same values).
+`secrets.yml` is gitignored and generated locally; never commit it (base64 is an encoding, not encryption).
 
 **Recommended workflow — use the sync script:**
 
@@ -260,7 +264,7 @@ ssh smokey01 sudo microk8s kubectl rollout undo deployment/dna-frontend -n defau
 - ~~Request Mgmt~~ (React Query)
 - ~~Search~~ (Fuse.js)
 - Pusher (real-time sockets)
-- ~~Styled Components~~ (@emotion/styled)
+- Tailwind CSS + shadcn/ui (replaced Styled Components and Emotion)
 - Moving Letters
 - UI Sounds (proprietary: "npm install beeper")
 - Maps

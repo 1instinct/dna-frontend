@@ -13,7 +13,6 @@ Next.js-based e-commerce frontend for DNA, integrated with a **custom Spree 4.2 
   - Breaking changes in newer versions are incompatible with backend
 - **Next.js 13.1.1**: Frozen version
 - **React 18.2.0**: Frozen version
-- **Material-UI v4.12.3**: Legacy version, not v5+
 
 ### Backend Integration
 
@@ -32,9 +31,10 @@ Next.js-based e-commerce frontend for DNA, integrated with a **custom Spree 4.2 
 
 ### Styling
 
-- **Emotion 11.13.3**: CSS-in-JS (`@emotion/styled`, `@emotion/react`)
-- **Material-UI v4.12.3**: Legacy UI components
-- **Styled Components pattern**: Use `shouldForwardProp` to filter props
+- **Tailwind CSS 3**: Utility classes, configured in `tailwind.config.ts`
+- **shadcn/ui**: Radix-based primitives in `components/ui/` (`components.json`)
+- **Theme tokens**: CSS variables in `styles/globals.css`; `cn()` from `@lib/utils` composes classes
+- Emotion and Material-UI were removed; do not reintroduce them
 
 ### State & Data
 
@@ -71,18 +71,12 @@ const mutation = useMutation(apiFunction, {
 });
 ```
 
-### Emotion Styled Components
+### Tailwind Classes
 
 ```typescript
-import styled from "@emotion/styled";
-import isPropValid from "@emotion/is-prop-valid";
+import { cn } from "@lib/utils";
 
-// Filter custom props to prevent DOM warnings
-const StyledDiv = styled("div", {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== "customProp"
-})<{ customProp?: boolean }>`
-  // styles
-`;
+<div className={cn("p-5 text-foreground", isActive && "text-brand")} />
 ```
 
 ## Spree API Structure
@@ -165,8 +159,7 @@ contrib/          # Local dependency packages
 ```
 ComponentName/
   index.ts              # Exports
-  ComponentName.tsx     # Main component
-  ComponentName.styles.tsx  # Emotion styled components
+  ComponentName.tsx     # Component logic and Tailwind markup
 ```
 
 ## Common Issues & Solutions
@@ -175,16 +168,6 @@ ComponentName/
 
 - **Problem**: `X cannot be used as a JSX component`
 - **Solution**: Create custom type definitions in `typings/` folder
-
-### React Prop Warnings
-
-- **Problem**: `React does not recognize the customProp prop on a DOM element`
-- **Solution**: Add `shouldForwardProp` filter to styled components
-
-### Material-UI Deprecations
-
-- **Badge overlap**: Use `overlap="rectangular"` not `overlap={true}`
-- **Old API**: Stick to v4 patterns, do not use v5 documentation
 
 ### Cart State Issues
 
@@ -236,10 +219,10 @@ yarn start        # Production server
 
 ### Styling
 
-- Emotion styled components
-- Mobile-first responsive design
-- Consistent spacing using theme values
-- Filter custom props from DOM
+- Tailwind utility classes, composed with `cn()`
+- shadcn/ui primitives from `components/ui` before new ones
+- Mobile-first responsive design with the custom breakpoints (`ss`, `xs`, `sm`, `md`, `lg`, `lgxl`, `xl`)
+- Theme colours (`bg-background`, `text-brand`, ...) instead of hardcoded values
 
 ### Error Handling
 
@@ -290,8 +273,7 @@ try {
 
 ✅ TypeScript JSX component errors (custom type definitions)
 ✅ React key warnings (unique keys using `id + index`)
-✅ Badge deprecation warnings (`overlap="rectangular"`)
-✅ Prop forwarding to DOM (shouldForwardProp filters)
+✅ Emotion and Material-UI replaced by Tailwind CSS and shadcn/ui
 ✅ Facebook Pixel syntax error (removed HTML comments)
 ✅ react-responsive-masonry replacement (CSS grid)
 ✅ Cart 404 errors (auto-create cart on error)
@@ -316,7 +298,8 @@ try {
 - Spree API Docs: https://api.spreecommerce.org/docs/api-v2/
 - Next.js 13 Docs: https://nextjs.org/docs (v13 specific)
 - React Query v3 Docs: https://react-query-v3.tanstack.com/
-- Emotion Docs: https://emotion.sh/docs/introduction
+- Tailwind CSS v3 Docs: https://v3.tailwindcss.com/docs
+- shadcn/ui Docs: https://ui.shadcn.com/docs
 
 ## Questions or Updates?
 

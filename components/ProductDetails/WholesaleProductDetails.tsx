@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
-import { Heart } from "lucide-react";
+import { Heart, ImageIcon } from "lucide-react";
 import { cn } from "@lib/utils";
 import {
   fetchStreams,
@@ -25,18 +25,15 @@ import * as tracking from "../../config/tracking";
 import Featured from "../Home/Featured";
 import { ProductList } from "../ProductList";
 import { FourOhFour } from "../404/FourOhFour";
+import { ServiceUnavailable } from "../404/ServiceUnavailable";
+import { isProductNotFoundError } from "../../lib/productVisibility";
 import { useMediaQuery } from "react-responsive";
 import homeData from "../Home/home.json";
 import { useProductFeed } from "../../hooks/useProductFeed";
 import { useRecentlyViewed } from "../../hooks/useRecentlyViewed";
 import { RecentlyViewed } from "../RecentlyViewed";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext
-} from "@components/ui";
+import { ProductGallery } from "./ProductGallery";
+import { buildGallery } from "../../lib/productMedia";
 import constants from "../../utilities/constants";
 
 interface WholesaleProductDetailsProps {
@@ -67,6 +64,12 @@ export const WholesaleProductDetails = ({
   const { data: favoriteCheck } = useCheckFavorite(defaultVariantId, !!user);
   const toggleFavorite = useToggleFavorite();
 
+  // Gallery: product videos first, then images in position order.
+  const galleryItems = thisProduct?.data
+    ? buildGallery(thisProduct.data as any, thisProduct.included as any, {
+        baseUrl: process.env.NEXT_PUBLIC_SPREE_API_URL || ""
+      })
+    : [];
   const productImgs =
     thisProduct &&
     thisProduct?.included?.filter((e: any) => e["type"] === "image");
@@ -310,6 +313,16 @@ export const WholesaleProductDetails = ({
     );
   }
 
+  // Checked before the data: a refetch that fails keeps the old product in
+  // `thisProduct`, and a product hidden since then must not stay on screen.
+  if (isError && !isProductNotFoundError(productError)) {
+    return (
+      <Layout>
+        <ServiceUnavailable />
+      </Layout>
+    );
+  }
+
   if (isError || !thisProduct) {
     return <FourOhFour />;
   }
@@ -328,45 +341,19 @@ export const WholesaleProductDetails = ({
 
         <div className="section-container py-8">
           <div className="flex flex-col gap-8 md:flex-row md:gap-12">
-            {/* Image Carousel */}
+            {/* Media gallery */}
             <div className="w-full md:w-2/5">
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {productImgs && productImgs.length > 0 ? (
-                    productImgs.map((image: any, index: number) => {
-                      const imgUrl = image.attributes.styles?.filter(
-                        (e: any) => e["width"] == "600"
-                      )[0]?.url;
-                      const imgSrc = `${process.env.NEXT_PUBLIC_SPREE_API_URL}${imgUrl}`;
-                      return (
-                        <CarouselItem key={`image-${index}`}>
-                          <div className="aspect-square overflow-hidden rounded-xl bg-muted">
-                            <img
-                              src={imgSrc}
-                              alt={`${
-                                thisProduct?.data?.attributes?.name
-                              } - Image ${index + 1}`}
-                              className="h-full w-full object-cover"
-                            />
-                          </div>
-                        </CarouselItem>
-                      );
-                    })
-                  ) : (
-                    <CarouselItem>
-                      <div className="flex aspect-square items-center justify-center rounded-xl bg-muted">
-                        <Loading />
-                      </div>
-                    </CarouselItem>
-                  )}
-                </CarouselContent>
-                {productImgs && productImgs.length > 1 && (
-                  <>
-                    <CarouselPrevious className="left-3" />
-                    <CarouselNext className="right-3" />
-                  </>
-                )}
-              </Carousel>
+              {galleryItems.length > 0 ? (
+                <ProductGallery items={galleryItems} />
+              ) : (
+                // No media: a static panel rather than a spinner.
+                <div className="flex aspect-square items-center justify-center rounded-xl bg-muted">
+                  <ImageIcon
+                    className="h-12 w-12 text-muted-foreground/40"
+                    aria-hidden
+                  />
+                </div>
+              )}
             </div>
 
             {/* Product Info */}

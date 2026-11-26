@@ -3,16 +3,16 @@ import { IStream } from "../../typings/stream";
 import { QueryKeys } from "../queryKeys";
 
 const fetchStream = async (id: string) => {
-  const storage = (await import("../../config/storage")).default;
-  const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL;
-  const token = process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN;
+  // The storefront key is added server-side by pages/api/public/[...path].ts.
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("Content-Type", "application/json;charset=UTF-8");
-  requestHeaders.set("X-Spree-Token", `${token}`);
-  const response = await fetch(`${apiUrl}/api/v1/live_stream/${id}`, {
-    method: "GET",
-    headers: requestHeaders
-  })
+  const response = await fetch(
+    `/api/public/live_stream/${encodeURIComponent(id)}`,
+    {
+      method: "GET",
+      headers: requestHeaders
+    }
+  )
     .then((response) => {
       if (!response.ok) throw new Error("Stream request failed");
       else return response.json();

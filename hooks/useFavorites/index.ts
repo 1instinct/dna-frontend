@@ -2,11 +2,14 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import { QueryKeys } from "@hooks/queryKeys";
 import constants from "@utilities/constants";
 
+// Favorites are per-user: every call authenticates with the signed-in user's
+// own OAuth bearer token, never the shared storefront key. Signed-out callers
+// get no network request (the UI sends them to /login instead).
+
 // Fetch user's favorites
 export const fetchFavorites = async (page: number = 1) => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
-  const spreeToken = process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN;
 
   if (!token?.access_token) {
     throw new Error("Not authenticated");
@@ -15,7 +18,6 @@ export const fetchFavorites = async (page: number = 1) => {
   const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL;
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("Content-Type", "application/json");
-  requestHeaders.set("X-Spree-Token", `${spreeToken}`);
   requestHeaders.set("Authorization", `Bearer ${token.access_token}`);
 
   const response = await fetch(`${apiUrl}/api/v1/favorites?page=${page}`, {
@@ -34,7 +36,6 @@ export const fetchFavorites = async (page: number = 1) => {
 export const toggleFavorite = async (variantId: string) => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
-  const spreeToken = process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN;
 
   if (!token?.access_token) {
     throw new Error("Not authenticated");
@@ -43,7 +44,6 @@ export const toggleFavorite = async (variantId: string) => {
   const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL;
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("Content-Type", "application/json");
-  requestHeaders.set("X-Spree-Token", `${spreeToken}`);
   requestHeaders.set("Authorization", `Bearer ${token.access_token}`);
 
   const response = await fetch(`${apiUrl}/api/v1/favorites/toggle`, {
@@ -63,7 +63,6 @@ export const toggleFavorite = async (variantId: string) => {
 export const removeFavorite = async (favoriteId: string) => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
-  const spreeToken = process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN;
 
   if (!token?.access_token) {
     throw new Error("Not authenticated");
@@ -72,7 +71,6 @@ export const removeFavorite = async (favoriteId: string) => {
   const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL;
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("Content-Type", "application/json");
-  requestHeaders.set("X-Spree-Token", `${spreeToken}`);
   requestHeaders.set("Authorization", `Bearer ${token.access_token}`);
 
   const response = await fetch(`${apiUrl}/api/v1/favorites/${favoriteId}`, {
@@ -91,7 +89,6 @@ export const removeFavorite = async (favoriteId: string) => {
 export const checkFavorite = async (variantId: string) => {
   const storage = (await import("../../config/storage")).default;
   const token = await storage.getToken();
-  const spreeToken = process.env.NEXT_PUBLIC_SPREE_ACCESS_TOKEN;
 
   if (!token?.access_token) {
     return { is_favorited: false };
@@ -100,7 +97,6 @@ export const checkFavorite = async (variantId: string) => {
   const apiUrl = process.env.NEXT_PUBLIC_SPREE_API_URL;
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("Content-Type", "application/json");
-  requestHeaders.set("X-Spree-Token", `${spreeToken}`);
   requestHeaders.set("Authorization", `Bearer ${token.access_token}`);
 
   const response = await fetch(
@@ -119,8 +115,9 @@ export const checkFavorite = async (variantId: string) => {
 };
 
 // Hook to fetch favorites
-export const useFavorites = (page: number = 1) => {
+export const useFavorites = (page: number = 1, enabled: boolean = true) => {
   return useQuery([QueryKeys.FAVORITES, page], () => fetchFavorites(page), {
+    enabled,
     staleTime: 30000,
     retry: 1
   });

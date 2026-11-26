@@ -3,6 +3,7 @@ import { spreeClient } from "@config/spree";
 import { QueryKeys } from "@hooks/queryKeys";
 import constants from "@utilities/constants";
 import { IOrderResult } from "@spree/storefront-api-v2-sdk/types/interfaces/Order";
+import { spreeErrorText } from "../../lib/cartAvailability";
 
 interface CheckoutAddress {
   firstname: string;
@@ -75,7 +76,9 @@ export const updateCheckout = async (data: CheckoutData) => {
   } else {
     constants.IS_DEBUG &&
       console.error("Checkout update failed:", response.fail());
-    throw new Error(response.fail().message || "Checkout update failed");
+    throw new Error(
+      spreeErrorText(response.fail()) || "Checkout update failed"
+    );
   }
 };
 
@@ -94,7 +97,9 @@ export const advanceCheckout = async () => {
   } else {
     constants.IS_DEBUG &&
       console.error("Checkout advance failed:", response.fail());
-    throw new Error(response.fail().message || "Failed to advance checkout");
+    throw new Error(
+      spreeErrorText(response.fail()) || "Failed to advance checkout"
+    );
   }
 };
 
@@ -117,7 +122,9 @@ export const completeCheckout = async () => {
   } else {
     constants.IS_DEBUG &&
       console.error("Checkout completion failed:", response.fail());
-    throw new Error(response.fail().message || "Failed to complete checkout");
+    throw new Error(
+      spreeErrorText(response.fail()) || "Failed to complete checkout"
+    );
   }
 };
 
@@ -228,8 +235,9 @@ export const useUpdateCheckout = () => {
 export const useAdvanceCheckout = () => {
   const queryClient = useQueryClient();
 
+  // Settled: a refused step can move the order back, and the cart may have changed.
   return useMutation(advanceCheckout, {
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries(QueryKeys.CART);
     }
   });
@@ -239,7 +247,7 @@ export const useCompleteCheckout = () => {
   const queryClient = useQueryClient();
 
   return useMutation(completeCheckout, {
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries(QueryKeys.CART);
     }
   });

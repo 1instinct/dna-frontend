@@ -16,12 +16,14 @@ import {
 import { Loading } from "../Loading";
 import {
   useCart,
+  useUnavailableCartLines,
   updateItemQuantity,
   removeItemFromCart
 } from "../../hooks/useCart";
 import { useProducts } from "../../hooks";
 import { QueryKeys } from "../../hooks/queryKeys";
 import { useAuth } from "../../config/auth";
+import { UnavailableCartLines } from "../Cart/UnavailableCartLines";
 import {
   IProduct,
   IProducts
@@ -45,6 +47,8 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
   } = useCart();
 
   const { data: productsData } = useProducts(1);
+  const unavailableLines = useUnavailableCartLines(cartData);
+  const hasUnavailable = unavailableLines.length > 0;
 
   useEffect(() => {
     if (
@@ -170,33 +174,38 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
               {product?.attributes?.name} - ${product?.attributes?.price}
             </span>
             <div className="flex items-center gap-1">
-              <button
-                onClick={() =>
-                  handleUpdateItemQuantity(lineItemRef.id, quantity - 1)
-                }
-                className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
-              >
-                <Minus className="h-3 w-3" />
-              </button>
-              <input
-                type="number"
-                value={quantity}
-                onChange={(e: any) => {
-                  const newQty = parseInt(e.target.value) || 1;
-                  if (newQty > 0) {
-                    handleUpdateItemQuantity(lineItemRef.id, newQty);
-                  }
-                }}
-                className="w-10 border-none bg-transparent text-center font-body text-sm text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              />
-              <button
-                onClick={() =>
-                  handleUpdateItemQuantity(lineItemRef.id, quantity + 1)
-                }
-                className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
-              >
-                <Plus className="h-3 w-3" />
-              </button>
+              {/* The backend refuses these on a line that can't be bought. */}
+              {!unavailableLines.some((l) => l.id === lineItemRef.id) && (
+                <>
+                  <button
+                    onClick={() =>
+                      handleUpdateItemQuantity(lineItemRef.id, quantity - 1)
+                    }
+                    className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
+                  >
+                    <Minus className="h-3 w-3" />
+                  </button>
+                  <input
+                    type="number"
+                    value={quantity}
+                    onChange={(e: any) => {
+                      const newQty = parseInt(e.target.value) || 1;
+                      if (newQty > 0) {
+                        handleUpdateItemQuantity(lineItemRef.id, newQty);
+                      }
+                    }}
+                    className="w-10 border-none bg-transparent text-center font-body text-sm text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  />
+                  <button
+                    onClick={() =>
+                      handleUpdateItemQuantity(lineItemRef.id, quantity + 1)
+                    }
+                    className="flex h-7 w-7 items-center justify-center rounded border border-border bg-transparent text-foreground transition-colors hover:bg-muted"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </button>
+                </>
+              )}
               <button
                 onClick={() => handleRemoveItem(lineItemRef.id)}
                 className="ml-1 flex h-7 w-7 items-center justify-center rounded border-none bg-transparent text-destructive transition-colors hover:bg-destructive/10"
@@ -264,6 +273,12 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                 </div>
 
                 {/* Cart Items */}
+                <UnavailableCartLines
+                  lines={unavailableLines}
+                  onRemove={handleRemoveItem}
+                  disabled={removeFromCartMutation.isLoading}
+                />
+
                 <div>{renderCartItems()}</div>
 
                 {/* Totals */}
@@ -301,6 +316,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                   {user ? (
                     <Button
                       className="w-full"
+                      disabled={hasUnavailable}
                       onClick={() => {
                         toggle();
                         router.push("/checkout");
@@ -312,6 +328,7 @@ export const CartSidebar = ({ isVisible, toggle }: Props) => {
                     <>
                       <Button
                         className="w-full"
+                        disabled={hasUnavailable}
                         onClick={() => {
                           toggle();
                           router.push("/checkout");

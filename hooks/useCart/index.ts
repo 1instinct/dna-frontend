@@ -4,6 +4,11 @@ import { useQuery } from "react-query";
 import { spreeClient } from "@config/spree";
 import { QueryKeys } from "@hooks/queryKeys";
 import constants from "@utilities/constants";
+import {
+  cartLineSlugs,
+  findUnavailableSlugs,
+  unavailableCartLines
+} from "../../lib/cartAvailability";
 
 export const showCart = async () => {
   const storage = (await import("../../config/storage")).default;
@@ -233,6 +238,23 @@ export const updateItemQuantity = async (itemId: string, quantity: number) => {
   } else {
     throw new Error(response.fail().message);
   }
+};
+
+/** The lines in this cart that can't be bought (see lib/cartAvailability). */
+export const useUnavailableCartLines = (
+  cart: Parameters<typeof cartLineSlugs>[0]
+) => {
+  const slugs = cartLineSlugs(cart);
+  // Under the CART key, so any change to the cart asks again.
+  const { data } = useQuery(
+    [QueryKeys.CART, "availability", slugs.join(",")],
+    () =>
+      findUnavailableSlugs(slugs, {
+        baseUrl: process.env.NEXT_PUBLIC_SPREE_API_URL || ""
+      }),
+    { enabled: slugs.length > 0, staleTime: 30000, retry: false }
+  );
+  return unavailableCartLines(cart, data);
 };
 
 // export const useCart = () => {
