@@ -19,7 +19,9 @@ export interface HomepageSection {
     | "newsletter"
     | "video"
     | "custom"
-    | "live_streams";
+    | "live_streams"
+    | "announcement_bar"
+    | "app_links";
   content: string;
   position: number;
   is_visible: boolean;
