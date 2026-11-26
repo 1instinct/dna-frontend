@@ -24,7 +24,7 @@
 - Factories in `test/factories/reviews.rb`.
 
 **M0.2 [A] Eligibility + channel**
-- `Reviews::Channel.for(order)`: `wholesale` when `order.channel == "wholesale"` or the user has the `wholesale` role, else `retail`. Seed the `wholesale` role in a migration. Tests for both triggers and the retail default.
+- `Reviews::Channel.for(order)`: `wholesale` when `order.channel == "wholesale"` or the user has the `wholesale` role, else `retail`. Tests for both triggers and the retail default.
 - `Reviews::Eligibility.for_user(user)` and `.for_order(order)` return `[{line_item, product, existing_review}]`. They use complete orders whose shipments are `shipped`, deduplicated by product, and exclude admins.
 - Tests cover: guest order via token, unshipped order (none), a product purchased twice (one entry), and an existing review (marked).
 
@@ -45,9 +45,17 @@
   - the stats math per scope (a wholesale review never moves retail stats)
   - points awarded once
 
+**M0.3b [A] Wholesale signals**
+- Migration seeding the `wholesale` Spree role.
+- `app/models/spree/order_wholesale_channel_decorator.rb`: before `complete`, set `channel = "wholesale"` when the user has the role. Never downgrade a channel an admin already set.
+- Deface override on the admin order customer-details page adding a Channel select (Retail · Wholesale); permit `channel` in the admin orders controller only.
+- v2 account serializer decorator: `wholesale` boolean attribute.
+- Tests: role → wholesale on completion; no role → stays `"spree"`; the storefront checkout API ignores a `channel` param; admin can set it; the account payload exposes the flag.
+
 **M0.4 [F] Primitives + API client**
 - `components/ui/textarea.tsx` (shadcn) and `components/ui/rating-input.tsx` (radiogroup, arrows, 44 px targets, labels "Hated it…Loved it").
 - `lib/api/dnaFetch.ts`, `types/reviews.ts`, and `QueryKeys` additions.
+- `pages/_app.tsx`: derive `wholesale` from `useAuth().user.wholesale` (from M0.3b) instead of hard-coded `false`.
 - Infra: bump `Dockerfile` to `node:22-bullseye`, then smoke-test `yarn build`.
 - Update `LLM-CONTEXT.md` and `.github/copilot-instructions.md`: the styling stack is now Tailwind + shadcn.
 
@@ -210,7 +218,7 @@
 
 | Week | dna-admin | dna-frontend |
 |---|---|---|
-| 1 | M0.1–M0.3 | M0.4 |
+| 1 | M0.1–M0.3b | M0.4 |
 | 2 | M1.1–M1.2, M2.1–M2.2 | M1.3–M1.5 |
 | 3 | M3, M4.1–M4.2 | M2.3–M2.6 |
 | 4 | M4.3–M4.4, M5.1 | M4.5, M5.2 |

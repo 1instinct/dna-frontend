@@ -106,7 +106,16 @@ Recomputed in `after_commit` of Review publish/unpublish/channel change: three c
 
 `Reviews::Channel.for(order)` returns `wholesale` when `order.channel == "wholesale"` (Spree's existing `spree_orders.channel` column, default `"spree"`) **or** the order's user has the `wholesale` Spree role. Otherwise it returns `retail`.
 
-**Dependency:** wholesale ordering isn't wired up end to end today. dna-admin only has `spree_prices.wholesale_price`, and dna-frontend's `wholesale` flag in `pages/_app.tsx` is hard-coded `false`. Until wholesale checkout stamps `order.channel = "wholesale"` or wholesale accounts get the role, every review is `retail`. Admins can reclassify a review from the queue, which also covers backfilling.
+**Both signals are used (decided 26 Nov 2026).** Wholesale ordering isn't wired up end to end today: dna-admin only has `spree_prices.wholesale_price`, and dna-frontend's `wholesale` flag in `pages/_app.tsx` is hard-coded `false`. This work wires both signals:
+
+1. **Account role.** A migration seeds the `wholesale` Spree role. Admins grant it on the user's edit page in Spree admin (Spree's stock role checkboxes). The storefront account payload (`spreeClient.account.accountInfo`, via a v2 account serializer decorator) gains `wholesale: true|false`.
+2. **Order channel.** `spree_orders.channel` becomes `"wholesale"`:
+   - automatically, in an `Order` decorator before `complete`, when the order's user has the `wholesale` role;
+   - manually, from a **Channel** select (Retail · Wholesale) that a Deface override adds to the admin order's customer details page. This covers phone, email and invoice orders, including trade buyers without a storefront account.
+   - The storefront can't set channel directly, so retail customers can't tag their own orders as wholesale.
+3. **Storefront mode.** `pages/_app.tsx` sets `wholesale` from `useAuth().user.wholesale` instead of hard-coded `false`, so wholesale accounts see `WholesaleProductDetails` and `channel=all` reviews.
+
+`Reviews::Channel.for(order)` checks both, so a wholesale-channel order from a guest and an order by a wholesale account each count as wholesale. Admins can still reclassify a single review from the queue, which also covers backfilling older reviews.
 
 | | Retail PDP | Wholesale PDP |
 |---|---|---|
@@ -300,9 +309,9 @@ All Claude calls run server-side in dna-frontend with `@anthropic-ai/sdk`, model
 1. Account deletion: **anonymize**.
 2. Request delay: **7 days** after `shipped_at`, **10 for international** orders.
 3. Points: **50 per review, +50 with a photo**.
-4. Wholesale PDPs show **all reviews** with a **"Wholesale only"** filter. Retail never shows wholesale reviews.
+4. Wholesale PDPs show **all reviews** with a **"Wholesale only"** filter. Retail never shows wholesale reviews, and the API serves wholesale reviews only to wholesale or admin accounts.
+5. Wholesale orders are identified by **both** the `wholesale` account role and `order.channel = "wholesale"` (auto-set for wholesale accounts, admin-settable for manual orders).
 
 ## Open questions
 
-1. How should a wholesale order be identified: `order.channel = "wholesale"` set at checkout, a `wholesale` Spree role on the account, or both? Neither is set anywhere today (see "Retail vs wholesale channel").
-2. Do we want a native-app surface? The API is client-agnostic, so the same endpoints work.
+1. Do we want a native-app surface? The API is client-agnostic, so the same endpoints work.
