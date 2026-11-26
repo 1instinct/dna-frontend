@@ -64,7 +64,6 @@ const SearchBar = ({
   const keyboardEvents = (event: KeyboardEvent) => {
     switch (event.key) {
       case "Escape":
-      case "Tab":
         setIsAutocompleteVisible(false);
         break;
       case "Enter":
@@ -112,18 +111,25 @@ const SearchBar = ({
   const labelId = "label-search";
   const dropdownId = "dropdown-search";
 
+  // Close the suggestions once focus leaves the search (they're links, so Tab can reach them).
+  const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
+    const next = event.relatedTarget as Node | null;
+    if (!next || !event.currentTarget.contains(next)) {
+      setIsAutocompleteVisible(false);
+    }
+  };
+
   return (
     <div
-      role="combobox"
-      aria-haspopup="listbox"
-      aria-owns="search"
-      aria-controls="search"
-      aria-expanded={isAutoCompleteVisible}
       ref={dropdownRef}
-      aria-labelledby={labelId}
+      role="search"
       className="relative"
+      onBlur={handleBlur}
       {...rest}
     >
+      <label id={labelId} htmlFor="search" className="sr-only">
+        Search products
+      </label>
       <div className="is-search-route flex flex-row justify-between">
         <div className="flex w-full justify-end">
           <div
@@ -132,26 +138,35 @@ const SearchBar = ({
               isExpanded ? "w-[195px]" : "w-0"
             )}
           >
-            <div
-              className="absolute left-0 top-0 z-[3] flex h-full w-11 cursor-pointer items-center justify-start"
+            <button
+              type="button"
+              className="absolute left-0 top-0 z-[3] flex h-full w-11 cursor-pointer items-center justify-start rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onClick={toggleSearch}
+              aria-label={isExpanded ? "Close search" : "Open search"}
+              aria-expanded={isExpanded}
+              aria-controls="search"
             >
               {isSearchLoading ? (
-                <i className="bts bt-spinner bt-pulse" />
+                <i className="bts bt-spinner bt-pulse" aria-hidden="true" />
               ) : (
-                <Search className="h-4 w-4 text-foreground" />
+                <Search
+                  className="h-4 w-4 text-foreground"
+                  aria-hidden="true"
+                />
               )}
-            </div>
+            </button>
             <input
               ref={searchRef}
               onKeyDown={(e: KeyboardEvent) => keyboardEvents(e)}
-              tabIndex={0}
+              type="search"
+              tabIndex={isExpanded ? 0 : -1}
               value={query}
               placeholder={placeholder}
               onChange={handleSearchChange}
               id="search"
-              aria-controls={dropdownId}
-              aria-labelledby={labelId}
+              aria-describedby={
+                isAutoCompleteVisible && query ? dropdownId : undefined
+              }
               autoComplete="off"
               className={cn(
                 "h-[42px] w-full border-0 bg-transparent font-title text-sm font-normal text-foreground caret-foreground outline-none transition-all duration-300 ease-in-out",
@@ -162,12 +177,14 @@ const SearchBar = ({
               )}
             />
             {query && (
-              <div
+              <button
+                type="button"
                 onClick={handleSearchClear}
-                className="absolute right-[5px] top-0 z-[3] flex h-full w-11 cursor-pointer items-center justify-end text-foreground transition-colors hover:text-brand"
+                aria-label="Clear search"
+                className="absolute right-[5px] top-0 z-[3] flex h-full w-11 cursor-pointer items-center justify-end rounded-md text-foreground transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <X className="h-3.5 w-3.5" />
-              </div>
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
             )}
           </div>
         </div>

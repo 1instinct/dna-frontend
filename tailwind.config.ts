@@ -26,7 +26,7 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         brand: {
-          DEFAULT: "#EB8B8B",
+          DEFAULT: "hsl(var(--brand) / <alpha-value>)",
           secondary: "#E6CDC0",
           bright: "#ff7777",
           dark: "#af1e1e",
@@ -35,7 +35,7 @@ const config: Config = {
         gray: {
           dark: "#333333",
           DEFAULT: "#666666",
-          medium: "#999999",
+          medium: "#6b6b6b",
           light: "#c4c4c4",
           bg: "#eeeeee"
         },

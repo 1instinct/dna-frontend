@@ -8,7 +8,8 @@ import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { useMutation, useQueryClient } from "react-query";
 import { fetchProducts, useProducts } from "../../hooks";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
   CarouselProvider,
   Slider,
@@ -39,6 +40,7 @@ interface ProductImage {
 
 interface Product {
   id: string;
+  attributes?: { name?: string };
   relationships?: {
     images?: {
       data: Array<{ id: string }>;
@@ -113,13 +115,15 @@ export const ComingSoon = () => {
           foundImg.length > 0 ? foundImg[0]?.attributes?.styles[3]?.url : "";
         const imgSrc = productImg ? `${spreeApiUrl}${imgUrl}` : "";
         return (
-          <div
+          <button
+            type="button"
             key={`image-${i.id}`}
             onClick={() => setIsSlideshow(true)}
-            className="cursor-pointer"
+            aria-haspopup="dialog"
+            className="cursor-pointer rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <img src={imgSrc} alt={`Product ${i.id}`} />
-          </div>
+            <img src={imgSrc} alt={i.attributes?.name || `Product ${i.id}`} />
+          </button>
         );
       });
     },
@@ -169,34 +173,53 @@ export const ComingSoon = () => {
         <NotifyForm />
         <AppCallout variant="section" />
         <SocialLinks />
-        {isSlideshow && (
-          <div className="fixed inset-0 h-full w-full">
-            <div
-              className="fixed inset-0 h-full w-full bg-black/95"
-              onClick={() => setIsSlideshow(false)}
-            />
-            <CarouselProvider
-              naturalSlideWidth={600}
-              naturalSlideHeight={600}
-              totalSlides={productsData.data ? productsData.data.length : 1}
-              touchEnabled
-              infinite={productsData.data ? true : false}
+        {/* A Radix dialog: focus moves into the slideshow, Escape and outside clicks close it,
+            and focus returns to the thumbnail that opened it. */}
+        <DialogPrimitive.Root open={isSlideshow} onOpenChange={setIsSlideshow}>
+          <DialogPrimitive.Portal>
+            <DialogPrimitive.Overlay className="fixed inset-0 h-full w-full bg-black/95" />
+            <DialogPrimitive.Content
+              aria-describedby={undefined}
+              className="fixed inset-0 h-full w-full focus:outline-none"
             >
-              <Slider className="slider h-screen bg-black/95">
-                {renderProductSlides()}
-              </Slider>
+              <DialogPrimitive.Title className="sr-only">
+                Product slideshow
+              </DialogPrimitive.Title>
+              <DialogPrimitive.Close
+                aria-label="Close slideshow"
+                className="fixed right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </DialogPrimitive.Close>
+              <CarouselProvider
+                naturalSlideWidth={600}
+                naturalSlideHeight={600}
+                totalSlides={productsData.data ? productsData.data.length : 1}
+                touchEnabled
+                infinite={productsData.data ? true : false}
+              >
+                <Slider className="slider h-screen bg-black/95">
+                  {renderProductSlides()}
+                </Slider>
 
-              <div className="fixed left-0 top-1/2 flex w-full justify-between">
-                <ButtonBack className="ml-2.5 flex h-[50px] w-[50px] items-center justify-center rounded-full opacity-[0.11] transition-opacity hover:opacity-100">
-                  <ChevronLeft className="h-6 w-6" />
-                </ButtonBack>
-                <ButtonNext className="mr-2.5 flex h-[50px] w-[50px] items-center justify-center rounded-full opacity-[0.11] transition-opacity hover:opacity-100">
-                  <ChevronRight className="h-6 w-6" />
-                </ButtonNext>
-              </div>
-            </CarouselProvider>
-          </div>
-        )}
+                <div className="fixed left-0 top-1/2 flex w-full justify-between">
+                  <ButtonBack
+                    aria-label="Previous product"
+                    className="ml-2.5 flex h-[50px] w-[50px] items-center justify-center rounded-full opacity-[0.11] transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <ChevronLeft className="h-6 w-6" aria-hidden="true" />
+                  </ButtonBack>
+                  <ButtonNext
+                    aria-label="Next product"
+                    className="mr-2.5 flex h-[50px] w-[50px] items-center justify-center rounded-full opacity-[0.11] transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <ChevronRight className="h-6 w-6" aria-hidden="true" />
+                  </ButtonNext>
+                </div>
+              </CarouselProvider>
+            </DialogPrimitive.Content>
+          </DialogPrimitive.Portal>
+        </DialogPrimitive.Root>
         <LegalLinks />
       </div>
     </>

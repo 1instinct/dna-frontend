@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import { nanoid } from "nanoid";
 
 const formatWithHighlight = (text: string, query: string | undefined) => {
@@ -36,24 +36,23 @@ const Suggestion = ({
   onChange,
   toggleVisibility
 }: OwnProps) => {
-  const router = useRouter();
-  const handleSelection = (e: any) => {
+  // A link, so keyboard users can Tab to it and it opens in a new tab like any link.
+  const handleSelection = () => {
     onChange("");
-    e.preventDefault();
     toggleVisibility(false);
-    router.push(`/${suggestion.attributes.slug}`);
   };
 
   if (suggestion) {
     return (
-      <div
+      <Link
+        href={`/${suggestion.attributes.slug}`}
         onClick={handleSelection}
-        className="flex cursor-pointer items-center justify-between bg-card px-8 py-3 font-title text-sm font-bold text-foreground transition-colors hover:bg-muted"
+        className="flex cursor-pointer items-center justify-between bg-card px-8 py-3 font-title text-sm font-bold text-foreground transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
       >
-        <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+        <span className="overflow-hidden text-ellipsis whitespace-nowrap">
           {formatWithHighlight(suggestion.attributes.name, query)}
-        </div>
-      </div>
+        </span>
+      </Link>
     );
   } else {
     return <></>;

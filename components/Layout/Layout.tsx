@@ -12,7 +12,7 @@ export const Layout: React.FC<LayoutProps> = ({
   children: JSX.Element[] | JSX.Element;
 }) => {
   return (
-    <main className="flex-1 overflow-auto scrollbar-none">
+    <div className="flex-1 overflow-auto scrollbar-none">
       <div className="flex-1 overflow-auto">
         {children}
         <Footer
@@ -22,6 +22,6 @@ export const Layout: React.FC<LayoutProps> = ({
           }}
         />
       </div>
-    </main>
+    </div>
   );
 };
