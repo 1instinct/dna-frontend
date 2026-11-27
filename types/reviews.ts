@@ -377,16 +377,23 @@ export type ReviewRequestStatus =
   | "expired"
   | "cancelled";
 
-/** This order's store review, when one was written (M5). */
-export interface ReviewRequestStoreReview {
-  id: number;
-  rating: StarRating;
-}
+/**
+ * This order's store review, when one was written (M5). The contract only
+ * promises `id` and `rating`; the rest of the own-review shape is used to
+ * prefill an edit when the API sends it.
+ */
+export type ReviewRequestStoreReview = Pick<OwnReview, "id" | "rating"> &
+  Partial<Omit<OwnStoreReview, "id" | "rating">>;
 
 export interface ReviewRequestStoreReviewState {
   /** Mirrors the store-reviews setting. */
   enabled: boolean;
   existing_review: ReviewRequestStoreReview | null;
+  /**
+   * Store questions (delivery, packaging...). Not in the M4 contract yet;
+   * the store step asks only for stars and text without them.
+   */
+  questions?: ReviewQuestion[];
 }
 
 /** One product on the order (the API sends one entry per product). */
@@ -426,57 +433,140 @@ export interface ReviewRequestOptOutResponse {
 }
 
 /* ------------------------------------------------------------------ */
-/* Q&A                                                                 */
+/* Store reviews (M5, see "M5 store reviews" in the API contract)      */
 /* ------------------------------------------------------------------ */
 
-export interface ProductAnswer {
-  id: number;
-  body: string;
-  display_name: string;
-  /** Staff answer. */
-  official: boolean;
-  verified_buyer: boolean;
-  helpful_count: number;
-  published_at: string | null;
-}
-
-/** Only answered questions are returned publicly. */
-export interface ProductQuestion {
-  id: number;
-  body: string;
-  display_name: string;
-  answers_count: number;
-  answers: ProductAnswer[];
-  published_at: string | null;
-}
-
-export interface CreateQuestionInput {
-  product_id: number | string;
-  body: string;
-  display_name?: string;
-}
-
-/* ------------------------------------------------------------------ */
-/* Store reviews                                                       */
-/* ------------------------------------------------------------------ */
-
-/** Store reviews reuse the review shape (no variant; attributes are delivery/packaging). */
+/**
+ * A published store review: the public review shape with
+ * `variant_label: null`, no photos and `incentivized: false`. Only retail
+ * store reviews are ever listed.
+ */
 export type StoreReview = Review;
 
-/** `GET /store_reviews/summary`; same shape as a product summary (retail scope). */
-export type StoreReviewSummary = ReviewSummary;
+/**
+ * `GET /store_reviews/summary`: the product summary shape with
+ * `scope: "retail"`, `ai_summary: null` and no `latest_photos`. `attributes`
+ * are the store questions (delivery, packaging...).
+ */
+export interface StoreReviewSummary
+  extends Omit<ReviewSummary, "latest_photos" | "ai_summary" | "photos_count"> {
+  ai_summary?: null;
+  photos_count?: number;
+}
 
-export interface StoreReviewListParams {
+/** What the big-average + histogram block needs (product or store summary). */
+export type RatingOverviewSummary = Pick<
+  ReviewSummary,
+  "average" | "ratings_count" | "reviews_count" | "histogram"
+>;
+
+/** Filters for `GET /store_reviews` (no `scope`, no `with_photos`). */
+export interface StoreReviewListFilters {
+  /** Default `helpful`. Never default to `rating_desc`. */
   sort?: ReviewSort;
+  /** Sent as `rating[]=5&rating[]=4`. */
   rating?: StarRating[];
-  page?: number;
+  /** Reviews with text only; sent as `written=1`. */
+  written?: boolean;
+  /** 1–50, default 10 on the server. */
   per_page?: number;
 }
 
-export interface CreateStoreReviewInput {
+export interface StoreReviewListParams extends StoreReviewListFilters {
+  page?: number;
+}
+
+/** `GET /store_reviews`: `{ data, meta }` like the product list. */
+export type StoreReviewListResponse = Paginated<StoreReview>;
+
+/**
+ * The customer's own store review: the own-review shape with
+ * `product: null` and zero points (store reviews earn none).
+ */
+export interface OwnStoreReview extends Omit<OwnReview, "product"> {
+  product: null;
+}
+
+export type StoreReviewIneligibleReason = "no_shipped_order";
+
+/** `GET /store_reviews/form` (Bearer; 401 without). */
+export interface StoreReviewForm {
+  eligible: boolean;
+  reason: StoreReviewIneligibleReason | null;
+  /** Suggested display name, e.g. "Maya R.". */
+  display_name: string | null;
+  /** Store questions, e.g. delivery and packaging. */
+  questions: ReviewQuestion[];
+  /** Write once, then edit. */
+  existing_review: OwnStoreReview | null;
+  limits: Pick<ReviewFormLimits, "title_max" | "body_max">;
+}
+
+/**
+ * JSON body for `POST /store_reviews` and `PATCH /store_reviews/:id`.
+ * A Bearer or an `X-Review-Token` authorizes it. No photos (422).
+ */
+export interface StoreReviewInput {
   rating: StarRating;
   title?: string;
   body?: string;
   attribute_ratings?: AttributeRatings;
   display_name?: string;
+}
+
+export interface UpdateStoreReviewInput extends Partial<StoreReviewInput> {
+  id: number;
+}
+
+/** `POST` (201) / `PATCH` (200) `/store_reviews` response, like `POST /reviews`. */
+export interface StoreReviewMutationResponse {
+  review: OwnStoreReview;
+}
+
+/** 409 body when the account (or the order, with a token) already has one. */
+export interface StoreReviewConflict {
+  code: "already_reviewed";
+  review_id: number;
+}
+
+/* ------------------------------------------------------------------ */
+/* Q&A (M6, see "M6 questions" in the API contract)                    */
+/* ------------------------------------------------------------------ */
+
+/** A published answer. Official (staff) answers come first. */
+export interface ProductAnswer {
+  id: number;
+  body: string;
+  /** The store name on an official answer. */
+  display_name: string;
+  official: boolean;
+  verified_buyer: boolean;
+  answered_at: string;
+}
+
+/** Only answered questions are public. */
+export interface ProductQuestion {
+  id: number;
+  body: string;
+  display_name: string;
+  asked_at: string;
+  answers: ProductAnswer[];
+}
+
+/** `GET /products/:product_id/questions`: newest answer first, per_page 1–20 (default 5). */
+export type ProductQuestionsResponse = Paginated<ProductQuestion>;
+
+/** `POST /products/:product_id/questions` body (Bearer). */
+export interface AskQuestionInput {
+  /** 10–500 characters. */
+  body: string;
+  /** Defaults to "First L." on the server. */
+  display_name?: string;
+}
+
+/** `POST /products/:product_id/questions` 201 response. */
+export interface AskQuestionResponse {
+  id: number;
+  status: "pending";
+  message: string;
 }

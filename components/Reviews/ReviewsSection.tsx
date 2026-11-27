@@ -1,9 +1,19 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from "react";
-import { Button, Skeleton } from "@components/ui";
+import {
+  Button,
+  Skeleton,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from "@components/ui";
 import { cn } from "@lib/utils";
 import {
   DEFAULT_REVIEW_SORT,
+  isReviewsDisabledError,
+  parseQuestionHash,
   pluralize,
+  questionAnchorId,
   REVIEWS_ENABLED,
   REVIEWS_PER_PAGE
 } from "@lib/reviews";
@@ -13,6 +23,7 @@ import {
   useReviewSummary,
   useReviewUserId
 } from "@hooks/useReviews";
+import { useQuestions } from "@hooks/useQuestions";
 import type {
   ReviewPhoto,
   ReviewScope,
@@ -21,10 +32,17 @@ import type {
 } from "../../types/reviews";
 import { AiSummaryCard } from "./AiSummaryCard";
 import { LightboxState, MediaLightbox } from "./MediaLightbox";
+import { AskQuestionForm, QuestionsList } from "./Questions";
 import { REVIEWS_SECTION_ID } from "./RatingSummary";
 import { ReviewCard } from "./ReviewCard";
 import { ReviewMediaStrip } from "./ReviewMediaStrip";
 import { AttributeBars, RatingOverview } from "./ReviewsOverview";
+import {
+  CardSkeleton,
+  EmptyBox,
+  ErrorState,
+  ShowMoreButton
+} from "./ReviewStates";
 import { ReviewsToolbar } from "./ReviewsToolbar";
 import { WriteReviewButton } from "./WriteReviewButton";
 
@@ -80,53 +98,25 @@ const OverviewSkeleton = () => (
   </div>
 );
 
-const CardSkeleton = () => (
-  <div
-    className="grid gap-3 border-t border-border/60 py-6 sm:grid-cols-[180px_minmax(0,1fr)] sm:gap-6"
-    aria-hidden="true"
-  >
-    <div className="grid content-start gap-2">
-      <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-3 w-20" />
-    </div>
-    <div className="grid gap-2">
-      <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-4 w-1/2" />
-      <Skeleton className="h-3 w-full" />
-      <Skeleton className="h-3 w-4/5" />
-    </div>
-  </div>
-);
+type SectionTab = "reviews" | "questions";
 
-const ErrorState = ({
-  message,
-  onRetry
-}: {
-  message: string;
-  onRetry: () => void;
-}) => (
-  <div
-    role="alert"
-    className="grid justify-items-center gap-3 rounded-xl border border-dashed border-border p-7 text-center font-body text-sm text-muted-foreground"
-  >
-    <p className="m-0">{message}</p>
-    <Button variant="outline" size="sm" onClick={onRetry}>
-      Try again
-    </Button>
-  </div>
-);
+/** `#questions` opens the Questions tab; `#question-<id>` also scrolls to it. */
+const readQuestionsHash = (): { open: boolean; questionId: number | null } => {
+  if (typeof window === "undefined") return { open: false, questionId: null };
+  const hash = window.location.hash;
+  const questionId = parseQuestionHash(hash);
+  return { open: hash === "#questions" || questionId !== null, questionId };
+};
 
-const EmptyBox = ({ children }: { children: React.ReactNode }) => (
-  <div className="grid justify-items-center gap-3 rounded-xl border border-dashed border-border p-7 text-center font-body text-sm text-muted-foreground">
-    {children}
-  </div>
-);
+/** Pages to load while looking for a deep-linked question before giving up. */
+const MAX_DEEP_LINK_PAGES = 10;
 
 /**
- * The PDP reviews block (`#reviews`): overview, attribute bars, AI summary,
- * photo strip, toolbar, review list and "Show more". The summary loads right
- * away; the list waits until the section nears the viewport unless SSR
- * already put the first page in the cache.
+ * The PDP reviews block (`#reviews`): tabs `Reviews (N)` / `Questions (M)`
+ * (the Questions tab is left out while Q&A is switched off, 503). Reviews:
+ * overview, attribute bars, AI summary, photo strip, toolbar, review list
+ * and "Show more". The summary loads right away; the lists wait until the
+ * section nears the viewport unless SSR already put them in the cache.
  *
  * Compliance: default sort is "Most helpful", low ratings are never hidden,
  * and the channel split is by buyer, never by rating.
@@ -152,6 +142,9 @@ const ReviewsSectionInner = ({
   const [written, setWritten] = useState(false);
   const [sort, setSort] = useState<ReviewSort>(DEFAULT_REVIEW_SORT);
   const [lightbox, setLightbox] = useState<LightboxState | null>(null);
+  const [tab, setTab] = useState<SectionTab>("reviews");
+  const [targetQuestionId, setTargetQuestionId] = useState<number | null>(null);
+  const [wantsQuestions, setWantsQuestions] = useState(false);
 
   const requestedScope: ReviewScope = wholesale
     ? wholesaleOnly
@@ -227,6 +220,77 @@ const ReviewsSectionInner = ({
     if (withPhotos) parts.push("with photos");
     return parts.join(" · ");
   })();
+
+  /* Questions (M6) -------------------------------------------------- */
+
+  const questionsQuery = useQuestions(productId, {
+    enabled: nearViewport || wantsQuestions
+  });
+  const questionPages = questionsQuery.data?.pages;
+  // No tab without a first page, nor while Q&A is switched off (503).
+  const showQuestions =
+    !!questionPages && !isReviewsDisabledError(questionsQuery.error);
+  const questionsTotal =
+    questionPages?.[0]?.meta?.total_count ??
+    questionPages?.reduce((sum, page) => sum + (page.data?.length || 0), 0) ??
+    0;
+
+  // Deep links from the answer email (`#question-<id>`) and "Sign in to ask" (`#questions`).
+  useEffect(() => {
+    const apply = () => {
+      const { open, questionId } = readQuestionsHash();
+      if (!open) return;
+      setWantsQuestions(true);
+      setTab("questions");
+      setTargetQuestionId(questionId);
+      sectionRef.current?.scrollIntoView({ block: "start" });
+    };
+    apply();
+    window.addEventListener("hashchange", apply);
+    return () => window.removeEventListener("hashchange", apply);
+  }, []);
+
+  // Once the deep-linked question is loaded, scroll to it and focus it;
+  // load more pages while it isn't there yet.
+  const {
+    hasNextPage: moreQuestions,
+    isFetchingNextPage: loadingMoreQuestions,
+    fetchNextPage: fetchMoreQuestions
+  } = questionsQuery;
+  useEffect(() => {
+    if (targetQuestionId === null || !showQuestions || tab !== "questions") {
+      return;
+    }
+    const found = questionPages?.some((page) =>
+      (page.data || []).some((question) => question.id === targetQuestionId)
+    );
+    if (found) {
+      const timer = window.setTimeout(() => {
+        const node = document.getElementById(
+          questionAnchorId(targetQuestionId)
+        );
+        if (!node) return;
+        node.scrollIntoView({ block: "start" });
+        node.focus({ preventScroll: true });
+        setTargetQuestionId(null);
+      }, 0);
+      return () => window.clearTimeout(timer);
+    }
+    if (moreQuestions && (questionPages?.length || 0) < MAX_DEEP_LINK_PAGES) {
+      if (!loadingMoreQuestions) fetchMoreQuestions();
+      return;
+    }
+    // Not found (no longer public): the tab is open, that's all we can do.
+    setTargetQuestionId(null);
+  }, [
+    targetQuestionId,
+    showQuestions,
+    tab,
+    questionPages,
+    moreQuestions,
+    loadingMoreQuestions,
+    fetchMoreQuestions
+  ]);
 
   const showAi = !!summary?.ai_summary && scope !== "wholesale";
   const overviewColumns = 1 + (attributes.length ? 1 : 0) + (showAi ? 1 : 0);
@@ -387,54 +451,104 @@ const ReviewsSectionInner = ({
         <div className="grid gap-6">
           {renderList()}
           {listQuery.hasNextPage && reviews.length > 0 && (
-            <div className="flex justify-center">
-              <Button
-                variant="outline"
-                onClick={() => listQuery.fetchNextPage()}
-                disabled={listQuery.isFetchingNextPage}
-                className="min-h-[44px] rounded-full px-6 font-title text-xs uppercase tracking-[0.12em]"
-              >
-                {listQuery.isFetchingNextPage
-                  ? "Loading…"
-                  : "Show more reviews"}
-              </Button>
-            </div>
+            <ShowMoreButton
+              onClick={() => listQuery.fetchNextPage()}
+              loading={listQuery.isFetchingNextPage}
+            >
+              Show more reviews
+            </ShowMoreButton>
           )}
         </div>
       </>
     );
   };
 
+  const reviewsCount = hasRatings ? (
+    <span className="tabular-nums"> ({summary?.ratings_count})</span>
+  ) : null;
+  const tabClass =
+    "-mb-px min-h-[44px] px-0 pb-3 pt-2 text-sm leading-5 tracking-[0.12em] data-[state=active]:text-foreground";
+
   return (
     <section
       id={REVIEWS_SECTION_ID}
       ref={sectionRef}
       aria-labelledby={headingId}
-      className={cn("mt-12 grid scroll-mt-24 gap-7", className)}
+      className={cn("mt-12 scroll-mt-24", className)}
     >
-      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-border/60">
-        <h2
-          id={headingId}
-          tabIndex={-1}
-          data-reviews-heading
-          className="-mb-px inline-block border-b-2 border-brand pb-3 font-title text-sm uppercase tracking-[0.12em] text-foreground focus:outline-none"
-        >
-          Reviews
-          {hasRatings && (
-            <span className="tabular-nums"> ({summary?.ratings_count})</span>
+      <Tabs
+        value={showQuestions ? tab : "reviews"}
+        onValueChange={(value) =>
+          setTab(value === "questions" ? "questions" : "reviews")
+        }
+        className="grid gap-7"
+      >
+        <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-border/60">
+          {showQuestions ? (
+            <>
+              <h2
+                id={headingId}
+                tabIndex={-1}
+                data-reviews-heading
+                className="sr-only"
+              >
+                Reviews
+                {hasRatings && ` (${summary?.ratings_count})`} and questions
+              </h2>
+              <TabsList
+                aria-labelledby={headingId}
+                className="h-auto gap-6 border-0"
+              >
+                <TabsTrigger value="reviews" className={tabClass}>
+                  Reviews{reviewsCount}
+                </TabsTrigger>
+                <TabsTrigger value="questions" className={tabClass}>
+                  Questions
+                  <span className="tabular-nums"> ({questionsTotal})</span>
+                </TabsTrigger>
+              </TabsList>
+            </>
+          ) : (
+            <h2
+              id={headingId}
+              tabIndex={-1}
+              data-reviews-heading
+              className="-mb-px inline-block border-b-2 border-brand pb-3 font-title text-sm uppercase tracking-[0.12em] text-foreground focus:outline-none"
+            >
+              Reviews{reviewsCount}
+            </h2>
           )}
-        </h2>
-        {hasRatings && (
-          <WriteReviewButton
-            productId={productId}
-            productName={productName}
-            size="sm"
-            className="mb-2"
-          />
-        )}
-      </div>
+          {hasRatings && (
+            <WriteReviewButton
+              productId={productId}
+              productName={productName}
+              size="sm"
+              className="mb-2"
+            />
+          )}
+        </div>
 
-      {renderBody()}
+        {showQuestions ? (
+          <>
+            <TabsContent value="reviews" className="mt-0 grid gap-7">
+              {renderBody()}
+            </TabsContent>
+            <TabsContent
+              value="questions"
+              className="mt-0 grid items-start gap-8 md:grid-cols-[minmax(0,1fr)_320px]"
+            >
+              <QuestionsList query={questionsQuery} />
+              <AskQuestionForm
+                productId={productId as string}
+                productName={productName}
+                className="md:sticky md:top-24"
+              />
+            </TabsContent>
+          </>
+        ) : (
+          renderBody()
+        )}
+      </Tabs>
 
       <MediaLightbox
         state={lightbox}

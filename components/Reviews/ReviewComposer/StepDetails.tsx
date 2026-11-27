@@ -18,6 +18,8 @@ interface StepDetailsProps {
   onText: (field: keyof ComposerText, value: string) => void;
   limits: Pick<ReviewFormLimits, "title_max" | "body_max">;
   errors: ComposerFieldErrors;
+  /** Neutral prompt for the review text; defaults to the product one. */
+  bodyPlaceholder?: string;
 }
 
 const DISPLAY_NAME_MAX = 60;
@@ -81,7 +83,8 @@ export const StepDetails = ({
   text,
   onText,
   limits,
-  errors
+  errors,
+  bodyPlaceholder = "How's the fit, fabric, color in person?"
 }: StepDetailsProps) => {
   const uid = useId();
   const id = (name: string) => `${uid}-${name}`;
@@ -169,7 +172,7 @@ export const StepDetails = ({
           value={text.body}
           maxLength={limits.body_max}
           rows={5}
-          placeholder="How's the fit, fabric, color in person?"
+          placeholder={bodyPlaceholder}
           aria-invalid={!!errors.body || undefined}
           aria-describedby={describe(errors.body && id("body-error"))}
           onChange={(event) => onText("body", event.target.value)}

@@ -17,4 +17,6 @@ export * from "./useStore";
 export * from "./useProductFeed";
 export * from "./useRecentlyViewed";
 export * from "./useReviews";
+export * from "./useStoreReviews";
+export * from "./useQuestions";
 export * from "./useWholesaleMode";

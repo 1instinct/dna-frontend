@@ -8,7 +8,7 @@ import type {
 } from "../../../types/reviews";
 import { firstName, reviewOf, sessionPoints, SubmittedReviews } from "./flow";
 import { OrderItemsList } from "./OrderItemsList";
-import { eyebrow, primaryPill } from "./RequestStatus";
+import { eyebrow, primaryPill, secondaryPill } from "./RequestStatus";
 
 interface AllDoneProps {
   request: ReviewRequestPayload;
@@ -20,6 +20,8 @@ interface AllDoneProps {
   /** Move focus to the heading (after the shopper finished the last item). */
   focusHeading: boolean;
   onSelect: (item: ReviewRequestItem) => void;
+  /** "Review DNA" / "Edit your review of DNA": reopens the store step. */
+  storeAction?: { label: string; onClick: () => void };
 }
 
 const formatPoints = (value: number) => value.toLocaleString("en-US");
@@ -36,7 +38,8 @@ export const AllDone = ({
   created,
   lastReview,
   focusHeading,
-  onSelect
+  onSelect,
+  storeAction
 }: AllDoneProps) => {
   const headingRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
@@ -121,9 +124,21 @@ export const AllDone = ({
           </p>
         )}
         {pointsBlock}
-        <Button asChild className={primaryPill}>
-          <Link href="/browse">Keep shopping</Link>
-        </Button>
+        <div className="flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:justify-center">
+          <Button asChild className={primaryPill}>
+            <Link href="/browse">Keep shopping</Link>
+          </Button>
+          {storeAction && (
+            <Button
+              type="button"
+              variant="outline"
+              className={secondaryPill}
+              onClick={storeAction.onClick}
+            >
+              {storeAction.label}
+            </Button>
+          )}
+        </div>
       </section>
 
       <section aria-labelledby="review-request-items" className="grid gap-3">

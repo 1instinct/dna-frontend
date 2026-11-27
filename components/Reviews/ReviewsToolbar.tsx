@@ -37,14 +37,16 @@ const FilterChip = ({ pressed, onClick, children }: FilterChipProps) => (
 );
 
 interface ReviewsToolbarProps {
-  withPhotos: boolean;
-  onWithPhotos: (value: boolean) => void;
+  /** Off for store reviews, which have no photos. Default true. */
+  showPhotosFilter?: boolean;
+  withPhotos?: boolean;
+  onWithPhotos?: (value: boolean) => void;
   written: boolean;
   onWritten: (value: boolean) => void;
   /** Only shown on wholesale PDPs. */
-  showWholesaleFilter: boolean;
-  wholesaleOnly: boolean;
-  onWholesaleOnly: (value: boolean) => void;
+  showWholesaleFilter?: boolean;
+  wholesaleOnly?: boolean;
+  onWholesaleOnly?: (value: boolean) => void;
   rating: StarRating | null;
   onClearRating: () => void;
   sort: ReviewSort;
@@ -52,12 +54,13 @@ interface ReviewsToolbarProps {
 }
 
 export const ReviewsToolbar = ({
-  withPhotos,
+  showPhotosFilter = true,
+  withPhotos = false,
   onWithPhotos,
   written,
   onWritten,
-  showWholesaleFilter,
-  wholesaleOnly,
+  showWholesaleFilter = false,
+  wholesaleOnly = false,
   onWholesaleOnly,
   rating,
   onClearRating,
@@ -74,19 +77,21 @@ export const ReviewsToolbar = ({
         role="group"
         aria-label="Filter reviews"
       >
-        <FilterChip
-          pressed={withPhotos}
-          onClick={() => onWithPhotos(!withPhotos)}
-        >
-          With photos
-        </FilterChip>
+        {showPhotosFilter && (
+          <FilterChip
+            pressed={withPhotos}
+            onClick={() => onWithPhotos?.(!withPhotos)}
+          >
+            With photos
+          </FilterChip>
+        )}
         <FilterChip pressed={written} onClick={() => onWritten(!written)}>
           Written only
         </FilterChip>
         {showWholesaleFilter && (
           <FilterChip
             pressed={wholesaleOnly}
-            onClick={() => onWholesaleOnly(!wholesaleOnly)}
+            onClick={() => onWholesaleOnly?.(!wholesaleOnly)}
           >
             Wholesale only
           </FilterChip>

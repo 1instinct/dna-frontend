@@ -1,7 +1,7 @@
 /**
  * Product reviews end-to-end checks (M2.6, plus the M4.5 email page
- * `/review/[token]`), with the dna-admin API mocked by Playwright
- * `page.route()`. Plain Node + the `playwright` package (the
+ * `/review/[token]`, M5 store reviews and M6 product Q&A), with the
+ * dna-admin API mocked by Playwright `page.route()`. Plain Node + the `playwright` package (the
  * `@playwright/test` runner isn't a dependency of this repo).
  *
  * Run:
@@ -482,6 +482,130 @@ const TOKEN = {
   created_at: Math.round(Date.now() / 1000)
 };
 
+/* M5 store reviews (contract "M5 store reviews"). */
+const STORE_SUMMARY = {
+  scope: "retail",
+  average: 4.8,
+  ratings_count: 1203,
+  reviews_count: 640,
+  histogram: { 1: 21, 2: 18, 3: 40, 4: 160, 5: 964 },
+  attributes: [
+    {
+      key: "delivery",
+      label: "Delivery",
+      kind: "scale",
+      low_label: null,
+      high_label: null,
+      average: 4.7,
+      count: 512
+    },
+    {
+      key: "packaging",
+      label: "Packaging",
+      kind: "scale",
+      low_label: null,
+      high_label: null,
+      average: 4.9,
+      count: 498
+    }
+  ],
+  ai_summary: null
+};
+
+const STORE_QUESTIONS = [
+  {
+    key: "delivery",
+    label: "Delivery",
+    kind: "scale",
+    low_label: null,
+    high_label: null
+  }
+];
+
+// 12 reviews so the list (10 per page) has a second page; every star level.
+const STORE_REVIEWS = Array.from({ length: 12 }, (_, i) => {
+  const rating = [5, 4, 2, 5, 1, 3, 5, 4, 5, 4, 5, 5][i];
+  return {
+    id: 300 + i,
+    rating,
+    title: i === 2 ? "Slow to arrive" : i % 3 === 0 ? "Great service" : null,
+    body:
+      i === 2
+        ? "Took nearly two weeks and no tracking updates."
+        : i === 5
+        ? null
+        : `Store review number ${i + 1}. Easy checkout and quick replies.`,
+    display_name: `Store Reviewer ${i + 1}`,
+    variant_label: null,
+    verified_purchase: true,
+    incentivized: false,
+    channel: "retail",
+    attribute_ratings: { delivery: Math.max(1, rating - 1) },
+    photos: [],
+    helpful_count: 12 - i,
+    unhelpful_count: 0,
+    reply: null,
+    published_at: `2026-11-${String(25 - i).padStart(2, "0")}T12:00:00Z`,
+    edited: false
+  };
+});
+
+const ownStoreReview = (overrides = {}) => ({
+  ...STORE_REVIEWS[0],
+  id: 12,
+  display_name: "Maya R.",
+  status: "pending",
+  status_message: "Thanks! We're checking it before it goes live.",
+  published_at: null,
+  product: null,
+  points: { awarded: 0, pending: 0 },
+  ...overrides
+});
+
+/* M6 product questions (contract "M6 questions"): answered ones only. */
+const PRODUCT_QUESTIONS = [
+  {
+    id: 31,
+    body: "Is the fabric see-through in the white?",
+    display_name: "Jo K.",
+    asked_at: "2026-11-10T09:00:00Z",
+    answers: [
+      {
+        id: 41,
+        body: "It's fully opaque, even in the white.",
+        display_name: "DNA",
+        official: true,
+        verified_buyer: false,
+        answered_at: "2026-11-11T12:00:00Z"
+      },
+      {
+        id: 42,
+        body: "I have the white one and it's not see-through at all.",
+        display_name: "Sam W.",
+        official: false,
+        verified_buyer: true,
+        answered_at: "2026-11-12T08:00:00Z"
+      }
+    ]
+  },
+  {
+    id: 32,
+    body: "Does the tie come off?",
+    display_name: "Ana P.",
+    asked_at: "2026-11-08T09:00:00Z",
+    answers: [
+      {
+        id: 43,
+        body: "The tie is sewn in at the side seam.",
+        display_name: "DNA",
+        official: true,
+        verified_buyer: false,
+        answered_at: "2026-11-09T12:00:00Z"
+      }
+    ]
+  }
+];
+
 /* ------------------------------------------------------------------ */
 /* A small PNG for the photo upload                                    */
 /* ------------------------------------------------------------------ */
@@ -570,7 +694,11 @@ const installMocks = async (page, state = {}) => {
       path: p,
       search: url.search,
       headers,
-      contentType: headers["content-type"] || ""
+      contentType: headers["content-type"] || "",
+      // JSON bodies (store reviews, questions); multipart is read via recordReviewPosts.
+      body: /json/.test(headers["content-type"] || "")
+        ? JSON.parse(request.postData() || "null")
+        : undefined
     };
     calls.push(call);
     if (method === "OPTIONS") {
@@ -642,6 +770,106 @@ const installMocks = async (page, state = {}) => {
       return json(route, 404, {
         error: "This review link isn't valid any more",
         code: "invalid_token"
+      });
+    }
+
+    // Store reviews (M5). Every endpoint answers 503 while switched off.
+    if (p.startsWith("/api/v1/store_reviews")) {
+      if (state.storeDisabled)
+        return json(route, 503, { error: "Not enabled", code: "not_enabled" });
+      if (reviewToken && reviewToken !== REVIEW_TOKEN)
+        return json(route, 404, {
+          error: "This review link isn't valid any more",
+          code: "invalid_token"
+        });
+      if (p === "/api/v1/store_reviews/summary")
+        return json(route, 200, STORE_SUMMARY);
+      if (p === "/api/v1/store_reviews/form") {
+        if (!signedIn) return json(route, 401, { error: "Sign in" });
+        return json(route, 200, {
+          eligible: true,
+          reason: null,
+          display_name: "Maya R.",
+          questions: STORE_QUESTIONS,
+          existing_review: state.storeExisting || null,
+          limits: { title_max: 120, body_max: 5000 }
+        });
+      }
+      if (p === "/api/v1/store_reviews" && method === "GET") {
+        const ratings = url.searchParams.getAll("rating[]").map(Number);
+        let rows = STORE_REVIEWS.slice();
+        if (ratings.length)
+          rows = rows.filter((r) => ratings.includes(r.rating));
+        if (url.searchParams.get("written") === "1")
+          rows = rows.filter((r) => r.body || r.title);
+        const perPage = Number(url.searchParams.get("per_page") || 10);
+        const pageNo = Number(url.searchParams.get("page") || 1);
+        return json(route, 200, {
+          data: rows.slice((pageNo - 1) * perPage, pageNo * perPage),
+          meta: {
+            page: pageNo,
+            per_page: perPage,
+            total_count: rows.length,
+            total_pages: Math.max(1, Math.ceil(rows.length / perPage))
+          }
+        });
+      }
+      if (p === "/api/v1/store_reviews" && method === "POST") {
+        if (!signedIn && !reviewToken)
+          return json(route, 401, { error: "Sign in" });
+        if (state.storeConflict)
+          return json(route, 409, {
+            error: "Already reviewed",
+            code: "already_reviewed",
+            review_id: 12
+          });
+        return json(route, 201, {
+          review: ownStoreReview({ rating: call.body && call.body.rating })
+        });
+      }
+      if ((m = p.match(/^\/api\/v1\/store_reviews\/(\d+)$/))) {
+        if (!signedIn && !reviewToken)
+          return json(route, 401, { error: "Sign in" });
+        return json(route, 200, {
+          review: ownStoreReview({
+            id: Number(m[1]),
+            rating: call.body && call.body.rating
+          })
+        });
+      }
+    }
+
+    // Product questions (M6)
+    if ((m = p.match(/^\/api\/v1\/products\/([^/]+)\/questions$/))) {
+      if (state.questionsDisabled)
+        return json(route, 503, { error: "Not enabled", code: "not_enabled" });
+      if (method === "POST") {
+        if (!signedIn) return json(route, 401, { error: "Sign in" });
+        if (state.askLimited)
+          return json(route, 429, { error: "Too many questions" });
+        const text = ((call.body && call.body.body) || "").trim();
+        if (text.length < 10 || text.length > 500)
+          return json(route, 422, {
+            error: "Invalid",
+            fields: { body: ["is too short (minimum is 10 characters)"] }
+          });
+        return json(route, 201, {
+          id: 51,
+          status: "pending",
+          message: "Thanks! We'll email you when it's answered."
+        });
+      }
+      const perPage = Number(url.searchParams.get("per_page") || 5);
+      const pageNo = Number(url.searchParams.get("page") || 1);
+      const rows = state.questions || PRODUCT_QUESTIONS;
+      return json(route, 200, {
+        data: rows.slice((pageNo - 1) * perPage, pageNo * perPage),
+        meta: {
+          page: pageNo,
+          per_page: perPage,
+          total_count: rows.length,
+          total_pages: Math.max(1, Math.ceil(rows.length / perPage))
+        }
       });
     }
 
@@ -1306,6 +1534,11 @@ const CHECKS = [
         () => document.activeElement?.textContent === "How would you rate it?"
       );
       await page.getByRole("button", { name: "Skip this item" }).click();
+      // M5: the store question comes after the items; it's skippable too.
+      await page
+        .getByRole("heading", { name: "How was shopping with us?" })
+        .waitFor();
+      await page.getByRole("button", { name: "Skip", exact: true }).click();
       const done = page.getByRole("heading", { name: "All done" });
       await done.waitFor();
       await page.waitForFunction(
@@ -1331,7 +1564,10 @@ const CHECKS = [
         "/satin-slip-skirt"
       );
       assert.strictEqual(
-        calls.filter((c) => c.path === "/api/v1/reviews").length,
+        calls.filter(
+          (c) =>
+            c.path === "/api/v1/reviews" || c.path === "/api/v1/store_reviews"
+        ).length,
         0,
         "skipping sends nothing"
       );
@@ -1480,6 +1716,371 @@ const CHECKS = [
         0
       );
       await kept.context.close();
+    }
+  },
+
+  /* M5 store reviews ------------------------------------------------- */
+  {
+    name: "store reviews page renders the summary, histogram filter and list",
+    run: async (browser) => {
+      const { context, page, calls, errors } = await open(browser, "/reviews", {
+        device: PHONE
+      });
+      await page
+        .getByRole("heading", { level: 1, name: /^Reviews of / })
+        .waitFor({ timeout: PAGE_TIMEOUT });
+      assert.match(await page.title(), /^Customer reviews/);
+      const root = page.locator("[data-store-reviews]");
+      await root.getByText("4.8", { exact: true }).waitFor();
+      await root.getByText("1,203 ratings · 640 written reviews").waitFor();
+      // Store attribute bars.
+      await root.getByText("Delivery", { exact: true }).first().waitFor();
+      await root.getByText("Packaging", { exact: true }).first().waitFor();
+      await root.locator("article").first().waitFor();
+      assert.strictEqual(await root.locator("article").count(), 10);
+      // No variant, photo or points lines on store review cards.
+      assert.strictEqual(await root.getByText(/^Purchased:/).count(), 0);
+      assert.strictEqual(await root.getByText(/DNA points/).count(), 0);
+      // Low ratings are listed too, and star-only reviews say so.
+      await root.getByText("Slow to arrive").waitFor();
+      await root.getByText("Rated without a written review.").waitFor();
+      // Histogram bars are aria-pressed filter buttons.
+      const bar = page.getByRole("button", {
+        name: /Show only 2-star reviews/
+      });
+      await bar.click();
+      await page.waitForFunction(
+        () =>
+          document.querySelectorAll("[data-store-reviews] article").length === 1
+      );
+      assert.strictEqual(await bar.getAttribute("aria-pressed"), "true");
+      assert.ok(
+        calls.some(
+          (c) =>
+            c.path === "/api/v1/store_reviews" &&
+            c.search.includes("rating%5B%5D=2")
+        ),
+        "requests rating[]=2"
+      );
+      await bar.click();
+      await page
+        .getByRole("button", { name: "Show more reviews" })
+        .click({ timeout: 10000 });
+      await page.waitForFunction(
+        () =>
+          document.querySelectorAll("[data-store-reviews] article").length ===
+          12
+      );
+      // Public reads go out without a Bearer and with the default sort.
+      const list = calls.find((c) => c.path === "/api/v1/store_reviews");
+      assert.ok(list.search.includes("sort=helpful"), "default sort helpful");
+      // Self-serving store reviews get no aggregateRating markup.
+      const ld = await page
+        .locator('script[type="application/ld+json"]')
+        .allTextContents();
+      assert.ok(
+        ld.every((text) => !text.includes("aggregateRating")),
+        "no aggregateRating JSON-LD"
+      );
+      // Signed out: no "Review us".
+      assert.strictEqual(
+        await page.getByRole("button", { name: "Review us" }).count(),
+        0
+      );
+      const overflow = await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth -
+          document.documentElement.clientWidth
+      );
+      assert.ok(overflow <= 0, `no horizontal overflow (${overflow}px)`);
+      assert.deepStrictEqual(errors, []);
+      await context.close();
+
+      // 503 not_enabled: a 404-style page and no list.
+      const off = await open(browser, "/reviews", {
+        state: { storeDisabled: true }
+      });
+      await off.page
+        .getByRole("heading", { name: "Page not found" })
+        .waitFor({ timeout: PAGE_TIMEOUT });
+      assert.strictEqual(
+        off.calls.filter((c) => c.path === "/api/v1/store_reviews").length,
+        0,
+        "no list request while disabled"
+      );
+      await off.context.close();
+    }
+  },
+  {
+    name: "store reviews: Review us opens the composer and POSTs JSON with a Bearer",
+    run: async (browser) => {
+      const { context, page, calls, errors } = await open(browser, "/reviews", {
+        signedIn: true
+      });
+      const button = page.getByRole("button", { name: "Review us" });
+      await button.waitFor({ timeout: PAGE_TIMEOUT });
+      await button.click();
+      const dialog = page.getByRole("dialog", { name: /^Review / });
+      await dialog
+        .getByRole("heading", { name: "How was shopping with us?" })
+        .waitFor();
+      assert.strictEqual(
+        await dialog.getByText(/points/i).count(),
+        0,
+        "no points copy"
+      );
+      assert.strictEqual(
+        await dialog.locator('input[type="file"]').count(),
+        0,
+        "no photo step"
+      );
+      await dialog.getByRole("radio", { name: /5 stars/ }).click();
+      await dialog.getByRole("button", { name: "Add details" }).click();
+      await dialog.getByRole("heading", { name: "Tell us more" }).waitFor();
+      await dialog.getByLabel("Your review").fill("Fast shipping, nice box.");
+      await dialog.getByRole("button", { name: "Submit review" }).click();
+      await dialog.getByRole("heading", { name: /Thanks, Maya/ }).waitFor();
+      await dialog
+        .getByText("Thanks! We're checking it before it goes live.", {
+          exact: true
+        })
+        .waitFor();
+      const post = calls.find(
+        (c) => c.method === "POST" && c.path === "/api/v1/store_reviews"
+      );
+      assert.ok(post, "POST /store_reviews sent");
+      assert.match(post.contentType, /^application\/json/);
+      assert.ok(post.headers.authorization, "sends the Bearer token");
+      assert.strictEqual(post.body.rating, 5);
+      assert.strictEqual(post.body.body, "Fast shipping, nice box.");
+      assert.ok(!("photos" in post.body), "no photos");
+      assert.deepStrictEqual(errors, []);
+      await context.close();
+    }
+  },
+  {
+    name: "footer shows the store rating badge linking to /reviews",
+    run: async (browser) => {
+      const { context, page } = await open(browser, "/privacy");
+      await page.locator("footer").waitFor({ timeout: PAGE_TIMEOUT });
+      await page
+        .locator("footer")
+        .evaluate((el) => el.scrollIntoView({ block: "end" }));
+      const badge = page.getByRole("link", {
+        name: /Rated 4\.8 out of 5 from 1,203 reviews/
+      });
+      await badge.waitFor();
+      assert.strictEqual(await badge.getAttribute("href"), "/reviews");
+      // innerText follows the CSS uppercase.
+      assert.match(await badge.innerText(), /4\.8\s*·\s*1,203 reviews/i);
+      await context.close();
+
+      // Hidden while store reviews are switched off (503).
+      const off = await open(browser, "/privacy", {
+        state: { storeDisabled: true }
+      });
+      await off.page.locator("footer").waitFor({ timeout: PAGE_TIMEOUT });
+      await off.page
+        .locator("footer")
+        .evaluate((el) => el.scrollIntoView({ block: "end" }));
+      await off.page.waitForResponse((r) =>
+        r.url().includes("/api/v1/store_reviews/summary")
+      );
+      await off.page.waitForTimeout(500);
+      assert.strictEqual(
+        await off.page.locator("[data-store-rating-badge]").count(),
+        0
+      );
+      await off.context.close();
+    }
+  },
+  {
+    name: "email link: store step after the items posts with X-Review-Token (409 → PATCH)",
+    run: async (browser) => {
+      const { context, page, calls, errors } = await open(
+        browser,
+        `/review/${REVIEW_TOKEN}`,
+        {
+          device: PHONE,
+          state: {
+            storeConflict: true,
+            reviewRequest: {
+              ...REVIEW_REQUEST,
+              items: [REVIEW_REQUEST.items[2]]
+            }
+          }
+        }
+      );
+      await page
+        .getByRole("heading", { name: "How would you rate it?" })
+        .waitFor({ timeout: PAGE_TIMEOUT });
+      await page.getByRole("radio", { name: /4 stars/ }).click();
+      await page.getByRole("button", { name: "Submit rating" }).click();
+      // The last item leads straight to the store question.
+      const storeHeading = page.getByRole("heading", {
+        name: "How was shopping with us?"
+      });
+      await storeHeading.waitFor();
+      await page.waitForFunction(
+        () =>
+          document.activeElement?.textContent === "How was shopping with us?"
+      );
+      assert.strictEqual(
+        await page
+          .locator("[data-store-review-composer]")
+          .getByText(/points/i)
+          .count(),
+        0,
+        "no points copy"
+      );
+      await page.getByRole("radio", { name: /2 stars/ }).click();
+      await page.getByRole("button", { name: "Submit rating" }).click();
+      await page.getByRole("button", { name: "Continue" }).waitFor();
+      const storeCalls = calls.filter((c) =>
+        c.path.startsWith("/api/v1/store_reviews")
+      );
+      assert.deepStrictEqual(
+        storeCalls.map((c) => `${c.method} ${c.path}`),
+        ["POST /api/v1/store_reviews", "PATCH /api/v1/store_reviews/12"],
+        "409 already_reviewed switches to PATCH"
+      );
+      storeCalls.forEach((c) => {
+        assert.strictEqual(c.headers["x-review-token"], REVIEW_TOKEN);
+        assert.ok(!c.headers.authorization, "no Bearer with the token");
+        assert.match(c.contentType, /^application\/json/);
+        assert.strictEqual(c.body.rating, 2);
+      });
+      await page.getByRole("button", { name: "Continue" }).click();
+      await page.getByRole("heading", { name: /Thanks/ }).waitFor();
+      // The store button (product rows have "Edit" with an aria-label).
+      await page
+        .locator("button", { hasText: /^Edit your review of / })
+        .waitFor();
+      assert.deepStrictEqual(errors, []);
+      await context.close();
+    }
+  },
+  {
+    name: "account reviews page shows the own store review with Edit",
+    run: async (browser) => {
+      const { context, page } = await open(
+        browser,
+        "/account/reviews?tab=mine",
+        {
+          signedIn: true,
+          state: {
+            storeExisting: ownStoreReview({
+              rating: 4,
+              title: "Easy returns",
+              body: "Swapped a size with no fuss.",
+              status: "published",
+              status_message: "Your review is live.",
+              published_at: "2026-11-20T10:00:00Z"
+            })
+          }
+        }
+      );
+      const row = page.locator("[data-own-store-review]");
+      await row.waitFor({ timeout: PAGE_TIMEOUT });
+      await row.getByText("Easy returns").waitFor();
+      await row.getByRole("button", { name: /^Edit your review of / }).click();
+      const dialog = page.getByRole("dialog", {
+        name: /^Edit your review of /
+      });
+      await dialog
+        .getByRole("heading", { name: "How was shopping with us?" })
+        .waitFor();
+      assert.strictEqual(
+        await dialog
+          .getByRole("radio", { name: /4 stars/ })
+          .getAttribute("aria-checked"),
+        "true"
+      );
+      await context.close();
+    }
+  },
+
+  /* M6 product questions --------------------------------------------- */
+  {
+    name: "PDP Questions tab shows answered questions and the ask form",
+    run: async (browser) => {
+      const { context, page, errors } = await open(browser, `/${SLUG}`);
+      const tab = page.getByRole("tab", { name: /Questions \(2\)/ });
+      await tab.waitFor({ timeout: PAGE_TIMEOUT });
+      await page.getByRole("tab", { name: /Reviews \(128\)/ }).waitFor();
+      await tab.click();
+      assert.strictEqual(await tab.getAttribute("aria-selected"), "true");
+      const question = page.locator("#question-31");
+      await question
+        .getByText("Is the fabric see-through in the white?")
+        .waitFor();
+      await question.getByText("Official answer").waitFor();
+      await question.getByText("Verified buyer").waitFor();
+      // Signed out: a sign-in link that comes back to the tab.
+      const signInLink = page.getByRole("link", { name: "Sign in to ask" });
+      assert.strictEqual(
+        await signInLink.getAttribute("href"),
+        `/login?redirect=${encodeURIComponent(`/${SLUG}#questions`)}`
+      );
+      assert.deepStrictEqual(errors, []);
+      await context.close();
+
+      // Signed in, from the answer email's deep link.
+      const asker = await open(browser, `/${SLUG}#question-32`, {
+        signedIn: true
+      });
+      const deepTab = asker.page.getByRole("tab", { name: /Questions/ });
+      await deepTab.waitFor({ timeout: PAGE_TIMEOUT });
+      await asker.page.waitForFunction(
+        () => document.activeElement?.id === "question-32"
+      );
+      assert.strictEqual(await deepTab.getAttribute("aria-selected"), "true");
+      const box = asker.page.getByLabel("Your question");
+      await box.fill("Short?");
+      await asker.page.getByText("6 / 500").waitFor();
+      await asker.page.getByRole("button", { name: "Ask question" }).click();
+      await asker.page.getByText(/at least 10 characters/).waitFor();
+      assert.strictEqual(await box.getAttribute("aria-invalid"), "true");
+      await box.fill("Does it shrink in the wash?");
+      await asker.page.getByRole("button", { name: "Ask question" }).click();
+      await asker.page
+        .getByRole("status")
+        .getByText("Thanks! We'll email you when it's answered.")
+        .waitFor();
+      const post = asker.calls.find(
+        (c) =>
+          c.method === "POST" && c.path === `/api/v1/products/${SLUG}/questions`
+      );
+      assert.ok(post, "POST /questions sent");
+      assert.ok(post.headers.authorization, "sends the Bearer token");
+      assert.strictEqual(post.body.body, "Does it shrink in the wash?");
+      await asker.context.close();
+
+      // 429 is shown; 503 hides the tab entirely.
+      const limited = await open(browser, `/${SLUG}#questions`, {
+        signedIn: true,
+        state: { askLimited: true }
+      });
+      await limited.page
+        .getByLabel("Your question")
+        .fill("Is there a matching skirt?", { timeout: PAGE_TIMEOUT });
+      await limited.page.getByRole("button", { name: "Ask question" }).click();
+      await limited.page
+        .getByRole("alert")
+        .getByText(/asked a lot of questions today/)
+        .waitFor();
+      await limited.context.close();
+
+      const off = await open(browser, `/${SLUG}`, {
+        state: { questionsDisabled: true }
+      });
+      await scrollToReviews(off.page);
+      assert.strictEqual(await off.page.getByRole("tab").count(), 0);
+      assert.match(
+        await off.page.locator("#reviews h2").first().innerText(),
+        /Reviews \(128\)/i
+      );
+      await off.context.close();
     }
   }
 ];

@@ -13,7 +13,7 @@ import type { ReviewTarget } from "./types";
 const DESKTOP_QUERY = "(min-width: 768px)";
 
 /** True at Tailwind's `md` breakpoint and up; false during SSR. */
-const useIsDesktop = () => {
+export const useIsDesktop = () => {
   const [desktop, setDesktop] = useState(false);
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;

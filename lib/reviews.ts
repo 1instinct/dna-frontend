@@ -12,7 +12,8 @@ import type {
   ReviewListFilters,
   ReviewScope,
   ReviewSort,
-  StarRating
+  StarRating,
+  StoreReviewListFilters
 } from "../types/reviews";
 
 /**
@@ -59,6 +60,38 @@ export const normalizeReviewFilters = (
   written: !!filters.written,
   per_page: filters.per_page || REVIEWS_PER_PAGE
 });
+
+/** Page size for the `/reviews` store reviews list. */
+export const STORE_REVIEWS_PER_PAGE = 10;
+
+/** Normalized store review list filters (stable query keys for SSR + browser). */
+export type NormalizedStoreReviewFilters = Required<StoreReviewListFilters>;
+
+export const normalizeStoreReviewFilters = (
+  filters: StoreReviewListFilters = {}
+): NormalizedStoreReviewFilters => ({
+  sort: filters.sort || DEFAULT_REVIEW_SORT,
+  rating: [...(filters.rating || [])].sort((a, b) => b - a),
+  written: !!filters.written,
+  per_page: filters.per_page || STORE_REVIEWS_PER_PAGE
+});
+
+/** Store name used in review copy ("Response from DNA", "Review DNA"). */
+export const STORE_NAME = process.env.NEXT_PUBLIC_SHORT_TITLE || "DNA";
+
+/** Product Q&A: `per_page` for the PDP questions tab (API allows 1–20). */
+export const QUESTIONS_PER_PAGE = 5;
+export const QUESTION_MIN_LENGTH = 10;
+export const QUESTION_MAX_LENGTH = 500;
+
+/** `#question-<id>` anchors on the PDP (the answer email links there). */
+export const questionAnchorId = (id: number | string) => `question-${id}`;
+
+/** The question id in a `#question-<id>` hash, or null. */
+export const parseQuestionHash = (hash: string | null | undefined) => {
+  const match = /^#?question-(\d+)$/.exec(hash || "");
+  return match ? Number(match[1]) : null;
+};
 
 /** The scope a PDP shows by default: retail shoppers see retail reviews, wholesale accounts see all. */
 export const defaultReviewScope = (wholesale?: boolean): ReviewScope =>
@@ -233,7 +266,14 @@ export const reviewPointsLine = (
   return null;
 };
 
-type ReviewErrorContext = "submit" | "vote" | "report" | "delete" | "load";
+type ReviewErrorContext =
+  | "submit"
+  | "vote"
+  | "report"
+  | "delete"
+  | "load"
+  | "store"
+  | "ask";
 
 const errorCode = (error: DnaApiError): string | undefined => {
   const body = error.body as { code?: unknown } | undefined;
@@ -247,7 +287,10 @@ const TOO_MANY: Record<ReviewErrorContext, string> = {
   report:
     "You've sent a lot of reports in a short time. Please try again later.",
   delete: "Too many requests. Please try again later.",
-  load: "Too many requests. Please try again later."
+  load: "Too many requests. Please try again later.",
+  store:
+    "You've sent a lot of reviews in a short time. Please try again in an hour.",
+  ask: "You've asked a lot of questions today. Please try again tomorrow."
 };
 
 /**
@@ -267,10 +310,14 @@ export const reviewErrorMessage = (
     return "This review link isn't valid any more.";
   }
   if (code === "not_enabled" || error.status === 503) {
-    return "Reviews are switched off for a moment. Please try again later.";
+    return context === "ask"
+      ? "Questions are switched off for a moment. Please try again later."
+      : "Reviews are switched off for a moment. Please try again later.";
   }
   if (code === "not_eligible") {
-    return "Reviews are open to customers once their order has shipped.";
+    return context === "store"
+      ? "You can review us once one of your orders has shipped."
+      : "Reviews are open to customers once their order has shipped.";
   }
   if (code === "forbidden") {
     return "Staff accounts can't review products.";
@@ -292,6 +339,9 @@ export const reviewErrorMessage = (
       if (error.fieldErrors) return "Please check the highlighted fields.";
       if (context === "vote") return "You can't vote on your own review.";
       if (context === "report") return "You can't report your own review.";
+      if (context === "ask") {
+        return error.message || "Please check your question and try again.";
+      }
       return error.message || "Please check your review and try again.";
     case 429:
       return TOO_MANY[context];

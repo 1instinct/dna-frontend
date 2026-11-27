@@ -21,3 +21,11 @@ export { OrderItemReview } from "./OrderItemReview";
 export { AccountReviews } from "./AccountReviews";
 export { ReviewComposer, ReviewComposerSheet } from "./ReviewComposer";
 export type { ReviewComposerProps, ReviewTarget } from "./ReviewComposer";
+export { QuestionsList, AskQuestionForm } from "./Questions";
+export {
+  StoreRatingBadge,
+  StoreReviewsPage,
+  StoreReviewComposer,
+  StoreReviewComposerSheet,
+  ReviewUsButton
+} from "./StoreReviews";

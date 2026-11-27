@@ -16,17 +16,20 @@ import { cn } from "@lib/utils";
 import {
   formatReviewDate,
   REVIEW_STATUS_LABELS,
-  reviewErrorMessage
+  reviewErrorMessage,
+  STORE_NAME
 } from "@lib/reviews";
 import {
   useDeleteReview,
   useMyReviews,
   useReviewables
 } from "@hooks/useReviews";
+import { useStoreReviewForm } from "@hooks/useStoreReviews";
 import type { OwnReview, Reviewable, ReviewStatus } from "../../types/reviews";
 import { ReviewComposerSheet } from "./ReviewComposer";
 import type { ReviewTarget } from "./ReviewComposer";
 import { reviewTargetFromReviewable } from "./OrderItemReview";
+import { StoreReviewComposerSheet } from "./StoreReviews/StoreReviewComposerSheet";
 
 export type AccountReviewsTab = "to-review" | "mine";
 
@@ -331,6 +334,114 @@ const MyReviewRow = ({
   );
 };
 
+/* Store review (M5) --------------------------------------------------- */
+
+/**
+ * The customer's store review (from `/store_reviews/form`), with Edit, at the
+ * top of "My reviews". With no store review yet, eligible customers get a
+ * "Review DNA" prompt. Store reviews can't be deleted (no endpoint), and
+ * earn no points. Renders nothing while store reviews are off (503).
+ */
+const StoreReviewRow = () => {
+  const formQuery = useStoreReviewForm();
+  const [open, setOpen] = useState(false);
+  const form = formQuery.data;
+  if (!form) return null;
+  const review = form.existing_review;
+  if (!review && !form.eligible) return null;
+
+  const sheet = (
+    <StoreReviewComposerSheet open={open} onOpenChange={setOpen} form={form} />
+  );
+
+  if (!review) {
+    return (
+      <li className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-border p-4">
+        <p className="m-0 font-body text-sm text-muted-foreground">
+          How was shopping with {STORE_NAME}? Tell other customers.
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setOpen(true)}
+          aria-haspopup="dialog"
+          className={cn(pillButton, "border-foreground/30")}
+        >
+          <PenLine aria-hidden="true" />
+          Review {STORE_NAME}
+        </Button>
+        {sheet}
+      </li>
+    );
+  }
+
+  const date = formatReviewDate(review.published_at);
+  return (
+    <li
+      className="grid gap-3 rounded-xl border border-border/40 bg-card p-4"
+      data-own-store-review
+    >
+      <div className="flex items-start gap-4">
+        <Thumb alt="" />
+        <div className="grid min-w-0 flex-1 gap-1.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Link
+              href="/reviews"
+              className="truncate font-body-bold text-sm text-foreground underline-offset-4 hover:underline"
+            >
+              Your review of {STORE_NAME}
+            </Link>
+            <Badge
+              variant="outline"
+              className={cn(
+                "shrink-0 text-[10px] leading-4",
+                STATUS_STYLES[review.status]
+              )}
+            >
+              {REVIEW_STATUS_LABELS[review.status]}
+            </Badge>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 font-body text-xs text-muted-foreground">
+            <Rating value={review.rating} size="sm" />
+            {date && <span>{date}</span>}
+          </div>
+          {review.title && (
+            <p className="m-0 font-body-bold text-sm text-foreground">
+              {review.title}
+            </p>
+          )}
+          {review.body ? (
+            <p className="m-0 line-clamp-3 whitespace-pre-line break-words font-body text-sm text-foreground/80">
+              {review.body}
+            </p>
+          ) : (
+            <p className="m-0 font-body text-sm text-muted-foreground">
+              Rated without a written review.
+            </p>
+          )}
+          <p className="m-0 font-body text-xs text-muted-foreground">
+            {review.status_message}
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setOpen(true)}
+          aria-haspopup="dialog"
+          aria-label={`Edit your review of ${STORE_NAME}`}
+          className={cn(pillButton, "border-foreground/30")}
+        >
+          <PenLine aria-hidden="true" />
+          Edit
+        </Button>
+      </div>
+      {sheet}
+    </li>
+  );
+};
+
 /* Page body ---------------------------------------------------------- */
 
 interface AccountReviewsProps {
@@ -359,13 +470,20 @@ export const AccountReviews = ({
       (reviewables.data?.data || []).filter((item) => !item.existing_review),
     [reviewables.data]
   );
-  const mine = useMemo(
+  const loadedMine = useMemo(
     () => (myReviews.data?.pages || []).flatMap((page) => page.data || []),
     [myReviews.data]
   );
+  // A store review (no product), if the API lists one here, is shown by
+  // StoreReviewRow instead.
+  const mine = useMemo(
+    () => loadedMine.filter((review) => !!review.product),
+    [loadedMine]
+  );
   const mineTotal =
-    myReviews.data?.pages?.[myReviews.data.pages.length - 1]?.meta
-      ?.total_count ?? mine.length;
+    (myReviews.data?.pages?.[myReviews.data.pages.length - 1]?.meta
+      ?.total_count ?? loadedMine.length) -
+    (loadedMine.length - mine.length);
 
   const openComposer = (next: ReviewTarget) => {
     setTarget(next);
@@ -446,14 +564,22 @@ export const AccountReviews = ({
     }
     if (!mine.length) {
       return (
-        <Notice>
-          <p className="m-0">You haven&apos;t written any reviews yet.</p>
-        </Notice>
+        <div className="grid gap-3">
+          <ul className="m-0 grid list-none gap-3 p-0 empty:hidden">
+            <StoreReviewRow />
+          </ul>
+          <Notice>
+            <p className="m-0">
+              You haven&apos;t written any product reviews yet.
+            </p>
+          </Notice>
+        </div>
       );
     }
     return (
       <div className="grid gap-4">
         <ul className="m-0 grid list-none gap-3 p-0">
+          <StoreReviewRow />
           {mine.map((review) => (
             <MyReviewRow
               key={review.id}

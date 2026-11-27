@@ -11,13 +11,13 @@ import {
   STAR_VALUES
 } from "@lib/reviews";
 import type {
+  RatingOverviewSummary,
   ReviewAttributeSummary,
-  ReviewSummary,
   StarRating
 } from "../../types/reviews";
 
 interface RatingHistogramProps {
-  summary: ReviewSummary;
+  summary: RatingOverviewSummary;
   activeRating: StarRating | null;
   onSelectRating: (rating: StarRating | null) => void;
 }

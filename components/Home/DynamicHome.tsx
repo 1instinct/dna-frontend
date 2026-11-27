@@ -143,6 +143,9 @@ const SectionRenderers: Record<
     const settings = parseSettings(section.settings);
     return (
       <Testimonials
+        // "store_reviews" reads recent 4★/5★ store reviews instead of the CMS rows.
+        source={settings.source === "store_reviews" ? "store_reviews" : "cms"}
+        limit={Number(settings.limit) || undefined}
         testimonials={settings.testimonials || []}
         title={section.title}
         content={section.content}

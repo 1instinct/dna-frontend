@@ -493,16 +493,21 @@ export const useReviewVotes = () =>
     initialData: () => (typeof window === "undefined" ? {} : readStoredVotes())
   });
 
-type ReviewPages = InfiniteData<ReviewListResponse>;
+type ReviewPages = InfiniteData<{ data: Review[] }>;
+
+/** Cached review lists a vote can touch: PDP lists and the store reviews page. */
+const VOTABLE_LISTS = [
+  QueryKeys.PRODUCT_REVIEWS,
+  QueryKeys.STORE_REVIEWS
+] as const;
 
 const patchReviewInLists = (
   queryClient: ReturnType<typeof useQueryClient>,
   reviewId: number,
   patch: (review: Review) => Review
 ) =>
-  queryClient.setQueriesData<ReviewPages | undefined>(
-    QueryKeys.PRODUCT_REVIEWS,
-    (data) => {
+  VOTABLE_LISTS.forEach((listKey) =>
+    queryClient.setQueriesData<ReviewPages | undefined>(listKey, (data) => {
       if (!data?.pages) return data;
       return {
         ...data,
@@ -513,7 +518,7 @@ const patchReviewInLists = (
           )
         }))
       };
-    }
+    })
   );
 
 export interface VoteReviewInput {
@@ -548,9 +553,11 @@ export const useVoteReview = () => {
     },
     {
       onMutate: async ({ reviewId, helpful }) => {
-        await queryClient.cancelQueries(QueryKeys.PRODUCT_REVIEWS);
-        const previousLists = queryClient.getQueriesData(
-          QueryKeys.PRODUCT_REVIEWS
+        await Promise.all(
+          VOTABLE_LISTS.map((listKey) => queryClient.cancelQueries(listKey))
+        );
+        const previousLists = VOTABLE_LISTS.flatMap((listKey) =>
+          queryClient.getQueriesData(listKey)
         );
         const previousVotes =
           queryClient.getQueryData<VoteMap>(votesKey) || readStoredVotes();

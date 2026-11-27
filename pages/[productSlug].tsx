@@ -1,6 +1,5 @@
 import type { GetServerSideProps } from "next";
 import { QueryClient } from "react-query";
-import { dehydrate } from "react-query/hydration";
 import { ProductDetails } from "../components/ProductDetails";
 import { QueryKeys } from "../hooks/queryKeys";
 import { fetchProduct, productQueryId } from "../hooks/useProduct";
@@ -10,30 +9,19 @@ import {
   productReviewsKey,
   reviewSummaryKey
 } from "../hooks/useReviews";
-import { REVIEWS_ENABLED, REVIEWS_PER_PAGE } from "../lib/reviews";
-
-/** react-query-auth's default query key (config/auth.ts sets no `key`). */
-const AUTH_USER_QUERY_KEY = "auth-user";
-
-/** Server fetches give up after this long; the browser then fetches instead. */
-const SSR_FETCH_TIMEOUT_MS = 2500;
-
-const withTimeout = async <T,>(
-  run: (signal: AbortSignal) => Promise<T>
-): Promise<T> => {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), SSR_FETCH_TIMEOUT_MS);
-  try {
-    return await run(controller.signal);
-  } finally {
-    clearTimeout(timer);
-  }
-};
+import { fetchQuestions, questionsKey } from "../hooks/useQuestions";
+import {
+  QUESTIONS_PER_PAGE,
+  REVIEWS_ENABLED,
+  REVIEWS_PER_PAGE
+} from "../lib/reviews";
+import { dehydrateForProps, seedAnonymousUser, withTimeout } from "../lib/ssr";
 
 /**
  * Server-renders the PDP: the product, plus (when reviews are enabled) the
- * retail review summary and the first page of retail reviews, so the stars,
- * the visible reviews and the JSON-LD are in the HTML. Every fetch is
+ * retail review summary, the first page of retail reviews and the first page
+ * of answered questions, so the stars, the visible reviews, the Questions tab
+ * and the JSON-LD are in the HTML. Every fetch is
  * best-effort: a failure or timeout leaves that query out of the dehydrated
  * cache and the browser fetches it as before. This never throws.
  */
@@ -44,13 +32,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   );
   const queryClient = new QueryClient();
 
-  // react-query-auth's AuthProvider renders "Loading..." instead of the page
-  // until its "auth-user" query succeeds, so without this the server would
-  // never render the PDP. Seed an anonymous user: the browser refetches it on
-  // mount (the token lives in localStorage). `updatedAt: 1` makes it older
-  // than any real fetch, so hydrating on client-side navigation never
-  // overwrites a signed-in user.
-  queryClient.setQueryData(AUTH_USER_QUERY_KEY, null, { updatedAt: 1 });
+  // Without a seeded "auth-user" the AuthProvider never renders the PDP (see lib/ssr.ts).
+  seedAnonymousUser(queryClient);
 
   if (productSlug) {
     const tasks: Array<Promise<unknown>> = [
@@ -86,6 +69,20 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
               { pages: [firstPage], pageParams: [1] }
             )
           )
+          .catch(() => undefined),
+        // First page of answered questions, for the Questions tab (and its count).
+        withTimeout((signal) =>
+          fetchQuestions(productSlug, 1, {
+            signal,
+            perPage: QUESTIONS_PER_PAGE
+          })
+        )
+          .then((firstPage) =>
+            queryClient.setQueryData(questionsKey(productSlug), {
+              pages: [firstPage],
+              pageParams: [1]
+            })
+          )
           .catch(() => undefined)
       );
     }
@@ -93,18 +90,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     await Promise.all(tasks);
   }
 
-  let dehydratedState: unknown = null;
-  try {
-    // Round-trip through JSON so `undefined` values can't break Next's prop serialization.
-    dehydratedState = JSON.parse(JSON.stringify(dehydrate(queryClient)));
-  } catch {
-    dehydratedState = null;
-  }
-
   return {
     props: {
       productSlug,
-      dehydratedState
+      dehydratedState: dehydrateForProps(queryClient)
     }
   };
 };

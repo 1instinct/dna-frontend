@@ -7,11 +7,13 @@ import React, {
 } from "react";
 import { Button } from "@components/ui";
 import { cn } from "@lib/utils";
-import { isInvalidReviewToken } from "@lib/reviews";
+import { isInvalidReviewToken, STORE_NAME } from "@lib/reviews";
 import type {
   OwnReview,
+  OwnStoreReview,
   ReviewRequestItem,
   ReviewRequestPayload,
+  ReviewRequestStoreReview,
   StarRating
 } from "../../../types/reviews";
 import { ReviewComposer } from "../ReviewComposer";
@@ -28,6 +30,7 @@ import {
 } from "./flow";
 import { OrderItemsList } from "./OrderItemsList";
 import { eyebrow, RequestColumn } from "./RequestStatus";
+import { StoreReviewStep } from "./StoreReviewStep";
 
 /** Props for the store-review step that follows the last item (M5). */
 export interface StoreReviewStepProps {
@@ -35,15 +38,6 @@ export interface StoreReviewStepProps {
   request: ReviewRequestPayload;
   onDone: () => void;
 }
-
-/**
- * The "How was ordering from DNA?" step. Store reviews are written in M5
- * (`POST /api/v1/store_reviews` with the same `X-Review-Token`), so there is
- * nothing to show yet.
- * TODO(M5): set this to the StoreReviewStep component.
- */
-const STORE_REVIEW_STEP =
-  null as React.ComponentType<StoreReviewStepProps> | null;
 
 type View = "items" | "store" | "done";
 
@@ -60,8 +54,10 @@ interface ReviewRequestFlowProps {
 
 /**
  * The email landing flow: one composer per item ("Item 1 of 3"), Skip,
- * Edit for items already reviewed, then (M5) the store question and the
- * "All done" screen. Everything goes out with `X-Review-Token`.
+ * Edit for items already reviewed, then the store question ("How was
+ * shopping with us?", when store reviews are on and this order has no store
+ * review yet) and the "All done" screen, which can reopen the store step.
+ * Everything goes out with `X-Review-Token`.
  */
 export const ReviewRequestFlow = ({
   token,
@@ -73,12 +69,26 @@ export const ReviewRequestFlow = ({
   const { items } = request;
   const rootRef = useRef<HTMLDivElement>(null);
 
+  const storeEnabled = !!request.store_review?.enabled;
+  const [storeReview, setStoreReview] = useState<
+    OwnStoreReview | ReviewRequestStoreReview | null
+  >(request.store_review?.existing_review || null);
+  // The store step is offered once per visit (Skip means "not now").
+  const [storeOffered, setStoreOffered] = useState(false);
+
   const [start] = useState(() => pickStartPoint(items, intent));
   const [currentId, setCurrentId] = useState<number | null>(
     start.item?.line_item_id ?? null
   );
   const [preselect, setPreselect] = useState<StarRating | null>(start.rating);
-  const [view, setView] = useState<View>(start.item ? "items" : "done");
+  // A completed link opens on the store step when the order has no store review yet.
+  const [view, setView] = useState<View>(() =>
+    start.item
+      ? "items"
+      : storeEnabled && !request.store_review.existing_review
+      ? "store"
+      : "done"
+  );
   // Bumped on every move so the composer remounts fresh for each item.
   const [visit, setVisit] = useState(0);
   const [skipped, setSkipped] = useState<number[]>([]);
@@ -99,10 +109,11 @@ export const ReviewRequestFlow = ({
   const pending = pendingAfter(items, currentId, submitted, skipped);
   const next = pending[0] || null;
 
-  const storeStepAvailable =
-    !!STORE_REVIEW_STEP &&
-    request.store_review.enabled &&
-    !request.store_review.existing_review;
+  useEffect(() => {
+    if (view === "store") setStoreOffered(true);
+  }, [view]);
+
+  const storeStepDue = storeEnabled && !storeReview && !storeOffered;
 
   const scrollToTop = () => {
     // Instant, so it never fights the focus move (and needs no motion).
@@ -122,7 +133,7 @@ export const ReviewRequestFlow = ({
   const finish = () => {
     setInteracted(true);
     setOnDoneStep(false);
-    setView(storeStepAvailable ? "store" : "done");
+    setView(storeStepDue ? "store" : "done");
     scrollToTop();
   };
 
@@ -186,21 +197,37 @@ export const ReviewRequestFlow = ({
   const progress =
     view === "items" && current
       ? itemPositionLabel(items, current)
+      : view === "store"
+      ? `${reviewedCount} of ${items.length} reviewed · One more question`
       : `${reviewedCount} of ${items.length} reviewed`;
 
   const created = createdIds
     .map((id) => submitted[id])
     .filter((review): review is OwnReview => !!review);
 
-  const StoreStep = STORE_REVIEW_STEP;
+  const openStoreStep = () => {
+    setInteracted(true);
+    setOnDoneStep(false);
+    setView("store");
+    scrollToTop();
+  };
 
   let body: React.ReactNode;
-  if (view === "store" && StoreStep) {
+  if (view === "store" && storeEnabled) {
     body = (
-      <StoreStep
+      <StoreReviewStep
         token={token}
         request={request}
-        onDone={() => setView("done")}
+        existingReview={storeReview}
+        // eslint-disable-next-line jsx-a11y/no-autofocus
+        autoFocus={interacted}
+        onSubmitted={setStoreReview}
+        onLinkDead={onLinkDead}
+        onDone={() => {
+          setInteracted(true);
+          setView("done");
+          scrollToTop();
+        }}
       />
     );
   } else if (view === "items" && current && form) {
@@ -270,6 +297,16 @@ export const ReviewRequestFlow = ({
         lastReview={lastReview}
         focusHeading={interacted}
         onSelect={goTo}
+        storeAction={
+          storeEnabled
+            ? {
+                label: storeReview
+                  ? `Edit your review of ${STORE_NAME}`
+                  : `Review ${STORE_NAME}`,
+                onClick: openStoreStep
+              }
+            : undefined
+        }
       />
     );
   }

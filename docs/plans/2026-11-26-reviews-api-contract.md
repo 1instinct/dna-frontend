@@ -348,7 +348,7 @@ Takes the same params as the product reviews list (`sort`, `rating[]`, `written`
 
 Takes a **Bearer** or an **`X-Review-Token`**. JSON body: `{ rating, title?, body?, attribute_ratings?, display_name? }`.
 
-- **201** on create and **200** on update, with the own-review shape.
+- **201** on create and **200** on update, with `{ "review": <own review> }`. That is the same wrapper as `POST /api/v1/reviews`.
 - **With a Bearer:** one store review per account. A second POST gets **409** `{ "code": "already_reviewed", "review_id": 12 }`. Use PATCH instead.
 - **With `X-Review-Token`:** the review is tied to that order (`source: "email"`), and one is allowed per order. A second POST gets the same **409**. An invalid link gets **404** `invalid_token`, as in M4.
 - **No shipped order:** **403** `not_eligible`.
