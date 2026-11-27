@@ -55,6 +55,7 @@ Then:
 | `ANTHROPIC_API_KEY` | `sk-ant-…` | AI summaries (M7). Server-only. Never prefix it with `NEXT_PUBLIC_`. |
 | `INTERNAL_CRON_SECRET` | same value as the admin's | Protects `/api/internal/reviews/summarize`. |
 | `DNA_ADMIN_SERVICE_TOKEN` | the service user's API key | Lets the summarizer read reviews from the admin and save summaries. Server-only. |
+| `SPREE_API_URL` | `https://admin.beeper.buzz` | Beeper only, recommended. The admin's direct address for server-side calls, including the summarizer. If it isn't set, `NEXT_PUBLIC_SPREE_API_URL` is used. |
 
 - [ ] dna-frontend's Docker image moved to Node 22. Check the first build, especially the `sharp` install.
 
