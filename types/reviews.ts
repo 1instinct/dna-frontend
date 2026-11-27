@@ -220,7 +220,8 @@ export type ReviewErrorCode =
   | "not_eligible"
   | "forbidden"
   | "not_enabled"
-  | "invalid";
+  | "invalid"
+  | "invalid_token";
 
 /** Points for one review. Same amounts for every rating (FTC: sentiment-blind). */
 export interface ReviewPoints {
@@ -376,30 +377,52 @@ export type ReviewRequestStatus =
   | "expired"
   | "cancelled";
 
-export interface ReviewRequestStoreReviewState {
-  enabled: boolean;
-  existing_review: { id: number; rating: StarRating } | null;
-  attributes: ReviewAttributeDefinition[];
+/** This order's store review, when one was written (M5). */
+export interface ReviewRequestStoreReview {
+  id: number;
+  rating: StarRating;
 }
 
-/** `GET /review_requests/:token`. */
+export interface ReviewRequestStoreReviewState {
+  /** Mirrors the store-reviews setting. */
+  enabled: boolean;
+  existing_review: ReviewRequestStoreReview | null;
+}
+
+/** One product on the order (the API sends one entry per product). */
+export interface ReviewRequestItem {
+  line_item_id: number;
+  product_id: number;
+  slug: string;
+  name: string;
+  image_url: string | null;
+  variant_label: string | null;
+  /** Composer questions for this product's category. */
+  questions: ReviewQuestion[];
+  /** The review already written for it (own-review shape), or null. */
+  existing_review: OwnReview | null;
+}
+
+/**
+ * `GET /review_requests/:token` (no Bearer; the token is the credential).
+ * 404 for an unknown, expired, opted-out or cancelled link; 503
+ * `not_enabled` while reviews are switched off.
+ */
 export interface ReviewRequestPayload {
-  status: ReviewRequestStatus;
   order_number: string;
-  /** Shopper's suggested display name, e.g. "Maya R.". */
+  /** Default name for new reviews, e.g. "Maya R.". */
   display_name: string | null;
-  /** True when the order belongs to an account (points go there). */
-  has_account: boolean;
-  items: Array<
-    Reviewable & {
-      /** Composer questions for this product's taxons. */
-      attributes?: ReviewAttributeDefinition[];
-    }
-  >;
+  items: ReviewRequestItem[];
   store_review: ReviewRequestStoreReviewState;
-  points_per_review: number;
-  points_photo_bonus: number;
-  expires_at: string | null;
+  points: ReviewPointSettings;
+  /** True when the order belongs to an account. Points are only paid to accounts. */
+  has_account: boolean;
+  limits: ReviewFormLimits;
+}
+
+/** `POST /review_requests/:token/opt_out`. Safe to call again. */
+export interface ReviewRequestOptOutResponse {
+  status: "opted_out";
 }
 
 /* ------------------------------------------------------------------ */

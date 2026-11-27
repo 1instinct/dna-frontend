@@ -24,6 +24,8 @@ import type {
   ReviewListFilters,
   ReviewListResponse,
   ReviewMutationResponse,
+  ReviewRequestOptOutResponse,
+  ReviewRequestPayload,
   ReviewScope,
   ReviewSummary,
   ReviewVoteResult,
@@ -326,22 +328,37 @@ const invalidateAfterWrite = (queryClient: ReturnType<typeof useQueryClient>) =>
     queryClient.invalidateQueries(QueryKeys.REVIEWABLES),
     queryClient.invalidateQueries(QueryKeys.MY_REVIEWS),
     queryClient.invalidateQueries(QueryKeys.REVIEW_FORM),
+    queryClient.invalidateQueries(QueryKeys.REVIEW_REQUEST),
     // The PDP star line reads avg_rating from the product payload.
     queryClient.invalidateQueries(QueryKeys.PRODUCT)
   ]);
+
+export interface ReviewWriteOptions {
+  /**
+   * The review request token from an email link. It is sent as
+   * `X-Review-Token` instead of a Bearer: the token alone proves the
+   * purchase, and a stale Bearer would turn the request into a 401.
+   */
+  reviewToken?: string;
+}
+
+const writeAuth = ({ reviewToken }: ReviewWriteOptions) =>
+  reviewToken
+    ? ({ auth: "none", reviewToken } as const)
+    : ({ auth: "required" } as const);
 
 /**
  * `POST /reviews` (multipart). Returns the own-review shape; posting for a
  * product the customer already reviewed edits that review (200).
  */
-export const useCreateReview = () => {
+export const useCreateReview = (options: ReviewWriteOptions = {}) => {
   const queryClient = useQueryClient();
   return useMutation<OwnReview, unknown, CreateReviewInput>(
     async (input) => {
       const response = await dnaFetch<ReviewMutationResponse>("/reviews", {
         method: "POST",
         formData: reviewFormData(input, { keepEmpty: false }),
-        auth: "required"
+        ...writeAuth(options)
       });
       return response.review;
     },
@@ -350,7 +367,7 @@ export const useCreateReview = () => {
 };
 
 /** `PATCH /reviews/:id` (multipart). New photos add to the kept ones. */
-export const useUpdateReview = () => {
+export const useUpdateReview = (options: ReviewWriteOptions = {}) => {
   const queryClient = useQueryClient();
   return useMutation<OwnReview, unknown, UpdateReviewInput>(
     async ({ id, ...input }) => {
@@ -360,7 +377,7 @@ export const useUpdateReview = () => {
           method: "PATCH",
           // Empty strings clear a title or body the customer deleted.
           formData: reviewFormData(input, { keepEmpty: true }),
-          auth: "required"
+          ...writeAuth(options)
         }
       );
       return response.review;
@@ -381,6 +398,52 @@ export const useDeleteReview = () => {
     { onSuccess: () => invalidateAfterWrite(queryClient) }
   );
 };
+
+/* Review requests (M4 email links) ------------------------------------ */
+
+export const reviewRequestKey = (token: string) =>
+  [QueryKeys.REVIEW_REQUEST, token] as const;
+
+const reviewRequestPath = (token: string, suffix = "") =>
+  `/review_requests/${encodeURIComponent(token)}${suffix}`;
+
+/**
+ * `GET /review_requests/:token`: the order's items, existing reviews,
+ * questions, points and limits for the `/review/[token]` page. The token is
+ * the credential, so no Bearer is sent. 404 means the link is dead
+ * (expired, replaced by a newer email, opted out); that isn't retried.
+ */
+export const useReviewRequest = (
+  token: string | undefined,
+  { enabled = true }: ReviewQueryOptions = {}
+) =>
+  useQuery<ReviewRequestPayload, unknown>(
+    reviewRequestKey(token || ""),
+    ({ signal }) =>
+      dnaFetch<ReviewRequestPayload>(reviewRequestPath(token as string), {
+        auth: "none",
+        signal
+      }),
+    {
+      enabled: enabled && !!token,
+      staleTime: 60_000,
+      retry: retryReviews,
+      refetchOnWindowFocus: false
+    }
+  );
+
+/**
+ * `POST /review_requests/:token/opt_out`: no more review emails to the
+ * order's address. Only ever called from an explicit click, never on page
+ * load (mail scanners open links). Calling it twice is harmless.
+ */
+export const useOptOutReviewRequest = (token: string | undefined) =>
+  useMutation<ReviewRequestOptOutResponse, unknown, void>(() =>
+    dnaFetch<ReviewRequestOptOutResponse>(
+      reviewRequestPath(token as string, "/opt_out"),
+      { method: "POST", auth: "none" }
+    )
+  );
 
 /* Votes --------------------------------------------------------------- */
 

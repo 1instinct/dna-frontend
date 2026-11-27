@@ -138,7 +138,8 @@ const RatingInput = React.forwardRef<HTMLDivElement, RatingInputProps>(
                 disabled={disabled}
                 className={cn(
                   "inline-flex shrink-0 items-center justify-center rounded-md transition-transform duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
-                  !disabled && "cursor-pointer hover:scale-110",
+                  !disabled &&
+                    "cursor-pointer hover:scale-110 motion-reduce:transition-none motion-reduce:hover:scale-100",
                   sizes.button
                 )}
                 onClick={() => select(starValue)}

@@ -18,6 +18,7 @@ import {
 } from "@hooks/useReviews";
 import type {
   OwnReview,
+  ReviewForm,
   ReviewFormLimits,
   ReviewPhoto,
   StarRating
@@ -30,6 +31,7 @@ import { StepDone } from "./StepDone";
 import { StepRating } from "./StepRating";
 import {
   ComposerFieldErrors,
+  ComposerQueue,
   ComposerStep,
   ComposerText,
   ComposerValues,
@@ -43,9 +45,24 @@ export interface ReviewComposerProps {
   mode?: "sheet" | "page";
   /** Pre-selects a rating (e.g. a star tapped in the request email). */
   initialRating?: StarRating;
+  /**
+   * Composer data supplied by the caller instead of loading
+   * `GET /products/:id/review_form` (which needs a Bearer). The email page
+   * builds it from the review request.
+   */
+  form?: ReviewForm;
+  /** Email link token: writes go out with `X-Review-Token`, no Bearer. */
+  reviewToken?: string;
+  /**
+   * The caller decides what comes next (the email page walks the order's
+   * items). Without it, "Next up" comes from the account's reviewables.
+   */
+  queue?: ComposerQueue;
   /** Shows a Close button on the last step and on dead ends. */
   onClose?: () => void;
   onSubmitted?: (review: OwnReview) => void;
+  /** Called when a submit fails, after the composer shows the error. */
+  onError?: (error: unknown) => void;
   /** Renders the title; the Sheet passes its SheetTitle for the dialog name. */
   renderTitle?: (text: string, className: string) => React.ReactNode;
   /**
@@ -106,8 +123,12 @@ export const ReviewComposer = ({
   target: initialTarget,
   mode = "sheet",
   initialRating,
+  form: suppliedForm,
+  reviewToken,
+  queue,
   onClose,
   onSubmitted,
+  onError,
   renderTitle,
   autoFocus,
   className
@@ -125,9 +146,11 @@ export const ReviewComposer = ({
   }, [initialTarget.productId]);
   const targetKey = String(target.productId);
 
-  const formQuery = useReviewForm(target.productId);
-  const form = formQuery.data;
-  const reviewables = useReviewables();
+  const formQuery = useReviewForm(target.productId, {
+    enabled: !suppliedForm
+  });
+  const form = suppliedForm || formQuery.data;
+  const reviewables = useReviewables({ enabled: !queue });
 
   const [initializedFor, setInitializedFor] = useState<string | null>(null);
   const [editing, setEditing] = useState<OwnReview | null>(null);
@@ -145,8 +168,8 @@ export const ReviewComposer = ({
   const dirtyRef = useRef(false);
   const interactedRef = useRef(autoFocus ?? mode === "sheet");
 
-  const createReview = useCreateReview();
-  const updateReview = useUpdateReview();
+  const createReview = useCreateReview({ reviewToken });
+  const updateReview = useUpdateReview({ reviewToken });
   const submitting = createReview.isLoading || updateReview.isLoading;
 
   const ready = initializedFor === targetKey && !!form;
@@ -261,7 +284,8 @@ export const ReviewComposer = ({
         !doneProducts.includes(String(item.product_id))
     );
   }, [reviewables.data, targetKey, doneProducts]);
-  const nextItem = remainingReviewables[0] || null;
+  const nextItem = queue ? queue.next : remainingReviewables[0] || null;
+  const remainingCount = queue ? queue.remaining : remainingReviewables.length;
 
   const submit = async () => {
     if (!values.rating) {
@@ -307,6 +331,7 @@ export const ReviewComposer = ({
       setStep(3);
       onSubmitted?.(review);
     } catch (error) {
+      onError?.(error);
       const fields = reviewFieldErrors(error) as ComposerFieldErrors;
       setErrors(fields);
       setSubmitError(reviewErrorMessage(error, "submit"));
@@ -333,14 +358,20 @@ export const ReviewComposer = ({
   const reviewNext = () => {
     if (!nextItem) return;
     interactedRef.current = true;
+    if (queue) {
+      queue.onNext();
+      return;
+    }
+    const reviewable = remainingReviewables[0];
+    if (!reviewable) return;
     setResult(null);
     setInitializedFor(null);
     setTarget({
-      productId: nextItem.slug || nextItem.product_id,
-      name: nextItem.name,
-      imageUrl: nextItem.image_url,
-      variantLabel: nextItem.variant_label,
-      lineItemId: nextItem.line_item_id
+      productId: reviewable.slug || reviewable.product_id,
+      name: reviewable.name,
+      imageUrl: reviewable.image_url,
+      variantLabel: reviewable.variant_label,
+      lineItemId: reviewable.line_item_id
     });
   };
 
@@ -453,7 +484,8 @@ export const ReviewComposer = ({
             review={result}
             isNew={!editing}
             next={nextItem}
-            remaining={remainingReviewables.length}
+            remaining={remainingCount}
+            nextLabel={queue?.nextLabel}
           />
         ) : null;
     }

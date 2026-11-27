@@ -1,4 +1,8 @@
-import type { AttributeRatings, StarRating } from "../../../types/reviews";
+import type {
+  AttributeRatings,
+  Reviewable,
+  StarRating
+} from "../../../types/reviews";
 
 /** What the composer is reviewing. */
 export interface ReviewTarget {
@@ -37,3 +41,20 @@ export type ComposerFieldErrors = Partial<
     string
   >
 >;
+
+/** What "Next up" shows: any item with a name, image and variant. */
+export type ComposerNextItem = Pick<
+  Reviewable,
+  "name" | "image_url" | "variant_label"
+>;
+
+/** A caller-controlled list of items to review one after another. */
+export interface ComposerQueue {
+  /** Shown on the Done step with "Review next item"; null when nothing is left. */
+  next: ComposerNextItem | null;
+  /** Items still to review after this one. */
+  remaining: number;
+  /** Replaces "N to review" on the Done step, e.g. "Item 2 of 3". */
+  nextLabel?: string;
+  onNext: () => void;
+}

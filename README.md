@@ -79,6 +79,8 @@ Done!
 
 ## Updating a fork
 
+Starting a new store from DNA, or merging DNA updates into one: see [docs/STARTING_A_STORE.md](docs/STARTING_A_STORE.md).
+
 - `git remote add upstream git@github.com:1instinct/dna-frontend.git`
 - `git fetch upstream`
 - `git checkout main`

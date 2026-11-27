@@ -52,6 +52,9 @@ class MyDocument extends Document {
     return initialProps;
   }
   render() {
+    // Review link pages carry a secret token in the URL: GA gets a redacted URL, and the
+    // Facebook pixel and CRM tracker don't load at all (config/tracking.ts).
+    const privatePage = tracking.isPrivatePage(this.props.__NEXT_DATA__.page);
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://instinct.is";
     const siteTitle =
       process.env.NEXT_PUBLIC_PAGE_TITLE ||
@@ -176,9 +179,11 @@ class MyDocument extends Document {
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
+                var gaPath = window.location.pathname.replace(/^\\/review\\/[^/]+/, '/review/[token]');
                 gtag('config', "${tracking.GA_TRACKING_CODE}", {
                   'send_page_view': true,
-                  'page_path': window.location.pathname,
+                  'page_path': gaPath,
+                  'page_location': window.location.origin + gaPath,
                   'debug_mode': ${tracking.GA_DEBUG_MODE},
                 });
               `
@@ -187,19 +192,25 @@ class MyDocument extends Document {
           <script
             src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}
           />
-          <script dangerouslySetInnerHTML={{ __html: FacebookPixelObject }} />
-          <script
-            src="https://crm-api.instinct.is/js/external-tracking.js"
-            data-tracking-id={process.env.NEXT_PUBLIC_GHL_TRACKING_ID}
-          />
-          <noscript>
-            <img
-              height="1"
-              width="1"
-              style={{ display: "none" }}
-              src={`https://www.facebook.com/tr?id=${tracking.FB_PIXEL_ID}&ev=PageView&noscript=1`}
-            />
-          </noscript>
+          {!privatePage && (
+            <>
+              <script
+                dangerouslySetInnerHTML={{ __html: FacebookPixelObject }}
+              />
+              <script
+                src="https://crm-api.instinct.is/js/external-tracking.js"
+                data-tracking-id={process.env.NEXT_PUBLIC_GHL_TRACKING_ID}
+              />
+              <noscript>
+                <img
+                  height="1"
+                  width="1"
+                  style={{ display: "none" }}
+                  src={`https://www.facebook.com/tr?id=${tracking.FB_PIXEL_ID}&ev=PageView&noscript=1`}
+                />
+              </noscript>
+            </>
+          )}
         </Head>
         <body>
           <style

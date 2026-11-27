@@ -1,6 +1,7 @@
 /**
- * Product reviews end-to-end checks (M2.6), with the dna-admin API mocked by
- * Playwright `page.route()`. Plain Node + the `playwright` package (the
+ * Product reviews end-to-end checks (M2.6, plus the M4.5 email page
+ * `/review/[token]`), with the dna-admin API mocked by Playwright
+ * `page.route()`. Plain Node + the `playwright` package (the
  * `@playwright/test` runner isn't a dependency of this repo).
  *
  * Run:
@@ -344,6 +345,27 @@ const REVIEWABLES = [
   }
 ];
 
+/* M4 email flow: GET /review_requests/:token (contract "M4 email flow"). */
+const REVIEW_TOKEN = "e2e-review-token-3f9a";
+const REVIEW_REQUEST = {
+  order_number: "R123456",
+  display_name: "Maya R.",
+  items: REVIEWABLES.map((item) => ({
+    line_item_id: item.line_item_id,
+    product_id: item.product_id,
+    slug: item.slug,
+    name: item.name,
+    image_url: item.image_url,
+    variant_label: item.variant_label,
+    questions: item.questions,
+    existing_review: item.existing_review ? ownReview() : null
+  })),
+  store_review: { enabled: true, existing_review: null },
+  points: { per_review: 50, photo_bonus: 50 },
+  has_account: false,
+  limits: LIMITS
+};
+
 const MY_REVIEWS = [
   ownReview(),
   ownReview({
@@ -600,6 +622,29 @@ const installMocks = async (page, state = {}) => {
       });
     }
 
+    // Email flow (M4): the token is the credential, no Bearer.
+    const reviewToken = headers["x-review-token"];
+    if ((m = p.match(/^\/api\/v1\/review_requests\/([^/]+)\/opt_out$/))) {
+      if (decodeURIComponent(m[1]) !== REVIEW_TOKEN)
+        return json(route, 404, { error: "not found" });
+      return json(route, 200, { status: "opted_out" });
+    }
+    if ((m = p.match(/^\/api\/v1\/review_requests\/([^/]+)$/))) {
+      if (decodeURIComponent(m[1]) !== REVIEW_TOKEN)
+        return json(route, 404, { error: "not found" });
+      return json(route, 200, state.reviewRequest || REVIEW_REQUEST);
+    }
+    if (
+      reviewToken &&
+      reviewToken !== REVIEW_TOKEN &&
+      /^\/api\/v1\/reviews/.test(p)
+    ) {
+      return json(route, 404, {
+        error: "This review link isn't valid any more",
+        code: "invalid_token"
+      });
+    }
+
     // Write path (M2)
     if ((m = p.match(/^\/api\/v1\/products\/([^/]+)\/review_form$/))) {
       if (!signedIn) return json(route, 401, { error: "Sign in" });
@@ -642,7 +687,8 @@ const installMocks = async (page, state = {}) => {
       });
     }
     if (p === "/api/v1/reviews" && method === "POST") {
-      if (!signedIn) return json(route, 401, { error: "Sign in" });
+      if (!signedIn && !reviewToken)
+        return json(route, 401, { error: "Sign in" });
       if (state.onCreate) return state.onCreate(route, call);
       return json(route, 201, {
         review: ownReview({
@@ -664,7 +710,8 @@ const installMocks = async (page, state = {}) => {
       });
     }
     if ((m = p.match(/^\/api\/v1\/reviews\/(\d+)$/))) {
-      if (!signedIn) return json(route, 401, { error: "Sign in" });
+      if (!signedIn && !(reviewToken && method === "PATCH"))
+        return json(route, 401, { error: "Sign in" });
       if (method === "DELETE")
         return route.fulfill({
           status: 204,
@@ -1162,6 +1209,278 @@ const CHECKS = [
         .waitFor();
       await context.close();
     }
+  },
+  {
+    name: "email link: the tapped star is preselected and submits with X-Review-Token",
+    run: async (browser) => {
+      const { context, page, calls, errors } = await open(
+        browser,
+        `/review/${REVIEW_TOKEN}?item=55&rating=4`,
+        { device: PHONE }
+      );
+      await page
+        .getByRole("heading", { name: "How would you rate it?" })
+        .waitFor({ timeout: PAGE_TIMEOUT });
+      // _document also has a site-wide "noodp"; crawlers apply both.
+      assert.ok(
+        (
+          await page
+            .locator('meta[name="robots"]')
+            .evaluateAll((els) => els.map((el) => el.content))
+        ).includes("noindex"),
+        "robots noindex"
+      );
+      assert.strictEqual(await page.title(), "Review your order");
+      await page.getByText(/^Item 3 of 3/).waitFor();
+      await page.getByText("Satin Slip Skirt").first().waitFor();
+      assert.strictEqual(
+        await page
+          .getByRole("radio", { name: /4 stars/ })
+          .getAttribute("aria-checked"),
+        "true"
+      );
+      // The star intent is dropped from the URL so a refresh can't replay it.
+      await page.waitForFunction(() => location.search === "");
+      assert.strictEqual(
+        new URL(page.url()).pathname,
+        `/review/${REVIEW_TOKEN}`
+      );
+      await page.getByRole("button", { name: "Submit rating" }).click();
+      await page.getByRole("heading", { name: /Thanks, Maya/ }).waitFor();
+      // The next unreviewed item wraps around to the first one.
+      await page.getByText("Next up · Item 1 of 3").waitFor();
+      const get = calls.find((c) =>
+        c.path.startsWith("/api/v1/review_requests/")
+      );
+      assert.ok(!get.headers.authorization, "GET sends no Bearer");
+      const posts = calls.filter(
+        (c) => c.method === "POST" && c.path === "/api/v1/reviews"
+      );
+      assert.strictEqual(posts.length, 1, "one POST /reviews");
+      assert.strictEqual(posts[0].headers["x-review-token"], REVIEW_TOKEN);
+      assert.ok(!posts[0].headers.authorization, "no Bearer with the token");
+      assert.match(posts[0].contentType, /^multipart\/form-data; boundary=/);
+      const [recorded] = await page.evaluate(() => window.__reviewPosts);
+      const fields = Object.fromEntries(recorded.entries);
+      assert.strictEqual(fields.rating, "4");
+      assert.strictEqual(fields.line_item_id, "55");
+      assert.strictEqual(fields.product_id, "satin-slip-skirt");
+      // "Review next item" opens the first item with focus on its heading.
+      await page.getByRole("button", { name: "Review next item" }).click();
+      await page.getByText(/^Item 1 of 3/).waitFor();
+      await page
+        .getByRole("heading", { name: "How would you rate it?" })
+        .waitFor();
+      await page.waitForFunction(
+        () => document.activeElement?.textContent === "How would you rate it?"
+      );
+      assert.strictEqual(
+        await page.getByRole("radio", { checked: true }).count(),
+        0,
+        "no rating carried over"
+      );
+      const overflow = await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth -
+          document.documentElement.clientWidth
+      );
+      assert.ok(overflow <= 0, `no horizontal overflow (${overflow}px)`);
+      assert.deepStrictEqual(errors, []);
+      await context.close();
+    }
+  },
+  {
+    name: "email link: Skip moves to the next unreviewed item, then All done",
+    run: async (browser) => {
+      const { context, page, calls } = await open(
+        browser,
+        `/review/${REVIEW_TOKEN}`,
+        { device: PHONE }
+      );
+      await page.getByText(/^Item 1 of 3/).waitFor({ timeout: PAGE_TIMEOUT });
+      await page.getByText("Rib-Knit Wrap Top").first().waitFor();
+      await page.getByRole("button", { name: "Skip this item" }).click();
+      // Item 2 already has a review, so Skip lands on item 3.
+      await page.getByText(/^Item 3 of 3/).waitFor();
+      await page.waitForFunction(
+        () => document.activeElement?.textContent === "How would you rate it?"
+      );
+      await page.getByRole("button", { name: "Skip this item" }).click();
+      const done = page.getByRole("heading", { name: "All done" });
+      await done.waitFor();
+      await page.waitForFunction(
+        () => document.activeElement?.textContent === "All done"
+      );
+      // Guest order: an account invitation, never a rating-dependent promise.
+      const signup = page.getByRole("link", {
+        name: "Create an account with this email to collect points next time"
+      });
+      assert.strictEqual(await signup.getAttribute("href"), "/signup");
+      await page
+        .getByRole("button", { name: "Review Rib-Knit Wrap Top" })
+        .waitFor();
+      await page
+        .getByRole("button", {
+          name: "Edit your review of Linen Wide-Leg Trouser"
+        })
+        .waitFor();
+      assert.strictEqual(
+        await page
+          .getByRole("link", { name: "Satin Slip Skirt" })
+          .getAttribute("href"),
+        "/satin-slip-skirt"
+      );
+      assert.strictEqual(
+        calls.filter((c) => c.path === "/api/v1/reviews").length,
+        0,
+        "skipping sends nothing"
+      );
+      await context.close();
+    }
+  },
+  {
+    name: "email link: an item with a review shows Edit and saves with PATCH",
+    run: async (browser) => {
+      const { context, page, calls } = await open(
+        browser,
+        `/review/${REVIEW_TOKEN}?item=54&rating=1`
+      );
+      // Item 54 already has a review: the star is ignored, item 1 opens.
+      await page.getByText(/^Item 1 of 3/).waitFor({ timeout: PAGE_TIMEOUT });
+      await page.waitForFunction(() => location.search === "");
+      const list = page.getByRole("region", { name: "In this order" });
+      await list.getByText("Reviewed").waitFor();
+      await list
+        .getByRole("button", {
+          name: "Edit your review of Linen Wide-Leg Trouser"
+        })
+        .click();
+      await page.getByText(/^Item 2 of 3/).waitFor();
+      await page.getByRole("heading", { name: "Edit your review" }).waitFor();
+      assert.strictEqual(
+        await page
+          .getByRole("radio", { name: /4 stars/ })
+          .getAttribute("aria-checked"),
+        "true"
+      );
+      await page.getByRole("radio", { name: /3 stars/ }).click();
+      await page.getByRole("button", { name: "Save rating" }).click();
+      await page.getByRole("heading", { name: /Thanks/ }).waitFor();
+      const patch = calls.find(
+        (c) => c.method === "PATCH" && c.path === "/api/v1/reviews/901"
+      );
+      assert.ok(patch, "PATCH /reviews/901 sent");
+      assert.strictEqual(patch.headers["x-review-token"], REVIEW_TOKEN);
+      const recorded = await page.evaluate(() => window.__reviewPosts);
+      assert.strictEqual(Object.fromEntries(recorded[0].entries).rating, "3");
+      await context.close();
+    }
+  },
+  {
+    name: "email link: a dead link shows the expired page",
+    run: async (browser) => {
+      const { context, page, calls } = await open(
+        browser,
+        "/review/no-longer-valid?item=53&rating=5",
+        { device: PHONE }
+      );
+      await page
+        .getByRole("heading", { name: "This review link has expired" })
+        .waitFor({ timeout: PAGE_TIMEOUT });
+      assert.strictEqual(
+        await page
+          .getByRole("link", { name: "Sign in to review" })
+          .getAttribute("href"),
+        "/account/reviews"
+      );
+      await page.getByRole("link", { name: "Keep shopping" }).waitFor();
+      assert.strictEqual(
+        calls.filter((c) => c.path.startsWith("/api/v1/review_requests/"))
+          .length,
+        1,
+        "a 404 isn't retried"
+      );
+      await context.close();
+
+      // A link that dies mid-flow (invalid_token on submit) ends up there too.
+      const second = await open(browser, `/review/${REVIEW_TOKEN}?rating=5`, {
+        state: {
+          onCreate: (route) =>
+            route.fulfill({
+              status: 404,
+              contentType: "application/json",
+              headers: { "Access-Control-Allow-Origin": "*" },
+              body: JSON.stringify({
+                error: "This review link isn't valid any more",
+                code: "invalid_token"
+              })
+            })
+        }
+      });
+      await second.page
+        .getByRole("radio", { name: /5 stars/ })
+        .click({ timeout: PAGE_TIMEOUT });
+      await second.page.getByRole("button", { name: "Submit rating" }).click();
+      await second.page
+        .getByRole("heading", { name: "This review link has expired" })
+        .waitFor();
+      await second.context.close();
+    }
+  },
+  {
+    name: "email opt-out asks first and POSTs once on Confirm",
+    run: async (browser) => {
+      const { context, page, calls, errors } = await open(
+        browser,
+        `/review/${REVIEW_TOKEN}?opt_out=1`,
+        { device: PHONE }
+      );
+      await page
+        .getByRole("heading", { name: "Stop review emails to this address?" })
+        .waitFor({ timeout: PAGE_TIMEOUT });
+      await page.waitForTimeout(1000);
+      assert.strictEqual(
+        calls.filter((c) => c.path.startsWith("/api/v1/review_requests/"))
+          .length,
+        0,
+        "opening the link calls nothing (mail scanners open links)"
+      );
+      assert.strictEqual(
+        await page
+          .getByRole("heading", { name: "How would you rate it?" })
+          .count(),
+        0,
+        "no composer"
+      );
+      const confirm = page.getByRole("button", { name: "Confirm" });
+      await confirm.dblclick();
+      await page
+        .getByText("You won't get review emails from us anymore.")
+        .waitFor();
+      const posts = calls.filter(
+        (c) =>
+          c.method === "POST" &&
+          c.path === `/api/v1/review_requests/${REVIEW_TOKEN}/opt_out`
+      );
+      assert.strictEqual(posts.length, 1, "exactly one opt-out POST");
+      assert.ok(!posts[0].headers.authorization, "no Bearer");
+      assert.deepStrictEqual(errors, []);
+      await context.close();
+
+      // "Keep them" goes on to the review page without opting out.
+      const kept = await open(browser, `/review/${REVIEW_TOKEN}?opt_out=1`);
+      await kept.page
+        .getByRole("button", { name: "Keep them" })
+        .click({ timeout: PAGE_TIMEOUT });
+      await kept.page
+        .getByRole("heading", { name: "How would you rate it?" })
+        .waitFor();
+      assert.strictEqual(
+        kept.calls.filter((c) => c.path.endsWith("/opt_out")).length,
+        0
+      );
+      await kept.context.close();
+    }
   }
 ];
 
@@ -1211,7 +1530,9 @@ module.exports = {
   DESKTOP,
   BASE_URL,
   API_URL,
-  SLUG
+  SLUG,
+  REVIEW_TOKEN,
+  REVIEW_REQUEST
 };
 
 if (require.main === module) {

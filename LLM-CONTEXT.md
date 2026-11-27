@@ -82,6 +82,13 @@ const summary = await dnaFetch<ReviewSummary>(
 - `pages/[productSlug].tsx` has `getServerSideProps`: it prefetches the product, the retail summary and the first 5 retail reviews into the React Query cache (dehydrated). Each fetch is best-effort with a 2.5 s timeout; failures fall back to client fetching.
 - Compliance: default sort is "Most helpful"; never hide or down-rank low ratings.
 
+### Review request email page (M4)
+
+- `pages/review/[token].tsx` → `components/Reviews/ReviewRequest/`. Public and `noindex`; the token is the credential (no Bearer). `useReviewRequest(token)` / `useOptOutReviewRequest(token)` in `hooks/useReviews`.
+- Reuses `ReviewComposer` in `mode="page"` with `form` (built from the request), `reviewToken` (writes send `X-Review-Token`, via `useCreateReview({ reviewToken })` / `useUpdateReview({ reviewToken })`) and `queue` (the page decides the next item).
+- `?item=&rating=` preselects a star, then is removed from the URL. `?opt_out=1` only POSTs after a Confirm click (mail scanners open links). 404 / `invalid_token` → expired-link page.
+- The store-review step waits for M5: see `STORE_REVIEW_STEP` in `ReviewRequestFlow.tsx`.
+
 ### Mutations with Cache Invalidation
 
 ```typescript

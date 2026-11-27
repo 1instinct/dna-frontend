@@ -2,6 +2,18 @@ export const GA_TRACKING_CODE = process.env.NEXT_PUBLIC_GA_TRACKING_CODE;
 export const GA_DEBUG_MODE = process.env.NEXT_PUBLIC_GA_DEBUG_MODE;
 export const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID;
 
+// Pages whose URL carries a secret (the review link token from review request emails). Their
+// URLs are redacted before any tracker sees them, and third-party pixels don't load on them
+// (pages/_document.tsx).
+export const PRIVATE_PAGE_PREFIXES = ["/review/"];
+
+export const isPrivatePage = (path: string): boolean =>
+  PRIVATE_PAGE_PREFIXES.some((prefix) => path.startsWith(prefix));
+
+/** `/review/abc123?item=1` → `/review/[token]`; other URLs unchanged. */
+export const redactTrackingUrl = (url: string): string =>
+  url.replace(/^((?:https?:\/\/[^/]+)?\/review\/)[^/?#]+[^#]*/, "$1[token]");
+
 export enum Action {
   PRESS_ENTER = "press-enter",
   SELECT_SUGGESTION = "select-suggestion",
@@ -70,10 +82,13 @@ export const trackPageview = (url: string): void => {
   for (let provider of trackingProviders) {
     if (provider.isActive()) {
       if (TRACKING_VERBOSE) {
-        console.log(provider.getName() + " - trackPageview", url);
+        console.log(
+          provider.getName() + " - trackPageview",
+          redactTrackingUrl(url)
+        );
       }
 
-      provider.trackPageview(url);
+      provider.trackPageview(redactTrackingUrl(url));
     }
   }
 };

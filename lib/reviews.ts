@@ -263,6 +263,9 @@ export const reviewErrorMessage = (
     return "Something went wrong. Please try again.";
   }
   const code = errorCode(error);
+  if (code === "invalid_token") {
+    return "This review link isn't valid any more.";
+  }
   if (code === "not_enabled" || error.status === 503) {
     return "Reviews are switched off for a moment. Please try again later.";
   }
@@ -296,6 +299,25 @@ export const reviewErrorMessage = (
       return "Something went wrong. Please try again.";
   }
 };
+
+/**
+ * A write sent with `X-Review-Token` was refused because the link is dead
+ * (404 `invalid_token`). A plain 404 on PATCH only means "not your review".
+ */
+export const isInvalidReviewToken = (error: unknown): boolean =>
+  isDnaApiError(error) && errorCode(error) === "invalid_token";
+
+/**
+ * `GET /review_requests/:token` failed because the link is dead: unknown,
+ * expired, replaced by a newer email, opted out or cancelled (all 404).
+ */
+export const isInvalidReviewLink = (error: unknown): boolean =>
+  isDnaApiError(error) && (error.status === 404 || isInvalidReviewToken(error));
+
+/** True for a 503 / `not_enabled`: reviews are switched off server-side. */
+export const isReviewsDisabledError = (error: unknown): boolean =>
+  isDnaApiError(error) &&
+  (error.status === 503 || errorCode(error) === "not_enabled");
 
 /**
  * Field errors keyed by composer field: `rating`, `title`, `body`,
