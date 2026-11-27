@@ -33,7 +33,7 @@ Change these in the store's repo, not in DNA:
 | dna-frontend `.env` | `NEXT_PUBLIC_SPREE_API_URL`, `NEXT_PUBLIC_SITE_TITLE`, `NEXT_PUBLIC_REVIEWS_ENABLED`, tracking IDs |
 | dna-frontend `tailwind.config.ts`, `styles/globals.css` | Brand colors and fonts (`brand`, `secondary`, `font-title`, `font-body`). Review UI uses these tokens. |
 | dna-frontend `components/shared/Logo`, `public/` | Logo and favicons |
-| dna-admin `public/email/pattern-*.png` | Email background tiles (light and dark), if the DNA pink doesn't suit the brand |
+| dna-admin `config/email_theme.yml`, `public/email/` | Email colors, fonts, background tiles (light and dark) and a default logo. Set `color_scheme: "dark"` for an always-dark brand. |
 
 Keep store-only changes in their own commits, with clear messages. That keeps later merges from DNA easy.
 
