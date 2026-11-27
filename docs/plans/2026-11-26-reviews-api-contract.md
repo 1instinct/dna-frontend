@@ -264,7 +264,7 @@ The "How's your order?" email links to the storefront page `/review/[token]`. Th
       "questions": [ { "key": "fit", "label": "Fit", "kind": "bipolar", "low_label": "Runs small", "high_label": "Runs large" } ],
       "existing_review": null }
   ],
-  "store_review": { "enabled": true, "existing_review": null },
+  "store_review": { "enabled": true, "existing_review": null, "questions": [] },
   "points": { "per_review": 50, "photo_bonus": 50 },
   "has_account": false,
   "limits": { "max_photos": 5, "max_photo_mb": 10, "title_max": 120, "body_max": 5000,
@@ -276,6 +276,7 @@ The "How's your order?" email links to the storefront page `/review/[token]`. Th
 - The first successful GET sets the request's `opened_at`. Later GETs don't change it.
 - `items` holds the order's shipped products, one entry per product. `existing_review` uses the "own review" shape (M2) or is `null`.
 - `display_name` is the default name for new reviews, for example "Maya R.".
+- `store_review.questions` lists the active store questions (`applies_to: store`), in the same shape as an item's `questions`.
 - `store_review.enabled` mirrors the store-reviews setting. `existing_review` is this order's store review, if there is one. Store reviews are written in M5 (`/api/v1/store_reviews`), which will take the same header.
 - `has_account` is `true` when the order belongs to an account. Points go to that account. With `false`, show "Create an account to collect points" rather than a points total. Points are only paid to accounts.
 - **404** `{ "error": "not found" }` for any link that isn't usable (see the table above).

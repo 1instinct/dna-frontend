@@ -12,6 +12,7 @@ four repos: `dna-admin`, `dna-frontend`, `Beeper-Admin`, `Beeper-Frontend` (`doc
 | `ALLOWED_ORIGINS` | `https://beeper.buzz,https://www.beeper.buzz` | CORS for storefronts that call the admin from the browser. Beeper proxies `/api/v1` through its own domain, so it only needs this for other clients. |
 | `MAILGUN_HOST` / `_PORT` / `_USER` / `_PASS` | (existing) | Review emails send through the existing mail setup. |
 | `MODERATION_EMAIL` | `moderation@beeper.buzz` | Optional. Gets an email when a customer reports a review. |
+| `INTERNAL_CRON_SECRET` | a long random string (`openssl rand -hex 32`) | AI summaries (M7). The hourly task sends it when it asks the storefront to write summaries. It must match the storefront's value. |
 
 Then:
 
@@ -37,7 +38,11 @@ Then:
   - [ ] Photos need approval: on (default) or off.
   - [ ] Email timing: 7 days after shipping, 10 for international, a reminder 7 days later, links valid 60 days (defaults).
   - [ ] Points: 50 per review, +50 with a photo (defaults). Points are the same whatever the rating.
-  - [ ] Leave **Store reviews**, **Questions** and **AI summary** off. Those milestones (M5–M7) aren't built yet.
+  - [ ] **Store reviews** (M5): tick it to add the "How was shopping with us?" step to review emails, the `/reviews` page and the footer badge.
+  - [ ] **Questions** (M6): tick it to add the Questions tab on product pages. Answer questions in **Reviews › Questions**. The customer is emailed when you answer.
+  - [ ] **AI summary** (M7): tick it once section 3's AI variables are set. Summaries start appearing within an hour on products with 5+ written reviews (the "Minimum reviews" setting).
+- [ ] **Reviews › Review questions**: for store reviews, add questions with "Applies to: Store", for example Delivery and Packaging.
+- [ ] **Users**: create a service user for AI summaries (for example `ai-summaries@yourstore`) with the **admin** role. Press **Generate API key** on its user page and put the key in the storefront's `DNA_ADMIN_SERVICE_TOKEN`. Treat it like a password.
 - [ ] **Users › (account) › Roles**: give wholesale buyers the `wholesale` role. Their orders and reviews then count as wholesale, which retail product pages never show.
 
 ## 3. Storefront: environment
@@ -47,6 +52,9 @@ Then:
 | `NEXT_PUBLIC_REVIEWS_ENABLED` | `true` | Shows stars, the reviews section, the review form, Account › Reviews and the `/review/<token>` page. Off means none of it renders and no review calls are made. |
 | `NEXT_PUBLIC_SPREE_API_URL` | (existing) | Same admin API as now. |
 | `NEXT_PUBLIC_SHORT_TITLE` | `Beeper` | Beeper only, optional. The store name in review copy ("Response from Beeper"). |
+| `ANTHROPIC_API_KEY` | `sk-ant-…` | AI summaries (M7). Server-only. Never prefix it with `NEXT_PUBLIC_`. |
+| `INTERNAL_CRON_SECRET` | same value as the admin's | Protects `/api/internal/reviews/summarize`. |
+| `DNA_ADMIN_SERVICE_TOKEN` | the service user's API key | Lets the summarizer read reviews from the admin and save summaries. Server-only. |
 
 - [ ] dna-frontend's Docker image moved to Node 22. Check the first build, especially the `sharp` install.
 
@@ -57,6 +65,9 @@ Then:
 3. [ ] Tick **Reviews on** in Review settings.
 4. [ ] Optional, to start with reviews already coming in: `bundle exec rake reviews:backfill[30]`. This emails customers whose orders shipped in the last 30 days, 200 an hour.
 5. [ ] Watch **Reviews › Reviews** (the moderation queue) and **Reviews › Review emails** (the sent → opened → completed funnel).
+6. [ ] Turn on **Store reviews** and **Questions** whenever you like. They don't depend on each other.
+7. [ ] After about two weeks of reviews, set the AI variables and turn on **AI summary**. To try it on one product, go to **Products › (product) › Reviews › Regenerate**.
+8. [ ] Once there are **50+ written retail reviews**, submit the feed in Google Merchant Center (**Growth › Manage programs › Product ratings**). The feed URL is `$ADMIN_URL/feeds/google/product_reviews.xml`.
 
 ## 5. Check it works
 
@@ -68,9 +79,11 @@ Then:
   - the customer's points went up;
   - the request shows as completed in Review emails.
 
-## Later milestones will add
+- [ ] **Store reviews**: finish an email-link review. The store step should appear after the products, and the review should show on `/reviews` once published.
+- [ ] **Questions**: ask a question on a product page, answer it in **Reviews › Questions**, then check the email arrives and the question shows on the product page.
+- [ ] **AI summary**: press **Regenerate** on a product with 5+ written reviews. Within a minute or two, the summary card should appear on the product page.
+- [ ] **Google feed**: open `$ADMIN_URL/feeds/google/product_reviews.xml`. It should list your written retail reviews.
 
-- M5 store reviews: turn on **Store reviews**.
-- M6 Q&A: turn on **Questions**.
-- M7 AI summaries: needs `ANTHROPIC_API_KEY` and `INTERNAL_CRON_SECRET` on the storefront, and **AI summary** turned on.
-- M8 Google review feed: submit the feed URL in Merchant Center once you have 50+ reviews.
+## Coming in phase 2
+
+- **Ask AI** on product pages, using the same `ANTHROPIC_API_KEY`.
