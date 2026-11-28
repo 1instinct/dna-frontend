@@ -266,7 +266,7 @@ describe("ChatSession sending", () => {
     await t.session.idle();
     const failed = t.session.getState().entries[0];
     assert.equal(failed.status, "failed");
-    assert.match(failed.error || "", /can't reach the server/i);
+    assert.match(failed.error || "", /check your connection/i);
     assert.equal(callsOf(t.calls, "sendMessage").length, 2);
 
     fail = false;
