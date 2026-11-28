@@ -233,6 +233,8 @@ drop the prefix and are read only in `pages/api/*` or `lib/server/*`:
 - `NEXT_PUBLIC_APP_LIBRARY_URL` - optional app link (e.g. `exampleapp://library`); library items then offer "Open in app" at `<url>/<variant id>`
 - `NEXT_PUBLIC_MARKETPLACE_TAXON` - the creator marketplace's Spree taxon (backend default `marketplace`); empty turns off the /browse marketplace switch and the account Creator entry
 - `NEXT_PUBLIC_CREATOR_SHARE_PERCENT` - optional creator share shown on /creators
+- `NEXT_PUBLIC_CHAT_ENABLED` - the storefront chat widget (`components/Chat`); off unless `true`. Lazy-loaded, so it costs nothing when off
+- `NEXT_PUBLIC_VISITOR_TRACKING` - visit pings to dna-admin (`POST /api/v1/storefront/visits`) for its live Visitors screen; unset follows `NEXT_PUBLIC_CHAT_ENABLED`, `true`/`false` overrides it. Both wait for consent (`lib/chat/consent.ts`)
 
 ## Common Tasks
 

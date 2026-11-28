@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2019"
+    "target": "es2019",
+    "jsx": "react-jsx"
   },
   "ts-node": {
     "transpileOnly": true
