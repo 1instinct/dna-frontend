@@ -8,6 +8,7 @@ import { ComingSoon } from "../components/ComingSoon";
 import { RefCapture } from "../components/shared/RefCapture";
 import { FromAppCapture } from "../components/shared/FromAppCapture";
 import { AppCallout, AppPresenceProvider } from "../components/AppCallout";
+import { StorefrontChat } from "../components/Chat";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import * as tracking from "../config/tracking";
@@ -130,6 +131,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               >
                 <Component {...pageProps} wholesale={wholesale} />
               </main>
+              {/* Chat widget and visit tracking: nothing loads unless their flags are on. */}
+              <StorefrontChat
+                hideWidget={FULLSCREEN_ROUTES.includes(router.pathname)}
+              />
             </div>
           </AppPresenceProvider>
         </Hydrate>
